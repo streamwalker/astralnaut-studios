@@ -285,6 +285,84 @@ export type Database = {
           },
         ]
       }
+      growth_kpis: {
+        Row: {
+          cac: number | null
+          churn: number | null
+          created_at: string
+          discord: number | null
+          emails: number | null
+          ewr: number | null
+          id: string
+          mrr: number | null
+          notes: string | null
+          nps: number | null
+          recorded_at: string
+          subs: number | null
+        }
+        Insert: {
+          cac?: number | null
+          churn?: number | null
+          created_at?: string
+          discord?: number | null
+          emails?: number | null
+          ewr?: number | null
+          id?: string
+          mrr?: number | null
+          notes?: string | null
+          nps?: number | null
+          recorded_at?: string
+          subs?: number | null
+        }
+        Update: {
+          cac?: number | null
+          churn?: number | null
+          created_at?: string
+          discord?: number | null
+          emails?: number | null
+          ewr?: number | null
+          id?: string
+          mrr?: number | null
+          notes?: string | null
+          nps?: number | null
+          recorded_at?: string
+          subs?: number | null
+        }
+        Relationships: []
+      }
+      growth_sprint_weeks: {
+        Row: {
+          created_at: string
+          dates: string
+          done: boolean
+          done_at: string | null
+          id: string
+          outcome: string
+          updated_at: string
+          week: number
+        }
+        Insert: {
+          created_at?: string
+          dates: string
+          done?: boolean
+          done_at?: string | null
+          id?: string
+          outcome: string
+          updated_at?: string
+          week: number
+        }
+        Update: {
+          created_at?: string
+          dates?: string
+          done?: boolean
+          done_at?: string | null
+          id?: string
+          outcome?: string
+          updated_at?: string
+          week?: number
+        }
+        Relationships: []
+      }
       issue_drops: {
         Row: {
           id: string
