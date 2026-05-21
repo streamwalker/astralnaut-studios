@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndustryRouteImport } from './routes/industry'
@@ -17,10 +18,14 @@ import { Route as ChildrenOfAquariusRouteImport } from './routes/children-of-aqu
 import { Route as BattlefieldAtlantisRouteImport } from './routes/battlefield-atlantis'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiSitemapDotxmlRouteImport } from './routes/api/sitemap[.]xml'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ReaderSeriesIssueRouteImport } from './routes/reader.$series.$issue'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
@@ -60,11 +65,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiSitemapDotxmlRoute = ApiSitemapDotxmlRouteImport.update({
-  id: '/api/sitemap.xml',
-  path: '/api/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -84,8 +84,8 @@ export interface FileRoutesByFullPath {
   '/industry': typeof IndustryRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
-  '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
 }
 export interface FileRoutesByTo {
@@ -96,8 +96,8 @@ export interface FileRoutesByTo {
   '/industry': typeof IndustryRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
-  '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
 }
 export interface FileRoutesById {
@@ -110,8 +110,8 @@ export interface FileRoutesById {
   '/industry': typeof IndustryRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
-  '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
 }
 export interface FileRouteTypes {
@@ -124,8 +124,8 @@ export interface FileRouteTypes {
     | '/industry'
     | '/login'
     | '/pricing'
+    | '/sitemap.xml'
     | '/admin'
-    | '/api/sitemap.xml'
     | '/reader/$series/$issue'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -136,8 +136,8 @@ export interface FileRouteTypes {
     | '/industry'
     | '/login'
     | '/pricing'
+    | '/sitemap.xml'
     | '/admin'
-    | '/api/sitemap.xml'
     | '/reader/$series/$issue'
   id:
     | '__root__'
@@ -149,8 +149,8 @@ export interface FileRouteTypes {
     | '/industry'
     | '/login'
     | '/pricing'
+    | '/sitemap.xml'
     | '/_authenticated/admin'
-    | '/api/sitemap.xml'
     | '/reader/$series/$issue'
   fileRoutesById: FileRoutesById
 }
@@ -163,12 +163,19 @@ export interface RootRouteChildren {
   IndustryRoute: typeof IndustryRoute
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
-  ApiSitemapDotxmlRoute: typeof ApiSitemapDotxmlRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ReaderSeriesIssueRoute: typeof ReaderSeriesIssueRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pricing': {
       id: '/pricing'
       path: '/pricing'
@@ -225,13 +232,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/sitemap.xml': {
-      id: '/api/sitemap.xml'
-      path: '/api/sitemap.xml'
-      fullPath: '/api/sitemap.xml'
-      preLoaderRoute: typeof ApiSitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -270,7 +270,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndustryRoute: IndustryRoute,
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
-  ApiSitemapDotxmlRoute: ApiSitemapDotxmlRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   ReaderSeriesIssueRoute: ReaderSeriesIssueRoute,
 }
 export const routeTree = rootRouteImport
