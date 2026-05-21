@@ -1,40 +1,18 @@
-## Manage uploaded comic pages in admin
+## Goal
+Make page 10 of Battlefield Atlantis Issue 1 free to read.
 
-Today the admin "Recent uploads" panel is read-only — it shows the 30 newest pages with thumbnail, title, slug, page number, and publish state. There is no way to fix a wrong file, rename a page, change its order, or remove it. This plan adds full CRUD on uploaded pages.
+## Why it's currently locked
+The reader's free/locked gate uses `Math.floor(issue.free_pages)`. The issue currently has `free_pages = 9.5`, so `floor = 9` — page 10 is locked even though its `comics` row already has `is_free = true` and is published.
 
-### What changes
+## Change
+Single data update to the `issues` row for `battlefield-atlantis-issue-1`:
 
-**1. Filter + group by issue**
-Replace the flat "Recent uploads (last 30)" list with an issue picker at the top of the right-hand panel:
-- Series → Issue dropdowns (reusing the same query the batch uploader already runs).
-- Once an issue is selected, load **all** its pages (`comics` where `issue_id = …`, ordered by `page_number`) — not capped at 30.
-- A "Recent uploads (all issues)" fallback view shows the 30 newest when no issue is selected, for quick access right after an upload.
+- `free_pages`: 9.5 → 10
+- `paid_pages`: 11 → 10 (keeps total at 20.5)
+- `total_pages`: unchanged (20.5)
 
-**2. Per-page row actions**
-Each page row gets a kebab menu (`DropdownMenu`) with:
-- **Replace image** — opens a file picker; uploads the new file to `comic-pages` at a new path, updates `comics.image_path`, then deletes the old object from storage. Keeps page_number, title, publish state intact.
-- **Edit details** — opens a dialog with: `title`, `page_number`, `alt_text`, `is_free` (switch), `published_at` (published / draft toggle that sets `now()` or `null`). Saves via `supabase.from("comics").update(...)`.
-- **Delete** — `AlertDialog` confirm, then delete the storage object and the `comics` row.
+No code changes. The Battlefield Atlantis landing page and reader both read `free_pages` from the DB and will reflect the unlock immediately (KV stat shows "10", page grid marks page 10 FREE, reader serves the image instead of the paywall).
 
-**3. Reposition (reorder page numbers)**
-Inside the issue view, add ↑ / ↓ buttons on each row that swap `page_number` with the neighbor (two updates in a small transaction-style sequence — update current to a temp negative value, neighbor to current, current to neighbor — to satisfy any future unique constraint on (issue_id, page_number)). For now, since there is no such constraint, a straightforward two-row update is enough.
-
-Out of scope: drag-and-drop reordering (buttons are simpler and reliable). We can add dnd later if needed.
-
-**4. Cache + UX**
-- All mutations call `qc.invalidateQueries({ queryKey: ["admin-comics"] })` and a new `["admin-issue-pages", issueId]` key.
-- Toasts via `sonner` for success/failure.
-- Optimistic UI is not needed — these are admin-only, low-volume actions.
-
-### Technical notes
-
-- All writes go through the browser `supabase` client; existing RLS already restricts `comics` ALL to `has_role(auth.uid(), 'admin')`, and storage policies on `comic-pages` already allow admin writes (the batch uploader works).
-- No DB migration required.
-- Storage delete: `supabase.storage.from("comic-pages").remove([oldPath])`.
-- Replace flow uses the same path convention as the existing batch upload (timestamp + filename) so we never overwrite by accident, then removes the old file after the DB row is updated.
-- New file: `src/components/admin/page-row.tsx` to keep `admin.tsx` from ballooning. Edit dialog + replace + delete + reorder live there.
-
-### Files touched
-
-- `src/routes/_authenticated/admin.tsx` — add issue filter, swap the list for the new `PageRow`, add `admin-issue-pages` query.
-- `src/components/admin/page-row.tsx` — new component with the kebab menu, edit dialog, replace input, delete confirm, reorder buttons.
+## Out of scope
+- No change to drop schedule / `issue_drops`.
+- No change to other series or issues.
