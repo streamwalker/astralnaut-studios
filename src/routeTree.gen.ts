@@ -9,14 +9,45 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as IndustryRouteImport } from './routes/industry'
+import { Route as DarkerAgesRouteImport } from './routes/darker-ages'
+import { Route as ChildrenOfAquariusRouteImport } from './routes/children-of-aquarius'
+import { Route as BattlefieldAtlantisRouteImport } from './routes/battlefield-atlantis'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ReaderSeriesIssueRouteImport } from './routes/reader.$series.$issue'
 
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndustryRoute = IndustryRouteImport.update({
+  id: '/industry',
+  path: '/industry',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DarkerAgesRoute = DarkerAgesRouteImport.update({
+  id: '/darker-ages',
+  path: '/darker-ages',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChildrenOfAquariusRoute = ChildrenOfAquariusRouteImport.update({
+  id: '/children-of-aquarius',
+  path: '/children-of-aquarius',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BattlefieldAtlantisRoute = BattlefieldAtlantisRouteImport.update({
+  id: '/battlefield-atlantis',
+  path: '/battlefield-atlantis',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -33,45 +64,138 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const ReaderSeriesIssueRoute = ReaderSeriesIssueRouteImport.update({
+  id: '/reader/$series/$issue',
+  path: '/reader/$series/$issue',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
+  '/children-of-aquarius': typeof ChildrenOfAquariusRoute
+  '/darker-ages': typeof DarkerAgesRoute
+  '/industry': typeof IndustryRoute
   '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
+  '/children-of-aquarius': typeof ChildrenOfAquariusRoute
+  '/darker-ages': typeof DarkerAgesRoute
+  '/industry': typeof IndustryRoute
   '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
+  '/children-of-aquarius': typeof ChildrenOfAquariusRoute
+  '/darker-ages': typeof DarkerAgesRoute
+  '/industry': typeof IndustryRoute
   '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/admin'
+  fullPaths:
+    | '/'
+    | '/battlefield-atlantis'
+    | '/children-of-aquarius'
+    | '/darker-ages'
+    | '/industry'
+    | '/login'
+    | '/pricing'
+    | '/admin'
+    | '/reader/$series/$issue'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/admin'
-  id: '__root__' | '/' | '/_authenticated' | '/login' | '/_authenticated/admin'
+  to:
+    | '/'
+    | '/battlefield-atlantis'
+    | '/children-of-aquarius'
+    | '/darker-ages'
+    | '/industry'
+    | '/login'
+    | '/pricing'
+    | '/admin'
+    | '/reader/$series/$issue'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/battlefield-atlantis'
+    | '/children-of-aquarius'
+    | '/darker-ages'
+    | '/industry'
+    | '/login'
+    | '/pricing'
+    | '/_authenticated/admin'
+    | '/reader/$series/$issue'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  BattlefieldAtlantisRoute: typeof BattlefieldAtlantisRoute
+  ChildrenOfAquariusRoute: typeof ChildrenOfAquariusRoute
+  DarkerAgesRoute: typeof DarkerAgesRoute
+  IndustryRoute: typeof IndustryRoute
   LoginRoute: typeof LoginRoute
+  PricingRoute: typeof PricingRoute
+  ReaderSeriesIssueRoute: typeof ReaderSeriesIssueRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/industry': {
+      id: '/industry'
+      path: '/industry'
+      fullPath: '/industry'
+      preLoaderRoute: typeof IndustryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/darker-ages': {
+      id: '/darker-ages'
+      path: '/darker-ages'
+      fullPath: '/darker-ages'
+      preLoaderRoute: typeof DarkerAgesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/children-of-aquarius': {
+      id: '/children-of-aquarius'
+      path: '/children-of-aquarius'
+      fullPath: '/children-of-aquarius'
+      preLoaderRoute: typeof ChildrenOfAquariusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/battlefield-atlantis': {
+      id: '/battlefield-atlantis'
+      path: '/battlefield-atlantis'
+      fullPath: '/battlefield-atlantis'
+      preLoaderRoute: typeof BattlefieldAtlantisRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -95,6 +219,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/reader/$series/$issue': {
+      id: '/reader/$series/$issue'
+      path: '/reader/$series/$issue'
+      fullPath: '/reader/$series/$issue'
+      preLoaderRoute: typeof ReaderSeriesIssueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -113,8 +244,24 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  BattlefieldAtlantisRoute: BattlefieldAtlantisRoute,
+  ChildrenOfAquariusRoute: ChildrenOfAquariusRoute,
+  DarkerAgesRoute: DarkerAgesRoute,
+  IndustryRoute: IndustryRoute,
   LoginRoute: LoginRoute,
+  PricingRoute: PricingRoute,
+  ReaderSeriesIssueRoute: ReaderSeriesIssueRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
