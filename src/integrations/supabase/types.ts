@@ -84,40 +84,60 @@ export type Database = {
         Row: {
           bio: string | null
           created_at: string
+          faction: string | null
           id: string
           is_published: boolean
           name: string
           portrait_path: string | null
+          role: string | null
+          series_id: string | null
           short_description: string | null
           slug: string
           sort_order: number
+          transmedium: boolean | null
           updated_at: string
         }
         Insert: {
           bio?: string | null
           created_at?: string
+          faction?: string | null
           id?: string
           is_published?: boolean
           name: string
           portrait_path?: string | null
+          role?: string | null
+          series_id?: string | null
           short_description?: string | null
           slug: string
           sort_order?: number
+          transmedium?: boolean | null
           updated_at?: string
         }
         Update: {
           bio?: string | null
           created_at?: string
+          faction?: string | null
           id?: string
           is_published?: boolean
           name?: string
           portrait_path?: string | null
+          role?: string | null
+          series_id?: string | null
           short_description?: string | null
           slug?: string
           sort_order?: number
+          transmedium?: boolean | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "characters_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       comics: {
         Row: {
@@ -125,8 +145,11 @@ export type Database = {
           author_note: string | null
           chapter_id: string | null
           created_at: string
+          drop_at: string | null
           id: string
           image_path: string
+          is_free: boolean
+          issue_id: string | null
           page_number: number
           published_at: string | null
           slug: string
@@ -140,8 +163,11 @@ export type Database = {
           author_note?: string | null
           chapter_id?: string | null
           created_at?: string
+          drop_at?: string | null
           id?: string
           image_path: string
+          is_free?: boolean
+          issue_id?: string | null
           page_number: number
           published_at?: string | null
           slug: string
@@ -155,8 +181,11 @@ export type Database = {
           author_note?: string | null
           chapter_id?: string | null
           created_at?: string
+          drop_at?: string | null
           id?: string
           image_path?: string
+          is_free?: boolean
+          issue_id?: string | null
           page_number?: number
           published_at?: string | null
           slug?: string
@@ -171,6 +200,13 @@ export type Database = {
             columns: ["chapter_id"]
             isOneToOne: false
             referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comics_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "issues"
             referencedColumns: ["id"]
           },
         ]
@@ -202,24 +238,288 @@ export type Database = {
         }
         Relationships: []
       }
+      factions: {
+        Row: {
+          acro: string | null
+          created_at: string
+          emblem_path: string | null
+          id: string
+          name: string
+          series_id: string
+          slug: string
+          sort_order: number
+          summary: string | null
+        }
+        Insert: {
+          acro?: string | null
+          created_at?: string
+          emblem_path?: string | null
+          id?: string
+          name: string
+          series_id: string
+          slug: string
+          sort_order?: number
+          summary?: string | null
+        }
+        Update: {
+          acro?: string | null
+          created_at?: string
+          emblem_path?: string | null
+          id?: string
+          name?: string
+          series_id?: string
+          slug?: string
+          sort_order?: number
+          summary?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "factions_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      issue_drops: {
+        Row: {
+          id: string
+          issue_id: string
+          pages: number[]
+          patron_date: string
+          reader_date: string
+          week: number
+        }
+        Insert: {
+          id?: string
+          issue_id: string
+          pages: number[]
+          patron_date: string
+          reader_date: string
+          week: number
+        }
+        Update: {
+          id?: string
+          issue_id?: string
+          pages?: number[]
+          patron_date?: string
+          reader_date?: string
+          week?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "issue_drops_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "issues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      issues: {
+        Row: {
+          cover_path: string | null
+          created_at: string
+          drop_cadence: string | null
+          free_pages: number
+          id: string
+          issue_number: number
+          paid_pages: number
+          paid_release_end: string | null
+          paid_release_start: string | null
+          release_status: string | null
+          series_id: string
+          slug: string
+          subtitle: string | null
+          title: string
+          total_pages: number
+          updated_at: string
+          variant_cover_paths: string[] | null
+        }
+        Insert: {
+          cover_path?: string | null
+          created_at?: string
+          drop_cadence?: string | null
+          free_pages?: number
+          id?: string
+          issue_number: number
+          paid_pages?: number
+          paid_release_end?: string | null
+          paid_release_start?: string | null
+          release_status?: string | null
+          series_id: string
+          slug: string
+          subtitle?: string | null
+          title: string
+          total_pages?: number
+          updated_at?: string
+          variant_cover_paths?: string[] | null
+        }
+        Update: {
+          cover_path?: string | null
+          created_at?: string
+          drop_cadence?: string | null
+          free_pages?: number
+          id?: string
+          issue_number?: number
+          paid_pages?: number
+          paid_release_end?: string | null
+          paid_release_start?: string | null
+          release_status?: string | null
+          series_id?: string
+          slug?: string
+          subtitle?: string | null
+          title?: string
+          total_pages?: number
+          updated_at?: string
+          variant_cover_paths?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "issues_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      milestones: {
+        Row: {
+          created_at: string
+          current_count: number
+          ends_at: string | null
+          id: string
+          is_active: boolean
+          name: string
+          rewards: Json
+          slug: string
+          target_count: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_count?: number
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          rewards?: Json
+          slug: string
+          target_count?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_count?: number
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          rewards?: Json
+          slug?: string
+          target_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      series: {
+        Row: {
+          comp_titles: string[] | null
+          cover_path: string | null
+          created_at: string
+          genre: string | null
+          id: string
+          launch_label: string | null
+          logline: string | null
+          logo_path: string | null
+          name: string
+          slug: string
+          sort_order: number
+          status: string
+          tagline: string | null
+          updated_at: string
+        }
+        Insert: {
+          comp_titles?: string[] | null
+          cover_path?: string | null
+          created_at?: string
+          genre?: string | null
+          id?: string
+          launch_label?: string | null
+          logline?: string | null
+          logo_path?: string | null
+          name: string
+          slug: string
+          sort_order?: number
+          status?: string
+          tagline?: string | null
+          updated_at?: string
+        }
+        Update: {
+          comp_titles?: string[] | null
+          cover_path?: string | null
+          created_at?: string
+          genre?: string | null
+          id?: string
+          launch_label?: string | null
+          logline?: string | null
+          logo_path?: string | null
+          name?: string
+          slug?: string
+          sort_order?: number
+          status?: string
+          tagline?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_copy: {
+        Row: {
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
       subscribers: {
         Row: {
+          active: boolean
           confirmed: boolean
           created_at: string
           email: string
           id: string
+          tier: Database["public"]["Enums"]["sub_tier"] | null
+          user_id: string | null
         }
         Insert: {
+          active?: boolean
           confirmed?: boolean
           created_at?: string
           email: string
           id?: string
+          tier?: Database["public"]["Enums"]["sub_tier"] | null
+          user_id?: string | null
         }
         Update: {
+          active?: boolean
           confirmed?: boolean
           created_at?: string
           email?: string
           id?: string
+          tier?: Database["public"]["Enums"]["sub_tier"] | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -259,6 +559,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      sub_tier: "reader" | "initiate" | "patron"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -387,6 +688,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      sub_tier: ["reader", "initiate", "patron"],
     },
   },
 } as const

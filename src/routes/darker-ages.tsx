@@ -1,0 +1,35 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { SiteHeader, SiteFooter } from "@/components/site-header";
+
+export const Route = createFileRoute("/darker-ages")({
+  head: () => ({
+    meta: [
+      { title: "Darker Ages — Coming October 2026 · Real World Comics" },
+      { name: "description", content: "Dark medieval fantasy from Astralnaut Studios. After the protective magic of the old age has died, what was held back is loose. Launches October 2026." },
+      { property: "og:title", content: "Darker Ages — Coming October 2026" },
+      { property: "og:url", content: "/darker-ages" },
+    ],
+    links: [{ rel: "canonical", href: "/darker-ages" }],
+  }),
+  component: DarkerAges,
+});
+
+function DarkerAges() {
+  return (
+    <>
+      <SiteHeader />
+      <main className="mx-auto max-w-7xl px-6 py-20 text-center">
+        <Link to="/" className="text-xs text-[var(--mute)] hover:text-[var(--neon)]">← Back to slate</Link>
+        <div className="mt-12 eyebrow">October 2026 · Issue 1</div>
+        <h1 className="mt-4 text-5xl font-black tracking-tight md:text-7xl">Darker Ages</h1>
+        <p className="mx-auto mt-6 max-w-2xl text-xl text-[var(--ink2)]">After the protective magic of the old age has died, what was held back is loose.</p>
+        <div className="mx-auto mt-10 max-w-md card-rwc p-8">
+          <div className="eyebrow">Pre-launch</div>
+          <p className="mt-3 text-[var(--ink2)]">First-act pages drop October 2026. Subscribers get day-one access on the tier-staggered schedule.</p>
+          <Link to="/pricing" className="btn-cta mt-6 inline-flex">Reserve your tier</Link>
+        </div>
+      </main>
+      <SiteFooter />
+    </>
+  );
+}
