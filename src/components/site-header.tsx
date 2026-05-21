@@ -1,4 +1,7 @@
-import { Link } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import baLogo from "@/assets/battlefield-atlantis-logo.png";
 
 type NavItem = { to: string; label: string; exact?: boolean; accent?: boolean; params?: Record<string, string> };
@@ -12,8 +15,43 @@ const nav: NavItem[] = [
   { to: "/industry", label: "For Industry", accent: true },
 ];
 
+function useAdminSession() {
+  const qc = useQueryClient();
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      qc.invalidateQueries({ queryKey: ["site-header-admin"] });
+    });
+    return () => subscription.unsubscribe();
+  }, [qc]);
+
+  return useQuery({
+    queryKey: ["site-header-admin"],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return { user: null, isAdmin: false };
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      return { user, isAdmin: !!data };
+    },
+    staleTime: 60_000,
+  });
+}
 
 export function SiteHeader() {
+  const { data } = useAdminSession();
+  const isAdmin = !!data?.isAdmin;
+  const nav_ = useNavigate();
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    nav_({ to: "/" });
+  };
+
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md" style={{ background: "rgba(2,0,12,0.7)", borderBottom: "1px solid var(--border-line)" }}>
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3">
@@ -45,14 +83,41 @@ export function SiteHeader() {
                 activeProps={{ className: "!text-[var(--neon)]" }}
                 activeOptions={n.exact ? { exact: true } : undefined}
               >
-
                 {n.label}
               </Link>
             );
           })}
         </nav>
         <div className="flex items-center gap-3">
-          <Link to="/login" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Sign in</Link>
+          {isAdmin ? (
+            <>
+              <Link
+                to="/admin"
+                className="flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[2px]"
+                style={{
+                  color: "var(--gold)",
+                  border: "1px solid var(--gold)",
+                  background: "rgba(201, 168, 76, 0.08)",
+                  boxShadow: "0 0 14px rgba(201, 168, 76, 0.25)",
+                }}
+                title="You are signed in as an admin"
+              >
+                <span
+                  className="inline-block h-1.5 w-1.5 animate-pulse rounded-full"
+                  style={{ background: "var(--gold)", boxShadow: "0 0 8px var(--gold)" }}
+                />
+                Admin Mode
+              </Link>
+              <button
+                onClick={signOut}
+                className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]"
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <Link to="/login" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Sign in</Link>
+          )}
           <Link to="/reader/$series/$issue" params={{ series: "battlefield-atlantis", issue: "1" }} className="btn-cta text-sm">Start reading →</Link>
         </div>
       </div>
