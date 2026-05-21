@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { pageUrl } from "@/lib/storage";
+import { logoFor } from "@/lib/series-logos";
 
 interface Props {
   slug: string;
@@ -19,6 +20,7 @@ const seriesRoute: Record<string, "/battlefield-atlantis" | "/children-of-aquari
 
 export function SeriesCard(p: Props) {
   const cover = pageUrl(p.cover_path);
+  const logo = logoFor(p.slug);
   const to = seriesRoute[p.slug] ?? "/";
   const isActive = p.status === "active";
   return (
@@ -26,6 +28,10 @@ export function SeriesCard(p: Props) {
       <div className="relative aspect-[1054/1491] overflow-hidden bg-[var(--bg2)]">
         {cover ? (
           <img src={cover} alt={`${p.name} cover`} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" />
+        ) : logo ? (
+          <div className="flex h-full w-full items-center justify-center p-8" style={{ background: "var(--gradient-panel)" }}>
+            <img src={logo} alt={`${p.name} logo`} className="max-h-[60%] max-w-full object-contain" loading="lazy" />
+          </div>
         ) : (
           <div className="flex h-full w-full items-center justify-center p-8 text-center" style={{ background: "var(--gradient-panel)" }}>
             <div>
