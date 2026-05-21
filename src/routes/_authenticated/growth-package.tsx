@@ -39,7 +39,7 @@ function GrowthPackagePage() {
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)]">
       <header className="border-b border-white/10">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
-          <Link to="/_authenticated/admin" className="text-xs text-[var(--mute)] hover:text-[var(--neon)]">
+          <Link to="/admin" className="text-xs text-[var(--mute)] hover:text-[var(--neon)]">
             ← Back to admin
           </Link>
           <div className="text-xs uppercase tracking-[0.18em] text-[var(--mute)]">Growth Package</div>
@@ -108,8 +108,8 @@ function GrowthPackagePage() {
           <Card
             title="Growth Dashboard"
             subtitle="Internal · /admin/growth · auth required"
-            primary={{ label: "Open dashboard", to: "/_authenticated/growth" }}
-            secondary={{ label: "Export KPI history (CSV)", to: "/_authenticated/growth", search: { export: "1" } as any }}
+            primary={{ label: "Open dashboard", to: "/growth" }}
+            secondary={{ label: "Export KPI history (CSV)", to: "/growth", search: { export: "1" } as any }}
           />
         </div>
 

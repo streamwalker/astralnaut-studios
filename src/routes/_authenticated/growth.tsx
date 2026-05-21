@@ -174,7 +174,7 @@ function GrowthDashboard() {
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)]">
       <header className="border-b border-white/10">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-          <Link to="/_authenticated/growth-package" className="text-xs text-[var(--mute)] hover:text-[var(--neon)]">← Back to Growth Package</Link>
+          <Link to="/growth-package" className="text-xs text-[var(--mute)] hover:text-[var(--neon)]">← Back to Growth Package</Link>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => kpis && exportCsv(kpis)}>Export CSV</Button>
             <Button size="sm" onClick={() => saveSnapshot.mutate()} disabled={saveSnapshot.isPending}>

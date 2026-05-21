@@ -159,7 +159,7 @@ function AdminPage() {
             <span className="text-sm font-semibold tracking-[0.18em]">ADMIN</span>
           </Link>
           <div className="flex items-center gap-3 text-sm">
-            <Link to="/_authenticated/growth-package" className="rounded-md border border-[var(--gold)]/40 px-3 py-1.5 text-xs font-bold uppercase tracking-[2px] text-[var(--gold)] hover:bg-[var(--gold)]/10">
+            <Link to="/growth-package" className="rounded-md border border-[var(--gold)]/40 px-3 py-1.5 text-xs font-bold uppercase tracking-[2px] text-[var(--gold)] hover:bg-[var(--gold)]/10">
               Growth Package
             </Link>
             <span className="text-muted-foreground">{userData?.email}</span>
