@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
+import daLogo from "@/assets/darker-ages-logo.png";
 
 export const Route = createFileRoute("/darker-ages")({
   head: () => ({
@@ -7,7 +8,10 @@ export const Route = createFileRoute("/darker-ages")({
       { title: "Darker Ages — Coming October 2026 · Real World Comics" },
       { name: "description", content: "Dark medieval fantasy from Astralnaut Studios. After the protective magic of the old age has died, what was held back is loose. Launches October 2026." },
       { property: "og:title", content: "Darker Ages — Coming October 2026" },
+      { property: "og:description", content: "Dark medieval fantasy. Launches October 2026." },
       { property: "og:url", content: "/darker-ages" },
+      { property: "og:type", content: "article" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/darker-ages" }],
   }),
@@ -21,7 +25,8 @@ function DarkerAges() {
       <main className="mx-auto max-w-7xl px-6 py-20 text-center">
         <Link to="/" className="text-xs text-[var(--mute)] hover:text-[var(--neon)]">← Back to slate</Link>
         <div className="mt-12 eyebrow">October 2026 · Issue 1</div>
-        <h1 className="mt-4 text-5xl font-black tracking-tight md:text-7xl">Darker Ages</h1>
+        <img src={daLogo} alt="Darker Ages" className="mx-auto mt-6 max-h-48 w-auto" />
+        <h1 className="sr-only">Darker Ages</h1>
         <p className="mx-auto mt-6 max-w-2xl text-xl text-[var(--ink2)]">After the protective magic of the old age has died, what was held back is loose.</p>
         <div className="mx-auto mt-10 max-w-md card-rwc p-8">
           <div className="eyebrow">Pre-launch</div>
