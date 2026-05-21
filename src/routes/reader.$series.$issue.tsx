@@ -53,6 +53,7 @@ function Reader() {
     <>
       <SiteHeader />
       <div className="mx-auto max-w-5xl px-4 py-6">
+        <h1 className="sr-only">{issue.series.name} Issue {issue.issue_number} — Page {page}</h1>
         <div className="flex items-center justify-between">
           <Link to={`/${issue.series.slug}` as "/battlefield-atlantis"} className="text-xs text-[var(--mute)] hover:text-[var(--neon)]">← {issue.series.name}</Link>
           <div className="font-mono text-sm text-[var(--mute)]">PAGE <span className="text-[var(--ink)]">{page}</span> / {total} · {isFree ? <span className="text-[var(--neon)]">FREE</span> : <span className="text-[var(--gold)]">LOCKED</span>}</div>
@@ -74,7 +75,7 @@ function Reader() {
             {Array.from({ length: total }).map((_, i) => {
               const n = i + 1;
               return (
-                <button key={n} onClick={() => navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: n } })} className="h-2 w-2 rounded-full" style={{ background: n === page ? "var(--neon)" : n <= freeMax ? "rgba(34,211,255,0.3)" : "rgba(255,255,255,0.1)" }} />
+                <button key={n} aria-label={`Go to page ${n}`} onClick={() => navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: n } })} className="h-2 w-2 rounded-full" style={{ background: n === page ? "var(--neon)" : n <= freeMax ? "rgba(34,211,255,0.3)" : "rgba(255,255,255,0.1)" }} />
               );
             })}
           </div>
