@@ -3,6 +3,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { getSeriesBundle, getIssueBundle } from "@/lib/public.functions";
 import { pageUrl } from "@/lib/storage";
 import baLogo from "@/assets/battlefield-atlantis-logo.png";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/battlefield-atlantis")({
   loader: async () => {
