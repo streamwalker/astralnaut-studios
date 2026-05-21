@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import baLogo from "@/assets/battlefield-atlantis-logo.png";
 
-const nav = [
+type NavItem = { to: string; label: string; exact?: boolean; accent?: boolean; params?: Record<string, string> };
+const nav: NavItem[] = [
   { to: "/", label: "Library", exact: true },
   { to: "/battlefield-atlantis", label: "Characters" },
   { to: "/reader/$series/$issue", label: "Reader", params: { series: "battlefield-atlantis", issue: "1" } },
@@ -9,7 +10,8 @@ const nav = [
   { to: "/pricing", label: "Rewards" },
   { to: "/pricing", label: "Pricing" },
   { to: "/industry", label: "For Industry", accent: true },
-] as const;
+];
+
 
 export function SiteHeader() {
   return (
@@ -32,17 +34,18 @@ export function SiteHeader() {
         </Link>
         <nav className="hidden items-center gap-1 lg:flex">
           {nav.map((n, i) => {
-            const linkProps = n.to === "/reader/$series/$issue"
-              ? { to: n.to, params: (n as { params: { series: string; issue: string } }).params }
+            const linkProps = n.params
+              ? { to: n.to as "/reader/$series/$issue", params: n.params as { series: string; issue: string } }
               : { to: n.to };
             return (
               <Link
                 key={`${n.label}-${i}`}
-                {...linkProps}
+                {...(linkProps as { to: string })}
                 className={`rounded-md px-3 py-2 text-sm font-medium hover:bg-white/5 hover:text-[var(--neon)] ${n.accent ? "text-[var(--gold)]" : "text-[var(--ink2)]"}`}
                 activeProps={{ className: "!text-[var(--neon)]" }}
-                activeOptions={"exact" in n && n.exact ? { exact: true } : undefined}
+                activeOptions={n.exact ? { exact: true } : undefined}
               >
+
                 {n.label}
               </Link>
             );
