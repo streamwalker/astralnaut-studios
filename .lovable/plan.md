@@ -1,50 +1,94 @@
-## Problem
-On the published site, the **Download .docx** buttons send the user to `/growth-package/1M-Subscriber-Strategy.docx` (and the playbook). The published `_authenticated` gate intercepts those URLs and bounces the visitor into a "log into Lovable" redirect loop instead of serving the static file. The Studio Brand Landing Page and Growth Dashboard links also break the in-page flow (open separate routes / require auth again).
+You want the logo to be the hero of each project card. Right now the cards are tall vertical posters (cover-aspect 1054×1491) with the logo squeezed into a small area, then a text block underneath. Going horizontal flips the relationship: the logo gets a wide cinematic plate and the copy sits beside it.
 
-## Fix
-Replace the four "download / open elsewhere" cards on `/growth-package` with a single embedded reader experience. Everything lives inside the already-authenticated `_authenticated/growth-package` route — no static files, no extra navigation.
+Below are four layout directions. Pick one (or mix), then I'll generate three rendered design variants of the chosen layout and you choose the final look.
 
-## Changes
+---
 
-### 1. Extract the two `.docx` files into typed in-app content (one-time)
-- Run a small Node/Python script (not committed) to unzip the two existing `public/growth-package/*.docx`, walk the WordprocessingML, and emit structured JSON: `{ sections: [{ heading, level, paragraphs[], tables[] }] }`.
-- Save as `src/content/growth-strategy.ts` and `src/content/growth-playbook.ts` (plain TS modules exporting typed arrays — no runtime fetch, no auth surface).
-- Delete `public/growth-package/*.docx` once content is migrated.
+## Option A — Stacked horizontal bands (full-bleed)
 
-### 2. Rebuild `/growth-package` as a 4-tab reader
-File: `src/routes/_authenticated/growth-package.tsx`
-
-Replace the current 4-card grid with a sticky tab bar + content panel:
+Each card becomes a full-width row, stacked vertically down the page.
 
 ```text
-┌──────────────────────────────────────────────────┐
-│  Astralnaut Studios — Growth Package             │
-├──────────────────────────────────────────────────┤
-│ [Strategy] [Playbook] [Studio Page] [Dashboard]  │
-├──────────────────────────────────────────────────┤
-│                                                  │
-│   ← active panel renders here                    │
-│                                                  │
-└──────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│  [ • READING NOW ]                                           │
+│                                                              │
+│     ┌────────────────────┐   HARD SCI-FI SPACE OPERA         │
+│     │                    │   Battlefield Atlantis            │
+│     │  BATTLEFIELD       │   25,000 years before the         │
+│     │  ATLANTIS  logo    │   present, Saantris Station…      │
+│     │                    │                                   │
+│     └────────────────────┘   Read first act free →           │
+└──────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│  [ • READING NOW ]    Children of Aquarius logo │ copy …     │
+└──────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│  [ OCT 2026 ]         Darker Ages logo          │ copy …     │
+└──────────────────────────────────────────────────────────────┘
 ```
 
-- **Strategy tab** — renders `growth-strategy.ts` as a long-form document: section headings, body paragraphs, and tables styled with the existing `card-rwc` / `var(--gold)` / `var(--ink)` tokens. Sticky in-page TOC on the left at `md+`.
-- **Playbook tab** — renders all 40 tactics as expandable cards grouped by the 4 phases. Each tactic shows the 8 fields (Phase, Channel, Cost, Cadence, Owner, Why, How, KPI).
-- **Studio Page tab** — embeds the existing `/astralnaut-studios` route inside an `<iframe>` sized to viewport, with an "Open full page ↗" link in the corner. (Iframe avoids duplicating ~600 lines of marketing markup and stays in sync with the live page.)
-- **Dashboard tab** — embeds `/growth` the same way. Because the parent page is already inside `_authenticated`, the iframe inherits the Supabase session via cookies/localStorage and renders the live dashboard.
+- Logo plate ~60% width, copy ~40%.
+- Plate uses a subtle per-series gradient pulled from the logo (blue glow for Atlantis, cyan crystal for Aquarius, ember for Darker Ages).
+- Biggest "logo as hero" payoff. Slowest scroll — three big rows instead of a tight grid.
+- Best when there are only 3–5 projects total.
 
-Tab state is held in URL search (`?tab=strategy|playbook|studio|dashboard`) so deep links and refreshes work.
+## Option B — Stacked, alternating sides (zigzag)
 
-### 3. Optional fallback download
-Keep a small "Print this view" button at the top-right of the Strategy and Playbook tabs that calls `window.print()` with a print stylesheet — gives the user a PDF-able artifact without any static-file hosting. **No `.docx` files referenced anywhere in the app.**
+Same stacked rows as A, but every other card mirrors: logo-left / copy-right, then logo-right / copy-left, then logo-left.
 
-## Files touched
-- **new** `src/content/growth-strategy.ts`
-- **new** `src/content/growth-playbook.ts`
-- **rewrite** `src/routes/_authenticated/growth-package.tsx`
-- **delete** `public/growth-package/1M-Subscriber-Strategy.docx`
-- **delete** `public/growth-package/1M-Subscriber-Tactical-Playbook.docx`
+- More editorial, feels like a magazine spread.
+- Still gives the logo a giant canvas.
+- Slight risk of feeling busy on mobile — collapses to logo-on-top, copy-below on small screens.
 
-## Out of scope
-- No changes to `/astralnaut-studios` or `/growth` themselves — they keep working standalone and are embedded read-only here.
-- No auth/route changes.
+## Option C — Horizontal "shelf" (side-by-side, scroll if needed)
+
+Cards stay side-by-side like today, but each card itself becomes horizontal — wider than tall (roughly 3:2). All three fit in a single row on desktop; on tablet/mobile they stack.
+
+```text
+┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐
+│ logo │ title     │ │ logo │ title     │ │ logo │ title     │
+│      │ logline   │ │      │ logline   │ │      │ logline   │
+│      │ CTA →     │ │      │ CTA →     │ │      │ CTA →     │
+└──────────────────┘ └──────────────────┘ └──────────────────┘
+```
+
+- Logo still gets a wide plate (~55% of card width) but cards stay compact.
+- Closest to current density; no extra scrolling.
+- Logo plate is smaller than A/B but each card reads as a "ticket" or "playbill".
+
+## Option D — Featured + secondaries
+
+One large horizontal hero card on top (the active "Reading now" project, or whichever you flag), with the remaining projects as a horizontal row of smaller cards below.
+
+```text
+┌──────────────────────────────────────────────────────────────┐
+│           BATTLEFIELD ATLANTIS  logo │  title  │  copy  →    │
+└──────────────────────────────────────────────────────────────┘
+┌────────────────────────┐ ┌────────────────────────┐
+│ Aquarius  │  copy  →   │ │ Darker Ages │ copy  →  │
+└────────────────────────┘ └────────────────────────┘
+```
+
+- Strongest hierarchy — guides reader straight to what you want them on.
+- Requires picking a "featured" project (can be the most recently active).
+- Mixes Option A (hero) with Option C (shelf) below.
+
+---
+
+## Technical notes
+
+- File to update: `src/components/series-card.tsx` (single component drives the row on `/`, `/industry`, and elsewhere it's used).
+- Aspect ratio change: drop `aspect-[1054/1491]` on the image well; switch to a wider plate (e.g. `aspect-[16/9]` for the logo zone in A/B, `aspect-[5/4]` for C).
+- Logo source already exists via `logoFor(slug)` — no new assets needed.
+- Per-series accent gradients can be defined as CSS tokens in `src/styles.css` so the plate background tints to match each logo's palette.
+- Responsive: A/B/D collapse to single-column stacked layout under `md:`; C already stacks via the existing grid wrapper.
+- Status badge (`Reading now` / `Oct 2026`) and CTA stay — just repositioned.
+
+---
+
+## What I need from you
+
+1. Which layout direction — **A (stacked full bands)**, **B (zigzag stacked)**, **C (horizontal shelf)**, or **D (featured + secondaries)**?
+2. Should the logo plate get a per-series colored gradient background, or stay on the current flat dark surface?
+
+Once you pick, I'll generate three rendered variants of that direction (varying density, motion, and typographic emphasis) so you can pick the exact look before I build it.
