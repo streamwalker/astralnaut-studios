@@ -180,7 +180,7 @@ function BAPage() {
                     <DialogContent className="max-w-7xl overflow-hidden p-0">
                       <div className="grid gap-0 md:grid-cols-[2fr_1fr]">
                         <div className="flex items-center justify-center bg-[var(--bg2)] p-4">
-                          {portrait && <img src={portrait} alt={c.name} className="max-h-[90vh] w-full object-contain" />}
+                          {portrait && <img src={portrait} alt={c.name} className="max-h-[90vh] w-full object-contain animate-in fade-in zoom-in-95 duration-500" />}
                         </div>
                         <div className="max-h-[90vh] overflow-y-auto p-6 md:p-8">
                           <div className="eyebrow" style={{ color: "var(--neon)" }}>{c.faction}</div>
