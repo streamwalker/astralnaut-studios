@@ -17,6 +17,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import logo from "@/assets/astralnaut-logo.png";
+import { PageRow } from "@/components/admin/page-row";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Astralnaut Studios" }] }),
