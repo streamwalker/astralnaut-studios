@@ -17,6 +17,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import logo from "@/assets/astralnaut-logo.png";
+import { PageRow } from "@/components/admin/page-row";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Astralnaut Studios" }] }),
@@ -75,8 +76,52 @@ function AdminPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("comics")
-        .select("id, title, slug, page_number, image_path, published_at, created_at")
+        .select("id, title, slug, page_number, image_path, published_at, created_at, is_free, alt_text, issue_id")
         .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: allSeries } = useQuery({
+    queryKey: ["admin-mgr-series"],
+    enabled: !!isAdmin,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("series")
+        .select("id, name, slug")
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const [mgrSeriesId, setMgrSeriesId] = useState<string>("");
+  const [mgrIssueId, setMgrIssueId] = useState<string>("");
+
+  const { data: mgrIssues } = useQuery({
+    queryKey: ["admin-mgr-issues", mgrSeriesId],
+    enabled: !!isAdmin && !!mgrSeriesId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("issues")
+        .select("id, issue_number, title, slug")
+        .eq("series_id", mgrSeriesId)
+        .order("issue_number", { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: issuePages } = useQuery({
+    queryKey: ["admin-issue-pages", mgrIssueId],
+    enabled: !!isAdmin && !!mgrIssueId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("comics")
+        .select("id, title, slug, page_number, image_path, published_at, is_free, alt_text, issue_id")
+        .eq("issue_id", mgrIssueId)
+        .order("page_number", { ascending: true });
       if (error) throw error;
       return data;
     },
@@ -86,9 +131,6 @@ function AdminPage() {
     await supabase.auth.signOut();
     nav({ to: "/" });
   };
-
-  const publicUrl = (path: string) =>
-    supabase.storage.from("comic-pages").getPublicUrl(path).data.publicUrl;
 
   if (roleLoading) {
     return <div className="flex min-h-screen items-center justify-center text-muted-foreground">Checking access…</div>;
@@ -147,29 +189,94 @@ function AdminPage() {
         </section>
 
         <section className="rounded-2xl border border-border bg-card p-6">
-          <h2 className="text-xl font-bold">Recent uploads</h2>
+          <h2 className="text-xl font-bold">Manage pages</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            {comics?.length ?? 0} page{(comics?.length ?? 0) === 1 ? "" : "s"} in the library.
+            Pick an issue to reorder, edit, replace, or delete pages. Leave blank
+            to see the 30 most recent uploads.
           </p>
-          <ul className="mt-6 space-y-3">
-            {comics?.slice(0, 30).map((c) => (
-              <li key={c.id} className="flex items-center gap-3 rounded-lg border border-border/60 bg-background/40 p-3">
-                <img src={publicUrl(c.image_path)} alt="" className="h-14 w-14 rounded object-cover" />
-                <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-semibold">{c.title}</div>
-                  <div className="truncate text-xs text-muted-foreground">
-                    {c.slug} · page {c.page_number} ·{" "}
-                    {c.published_at ? "published" : "draft"}
-                  </div>
-                </div>
-              </li>
-            ))}
-            {comics?.length === 0 && (
-              <li className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-                No pages yet. Upload your first on the left.
-              </li>
-            )}
-          </ul>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div>
+              <Label>Series</Label>
+              <Select
+                value={mgrSeriesId}
+                onValueChange={(v) => { setMgrSeriesId(v); setMgrIssueId(""); }}
+              >
+                <SelectTrigger><SelectValue placeholder="All series" /></SelectTrigger>
+                <SelectContent>
+                  {allSeries?.map((s) => (
+                    <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Issue</Label>
+              <Select
+                value={mgrIssueId}
+                onValueChange={setMgrIssueId}
+                disabled={!mgrSeriesId}
+              >
+                <SelectTrigger><SelectValue placeholder={mgrSeriesId ? "Pick an issue" : "Pick a series first"} /></SelectTrigger>
+                <SelectContent>
+                  {mgrIssues?.map((i) => (
+                    <SelectItem key={i.id} value={i.id}>
+                      #{i.issue_number} — {i.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {mgrIssueId ? (
+            <>
+              <p className="mt-6 text-xs text-muted-foreground">
+                {issuePages?.length ?? 0} page{(issuePages?.length ?? 0) === 1 ? "" : "s"} in this issue.
+              </p>
+              <ul className="mt-3 space-y-3">
+                {issuePages?.map((p, idx) => (
+                  <PageRow
+                    key={p.id}
+                    page={p}
+                    neighbors={{
+                      up: issuePages[idx - 1],
+                      down: issuePages[idx + 1],
+                    }}
+                    invalidateKeys={[
+                      ["admin-issue-pages", mgrIssueId],
+                      ["admin-comics"],
+                    ]}
+                  />
+                ))}
+                {issuePages?.length === 0 && (
+                  <li className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+                    This issue has no pages yet.
+                  </li>
+                )}
+              </ul>
+            </>
+          ) : (
+            <>
+              <p className="mt-6 text-xs text-muted-foreground">
+                {comics?.length ?? 0} page{(comics?.length ?? 0) === 1 ? "" : "s"} total · showing 30 most recent.
+              </p>
+              <ul className="mt-3 space-y-3">
+                {comics?.slice(0, 30).map((c) => (
+                  <PageRow
+                    key={c.id}
+                    page={c}
+                    invalidateKeys={[["admin-comics"]]}
+                  />
+                ))}
+                {comics?.length === 0 && (
+                  <li className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+                    No pages yet. Upload your first on the left.
+                  </li>
+                )}
+              </ul>
+            </>
+          )}
         </section>
       </main>
     </div>
