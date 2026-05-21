@@ -113,7 +113,7 @@ function StudioPage() {
       <section id="properties" className="mx-auto max-w-6xl px-6 py-16">
         <div className="eyebrow text-[var(--gold)]">The Catalog</div>
         <h2 className="mt-2 text-3xl font-black md:text-4xl">Three properties. Three genres. One canon-aligned moment.</h2>
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
+        <div className="mt-10 flex flex-col gap-6">
           {(series ?? []).map((s) => (
             <SeriesCard key={s.id} {...s} />
           ))}
