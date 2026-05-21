@@ -1,0 +1,1 @@
+ALTER TABLE public.factions ADD COLUMN IF NOT EXISTS bio text;
