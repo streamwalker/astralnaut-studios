@@ -1,35 +1,59 @@
 import { Link } from "@tanstack/react-router";
-import logo from "@/assets/astralnaut-logo.png";
+import baLogo from "@/assets/battlefield-atlantis-logo.png";
 
-const nav = [
-  { to: "/battlefield-atlantis", label: "Battlefield Atlantis" },
-  { to: "/children-of-aquarius", label: "Children of Aquarius" },
-  { to: "/darker-ages", label: "Darker Ages" },
+type NavItem = { to: string; label: string; exact?: boolean; accent?: boolean; params?: Record<string, string> };
+const nav: NavItem[] = [
+  { to: "/", label: "Library", exact: true },
+  { to: "/battlefield-atlantis", label: "Characters" },
+  { to: "/reader/$series/$issue", label: "Reader", params: { series: "battlefield-atlantis", issue: "1" } },
+  { to: "/pricing", label: "Community" },
+  { to: "/pricing", label: "Rewards" },
   { to: "/pricing", label: "Pricing" },
-  { to: "/industry", label: "Industry" },
-] as const;
+  { to: "/industry", label: "For Industry", accent: true },
+];
+
 
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md" style={{ background: "rgba(2,0,12,0.7)", borderBottom: "1px solid var(--border-line)" }}>
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3">
         <Link to="/" className="flex items-center gap-3">
-          <img src={logo} alt="Astralnaut Studios" className="h-9 w-9 object-contain" />
-          <div className="leading-tight">
-            <div className="text-[10px] font-bold uppercase tracking-[3px]" style={{ color: "var(--gold)" }}>Astralnaut Studios</div>
-            <div className="text-sm font-extrabold tracking-tight" style={{ color: "var(--ink)" }}>Real World Comics</div>
+          <div
+            className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-lg"
+            style={{
+              background: "rgba(34,211,255,0.06)",
+              border: "1px solid rgba(34,211,255,0.35)",
+              boxShadow: "0 0 18px rgba(34,211,255,0.18) inset",
+            }}
+          >
+            <img src={baLogo} alt="Battlefield Atlantis" className="h-9 w-9 object-contain" />
+          </div>
+          <div className="text-sm font-extrabold uppercase tracking-[3px]" style={{ color: "var(--ink)" }}>
+            Astralnaut Studios
           </div>
         </Link>
         <nav className="hidden items-center gap-1 lg:flex">
-          {nav.map((n) => (
-            <Link key={n.to} to={n.to} className="rounded-md px-3 py-2 text-sm font-medium text-[var(--ink2)] hover:bg-white/5 hover:text-[var(--neon)]" activeProps={{ className: "text-[var(--neon)]" }}>
-              {n.label}
-            </Link>
-          ))}
+          {nav.map((n, i) => {
+            const linkProps = n.params
+              ? { to: n.to as "/reader/$series/$issue", params: n.params as { series: string; issue: string } }
+              : { to: n.to };
+            return (
+              <Link
+                key={`${n.label}-${i}`}
+                {...(linkProps as { to: string })}
+                className={`rounded-md px-3 py-2 text-sm font-medium hover:bg-white/5 hover:text-[var(--neon)] ${n.accent ? "text-[var(--gold)]" : "text-[var(--ink2)]"}`}
+                activeProps={{ className: "!text-[var(--neon)]" }}
+                activeOptions={n.exact ? { exact: true } : undefined}
+              >
+
+                {n.label}
+              </Link>
+            );
+          })}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <Link to="/login" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Sign in</Link>
-          <Link to="/pricing" className="btn-cta text-sm">Subscribe</Link>
+          <Link to="/reader/$series/$issue" params={{ series: "battlefield-atlantis", issue: "1" }} className="btn-cta text-sm">Start reading →</Link>
         </div>
       </div>
     </header>
@@ -68,7 +92,7 @@ function FooterCol({ title, links }: { title: string; links: { to: string; label
       <div className="text-xs font-bold uppercase tracking-[2px] text-[var(--ink)]">{title}</div>
       <ul className="mt-3 space-y-2">
         {links.map((l) => (
-          <li key={l.to}><Link to={l.to} className="text-sm text-[var(--mute)] hover:text-[var(--neon)]">{l.label}</Link></li>
+          <li key={l.to + l.label}><Link to={l.to} className="text-sm text-[var(--mute)] hover:text-[var(--neon)]">{l.label}</Link></li>
         ))}
       </ul>
     </div>

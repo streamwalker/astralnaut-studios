@@ -1,64 +1,57 @@
+## Landing hero + sitewide style refresh
 
-# Integrate uploaded brand assets
+### 1. Assets
+- Copy `user-uploads://Children_of_Aquarius_Issue_One_-_Main_Cover.png` → `src/assets/coa-issue-1-cover.png`. Also overwrite storage `comic-pages/children-of-aquarius/issue-1/main-cover.png` and update COA Issue 1 `cover_path` so the series hub uses the new main cover.
+- Copy `user-uploads://01._Battlefield_Atlantis_Issue_One_Variant_Cover_FINAL_CUT.png` → `src/assets/ba-issue-1-variant.png` and overwrite storage `comic-pages/battlefield-atlantis/issue-1/variant-cover-m.png` so the BA hero uses the FINAL CUT.
 
-You uploaded 4 images. Here's how I'll wire each one in.
+### 2. Typography (sitewide)
+- In `src/routes/__root.tsx` `head().links`: add Google Fonts `<link rel="preconnect">` to fonts.googleapis/gstatic and a stylesheet link for **Inter** weights 400, 500, 700, 800, 900.
+- In `src/styles.css`: change `body` font-family to `"Inter", system-ui, -apple-system, sans-serif`. Headings stay `font-black` (Inter 900) with `letter-spacing: -0.02em` to match the sample's tight geometric sans. Bump `.eyebrow` letter-spacing to 6px and switch default color to `var(--neon)` (keep gold as opt-in via inline style for stat numbers).
 
-## Assets in this batch
-
-1. `Battlefield_Atlantis_Logo_1.png` — BA wordmark (chrome + red A)
-2. `Children_of_Aquarius_Logo_2.png` — COA wordmark (circuit-blue)
-3. `Darker_Ages_Close.png` — Darker Ages wordmark (ember/stone)
-4. `Battlefield_Atlantis_Issue_One_Variant_Cover_M.png` — BA Issue 1 variant cover ("War of the Worlds Begins")
-
-## Where they go
-
-**Logos → `src/assets/`** (imported as ES6 modules for bundling)
-- `astralnaut-logo.png` is already in `src/assets/`; the three series logos join it there.
-- Update each series row in DB so `series.logo_path` points to the bundled asset URL (store the resolved URL string, or a sentinel like `local:ba-logo` that the frontend maps). Simpler: skip DB for logos and hard-map slug → imported asset inside `series-card.tsx` and the series hub heroes. Logos are brand chrome, not editor-managed content.
-
-**BA variant cover → `comic-pages` bucket** via `supabase--storage_upload` to `battlefield-atlantis/issue-1/variant-cover-m.png`, then:
-- Set `issues.cover_path = 'battlefield-atlantis/issue-1/variant-cover-m.png'` for BA Issue 1 (creates the issue row first if it doesn't exist — current DB only has COA Issue 1).
-- Also append to `issues.variant_cover_paths` so the hub can show variant strip later.
-
-## Page changes
-
-1. **`src/components/series-card.tsx`** — replace the gradient placeholder block with the imported series logo when the slug matches `battlefield-atlantis | children-of-aquarius | darker-ages`. Keep gradient fallback.
-2. **`src/routes/battlefield-atlantis.tsx`** — hero now shows the uploaded variant cover (via `pageUrl(issue.cover_path)`) and the BA logo above the H1 (H1 stays as visually-hidden text for SEO + screen readers; logo gets descriptive alt).
-3. **`src/routes/children-of-aquarius.tsx`** — same treatment with COA logo (cover already exists from earlier upload).
-4. **`src/routes/darker-ages.tsx`** — replace the giant text title with the Darker Ages logo image; keep H1 as sr-only.
-5. **`src/routes/index.tsx`** — series slate cards use the logos automatically via SeriesCard change. Hero stays text.
-6. **`src/components/site-header.tsx`** — Astralnaut logo is already there; no change.
-
-## SEO
-
-- Add `og:image` (and `twitter:image`) to each leaf series route pointing at the cover (BA variant cover, COA cover). Darker Ages gets the logo as og:image since no cover exists yet.
-- Alt text: "Battlefield Atlantis logo", "Children of Aquarius logo", "Darker Ages logo", "Battlefield Atlantis Issue 1 variant cover — The War of the Worlds Begins".
-
-## Migration / data changes (one combined migration + one storage upload + one insert)
-
-```sql
--- Ensure BA series + Issue 1 row exist (idempotent upserts by slug)
-INSERT INTO series (slug, name, genre, logline, sort_order, launch_label)
-VALUES ('battlefield-atlantis', 'Battlefield Atlantis', 'Hard sci-fi space opera',
-        '25,000 years before the present, Saantris Station is destroyed and the Tri-Planetary Coalition splits.', 1, 'Issue 1 live')
-ON CONFLICT (slug) DO UPDATE SET name = EXCLUDED.name, genre = EXCLUDED.genre, logline = EXCLUDED.logline;
-
-INSERT INTO issues (series_id, issue_number, title, subtitle, slug, free_pages, paid_pages, total_pages,
-                    release_status, cover_path, drop_cadence)
-SELECT id, 1, 'Only One Will Rule', 'The War of the Worlds Begins',
-       'battlefield-atlantis-issue-1', 9.5, 11, 20, 'live',
-       'battlefield-atlantis/issue-1/variant-cover-m.png', '4/wk'
-FROM series WHERE slug = 'battlefield-atlantis'
-ON CONFLICT (slug) DO UPDATE SET cover_path = EXCLUDED.cover_path;
+### 3. Header — option B (`src/components/site-header.tsx`)
+Replace nav array with:
 ```
+Library      → /
+Characters   → /battlefield-atlantis  (closest existing — character grid lives there)
+Reader       → /reader/battlefield-atlantis/1
+Community    → /pricing               (placeholder until built)
+Rewards      → /pricing
+Pricing      → /pricing
+For Industry → /industry              (gold accent)
+```
+- Logo block: framed BA series logo tile (rounded, cyan border glow) + `ASTRALNAUT STUDIOS` wordmark in Inter 800, 3px tracking. Use `seriesLogos["battlefield-atlantis"]` since BA is the flagship.
+- Right side: `Sign in` text link + `Start reading →` cyan→blue gradient pill linking to `/reader/battlefield-atlantis/1`.
+- Active nav item: gold (`var(--gold)`) via `activeProps`.
 
-Plus: upload variant cover to `comic-pages/battlefield-atlantis/issue-1/variant-cover-m.png`.
+### 4. New `CoverFan` component (`src/components/cover-fan.tsx`)
+- Receives no props. Imports `baLogo` not needed — uses 3 cover images: `coaCover`, `baVariant`, and existing `baCoverM` (the older BA variant from storage, re-imported as asset).
+- Renders a relative container, each cover absolutely positioned with `rotate-[-8deg]`, `rotate-[3deg]`, `rotate-[9deg]`, staggered translate-x/y, `drop-shadow-[0_25px_60px_rgba(34,211,255,0.25)]`, hover lift.
+- Mobile: stack as a single centered cover (`md:` reveals the fan).
 
-## What I still need from you (not blocking this batch)
+### 5. Landing hero rewrite (`src/routes/index.tsx`)
+Replace current hero section with a two-column `md:grid-cols-2 md:items-center` block:
 
-- BA pages 1–9.5 (the 10 free pages) so the BA reader actually shows art
-- Character portraits (Zeus, Orion, Rhea, Astra, Prometheus)
-- Faction emblems (NDF, TPC)
-- COA pages 1–9 (currently only the 5 you uploaded earlier are in storage; confirm pages 6–9 exist or send them)
+Left column:
+- Eyebrow: `⚡ NEW EPISODES EVERY WEEK · NETFLIX FOR COMICS` in cyan.
+- H1: "The next page only drops here." — `text-6xl md:text-7xl font-black tracking-tight leading-[1.02]`.
+- Sub: existing copy with `<span style="color:var(--gold)">PlayStation 5 unlocks at 1,000 subscribers.</span>` inline.
+- Info pill card: dark panel, cyan border, 📺 emoji + `9.5 PAGES OF EVERY ISSUE · FREE` (cyan eyebrow) + `The full first act + title page · free for everyone · no signup required.` (muted body).
+- Buttons: `▶ Read the first act free` (`btn-cta`, links to `/reader/battlefield-atlantis/1`) + `See pricing` (`btn-ghost`).
+- Stat row of 3: gold numerals (`text-3xl font-black mono`) with tiny uppercase labels — `Subscribers` (from `milestone.current_count`), `Series live` (`3`), `Pages so far` (computed from `getSiteCopy` key `home.stats.pages` with fallback `52`).
 
-Approve and I'll wire all four assets in one pass.
+Right column: `<CoverFan />`.
+
+The rest of the homepage (milestone strip, slate, "why subscribe" pillars) stays as-is.
+
+### 6. SEO
+- Update root `head()` title to `Real World Comics — The next page only drops here` and description to the new hero sub copy.
+
+### Technical notes
+- No DB migration. Storage uploads are two `supabase--storage_upload` overwrites; COA `cover_path` update is one row update via migration (small).
+- No new dependencies — Inter ships via Google Fonts link.
+- `CoverFan` is presentation-only; covers imported as ES6 assets so Vite hashes them.
+
+### Files touched
+- new: `src/assets/coa-issue-1-cover.png`, `src/assets/ba-issue-1-variant.png`, `src/components/cover-fan.tsx`
+- edited: `src/routes/__root.tsx`, `src/styles.css`, `src/components/site-header.tsx`, `src/routes/index.tsx`
+- storage: 2 overwrites; 1 migration row update for COA cover_path
