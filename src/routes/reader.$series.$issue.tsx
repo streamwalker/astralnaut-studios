@@ -29,7 +29,7 @@ function Reader() {
   const navigate = useNavigate();
   const total = Math.ceil(Number(issue.total_pages));
   const freeMax = Math.floor(Number(issue.free_pages));
-  const current = pages.find((p) => p.page_number === page);
+  const current = pages.find((p: typeof pages[number]) => p.page_number === page);
   const isFree = page <= freeMax;
   const img = pageUrl(current?.image_path);
   const [zoom, setZoom] = useState(false);
@@ -74,7 +74,7 @@ function Reader() {
             {Array.from({ length: total }).map((_, i) => {
               const n = i + 1;
               return (
-                <button key={n} onClick={() => navigate({ search: { page: n } })} className="h-2 w-2 rounded-full" style={{ background: n === page ? "var(--neon)" : n <= freeMax ? "rgba(34,211,255,0.3)" : "rgba(255,255,255,0.1)" }} />
+                <button key={n} onClick={() => navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: n } })} className="h-2 w-2 rounded-full" style={{ background: n === page ? "var(--neon)" : n <= freeMax ? "rgba(34,211,255,0.3)" : "rgba(255,255,255,0.1)" }} />
               );
             })}
           </div>

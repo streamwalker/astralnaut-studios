@@ -69,7 +69,7 @@ function BAPage() {
             {Array.from({ length: Math.ceil(Number(issue?.total_pages ?? 20)) }).map((_, idx) => {
               const n = idx + 1;
               const isFree = n <= Number(issue?.free_pages ?? 9.5);
-              const found = pages.find((p) => p.page_number === n);
+              const found = pages.find((p: typeof pages[number]) => p.page_number === n);
               const thumb = pageUrl(found?.image_path);
               return (
                 <div key={n} className="card-rwc relative aspect-[3/4] overflow-hidden">
@@ -88,7 +88,7 @@ function BAPage() {
             <div className="eyebrow">Factions</div>
             <h2 className="mt-2 text-3xl font-black">Two worlds. One coalition.</h2>
             <div className="mt-6 grid gap-4 md:grid-cols-2">
-              {factions.map((f) => (
+              {factions.map((f: typeof factions[number]) => (
                 <div key={f.id} className="card-rwc p-6">
                   <div className="eyebrow" style={{ color: "var(--neon)" }}>{f.acro}</div>
                   <h3 className="mt-2 text-xl font-black">{f.name}</h3>
@@ -105,7 +105,7 @@ function BAPage() {
             <div className="eyebrow">Meet the cast</div>
             <h2 className="mt-2 text-3xl font-black">Characters</h2>
             <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-5">
-              {characters.map((c) => {
+              {characters.map((c: typeof characters[number]) => {
                 const portrait = pageUrl(c.portrait_path);
                 return (
                   <div key={c.id} className="card-rwc overflow-hidden">

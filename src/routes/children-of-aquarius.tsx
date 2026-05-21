@@ -67,7 +67,7 @@ function COAPage() {
             {Array.from({ length: 24 }).map((_, idx) => {
               const n = idx + 1;
               const isFree = n <= 9;
-              const found = pages.find((p) => p.page_number === n);
+              const found = pages.find((p: typeof pages[number]) => p.page_number === n);
               const thumb = pageUrl(found?.image_path);
               return (
                 <div key={n} className="card-rwc relative aspect-[3/4] overflow-hidden">
@@ -96,7 +96,7 @@ function COAPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {drops.map((d) => (
+                  {drops.map((d: typeof drops[number]) => (
                     <tr key={d.id} className="border-t" style={{ borderColor: "var(--border-line)" }}>
                       <td className="px-4 py-3 font-bold text-[var(--gold)]">W{d.week}</td>
                       <td className="px-4 py-3">{d.patron_date}</td>
