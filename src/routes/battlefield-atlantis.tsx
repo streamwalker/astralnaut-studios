@@ -177,18 +177,18 @@ function BAPage() {
                         </div>
                       </button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-3xl overflow-hidden p-0">
-                      <div className="grid gap-0 md:grid-cols-[1fr_1.1fr]">
-                        <div className="aspect-[3/4] bg-[var(--bg2)] md:aspect-auto">
-                          {portrait && <img src={portrait} alt={c.name} className="h-full w-full object-cover" />}
+                    <DialogContent className="max-w-5xl overflow-hidden p-0">
+                      <div className="grid gap-0 md:grid-cols-[1.4fr_1fr]">
+                        <div className="flex items-center justify-center bg-[var(--bg2)] p-4">
+                          {portrait && <img src={portrait} alt={c.name} className="max-h-[80vh] w-full object-contain" />}
                         </div>
-                        <div className="p-6 md:p-8">
+                        <div className="max-h-[80vh] overflow-y-auto p-6 md:p-8">
                           <div className="eyebrow" style={{ color: "var(--neon)" }}>{c.faction}</div>
                           <DialogTitle className="mt-2 text-2xl font-black md:text-3xl">{c.name}</DialogTitle>
                           <div className="mt-1 font-mono text-xs text-[var(--mute)]">{c.role}</div>
                           {c.transmedium && <div className="mt-3 inline-block rounded border border-[var(--gold)] px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[2px] text-[var(--gold)]">Transmedium</div>}
                           {c.short_description && <DialogDescription className="mt-4 text-[var(--ink)]">{c.short_description}</DialogDescription>}
-                          {c.bio && <p className="mt-4 text-sm leading-relaxed text-[var(--ink2)]">{c.bio}</p>}
+                          {c.bio && <div className="mt-4 space-y-3 text-sm leading-relaxed text-[var(--ink2)]">{c.bio.split(/\n\n+/).map((p: string, i: number) => <p key={i}>{p}</p>)}</div>}
                         </div>
                       </div>
                     </DialogContent>
