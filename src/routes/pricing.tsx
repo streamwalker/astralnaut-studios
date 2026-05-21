@@ -47,7 +47,7 @@ function Pricing() {
           {tiers.map((t) => (
             <div key={t.name} className="card-rwc relative p-7" style={t.highlight ? { borderColor: "var(--neon)" } : undefined}>
               {t.highlight && <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[2px]" style={{ background: "var(--neon)", color: "#02000c" }}>Most popular</div>}
-              <div className="eyebrow" style={{ color: t.accent }}>{t.name}</div>
+              <h2 className="eyebrow" style={{ color: t.accent }}>{t.name}</h2>
               <div className="mt-3 font-mono text-5xl font-black">${t.price}<span className="text-base font-bold text-[var(--mute)]">/mo</span></div>
               <div className="mt-2 text-sm text-[var(--mute)]">Reads {t.day} · {t.offset}</div>
               <ul className="mt-6 space-y-2 text-sm text-[var(--ink2)]">
