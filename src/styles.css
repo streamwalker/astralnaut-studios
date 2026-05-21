@@ -100,11 +100,13 @@
       radial-gradient(ellipse at 0% 100%, rgba(34,211,255,0.10), transparent 55%),
       var(--bg);
     color: var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-feature-settings: "cv11", "ss01", "ss03";
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
   }
-  h1,h2,h3 { color: var(--ink); letter-spacing: -0.01em; }
-  .eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 5px; text-transform: uppercase; color: var(--gold); }
+  h1,h2,h3 { color: var(--ink); letter-spacing: -0.02em; font-weight: 900; }
+  .eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 6px; text-transform: uppercase; color: var(--neon); }
   .mono { font-family: var(--font-mono); }
   .panel { background: var(--bg-panel); border: 1px solid var(--border-line); border-radius: 14px; }
   .card-rwc { background: var(--bg-card); border: 1px solid var(--border-line); border-radius: 14px; box-shadow: var(--shadow-card); transition: transform .2s ease, border-color .2s ease; }
@@ -116,3 +118,4 @@
   .badge-locked { background: rgba(255,255,255,0.04); color: var(--mute); border: 1px solid var(--border-line); padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
   .badge-gold { background: rgba(244,201,93,0.12); color: var(--gold); border: 1px solid rgba(244,201,93,0.3); padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
 }
+
