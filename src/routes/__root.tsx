@@ -83,6 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:description", content: "Netflix for comics. Weekly drops, real prizes, canon you help shape." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/QZAeNqy6yxOqJTh5qCxXoi9l0uO2/social-images/social-1779340513940-Image_5-20-26_at_11.18_PM_(2).webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/QZAeNqy6yxOqJTh5qCxXoi9l0uO2/social-images/social-1779340513940-Image_5-20-26_at_11.18_PM_(2).webp" },
+      { name: "google-site-verification", content: "EgmLLVaNZgWO2RP5Vsz7saG00ZwyVOIZ_GWN0pMMk6E" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
