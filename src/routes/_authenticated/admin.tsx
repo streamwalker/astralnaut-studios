@@ -75,8 +75,52 @@ function AdminPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("comics")
-        .select("id, title, slug, page_number, image_path, published_at, created_at")
+        .select("id, title, slug, page_number, image_path, published_at, created_at, is_free, alt_text, issue_id")
         .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: allSeries } = useQuery({
+    queryKey: ["admin-mgr-series"],
+    enabled: !!isAdmin,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("series")
+        .select("id, name, slug")
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const [mgrSeriesId, setMgrSeriesId] = useState<string>("");
+  const [mgrIssueId, setMgrIssueId] = useState<string>("");
+
+  const { data: mgrIssues } = useQuery({
+    queryKey: ["admin-mgr-issues", mgrSeriesId],
+    enabled: !!isAdmin && !!mgrSeriesId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("issues")
+        .select("id, issue_number, title, slug")
+        .eq("series_id", mgrSeriesId)
+        .order("issue_number", { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: issuePages } = useQuery({
+    queryKey: ["admin-issue-pages", mgrIssueId],
+    enabled: !!isAdmin && !!mgrIssueId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("comics")
+        .select("id, title, slug, page_number, image_path, published_at, is_free, alt_text, issue_id")
+        .eq("issue_id", mgrIssueId)
+        .order("page_number", { ascending: true });
       if (error) throw error;
       return data;
     },
@@ -86,9 +130,6 @@ function AdminPage() {
     await supabase.auth.signOut();
     nav({ to: "/" });
   };
-
-  const publicUrl = (path: string) =>
-    supabase.storage.from("comic-pages").getPublicUrl(path).data.publicUrl;
 
   if (roleLoading) {
     return <div className="flex min-h-screen items-center justify-center text-muted-foreground">Checking access…</div>;
