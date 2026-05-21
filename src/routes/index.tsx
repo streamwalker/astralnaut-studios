@@ -6,6 +6,8 @@ import { SeriesCard } from "@/components/series-card";
 import { MilestoneStrip } from "@/components/milestone-strip";
 import { listSeries, getMilestone, getSiteCopy } from "@/lib/public.functions";
 import { Link } from "@tanstack/react-router";
+import { CoverFan } from "@/components/cover-fan";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
