@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { getSeriesBundle, getIssueBundle } from "@/lib/public.functions";
 import { pageUrl } from "@/lib/storage";
+import baLogo from "@/assets/battlefield-atlantis-logo.png";
 
 export const Route = createFileRoute("/battlefield-atlantis")({
   loader: async () => {
@@ -19,6 +20,9 @@ export const Route = createFileRoute("/battlefield-atlantis")({
       { property: "og:description", content: "Hard sci-fi space opera. First 9.5 pages free." },
       { property: "og:type", content: "article" },
       { property: "og:url", content: "/battlefield-atlantis" },
+      { property: "og:image", content: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/battlefield-atlantis/issue-1/variant-cover-m.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/battlefield-atlantis/issue-1/variant-cover-m.png" },
     ],
     links: [{ rel: "canonical", href: "/battlefield-atlantis" }],
   }),
