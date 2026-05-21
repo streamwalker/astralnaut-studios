@@ -177,12 +177,12 @@ function BAPage() {
                         </div>
                       </button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-5xl overflow-hidden p-0">
-                      <div className="grid gap-0 md:grid-cols-[1.4fr_1fr]">
+                    <DialogContent className="max-w-7xl overflow-hidden p-0">
+                      <div className="grid gap-0 md:grid-cols-[2fr_1fr]">
                         <div className="flex items-center justify-center bg-[var(--bg2)] p-4">
-                          {portrait && <img src={portrait} alt={c.name} className="max-h-[80vh] w-full object-contain" />}
+                          {portrait && <img src={portrait} alt={c.name} className="max-h-[90vh] w-full object-contain" />}
                         </div>
-                        <div className="max-h-[80vh] overflow-y-auto p-6 md:p-8">
+                        <div className="max-h-[90vh] overflow-y-auto p-6 md:p-8">
                           <div className="eyebrow" style={{ color: "var(--neon)" }}>{c.faction}</div>
                           <DialogTitle className="mt-2 text-2xl font-black md:text-3xl">{c.name}</DialogTitle>
                           <div className="mt-1 font-mono text-xs text-[var(--mute)]">{c.role}</div>
