@@ -20,6 +20,7 @@ import { Route as AstralnautStudiosRouteImport } from './routes/astralnaut-studi
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedGrowthPackageRouteImport } from './routes/_authenticated/growth-package'
+import { Route as AuthenticatedGrowthRouteImport } from './routes/_authenticated/growth'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ReaderSeriesIssueRouteImport } from './routes/reader.$series.$issue'
 
@@ -78,6 +79,11 @@ const AuthenticatedGrowthPackageRoute =
     path: '/growth-package',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedGrowthRoute = AuthenticatedGrowthRouteImport.update({
+  id: '/growth',
+  path: '/growth',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
 }
@@ -114,6 +121,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
 }
@@ -130,6 +138,7 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/growth': typeof AuthenticatedGrowthRoute
   '/_authenticated/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
 }
@@ -146,6 +155,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/sitemap.xml'
     | '/admin'
+    | '/growth'
     | '/growth-package'
     | '/reader/$series/$issue'
   fileRoutesByTo: FileRoutesByTo
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/sitemap.xml'
     | '/admin'
+    | '/growth'
     | '/growth-package'
     | '/reader/$series/$issue'
   id:
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/sitemap.xml'
     | '/_authenticated/admin'
+    | '/_authenticated/growth'
     | '/_authenticated/growth-package'
     | '/reader/$series/$issue'
   fileRoutesById: FileRoutesById
@@ -272,6 +284,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGrowthPackageRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/growth': {
+      id: '/_authenticated/growth'
+      path: '/growth'
+      fullPath: '/growth'
+      preLoaderRoute: typeof AuthenticatedGrowthRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -291,11 +310,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedGrowthRoute: typeof AuthenticatedGrowthRoute
   AuthenticatedGrowthPackageRoute: typeof AuthenticatedGrowthPackageRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedGrowthRoute: AuthenticatedGrowthRoute,
   AuthenticatedGrowthPackageRoute: AuthenticatedGrowthPackageRoute,
 }
 
