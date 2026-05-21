@@ -128,7 +128,7 @@ function BAPage() {
                         </div>
                       </button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-4xl overflow-hidden p- clinically grid-rows-[auto_1fr] md:grid-rows-1">
+                    <DialogContent className="max-w-4xl overflow-hidden p-0">
                       <div className="grid grid-cols-1 gap-0 md:grid-cols-[1.05fr_1fr]">
                         <div className="flex items-center justify-center bg-[var(--bg2)] p-6">
                           {emblem && <img src={emblem} alt={`${f.name} brand sheet`} className="h-full max-h-[50vh] w-full object-contain animate-in fade-in zoom-in-95 duration-500 md:max-h-[70vh]" />}
