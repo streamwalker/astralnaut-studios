@@ -50,7 +50,8 @@ function BAPage() {
           </div>
           <div>
             <div className="eyebrow">{bundle.series.genre}</div>
-            <h1 className="mt-3 text-5xl font-black tracking-tight md:text-6xl">Battlefield Atlantis</h1>
+            <img src={baLogo} alt="Battlefield Atlantis" className="mt-3 max-h-32 w-auto" />
+            <h1 className="sr-only">Battlefield Atlantis</h1>
             <div className="mt-2 font-mono text-sm text-[var(--mute)]">ISSUE 1 · {issue?.title}</div>
             <p className="mt-5 max-w-xl text-[var(--ink2)]">{bundle.series.logline}</p>
             <div className="mt-6 flex flex-wrap gap-3">
