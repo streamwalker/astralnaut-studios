@@ -17,6 +17,7 @@ import { Route as ChildrenOfAquariusRouteImport } from './routes/children-of-aqu
 import { Route as BattlefieldAtlantisRouteImport } from './routes/battlefield-atlantis'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiSitemapDotxmlRouteImport } from './routes/api/sitemap[.]xml'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ReaderSeriesIssueRouteImport } from './routes/reader.$series.$issue'
 
@@ -59,6 +60,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiSitemapDotxmlRoute = ApiSitemapDotxmlRouteImport.update({
+  id: '/api/sitemap.xml',
+  path: '/api/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
 }
 export interface FileRoutesByTo {
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
 }
 export interface FileRoutesById {
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
 }
 export interface FileRouteTypes {
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/pricing'
     | '/admin'
+    | '/api/sitemap.xml'
     | '/reader/$series/$issue'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/pricing'
     | '/admin'
+    | '/api/sitemap.xml'
     | '/reader/$series/$issue'
   id:
     | '__root__'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/pricing'
     | '/_authenticated/admin'
+    | '/api/sitemap.xml'
     | '/reader/$series/$issue'
   fileRoutesById: FileRoutesById
 }
@@ -151,6 +163,7 @@ export interface RootRouteChildren {
   IndustryRoute: typeof IndustryRoute
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
+  ApiSitemapDotxmlRoute: typeof ApiSitemapDotxmlRoute
   ReaderSeriesIssueRoute: typeof ReaderSeriesIssueRoute
 }
 
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/sitemap.xml': {
+      id: '/api/sitemap.xml'
+      path: '/api/sitemap.xml'
+      fullPath: '/api/sitemap.xml'
+      preLoaderRoute: typeof ApiSitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -250,6 +270,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndustryRoute: IndustryRoute,
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
+  ApiSitemapDotxmlRoute: ApiSitemapDotxmlRoute,
   ReaderSeriesIssueRoute: ReaderSeriesIssueRoute,
 }
 export const routeTree = rootRouteImport
