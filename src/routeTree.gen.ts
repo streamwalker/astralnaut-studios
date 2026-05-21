@@ -16,6 +16,7 @@ import { Route as IndustryRouteImport } from './routes/industry'
 import { Route as DarkerAgesRouteImport } from './routes/darker-ages'
 import { Route as ChildrenOfAquariusRouteImport } from './routes/children-of-aquarius'
 import { Route as BattlefieldAtlantisRouteImport } from './routes/battlefield-atlantis'
+import { Route as AstralnautStudiosRouteImport } from './routes/astralnaut-studios'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedGrowthPackageRouteImport } from './routes/_authenticated/growth-package'
@@ -57,6 +58,11 @@ const BattlefieldAtlantisRoute = BattlefieldAtlantisRouteImport.update({
   path: '/battlefield-atlantis',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AstralnautStudiosRoute = AstralnautStudiosRouteImport.update({
+  id: '/astralnaut-studios',
+  path: '/astralnaut-studios',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -85,6 +91,7 @@ const ReaderSeriesIssueRoute = ReaderSeriesIssueRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
   '/darker-ages': typeof DarkerAgesRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
   '/darker-ages': typeof DarkerAgesRoute
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
   '/darker-ages': typeof DarkerAgesRoute
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/astralnaut-studios'
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
     | '/darker-ages'
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/astralnaut-studios'
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
     | '/darker-ages'
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/astralnaut-studios'
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
     | '/darker-ages'
@@ -170,6 +182,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AstralnautStudiosRoute: typeof AstralnautStudiosRoute
   BattlefieldAtlantisRoute: typeof BattlefieldAtlantisRoute
   ChildrenOfAquariusRoute: typeof ChildrenOfAquariusRoute
   DarkerAgesRoute: typeof DarkerAgesRoute
@@ -231,6 +244,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BattlefieldAtlantisRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/astralnaut-studios': {
+      id: '/astralnaut-studios'
+      path: '/astralnaut-studios'
+      fullPath: '/astralnaut-studios'
+      preLoaderRoute: typeof AstralnautStudiosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -286,6 +306,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AstralnautStudiosRoute: AstralnautStudiosRoute,
   BattlefieldAtlantisRoute: BattlefieldAtlantisRoute,
   ChildrenOfAquariusRoute: ChildrenOfAquariusRoute,
   DarkerAgesRoute: DarkerAgesRoute,
@@ -298,3 +319,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
