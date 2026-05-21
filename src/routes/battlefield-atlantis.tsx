@@ -130,15 +130,35 @@ function BAPage() {
               {characters.map((c: typeof characters[number]) => {
                 const portrait = pageUrl(c.portrait_path);
                 return (
-                  <div key={c.id} className="card-rwc overflow-hidden">
-                    <div className="aspect-[3/4] bg-[var(--bg2)]">
-                      {portrait ? <img src={portrait} alt={c.name} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-xs text-[var(--mute)]">Portrait forthcoming</div>}
-                    </div>
-                    <div className="p-3">
-                      <div className="text-sm font-black">{c.name}</div>
-                      <div className="font-mono text-[10px] text-[var(--mute)]">{c.role}</div>
-                    </div>
-                  </div>
+                  <Dialog key={c.id}>
+                    <DialogTrigger asChild>
+                      <button type="button" aria-label={`View ${c.name} details`} className="card-rwc group block w-full overflow-hidden text-left transition hover:ring-2 hover:ring-[var(--neon)] focus:outline-none focus:ring-2 focus:ring-[var(--neon)] cursor-pointer">
+                        <div className="relative aspect-[3/4] bg-[var(--bg2)]">
+                          {portrait ? <img src={portrait} alt={c.name} className="h-full w-full object-cover transition group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-xs text-[var(--mute)]">Portrait forthcoming</div>}
+                          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-2 text-[10px] font-bold uppercase tracking-[2px] text-[var(--neon)] opacity-0 transition group-hover:opacity-100">Click to expand</div>
+                        </div>
+                        <div className="p-3">
+                          <div className="text-sm font-black">{c.name}</div>
+                          <div className="font-mono text-[10px] text-[var(--mute)]">{c.role}</div>
+                        </div>
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-3xl overflow-hidden p-0">
+                      <div className="grid gap-0 md:grid-cols-[1fr_1.1fr]">
+                        <div className="aspect-[3/4] bg-[var(--bg2)] md:aspect-auto">
+                          {portrait && <img src={portrait} alt={c.name} className="h-full w-full object-cover" />}
+                        </div>
+                        <div className="p-6 md:p-8">
+                          <div className="eyebrow" style={{ color: "var(--neon)" }}>{c.faction}</div>
+                          <DialogTitle className="mt-2 text-2xl font-black md:text-3xl">{c.name}</DialogTitle>
+                          <div className="mt-1 font-mono text-xs text-[var(--mute)]">{c.role}</div>
+                          {c.transmedium && <div className="mt-3 inline-block rounded border border-[var(--gold)] px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[2px] text-[var(--gold)]">Transmedium</div>}
+                          {c.short_description && <DialogDescription className="mt-4 text-[var(--ink)]">{c.short_description}</DialogDescription>}
+                          {c.bio && <p className="mt-4 text-sm leading-relaxed text-[var(--ink2)]">{c.bio}</p>}
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 );
               })}
             </div>
