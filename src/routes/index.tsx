@@ -48,24 +48,56 @@ function Home() {
       <SiteHeader />
       <main>
         {/* Hero */}
-        <section className="mx-auto max-w-7xl px-6 py-20 md:py-28">
-          <div className="eyebrow flex items-center gap-2"><span style={{ color: "var(--neon)" }}>◉</span> {copy["home.hero.eyebrow"] ?? "Netflix for comics"}</div>
-          <h1 className="mt-6 max-w-4xl text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">
-            {copy["home.hero.title"] ?? "The next page only drops here."}
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg text-[var(--ink2)]">
-            {copy["home.hero.sub"] ?? "Five new pages a week. Motion-enhanced art. Creator commentary. Subscriber-only votes that change the canon."}
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/battlefield-atlantis" className="btn-cta">▶ {copy["home.cta.primary"] ?? "Read the first act free"}</Link>
-            <Link to="/pricing" className="btn-ghost">{copy["home.cta.secondary"] ?? "See pricing"}</Link>
-          </div>
-          <div className="mt-12 grid max-w-2xl grid-cols-3 gap-8">
-            <Stat label="Series live" value="3" />
-            <Stat label="Free pages" value="18.5" />
-            <Stat label="Subscribers" value={milestone?.current_count?.toLocaleString() ?? "—"} />
+        <section className="mx-auto max-w-7xl px-6 py-16 md:py-24">
+          <div className="grid items-center gap-12 md:grid-cols-2">
+            <div>
+              <div className="eyebrow flex items-center gap-2">
+                <span aria-hidden>⚡</span>
+                {copy["home.hero.eyebrow"] ?? "New episodes every week · Netflix for comics"}
+              </div>
+              <h1 className="mt-6 text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">
+                {copy["home.hero.title"] ?? "The next page only drops here."}
+              </h1>
+              <p className="mt-6 max-w-xl text-lg text-[var(--ink2)]">
+                Five new pages a week. Motion-enhanced art. Creator commentary. Subscriber-only votes that change the canon. Real prizes for real readers —{" "}
+                <span style={{ color: "var(--gold)" }} className="font-semibold">PlayStation 5 unlocks at 1,000 subscribers.</span>
+              </p>
+
+              <div
+                className="mt-8 inline-flex max-w-xl items-center gap-3 rounded-xl px-4 py-3"
+                style={{ background: "rgba(34,211,255,0.06)", border: "1px solid rgba(34,211,255,0.3)" }}
+              >
+                <span className="text-2xl" aria-hidden>📺</span>
+                <div>
+                  <div className="text-xs font-black uppercase tracking-[3px]" style={{ color: "var(--neon)" }}>
+                    9.5 pages of every issue · free
+                  </div>
+                  <div className="mt-0.5 text-xs text-[var(--ink2)]">
+                    The full first act + title page · free for everyone · no signup required.
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link to="/reader/$series/$issue" params={{ series: "battlefield-atlantis", issue: "1" }} className="btn-cta">
+                  ▶ {copy["home.cta.primary"] ?? "Read the first act free"}
+                </Link>
+                <Link to="/pricing" className="btn-ghost">{copy["home.cta.secondary"] ?? "See pricing"}</Link>
+              </div>
+
+              <div className="mt-12 grid max-w-md grid-cols-3 gap-8">
+                <Stat label="Subscribers" value={milestone?.current_count?.toLocaleString() ?? "624"} />
+                <Stat label="Series live" value="3" />
+                <Stat label="Pages so far" value={copy["home.stats.pages"] ?? "52"} />
+              </div>
+            </div>
+
+            <div className="relative">
+              <CoverFan />
+            </div>
           </div>
         </section>
+
 
         {/* Milestone */}
         {milestone && (
