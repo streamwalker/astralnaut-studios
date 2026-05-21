@@ -1,44 +1,26 @@
-## 4-cover rotating fan above the fold
+## Interactive cover fan
 
-**Assets**
-- Copy `user-uploads://0002._Battlefield_Atlantis_Issue_1_Variant_Cover.png` → `src/assets/ba-issue-1-variant-2.png`
-- Copy `user-uploads://Children_of_Aquarius_Issue_1_Variant_Cover_A.png` → `src/assets/coa-issue-1-variant-a.png`
+Add prev/next controls and a click-to-expand lightbox to the above-the-fold rotating cover fan (`src/components/cover-fan.tsx`).
 
-**`src/components/cover-fan.tsx` (rewrite)**
+### Behavior
 
-Replace the static 3-cover layout with a 4-cover rotating fan.
+**Prev / Next**
+- Two circular arrow buttons overlaid on the fan (left = prev, right = next), styled to match the existing neon/violet glow.
+- Clicking advances or rewinds `active` immediately (the existing 900ms slot transition handles the motion).
+- Manual interaction resets the 4s auto-rotate timer so the next auto-advance happens 4s after the click (no jitter).
+- Keyboard: `ArrowLeft` / `ArrowRight` on the focused fan do the same.
 
-Covers array (order fixed):
-1. Battlefield Atlantis Issue 1 (`ba-issue-1-variant.png` — existing)
-2. Battlefield Atlantis Variant 2 (`ba-issue-1-variant-2.png` — NEW, replaces the duplicated `baCoverM` storage URL)
-3. Children of Aquarius Issue 1 (`coa-issue-1-cover.png` — existing)
-4. Children of Aquarius Variant A (`coa-issue-1-variant-a.png` — NEW)
+**Click to expand**
+- Clicking the front-center cover (or any cover already in the front slot) opens a fullscreen lightbox overlay showing that cover large.
+- Clicking a non-front cover rotates it to the front instead of opening the lightbox (one click = bring forward, second click on the now-front cover = expand). This keeps the rotation interaction intact.
+- Lightbox: dark backdrop (`rgba(0,0,0,0.85)`), centered image at up to `90vh` / `min(560px, 90vw)`, close on backdrop click, close button (×) top-right, and `Escape` key. Auto-rotate pauses while open.
+- Lightbox includes the same prev/next arrows so users can flip through covers at full size.
 
-Four fixed slot positions around the fan:
-- `front-center` — z 40, scale 1.00, rotate 2°, centered
-- `back-right`  — z 30, scale 0.88, rotate 8°, offset right
-- `far-back`    — z 20, scale 0.78, rotate 14°, offset right+up
-- `back-left`   — z 10, scale 0.86, rotate -10°, offset left
+### Technical details
 
-Rotation logic:
-- `useState<number>(0)` for `activeIndex`
-- `useEffect` runs `setInterval(() => setActive(i => (i + 1) % 4), 4000)`; cleared on unmount
-- Pause on hover (`onMouseEnter` clears, `onMouseLeave` restarts)
-- Respect `prefers-reduced-motion` — skip the interval entirely
-- For each cover at index `i`, its current slot = `slots[(i - activeIndex + 4) % 4]`
-- Apply slot via inline `style` (transform + zIndex) with a wrapper transition `transition: transform 900ms cubic-bezier(0.4,0,0.2,1), z-index 0ms` so position/scale/rotation tween while stacking swaps cleanly
-
-Visual preservation:
-- Keep the existing `aspect-[5/6] w-full max-w-[560px]` container
-- Keep the current cover shadow/glow style (neon + violet)
-- Each cover keeps `overflow-hidden rounded-xl`
-
-**Out of scope**
-- No changes to hero copy, stats, milestone strip, or other sections
-- No DB / server changes
-- The `baCoverM` Supabase storage URL reference is dropped; both new covers ship as bundled assets
-
-**Files touched**
-- `src/assets/ba-issue-1-variant-2.png` (new)
-- `src/assets/coa-issue-1-variant-a.png` (new)
-- `src/components/cover-fan.tsx` (rewrite)
+- All changes confined to `src/components/cover-fan.tsx`. No new dependencies, no route or backend changes.
+- New state: `lightboxOpen: boolean`. Reuse existing `active` index.
+- Replace the `setInterval` pattern with a `useEffect` that depends on a `tickKey` counter; bump `tickKey` whenever the user clicks prev/next so the interval restarts cleanly.
+- Each cover `<div>` becomes a `<button>` (or gets `role="button"` + `onClick`) with `aria-label` describing the cover. Front-slot click → open lightbox; non-front click → `setActive(i)`.
+- Lightbox rendered inline (no portal needed) as a `position: fixed inset-0 z-50` overlay; respects `prefers-reduced-motion` for fade-in.
+- Keep existing slot transform math, aspect ratio, and shadow styling untouched.
