@@ -241,6 +241,7 @@ export type Database = {
       factions: {
         Row: {
           acro: string | null
+          bio: string | null
           created_at: string
           emblem_path: string | null
           id: string
@@ -252,6 +253,7 @@ export type Database = {
         }
         Insert: {
           acro?: string | null
+          bio?: string | null
           created_at?: string
           emblem_path?: string | null
           id?: string
@@ -263,6 +265,7 @@ export type Database = {
         }
         Update: {
           acro?: string | null
+          bio?: string | null
           created_at?: string
           emblem_path?: string | null
           id?: string

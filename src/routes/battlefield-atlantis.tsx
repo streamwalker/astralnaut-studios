@@ -110,13 +110,47 @@ function BAPage() {
             <div className="eyebrow">Factions</div>
             <h2 className="mt-2 text-3xl font-black">Two worlds. One coalition.</h2>
             <div className="mt-6 grid gap-4 md:grid-cols-2">
-              {factions.map((f: typeof factions[number]) => (
-                <div key={f.id} className="card-rwc p-6">
-                  <div className="eyebrow" style={{ color: "var(--neon)" }}>{f.acro}</div>
-                  <h3 className="mt-2 text-xl font-black">{f.name}</h3>
-                  <p className="mt-2 text-[var(--ink2)]">{f.summary}</p>
-                </div>
-              ))}
+              {factions.map((f: typeof factions[number]) => {
+                const emblem = pageUrl(f.emblem_path);
+                const mottoBits = (f.acro ?? "").split("·").map((s: string) => s.trim()).filter(Boolean);
+                return (
+                  <Dialog key={f.id}>
+                    <DialogTrigger asChild>
+                      <button type="button" aria-label={`View ${f.name} details`} className="card-rwc group flex w-full items-center gap-5 p-6 text-left transition hover:ring-2 hover:ring-[var(--neon)] focus:outline-none focus:ring-2 focus:ring-[var(--neon)] cursor-pointer">
+                        <div className="flex h-24 w-24 flex-none items-center justify-center rounded-md bg-[var(--bg2)] p-2">
+                          {emblem ? <img src={emblem} alt={`${f.name} emblem`} className="h-full w-full object-contain" /> : <div className="text-[10px] text-[var(--mute)]">Emblem</div>}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="eyebrow" style={{ color: "var(--neon)" }}>{f.acro}</div>
+                          <h3 className="mt-2 text-xl font-black">{f.name}</h3>
+                          <p className="mt-2 line-clamp-2 text-sm text-[var(--ink2)]">{f.summary}</p>
+                          <div className="mt-3 text-[10px] font-bold uppercase tracking-[2px] text-[var(--mute)] transition group-hover:text-[var(--neon)]">Click to expand →</div>
+                        </div>
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl overflow-hidden p-0">
+                      <div className="grid gap-0 md:grid-cols-[1.05fr_1fr]">
+                        <div className="flex items-center justify-center bg-[var(--bg2)] p-6">
+                          {emblem && <img src={emblem} alt={`${f.name} brand sheet`} className="h-full max-h-[70vh] w-full object-contain" />}
+                        </div>
+                        <div className="p-6 md:p-8">
+                          <div className="eyebrow" style={{ color: "var(--neon)" }}>{f.acro}</div>
+                          <DialogTitle className="mt-2 text-2xl font-black md:text-3xl">{f.name}</DialogTitle>
+                          {f.summary && <DialogDescription className="mt-4 text-[var(--ink)]">{f.summary}</DialogDescription>}
+                          {mottoBits.length > 0 && (
+                            <div className="mt-4 flex flex-wrap gap-2">
+                              {mottoBits.map((m: string) => (
+                                <span key={m} className="rounded border border-[var(--gold)] px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[2px] text-[var(--gold)]">{m}</span>
+                              ))}
+                            </div>
+                          )}
+                          {f.bio && <div className="mt-5 space-y-3 text-sm leading-relaxed text-[var(--ink2)]">{f.bio.split(/\n\n+/).map((p: string, i: number) => <p key={i}>{p}</p>)}</div>}
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                );
+              })}
             </div>
           </section>
         )}
