@@ -1,161 +1,190 @@
-import { useState } from "react";
+import { useMemo } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { STRATEGY, type Block } from "@/content/growth-strategy";
+import { PLAYBOOK } from "@/content/growth-playbook";
+
+type Tab = "strategy" | "playbook" | "studio" | "dashboard";
 
 export const Route = createFileRoute("/_authenticated/growth-package")({
   head: () => ({ meta: [{ title: "Growth Package — Astralnaut Studios" }] }),
+  validateSearch: (s: Record<string, unknown>): { tab: Tab } => {
+    const t = s.tab;
+    return { tab: t === "playbook" || t === "studio" || t === "dashboard" ? t : "strategy" };
+  },
   component: GrowthPackagePage,
 });
 
-const STRATEGY_SECTIONS = [
-  "Executive Summary",
-  "The Core Thesis",
-  "The Three Phases",
-  "North Star Metric & Funnel Math",
-  "Phased Roadmap T0 → 1M (4 phases)",
-  "Seven Growth Channels",
-  "Content Engine",
-  "Conversion Architecture",
-  "Retention Engine",
-  "Brand & PR Strategy",
-  "90-Day Sprint Calendar",
-  "KPI Dashboard",
-  "Budget Models (Bootstrap / Lean / Capitalized)",
-  "Risk Register",
-  "Execution Principles",
+const TABS: { id: Tab; label: string; sub: string }[] = [
+  { id: "strategy", label: "Master Strategy", sub: "24-month roadmap" },
+  { id: "playbook", label: "Tactical Playbook", sub: "40 tactics" },
+  { id: "studio", label: "Studio Landing", sub: "/astralnaut-studios" },
+  { id: "dashboard", label: "Growth Dashboard", sub: "Live KPIs" },
 ];
-
-const PLAYBOOK_PHASES = [
-  { name: "Phase 1 — Ignition", range: "Tactics 1–10", ship: "Ship by week 4" },
-  { name: "Phase 2 — Validation", range: "Tactics 11–20", ship: "Ship by month 4" },
-  { name: "Phase 3 — Velocity", range: "Tactics 21–30", ship: "Ship by month 9" },
-  { name: "Phase 4 — Inflection", range: "Tactics 31–40", ship: "Ship by month 15" },
-];
-const PLAYBOOK_FIELDS = ["Phase", "Channel", "Cost", "Cadence", "Owner", "Why", "How", "KPI"];
 
 function GrowthPackagePage() {
-  const [openCard, setOpenCard] = useState<string | null>(null);
+  const { tab } = Route.useSearch();
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)]">
-      <header className="border-b border-white/10">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
+      <header className="sticky top-0 z-20 border-b border-white/10 bg-[var(--bg)]/95 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link to="/admin" className="text-xs text-[var(--mute)] hover:text-[var(--neon)]">
-            ← Back to admin
+            ← Admin
           </Link>
           <div className="text-xs uppercase tracking-[0.18em] text-[var(--mute)]">Growth Package</div>
         </div>
+        <nav className="mx-auto flex max-w-6xl flex-wrap gap-1 px-6 pb-3">
+          {TABS.map((t) => {
+            const active = t.id === tab;
+            return (
+              <Link
+                key={t.id}
+                to="/growth-package"
+                search={{ tab: t.id }}
+                className={
+                  "rounded-md px-3 py-2 text-sm transition-colors " +
+                  (active
+                    ? "bg-[var(--gold)] text-black"
+                    : "text-[var(--ink2)] hover:bg-white/5 hover:text-[var(--ink)]")
+                }
+              >
+                <div className="font-semibold leading-tight">{t.label}</div>
+                <div className={"text-[10px] uppercase tracking-wider " + (active ? "text-black/70" : "text-[var(--mute)]")}>
+                  {t.sub}
+                </div>
+              </Link>
+            );
+          })}
+        </nav>
       </header>
 
-      <main className="mx-auto max-w-5xl px-6 py-12">
-        <div className="eyebrow text-[var(--gold)]">Astralnaut Studios</div>
-        <h1 className="mt-2 text-4xl font-black md:text-5xl">Growth Package</h1>
-        <p className="mt-3 max-w-2xl text-[var(--ink2)]">
-          Strategy. Tactics. Brand. Dashboard. Four deliverables for the path to one million paying subscribers.
-        </p>
-
-        <div className="mt-6 flex flex-wrap gap-2 text-xs">
-          {["Target: 1M subs", "Horizon: 24 months", "Channels: 7", "Tactics: 40"].map((k) => (
-            <span key={k} className="rounded-full border border-[var(--gold)]/40 px-3 py-1 text-[var(--gold)]">{k}</span>
-          ))}
-        </div>
-
-        <div className="mt-10 grid gap-5 md:grid-cols-2">
-          {/* Master Strategy */}
-          <Card
-            title="Master Strategy"
-            subtitle="24-month roadmap · 21 tables · 4 phases"
-            primary={{ label: "Download .docx", href: "/growth-package/1M-Subscriber-Strategy.docx", download: true }}
-            secondary={{ label: openCard === "strategy" ? "Hide summary" : "View summary inline", onClick: () => setOpenCard(openCard === "strategy" ? null : "strategy") }}
-          >
-            {openCard === "strategy" && (
-              <ol className="mt-4 list-decimal space-y-1 pl-5 text-sm text-[var(--ink2)]">
-                {STRATEGY_SECTIONS.map((s) => <li key={s}>{s}</li>)}
-              </ol>
-            )}
-          </Card>
-
-          {/* Tactical Playbook */}
-          <Card
-            title="Tactical Playbook"
-            subtitle="40 tactics · phase-sequenced · executable"
-            primary={{ label: "Download .docx", href: "/growth-package/1M-Subscriber-Tactical-Playbook.docx", download: true }}
-            secondary={{ label: openCard === "playbook" ? "Hide phases" : "View phase breakdown", onClick: () => setOpenCard(openCard === "playbook" ? null : "playbook") }}
-          >
-            {openCard === "playbook" && (
-              <div className="mt-4 space-y-3 text-sm">
-                {PLAYBOOK_PHASES.map((p) => (
-                  <div key={p.name} className="rounded-md border border-white/10 bg-[var(--bg2)] p-3">
-                    <div className="font-bold">{p.name}</div>
-                    <div className="text-[var(--ink2)]">{p.range} · {p.ship}</div>
-                  </div>
-                ))}
-                <div className="pt-2 text-xs text-[var(--mute)]">
-                  Each tactic includes: {PLAYBOOK_FIELDS.join(" · ")}
-                </div>
-              </div>
-            )}
-          </Card>
-
-          {/* Studio Landing */}
-          <Card
-            title="Studio Brand Landing Page"
-            subtitle="Public · /astralnaut-studios"
-            primary={{ label: "Preview", to: "/astralnaut-studios" }}
-            secondary={{ label: "Open in new tab", href: "/astralnaut-studios", target: "_blank" }}
-          />
-
-          {/* Dashboard */}
-          <Card
-            title="Growth Dashboard"
-            subtitle="Internal · /admin/growth · auth required"
-            primary={{ label: "Open dashboard", to: "/growth" }}
-            secondary={{ label: "Export KPI history (CSV)", to: "/growth", search: { export: "1" } as any }}
-          />
-        </div>
-
-        <footer className="mt-16 flex flex-wrap items-center gap-6 border-t border-white/10 pt-6 text-sm text-[var(--mute)]">
-          <a href="https://realworldcomics.com" target="_blank" rel="noreferrer" className="hover:text-[var(--neon)]">Companion site →</a>
-          <a href="mailto:streamwalkersceo@gmail.com" className="hover:text-[var(--neon)]">Contact</a>
-        </footer>
+      <main className="mx-auto max-w-6xl px-6 py-8">
+        {tab === "strategy" && <DocumentReader title="Master Strategy" blocks={STRATEGY} />}
+        {tab === "playbook" && <DocumentReader title="Tactical Playbook" blocks={PLAYBOOK} />}
+        {tab === "studio" && <Embedded src="/astralnaut-studios" label="Studio Landing Page" />}
+        {tab === "dashboard" && <Embedded src="/growth" label="Growth Dashboard" />}
       </main>
     </div>
   );
 }
 
-type Action =
-  | { label: string; href: string; download?: boolean; target?: string; to?: undefined; onClick?: undefined; search?: undefined }
-  | { label: string; to: string; search?: any; href?: undefined; download?: undefined; target?: undefined; onClick?: undefined }
-  | { label: string; onClick: () => void; href?: undefined; to?: undefined; download?: undefined; target?: undefined; search?: undefined };
+function DocumentReader({ title, blocks }: { title: string; blocks: Block[] }) {
+  const toc = useMemo(
+    () =>
+      blocks
+        .map((b, i) => ({ b, i }))
+        .filter(({ b }) => b.k === "h1" || b.k === "h2")
+        .map(({ b, i }) => ({ id: `s-${i}`, level: b.k as "h1" | "h2", text: (b as { t: string }).t })),
+    [blocks],
+  );
 
-function Card({
-  title, subtitle, primary, secondary, children,
-}: { title: string; subtitle: string; primary: Action; secondary: Action; children?: React.ReactNode }) {
   return (
-    <div className="card-rwc p-6">
-      <div className="text-xs uppercase tracking-[0.16em] text-[var(--mute)]">{subtitle}</div>
-      <h3 className="mt-1 text-2xl font-bold">{title}</h3>
-      <div className="mt-5 flex flex-wrap gap-3">
-        <ActionBtn action={primary} primary />
-        <ActionBtn action={secondary} />
-      </div>
-      {children}
+    <div className="grid gap-8 md:grid-cols-[220px_1fr]">
+      <aside className="hidden md:block">
+        <div className="sticky top-32 max-h-[calc(100vh-10rem)] overflow-y-auto pr-2">
+          <div className="mb-3 text-[10px] uppercase tracking-[0.18em] text-[var(--mute)]">Contents</div>
+          <ul className="space-y-1 text-sm">
+            {toc.map((t) => (
+              <li key={t.id} className={t.level === "h2" ? "pl-3" : ""}>
+                <a href={`#${t.id}`} className="text-[var(--ink2)] hover:text-[var(--neon)]">
+                  {t.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="mt-6 rounded-md border border-white/15 px-3 py-1.5 text-xs text-[var(--ink2)] hover:border-[var(--neon)] hover:text-[var(--neon)]"
+          >
+            Print / Save as PDF
+          </button>
+        </div>
+      </aside>
+
+      <article className="min-w-0 max-w-3xl space-y-4 leading-relaxed">
+        <div className="eyebrow text-[var(--gold)]">Astralnaut Studios</div>
+        <h1 className="text-3xl font-black md:text-4xl">{title}</h1>
+        <div className="h-px w-full bg-white/10" />
+        {blocks.map((b, i) => renderBlock(b, i))}
+      </article>
     </div>
   );
 }
 
-function ActionBtn({ action, primary }: { action: Action; primary?: boolean }) {
-  const cls = primary
-    ? "rounded-md bg-[var(--gold)] px-4 py-2 text-sm font-semibold text-black hover:brightness-110"
-    : "rounded-md border border-white/15 px-4 py-2 text-sm text-[var(--ink)] hover:border-[var(--neon)] hover:text-[var(--neon)]";
-  if ("onClick" in action && action.onClick) {
-    return <button type="button" onClick={action.onClick} className={cls}>{action.label}</button>;
-  }
-  if ("to" in action && action.to) {
-    return <Link to={action.to as any} search={action.search} className={cls}>{action.label}</Link>;
-  }
+function renderBlock(b: Block, i: number) {
+  const id = `s-${i}`;
+  if (b.k === "h1")
+    return (
+      <h2 key={i} id={id} className="mt-10 scroll-mt-32 text-2xl font-black text-[var(--gold)] md:text-3xl">
+        {b.t}
+      </h2>
+    );
+  if (b.k === "h2")
+    return (
+      <h3 key={i} id={id} className="mt-8 scroll-mt-32 text-xl font-bold text-[var(--ink)]">
+        {b.t}
+      </h3>
+    );
+  if (b.k === "h3")
+    return (
+      <h4 key={i} className="mt-4 text-base font-bold uppercase tracking-wide text-[var(--ink2)]">
+        {b.t}
+      </h4>
+    );
+  if (b.k === "li")
+    return (
+      <li key={i} className="ml-6 list-disc text-[var(--ink2)]">
+        {b.t}
+      </li>
+    );
+  if (b.k === "table")
+    return (
+      <div key={i} className="my-4 overflow-x-auto rounded-md border border-white/10">
+        <table className="w-full border-collapse text-sm">
+          <tbody>
+            {b.rows.map((row, ri) => (
+              <tr key={ri} className={ri === 0 ? "bg-[var(--bg2)] font-semibold text-[var(--ink)]" : "border-t border-white/10"}>
+                {row.map((cell, ci) => (
+                  <td key={ci} className="px-3 py-2 align-top text-[var(--ink2)]">
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
   return (
-    <a href={action.href} download={action.download} target={action.target} rel={action.target ? "noreferrer" : undefined} className={cls}>
-      {action.label}
-    </a>
+    <p key={i} className="text-[var(--ink2)]">
+      {b.t}
+    </p>
+  );
+}
+
+function Embedded({ src, label }: { src: string; label: string }) {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-[var(--mute)]">Embedded preview · {label}</div>
+        <a
+          href={src}
+          target="_blank"
+          rel="noreferrer"
+          className="rounded-md border border-white/15 px-3 py-1.5 text-xs text-[var(--ink)] hover:border-[var(--neon)] hover:text-[var(--neon)]"
+        >
+          Open in new tab ↗
+        </a>
+      </div>
+      <div className="overflow-hidden rounded-lg border border-white/10 bg-[var(--bg2)]">
+        <iframe
+          src={src}
+          title={label}
+          className="h-[calc(100vh-14rem)] w-full"
+          loading="lazy"
+        />
+      </div>
+    </div>
   );
 }
