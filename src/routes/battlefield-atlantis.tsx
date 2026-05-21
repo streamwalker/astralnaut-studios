@@ -131,7 +131,7 @@ function BAPage() {
                     <DialogContent className="max-w-4xl overflow-hidden p-0">
                       <div className="grid gap-0 md:grid-cols-[1.05fr_1fr]">
                         <div className="flex items-center justify-center bg-[var(--bg2)] p-6">
-                          {emblem && <img src={emblem} alt={`${f.name} brand sheet`} className="h-full max-h-[70vh] w-full object-contain" />}
+                          {emblem && <img src={emblem} alt={`${f.name} brand sheet`} className="h-full max-h-[70vh] w-full object-contain animate-in fade-in zoom-in-95 duration-500" />}
                         </div>
                         <div className="p-6 md:p-8">
                           <div className="eyebrow" style={{ color: "var(--neon)" }}>{f.acro}</div>
