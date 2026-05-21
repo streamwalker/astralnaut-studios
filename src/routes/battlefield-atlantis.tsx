@@ -25,6 +25,22 @@ export const Route = createFileRoute("/battlefield-atlantis")({
       { name: "twitter:image", content: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/battlefield-atlantis/issue-1/variant-cover-m.png" },
     ],
     links: [{ rel: "canonical", href: "/battlefield-atlantis" }],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Book",
+        name: "Battlefield Atlantis",
+        headline: "Battlefield Atlantis — Issue 1",
+        bookFormat: "https://schema.org/EBook",
+        genre: "Hard sci-fi space opera",
+        image: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/battlefield-atlantis/issue-1/variant-cover-m.png",
+        author: { "@type": "Organization", name: "Astralnaut Studios" },
+        publisher: { "@type": "Organization", name: "Astralnaut Studios" },
+        url: "https://astralnautstudios.com/battlefield-atlantis",
+        description: "Twenty-five thousand years before the present, Saantris Station is destroyed. The Tri-Planetary Coalition splits.",
+      }),
+    }],
   }),
   component: BAPage,
 });

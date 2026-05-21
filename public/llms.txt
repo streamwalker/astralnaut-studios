@@ -1,11 +1,19 @@
 # Real World Comics — Astralnaut Studios
 
-A digital comics subscription platform from Astralnaut Studios LLC publishing three serialized properties on a weekly tier-staggered cadence.
+> A digital comics subscription platform from Astralnaut Studios LLC publishing three serialized properties on a weekly tier-staggered cadence.
 
 ## Properties
 - Battlefield Atlantis — hard sci-fi space opera
 - Children of Aquarius — esoteric thriller / disclosure-era religious mysticism
 - Darker Ages — dark medieval fantasy (October 2026)
+
+## Pages
+- [Home](/): Overview of the slate, weekly cadence, and subscriber model.
+- [Battlefield Atlantis](/battlefield-atlantis): Series page with first-act pages, characters, and factions.
+- [Children of Aquarius](/children-of-aquarius): Series page with first-act pages and drop schedule.
+- [Darker Ages](/darker-ages): Pre-launch teaser for October 2026 release.
+- [Pricing](/pricing): Reader, Initiate, and Patron tiers with pricing and benefits.
+- [Adaptation Rights](/industry): IP rights statement for film, TV, animation, streaming, video game, and audio drama.
 
 ## Access model
 - Free first-act pages (9 to 9.5 per issue) are unrestricted

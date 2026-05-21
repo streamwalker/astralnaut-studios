@@ -5,7 +5,7 @@ export const Route = createFileRoute("/industry")({
   head: () => ({
     meta: [
       { title: "Adaptation Rights — Astralnaut Studios" },
-      { name: "description", content: "Three independently-owned IP properties available for film, television, animation, streaming, video game, and audio drama adaptation. Sole rights holder: Astralnaut Studios LLC." },
+      { name: "description", content: "Three independently-owned IP properties available for film, TV, and game adaptation. Sole rights holder: Astralnaut Studios LLC. NDA-ready." },
       { property: "og:title", content: "Astralnaut Studios — Adaptation Rights" },
       { property: "og:description", content: "Three-property slate. UAP disclosure-era narratives. 100% owned. NDA-ready." },
       { property: "og:url", content: "/industry" },

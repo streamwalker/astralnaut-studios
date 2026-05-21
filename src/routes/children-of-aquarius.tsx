@@ -24,6 +24,22 @@ export const Route = createFileRoute("/children-of-aquarius")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/children-of-aquarius" }],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Book",
+        name: "Children of Aquarius",
+        headline: "Children of Aquarius — Issue 1",
+        bookFormat: "https://schema.org/EBook",
+        genre: "Esoteric thriller",
+        image: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/children-of-aquarius/issue-1/page-0.png",
+        author: { "@type": "Organization", name: "Astralnaut Studios" },
+        publisher: { "@type": "Organization", name: "Astralnaut Studios" },
+        url: "https://astralnautstudios.com/children-of-aquarius",
+        description: "A priest gifts three young humans the powers of Christ to find and protect the Christ child of the Aquarian Age.",
+      }),
+    }],
   }),
   component: COAPage,
 });
