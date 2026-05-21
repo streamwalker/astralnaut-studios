@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { getSeriesBundle, getIssueBundle } from "@/lib/public.functions";
 import { pageUrl } from "@/lib/storage";
+import coaLogo from "@/assets/children-of-aquarius-logo.png";
 
 export const Route = createFileRoute("/children-of-aquarius")({
   loader: async () => {
@@ -19,6 +20,8 @@ export const Route = createFileRoute("/children-of-aquarius")({
       { property: "og:description", content: "Esoteric thriller. The Age Begins · The Child Awakens." },
       { property: "og:type", content: "article" },
       { property: "og:url", content: "/children-of-aquarius" },
+      { property: "og:image", content: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/children-of-aquarius/issue-1/page-0.png" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/children-of-aquarius" }],
   }),
@@ -44,7 +47,8 @@ function COAPage() {
           </div>
           <div>
             <div className="eyebrow">{bundle.series.genre}</div>
-            <h1 className="mt-3 text-5xl font-black tracking-tight md:text-6xl">Children of Aquarius</h1>
+            <img src={coaLogo} alt="Children of Aquarius" className="mt-3 max-h-32 w-auto" />
+            <h1 className="sr-only">Children of Aquarius</h1>
             <div className="mt-2 font-mono text-sm text-[var(--mute)]">ISSUE 1 · {issue?.subtitle ?? issue?.title}</div>
             <p className="mt-5 max-w-xl text-[var(--ink2)]">{bundle.series.logline}</p>
             <div className="mt-6 flex flex-wrap gap-3">
