@@ -14,6 +14,22 @@ export const Route = createFileRoute("/darker-ages")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/darker-ages" }],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Book",
+        name: "Darker Ages",
+        headline: "Darker Ages — Issue 1",
+        bookFormat: "https://schema.org/EBook",
+        genre: "Dark medieval fantasy",
+        author: { "@type": "Organization", name: "Astralnaut Studios" },
+        publisher: { "@type": "Organization", name: "Astralnaut Studios" },
+        url: "https://astralnautstudios.com/darker-ages",
+        description: "After the protective magic of the old age has died, what was held back is loose. Launches October 2026.",
+        datePublished: "2026-10-01",
+      }),
+    }],
   }),
   component: DarkerAges,
 });
