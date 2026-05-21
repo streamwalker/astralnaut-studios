@@ -4,9 +4,10 @@ import { useServerFn } from "@tanstack/react-start";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { SeriesCard } from "@/components/series-card";
 import { MilestoneStrip } from "@/components/milestone-strip";
-import { listSeries, getMilestone, getSiteCopy } from "@/lib/public.functions";
+import { listSeries, getMilestone, getSiteCopy, getSubscriberCount } from "@/lib/public.functions";
 import { Link } from "@tanstack/react-router";
 import { CoverFan } from "@/components/cover-fan";
+import { CountUp } from "@/components/count-up";
 
 
 export const Route = createFileRoute("/")({
@@ -39,9 +40,12 @@ function Home() {
   const seriesFn = useServerFn(listSeries);
   const milestoneFn = useServerFn(getMilestone);
   const copyFn = useServerFn(getSiteCopy);
+  const subCountFn = useServerFn(getSubscriberCount);
   const { data: series = [] } = useQuery({ queryKey: ["series"], queryFn: () => seriesFn({}) });
   const { data: milestone } = useQuery({ queryKey: ["milestone"], queryFn: () => milestoneFn({}) });
   const { data: copy = {} } = useQuery({ queryKey: ["copy"], queryFn: () => copyFn({}) });
+  const { data: subData } = useQuery({ queryKey: ["subscriber-count"], queryFn: () => subCountFn({}) });
+  const subscriberCount = subData?.count ?? milestone?.current_count ?? 0;
 
   return (
     <>
@@ -86,7 +90,7 @@ function Home() {
               </div>
 
               <div className="mt-12 grid max-w-md grid-cols-3 gap-8">
-                <Stat label="Subscribers" value={milestone?.current_count?.toLocaleString() ?? "624"} />
+                <Stat label="Subscribers" value={<CountUp value={subscriberCount} />} />
                 <Stat label="Series live" value="3" />
                 <Stat label="Pages so far" value={copy["home.stats.pages"] ?? "52"} />
               </div>
@@ -138,7 +142,7 @@ function Home() {
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div>
       <div className="font-mono text-3xl font-black" style={{ color: "var(--gold)" }}>{value}</div>

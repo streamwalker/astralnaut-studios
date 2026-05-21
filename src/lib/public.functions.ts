@@ -23,6 +23,15 @@ export const getMilestone = createServerFn({ method: "GET" }).handler(async () =
   return data;
 });
 
+export const getSubscriberCount = createServerFn({ method: "GET" }).handler(async () => {
+  const { count, error } = await supabaseAdmin
+    .from("subscribers")
+    .select("id", { count: "exact", head: true })
+    .eq("confirmed", true);
+  if (error) throw new Error(error.message);
+  return { count: count ?? 0 };
+});
+
 export const getSiteCopy = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await supabaseAdmin.from("site_copy").select("key,value");
   if (error) throw new Error(error.message);
