@@ -13,3 +13,5 @@ User-agent: PerplexityBot
 Allow: /
 User-agent: Applebot
 Allow: /
+
+Sitemap: https://astralnautstudios.com/sitemap.xml
