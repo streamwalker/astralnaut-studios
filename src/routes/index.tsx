@@ -120,7 +120,7 @@ function Home() {
             <h2 className="text-3xl font-black md:text-4xl">The slate</h2>
             <div className="eyebrow">Three properties · One disclosure-era universe</div>
           </div>
-          <div className="mt-8 grid gap-6 md:grid-cols-3">
+          <div className="mt-8 flex flex-col gap-6">
             {series.map((s) => <SeriesCard key={s.id} {...s} />)}
           </div>
         </section>
