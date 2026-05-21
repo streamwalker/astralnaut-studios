@@ -16,8 +16,11 @@ import { Route as IndustryRouteImport } from './routes/industry'
 import { Route as DarkerAgesRouteImport } from './routes/darker-ages'
 import { Route as ChildrenOfAquariusRouteImport } from './routes/children-of-aquarius'
 import { Route as BattlefieldAtlantisRouteImport } from './routes/battlefield-atlantis'
+import { Route as AstralnautStudiosRouteImport } from './routes/astralnaut-studios'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedGrowthPackageRouteImport } from './routes/_authenticated/growth-package'
+import { Route as AuthenticatedGrowthRouteImport } from './routes/_authenticated/growth'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ReaderSeriesIssueRouteImport } from './routes/reader.$series.$issue'
 
@@ -56,6 +59,11 @@ const BattlefieldAtlantisRoute = BattlefieldAtlantisRouteImport.update({
   path: '/battlefield-atlantis',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AstralnautStudiosRoute = AstralnautStudiosRouteImport.update({
+  id: '/astralnaut-studios',
+  path: '/astralnaut-studios',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -64,6 +72,17 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedGrowthPackageRoute =
+  AuthenticatedGrowthPackageRouteImport.update({
+    id: '/growth-package',
+    path: '/growth-package',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedGrowthRoute = AuthenticatedGrowthRouteImport.update({
+  id: '/growth',
+  path: '/growth',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
@@ -78,6 +97,7 @@ const ReaderSeriesIssueRoute = ReaderSeriesIssueRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
   '/darker-ages': typeof DarkerAgesRoute
@@ -86,10 +106,13 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/growth': typeof AuthenticatedGrowthRoute
+  '/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
   '/darker-ages': typeof DarkerAgesRoute
@@ -98,12 +121,15 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/growth': typeof AuthenticatedGrowthRoute
+  '/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
   '/darker-ages': typeof DarkerAgesRoute
@@ -112,12 +138,15 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/growth': typeof AuthenticatedGrowthRoute
+  '/_authenticated/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/astralnaut-studios'
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
     | '/darker-ages'
@@ -126,10 +155,13 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/sitemap.xml'
     | '/admin'
+    | '/growth'
+    | '/growth-package'
     | '/reader/$series/$issue'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/astralnaut-studios'
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
     | '/darker-ages'
@@ -138,11 +170,14 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/sitemap.xml'
     | '/admin'
+    | '/growth'
+    | '/growth-package'
     | '/reader/$series/$issue'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/astralnaut-studios'
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
     | '/darker-ages'
@@ -151,12 +186,15 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/sitemap.xml'
     | '/_authenticated/admin'
+    | '/_authenticated/growth'
+    | '/_authenticated/growth-package'
     | '/reader/$series/$issue'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AstralnautStudiosRoute: typeof AstralnautStudiosRoute
   BattlefieldAtlantisRoute: typeof BattlefieldAtlantisRoute
   ChildrenOfAquariusRoute: typeof ChildrenOfAquariusRoute
   DarkerAgesRoute: typeof DarkerAgesRoute
@@ -218,6 +256,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BattlefieldAtlantisRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/astralnaut-studios': {
+      id: '/astralnaut-studios'
+      path: '/astralnaut-studios'
+      fullPath: '/astralnaut-studios'
+      preLoaderRoute: typeof AstralnautStudiosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -231,6 +276,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/growth-package': {
+      id: '/_authenticated/growth-package'
+      path: '/growth-package'
+      fullPath: '/growth-package'
+      preLoaderRoute: typeof AuthenticatedGrowthPackageRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/growth': {
+      id: '/_authenticated/growth'
+      path: '/growth'
+      fullPath: '/growth'
+      preLoaderRoute: typeof AuthenticatedGrowthRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
@@ -251,10 +310,14 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedGrowthRoute: typeof AuthenticatedGrowthRoute
+  AuthenticatedGrowthPackageRoute: typeof AuthenticatedGrowthPackageRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedGrowthRoute: AuthenticatedGrowthRoute,
+  AuthenticatedGrowthPackageRoute: AuthenticatedGrowthPackageRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -264,6 +327,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AstralnautStudiosRoute: AstralnautStudiosRoute,
   BattlefieldAtlantisRoute: BattlefieldAtlantisRoute,
   ChildrenOfAquariusRoute: ChildrenOfAquariusRoute,
   DarkerAgesRoute: DarkerAgesRoute,
@@ -276,3 +340,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
