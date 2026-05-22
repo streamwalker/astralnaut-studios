@@ -17,8 +17,11 @@ import { Route as DarkerAgesRouteImport } from './routes/darker-ages'
 import { Route as ChildrenOfAquariusRouteImport } from './routes/children-of-aquarius'
 import { Route as BattlefieldAtlantisRouteImport } from './routes/battlefield-atlantis'
 import { Route as AstralnautStudiosRouteImport } from './routes/astralnaut-studios'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RaffleRulesRouteImport } from './routes/raffle.rules'
+import { Route as RaffleFreeEntryRouteImport } from './routes/raffle.free-entry'
 import { Route as AuthenticatedGrowthPackageRouteImport } from './routes/_authenticated/growth-package'
 import { Route as AuthenticatedGrowthRouteImport } from './routes/_authenticated/growth'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -65,6 +68,11 @@ const AstralnautStudiosRoute = AstralnautStudiosRouteImport.update({
   path: '/astralnaut-studios',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -72,6 +80,16 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RaffleRulesRoute = RaffleRulesRouteImport.update({
+  id: '/raffle/rules',
+  path: '/raffle/rules',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RaffleFreeEntryRoute = RaffleFreeEntryRouteImport.update({
+  id: '/raffle/free-entry',
+  path: '/raffle/free-entry',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedGrowthPackageRoute =
@@ -104,6 +122,7 @@ const ApiPublicPaymentsWebhookRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
@@ -115,11 +134,14 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
+  '/raffle/free-entry': typeof RaffleFreeEntryRoute
+  '/raffle/rules': typeof RaffleRulesRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
@@ -131,6 +153,8 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
+  '/raffle/free-entry': typeof RaffleFreeEntryRoute
+  '/raffle/rules': typeof RaffleRulesRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -138,6 +162,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/account': typeof AccountRoute
   '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
@@ -149,6 +174,8 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/growth': typeof AuthenticatedGrowthRoute
   '/_authenticated/growth-package': typeof AuthenticatedGrowthPackageRoute
+  '/raffle/free-entry': typeof RaffleFreeEntryRoute
+  '/raffle/rules': typeof RaffleRulesRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -156,6 +183,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
     | '/astralnaut-studios'
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
@@ -167,11 +195,14 @@ export interface FileRouteTypes {
     | '/admin'
     | '/growth'
     | '/growth-package'
+    | '/raffle/free-entry'
+    | '/raffle/rules'
     | '/reader/$series/$issue'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
     | '/astralnaut-studios'
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
@@ -183,12 +214,15 @@ export interface FileRouteTypes {
     | '/admin'
     | '/growth'
     | '/growth-package'
+    | '/raffle/free-entry'
+    | '/raffle/rules'
     | '/reader/$series/$issue'
     | '/api/public/payments/webhook'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/account'
     | '/astralnaut-studios'
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
@@ -200,6 +234,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/growth'
     | '/_authenticated/growth-package'
+    | '/raffle/free-entry'
+    | '/raffle/rules'
     | '/reader/$series/$issue'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
@@ -207,6 +243,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AccountRoute: typeof AccountRoute
   AstralnautStudiosRoute: typeof AstralnautStudiosRoute
   BattlefieldAtlantisRoute: typeof BattlefieldAtlantisRoute
   ChildrenOfAquariusRoute: typeof ChildrenOfAquariusRoute
@@ -215,6 +252,8 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  RaffleFreeEntryRoute: typeof RaffleFreeEntryRoute
+  RaffleRulesRoute: typeof RaffleRulesRoute
   ReaderSeriesIssueRoute: typeof ReaderSeriesIssueRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -277,6 +316,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AstralnautStudiosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -289,6 +335,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/raffle/rules': {
+      id: '/raffle/rules'
+      path: '/raffle/rules'
+      fullPath: '/raffle/rules'
+      preLoaderRoute: typeof RaffleRulesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/raffle/free-entry': {
+      id: '/raffle/free-entry'
+      path: '/raffle/free-entry'
+      fullPath: '/raffle/free-entry'
+      preLoaderRoute: typeof RaffleFreeEntryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/growth-package': {
@@ -348,6 +408,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AccountRoute: AccountRoute,
   AstralnautStudiosRoute: AstralnautStudiosRoute,
   BattlefieldAtlantisRoute: BattlefieldAtlantisRoute,
   ChildrenOfAquariusRoute: ChildrenOfAquariusRoute,
@@ -356,9 +417,21 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  RaffleFreeEntryRoute: RaffleFreeEntryRoute,
+  RaffleRulesRoute: RaffleRulesRoute,
   ReaderSeriesIssueRoute: ReaderSeriesIssueRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
