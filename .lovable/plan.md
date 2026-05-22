@@ -1,94 +1,76 @@
-You want the logo to be the hero of each project card. Right now the cards are tall vertical posters (cover-aspect 1054×1491) with the logo squeezed into a small area, then a text block underneath. Going horizontal flips the relationship: the logo gets a wide cinematic plate and the copy sits beside it.
 
-Below are four layout directions. Pick one (or mix), then I'll generate three rendered design variants of the chosen layout and you choose the final look.
+## Goal
 
----
+Take live payments via Stripe for the three Real World Comics subscription tiers (monthly + annual), collect a shipping address at Patron signup, and add a free "no purchase necessary" entry path so the raffle is Stripe-safe.
 
-## Option A — Stacked horizontal bands (full-bleed)
+## 1. Enable Stripe (Lovable built-in)
 
-Each card becomes a full-width row, stacked vertically down the page.
+Use Lovable's seamless Stripe integration — no Stripe account or API key required from you upfront. Test environment works immediately; going live requires claiming the account.
 
-```text
-┌──────────────────────────────────────────────────────────────┐
-│  [ • READING NOW ]                                           │
-│                                                              │
-│     ┌────────────────────┐   HARD SCI-FI SPACE OPERA         │
-│     │                    │   Battlefield Atlantis            │
-│     │  BATTLEFIELD       │   25,000 years before the         │
-│     │  ATLANTIS  logo    │   present, Saantris Station…      │
-│     │                    │                                   │
-│     └────────────────────┘   Read first act free →           │
-└──────────────────────────────────────────────────────────────┘
-┌──────────────────────────────────────────────────────────────┐
-│  [ • READING NOW ]    Children of Aquarius logo │ copy …     │
-└──────────────────────────────────────────────────────────────┘
-┌──────────────────────────────────────────────────────────────┐
-│  [ OCT 2026 ]         Darker Ages logo          │ copy …     │
-└──────────────────────────────────────────────────────────────┘
-```
+**Tax handling:** Use Stripe's *tax calculation & collection only* mode (+0.5%/txn). Full compliance handling is digital-only and the Patron tier ships a physical print, so it isn't eligible. You'd then register/file in jurisdictions where you cross thresholds (Stripe alerts you).
 
-- Logo plate ~60% width, copy ~40%.
-- Plate uses a subtle per-series gradient pulled from the logo (blue glow for Atlantis, cyan crystal for Aquarius, ember for Darker Ages).
-- Biggest "logo as hero" payoff. Slowest scroll — three big rows instead of a tight grid.
-- Best when there are only 3–5 projects total.
+## 2. Products & pricing in Stripe
 
-## Option B — Stacked, alternating sides (zigzag)
+Create 3 products, each with 2 recurring prices (monthly + annual). Annual gets a standard ~17% discount (2 months free) unless you say otherwise.
 
-Same stacked rows as A, but every other card mirrors: logo-left / copy-right, then logo-right / copy-left, then logo-left.
+| Tier | Monthly | Annual |
+|---|---|---|
+| Reader | $4.99 | $49.90 |
+| Initiate | $12.99 | $129.90 |
+| Patron | $24.99 | $249.90 |
 
-- More editorial, feels like a magazine spread.
-- Still gives the logo a giant canvas.
-- Slight risk of feeling busy on mobile — collapses to logo-on-top, copy-below on small screens.
+Each product gets a Stripe tax code matched to its type (digital subscription for Reader/Initiate; mixed digital+physical for Patron).
 
-## Option C — Horizontal "shelf" (side-by-side, scroll if needed)
+## 3. Database
 
-Cards stay side-by-side like today, but each card itself becomes horizontal — wider than tall (roughly 3:2). All three fit in a single row on desktop; on tablet/mobile they stack.
+New tables:
+- **subscribers** — links a user to their Stripe customer + active subscription, current tier, status, period end, optional shipping address (for Patron).
+- **raffle_entries** — one row per weekly entry, with `source` = `paid_tier` or `amoe` (free entry), week identifier, and user.
 
-```text
-┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐
-│ logo │ title     │ │ logo │ title     │ │ logo │ title     │
-│      │ logline   │ │      │ logline   │ │      │ logline   │
-│      │ CTA →     │ │      │ CTA →     │ │      │ CTA →     │
-└──────────────────┘ └──────────────────┘ └──────────────────┘
-```
+RLS: users see only their own rows; service role writes from webhook.
 
-- Logo still gets a wide plate (~55% of card width) but cards stay compact.
-- Closest to current density; no extra scrolling.
-- Logo plate is smaller than A/B but each card reads as a "ticket" or "playbill".
+## 4. Checkout flow
 
-## Option D — Featured + secondaries
+- Pricing page lists 3 tiers with monthly/annual toggle.
+- "Subscribe" → server function creates a Stripe Checkout Session for the selected price.
+- Patron checkout enables `shipping_address_collection` (US + countries you ship to).
+- On success, redirect to `/account` with a "subscription active" banner.
 
-One large horizontal hero card on top (the active "Reading now" project, or whichever you flag), with the remaining projects as a horizontal row of smaller cards below.
+## 5. Customer portal
 
-```text
-┌──────────────────────────────────────────────────────────────┐
-│           BATTLEFIELD ATLANTIS  logo │  title  │  copy  →    │
-└──────────────────────────────────────────────────────────────┘
-┌────────────────────────┐ ┌────────────────────────┐
-│ Aquarius  │  copy  →   │ │ Darker Ages │ copy  →  │
-└────────────────────────┘ └────────────────────────┘
-```
+"Manage subscription" button on `/account` opens Stripe's hosted Billing Portal so users can change tier, update payment method, update shipping address, or cancel.
 
-- Strongest hierarchy — guides reader straight to what you want them on.
-- Requires picking a "featured" project (can be the most recently active).
-- Mixes Option A (hero) with Option C (shelf) below.
+## 6. Webhook
 
----
+Public route at `/api/public/stripe-webhook` verifies the Stripe signature and handles:
+- `checkout.session.completed` → upsert subscriber, store shipping address if provided.
+- `customer.subscription.updated` / `deleted` → update tier + status + period end.
+- `invoice.paid` → grant that week's paid raffle entry/entries for the tier.
+
+## 7. Raffle compliance (AMOE)
+
+- Update tier copy: raffle entries are a perk, but a **free alternate entry** is always available.
+- New public page `/raffle/free-entry`: simple form (name, email, weekly entry) with rate limit (1 entry per email per week), writes to `raffle_entries` with `source='amoe'`.
+- Add a short Official Rules page (`/raffle/rules`) — placeholder text you can fill in with your final legal copy; required for any sweepstakes.
+- Link both from the pricing page and footer.
+
+## 8. Going live (your steps after build)
+
+1. Claim the Stripe account from Lovable → verify business details.
+2. Switch from test to live mode.
+3. Add real shipping countries + zones for Patron.
+4. Replace placeholder Official Rules with reviewed copy.
 
 ## Technical notes
 
-- File to update: `src/components/series-card.tsx` (single component drives the row on `/`, `/industry`, and elsewhere it's used).
-- Aspect ratio change: drop `aspect-[1054/1491]` on the image well; switch to a wider plate (e.g. `aspect-[16/9]` for the logo zone in A/B, `aspect-[5/4]` for C).
-- Logo source already exists via `logoFor(slug)` — no new assets needed.
-- Per-series accent gradients can be defined as CSS tokens in `src/styles.css` so the plate background tints to match each logo's palette.
-- Responsive: A/B/D collapse to single-column stacked layout under `md:`; C already stacks via the existing grid wrapper.
-- Status badge (`Reading now` / `Oct 2026`) and CTA stay — just repositioned.
+- Server functions (`createServerFn`) handle all Stripe API calls; secret key never touches the browser.
+- Webhook lives at `src/routes/api/public/stripe-webhook.ts` and uses `supabaseAdmin` after signature verification.
+- Subscriber lookups use `requireSupabaseAuth` middleware so RLS applies.
+- Annual price IDs are stored alongside monthly so the portal can offer upgrades/downgrades cleanly.
 
----
+## Out of scope (ask if you want these)
 
-## What I need from you
-
-1. Which layout direction — **A (stacked full bands)**, **B (zigzag stacked)**, **C (horizontal shelf)**, or **D (featured + secondaries)**?
-2. Should the logo plate get a per-series colored gradient background, or stay on the current flat dark surface?
-
-Once you pick, I'll generate three rendered variants of that direction (varying density, motion, and typographic emphasis) so you can pick the exact look before I build it.
+- Proration rules beyond Stripe defaults
+- Coupons / promo codes
+- Gift subscriptions
+- Print fulfillment automation (you'll get shipping addresses; quarterly fulfillment is manual)
