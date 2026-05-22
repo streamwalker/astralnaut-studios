@@ -115,6 +115,8 @@ export function SiteHeader() {
                 Sign out
               </button>
             </>
+          ) : data?.user ? (
+            <Link to="/account" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Account</Link>
           ) : (
             <Link to="/login" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Sign in</Link>
           )}
@@ -140,7 +142,10 @@ export function SiteFooter() {
         ]} />
         <FooterCol title="Platform" links={[
           { to: "/pricing", label: "Pricing" },
+          { to: "/account", label: "Your account" },
           { to: "/login", label: "Sign in" },
+          { to: "/raffle/free-entry", label: "Free raffle entry" },
+          { to: "/raffle/rules", label: "Raffle rules" },
         ]} />
         <FooterCol title="Studio" links={[
           { to: "/industry", label: "Adaptation rights" },
