@@ -89,6 +89,69 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     return session.client_secret;
   });
 
+const TIER_LOOKUP_KEYS = [
+  "reader_monthly", "reader_yearly",
+  "initiate_monthly", "initiate_yearly",
+  "patron_monthly", "patron_yearly",
+] as const;
+
+/**
+ * Build (or reuse) a Billing Portal configuration that lets the customer
+ * switch between any of our six tiers, with prorated charges/credits
+ * applied immediately. New tier benefits unlock the moment the change
+ * is confirmed — both for upgrades and downgrades.
+ */
+async function getOrCreatePortalConfiguration(
+  stripe: ReturnType<typeof createStripeClient>,
+): Promise<string> {
+  const prices = await stripe.prices.list({
+    lookup_keys: [...TIER_LOOKUP_KEYS],
+    expand: ["data.product"],
+    limit: 20,
+  });
+
+  // Group price ids by product id (Stripe requires the product + its allowed prices).
+  const byProduct = new Map<string, string[]>();
+  for (const p of prices.data) {
+    const productId = typeof p.product === "string" ? p.product : p.product?.id;
+    if (!productId) continue;
+    if (!byProduct.has(productId)) byProduct.set(productId, []);
+    byProduct.get(productId)!.push(p.id);
+  }
+  const products = Array.from(byProduct.entries()).map(([product, priceIds]) => ({
+    product,
+    prices: priceIds,
+  }));
+
+  const config = await stripe.billingPortal.configurations.create({
+    business_profile: { headline: "Manage your Real World Comics subscription" },
+    features: {
+      customer_update: { enabled: true, allowed_updates: ["email", "address", "shipping", "tax_id"] },
+      invoice_history: { enabled: true },
+      payment_method_update: { enabled: true },
+      subscription_cancel: {
+        enabled: true,
+        mode: "at_period_end",
+        proration_behavior: "none",
+        cancellation_reason: {
+          enabled: true,
+          options: ["too_expensive", "missing_features", "switched_service", "unused", "customer_service", "other"],
+        },
+      },
+      subscription_update: {
+        enabled: true,
+        default_allowed_updates: ["price", "quantity", "promotion_code"],
+        // create_prorations = immediate switch, prorated charge for upgrades,
+        // prorated credit on next invoice for downgrades. Benefits start now.
+        proration_behavior: "create_prorations",
+        products,
+      },
+    },
+  });
+
+  return config.id;
+}
+
 export const createPortalSession = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { returnUrl?: string; environment: StripeEnv }) => {
@@ -111,8 +174,10 @@ export const createPortalSession = createServerFn({ method: "POST" })
     if (subError || !sub?.stripe_customer_id) throw new Error("No subscription found");
 
     const stripe = createStripeClient(data.environment);
+    const configuration = await getOrCreatePortalConfiguration(stripe);
     const portal = await stripe.billingPortal.sessions.create({
       customer: sub.stripe_customer_id as string,
+      configuration,
       ...(data.returnUrl && { return_url: data.returnUrl }),
     });
     return portal.url;
