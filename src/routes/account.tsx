@@ -147,7 +147,32 @@ function AccountPage() {
               <button onClick={openPortal} disabled={portalLoading} className="btn-cta mt-6">
                 {portalLoading ? "Opening…" : "Manage subscription"}
               </button>
-              <p className="mt-2 text-xs text-[var(--mute)]">Opens in a new tab. Update payment method, change tier, update shipping, or cancel.</p>
+              <div className="mt-4 rounded-md border border-[var(--border-line)] bg-black/20 p-4 text-xs text-[var(--ink2)]">
+                <div className="text-[10px] font-bold uppercase tracking-[2px] text-[var(--gold)]">
+                  Changing tiers
+                </div>
+                <ul className="mt-2 space-y-1.5">
+                  <li>
+                    <span className="font-semibold text-[var(--ink)]">Upgrade (e.g. Reader → Patron):</span>{" "}
+                    new tier benefits unlock immediately. You're charged a prorated amount for the remainder of the current billing period.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-[var(--ink)]">Downgrade (e.g. Patron → Reader):</span>{" "}
+                    the switch is also immediate, and an unused-time credit is applied to your next invoice — no refund to your card.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-[var(--ink)]">Monthly ↔ Yearly:</span>{" "}
+                    same rules — you keep access throughout, and Stripe calculates the proration automatically.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-[var(--ink)]">Cancel:</span>{" "}
+                    you keep access until the end of the current billing period; nothing is charged after that.
+                  </li>
+                </ul>
+                <p className="mt-3">
+                  Opens Stripe's secure portal in a new tab. You can also update payment method, shipping address, or tax ID there.
+                </p>
+              </div>
             </>
           )}
         </section>
