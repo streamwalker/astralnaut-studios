@@ -149,7 +149,9 @@ export function SiteFooter() {
           { to: "/raffle/free-entry", label: "Free raffle entry" },
           { to: "/raffle/rules", label: "Raffle rules" },
         ]} />
-        <FooterCol title="Studio" links={[
+        <FooterCol title="Learn" links={[
+          { to: "/help", label: "Help Center" },
+          { to: "/learn", label: "Training course" },
           { to: "/industry", label: "Adaptation rights" },
         ]} />
       </div>
