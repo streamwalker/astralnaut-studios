@@ -4,14 +4,15 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import baLogo from "@/assets/battlefield-atlantis-logo.png";
 
-type NavItem = { to: string; label: string; exact?: boolean; accent?: boolean; params?: Record<string, string> };
+type NavItem = { to: string; label: string; exact?: boolean; accent?: boolean; params?: Record<string, string>; tour?: string };
 const nav: NavItem[] = [
-  { to: "/", label: "Library", exact: true },
+  { to: "/", label: "Library", exact: true, tour: "nav-library" },
   { to: "/battlefield-atlantis", label: "Characters" },
-  { to: "/reader/$series/$issue", label: "Reader", params: { series: "battlefield-atlantis", issue: "1" } },
+  { to: "/reader/$series/$issue", label: "Reader", params: { series: "battlefield-atlantis", issue: "1" }, tour: "nav-reader" },
   { to: "/pricing", label: "Community" },
   { to: "/pricing", label: "Rewards" },
-  { to: "/pricing", label: "Pricing" },
+  { to: "/pricing", label: "Pricing", tour: "nav-pricing" },
+  { to: "/help", label: "Help", tour: "nav-help" },
   { to: "/industry", label: "For Industry", accent: true },
 ];
 
@@ -79,6 +80,7 @@ export function SiteHeader() {
               <Link
                 key={`${n.label}-${i}`}
                 {...(linkProps as { to: string })}
+                data-tour={n.tour}
                 className={`rounded-md px-3 py-2 text-sm font-medium hover:bg-white/5 hover:text-[var(--neon)] ${n.accent ? "text-[var(--gold)]" : "text-[var(--ink2)]"}`}
                 activeProps={{ className: "!text-[var(--neon)]" }}
                 activeOptions={n.exact ? { exact: true } : undefined}
@@ -116,9 +118,9 @@ export function SiteHeader() {
               </button>
             </>
           ) : data?.user ? (
-            <Link to="/account" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Account</Link>
+            <Link to="/account" data-tour="nav-account" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Account</Link>
           ) : (
-            <Link to="/login" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Sign in</Link>
+            <Link to="/login" data-tour="nav-account" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Sign in</Link>
           )}
           <Link to="/reader/$series/$issue" params={{ series: "battlefield-atlantis", issue: "1" }} className="btn-cta text-sm">Start reading →</Link>
         </div>
@@ -147,7 +149,9 @@ export function SiteFooter() {
           { to: "/raffle/free-entry", label: "Free raffle entry" },
           { to: "/raffle/rules", label: "Raffle rules" },
         ]} />
-        <FooterCol title="Studio" links={[
+        <FooterCol title="Learn" links={[
+          { to: "/help", label: "Help Center" },
+          { to: "/learn", label: "Training course" },
           { to: "/industry", label: "Adaptation rights" },
         ]} />
       </div>

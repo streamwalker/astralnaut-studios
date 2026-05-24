@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { supabase } from "@/integrations/supabase/client";
+import { HelpTip } from "@/components/help/HelpTip";
 
 type Tier = {
   key: "reader" | "initiate" | "patron";
@@ -134,7 +135,8 @@ function Pricing() {
             Free first-act pages always remain free. Pages 10+ of every issue release on a tier-staggered weekly cadence.
           </p>
 
-          <div className="mt-8 inline-flex items-center gap-1 rounded-full border border-[var(--border-line)] p-1" role="tablist" aria-label="Billing interval">
+          <div className="mt-8 inline-flex items-center gap-2">
+            <div className="inline-flex items-center gap-1 rounded-full border border-[var(--border-line)] p-1" role="tablist" aria-label="Billing interval">
             <button
               role="tab"
               aria-selected={interval === "monthly"}
@@ -155,8 +157,12 @@ function Pricing() {
             >
               Yearly · 2 months free
             </button>
+            </div>
+
+            <HelpTip title="Monthly vs annual" description="Annual saves you about 2 months. Switch any time from your account." href="/help/choose-tier" />
           </div>
         </div>
+
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {tiers.map((t) => {

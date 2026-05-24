@@ -10,6 +10,8 @@ import {
 
 import appCss from "../styles.css?url";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { TourOverlay } from "@/components/tour/TourOverlay";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 function NotFoundComponent() {
   return (
@@ -119,8 +121,11 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <PaymentTestModeBanner />
-      <Outlet />
+      <TooltipProvider delayDuration={150}>
+        <PaymentTestModeBanner />
+        <Outlet />
+        <TourOverlay />
+      </TooltipProvider>
     </QueryClientProvider>
   );
 }

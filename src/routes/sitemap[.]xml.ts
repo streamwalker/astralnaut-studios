@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { readerHelp } from "@/content/help/reader";
+import { readerCourse } from "@/content/learn/reader";
 
 const BASE_URL = "https://astralnautstudios.com";
 
@@ -20,6 +22,18 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/darker-ages", changefreq: "weekly", priority: "0.8" },
           { path: "/pricing", changefreq: "monthly", priority: "0.6" },
           { path: "/industry", changefreq: "monthly", priority: "0.6" },
+          { path: "/help", changefreq: "monthly", priority: "0.5" },
+          { path: "/learn", changefreq: "monthly", priority: "0.5" },
+          ...readerHelp.articles.map((a) => ({
+            path: `/help/${a.slug}`,
+            changefreq: "monthly" as const,
+            priority: "0.4",
+          })),
+          ...readerCourse.modules.map((m) => ({
+            path: `/learn/${m.id}`,
+            changefreq: "monthly" as const,
+            priority: "0.4",
+          })),
         ];
 
         const urls = entries.map((e) =>
