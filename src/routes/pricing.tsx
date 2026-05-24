@@ -156,9 +156,11 @@ function Pricing() {
               }`}
             >
               Yearly · 2 months free
-            </button>
+            </div>
+            <HelpTip title="Monthly vs annual" description="Annual saves you about 2 months. Switch any time from your account." href="/help/choose-tier" />
           </div>
         </div>
+
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {tiers.map((t) => {
