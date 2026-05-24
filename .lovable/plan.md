@@ -1,76 +1,119 @@
-
 ## Goal
 
-Take live payments via Stripe for the three Real World Comics subscription tiers (monthly + annual), collect a shipping address at Patron signup, and add a free "no purchase necessary" entry path so the raffle is Stripe-safe.
+Ship a complete in-app help, training, and onboarding system for Astralnaut Studios — split into a public **Reader** experience and a gated **Admin/Creator** experience. Progress and dismissals stored in `localStorage` (no DB changes).
 
-## 1. Enable Stripe (Lovable built-in)
+## Deliverables
 
-Use Lovable's seamless Stripe integration — no Stripe account or API key required from you upfront. Test environment works immediately; going live requires claiming the account.
+### 1. Help Center routes (searchable manual)
 
-**Tax handling:** Use Stripe's *tax calculation & collection only* mode (+0.5%/txn). Full compliance handling is digital-only and the Patron tier ships a physical print, so it isn't eligible. You'd then register/file in jurisdictions where you cross thresholds (Stripe alerts you).
+```
+src/routes/help.tsx              -> /help (Reader hub — landing + search)
+src/routes/help.$slug.tsx        -> /help/:slug (Reader article)
+src/routes/_authenticated/admin.help.tsx          -> /admin/help (Admin hub)
+src/routes/_authenticated/admin.help.$slug.tsx    -> /admin/help/:slug (Admin article)
+```
 
-## 2. Products & pricing in Stripe
+- Sidebar with categories, top search bar (client-side filter over article frontmatter).
+- Each article: title, summary, body, "Related articles", "Was this helpful?" (localStorage feedback).
+- Per-route `head()` metadata (title, description, og:title, og:description).
 
-Create 3 products, each with 2 recurring prices (monthly + annual). Annual gets a standard ~17% discount (2 months free) unless you say otherwise.
+**Reader categories (~12 articles):**
+- Getting Started (account, sign in, pick a tier)
+- Reading (using the reader, navigation, offline tips)
+- Subscriptions & Billing (tiers, monthly vs annual, Stripe portal, cancel)
+- Raffles & Rewards (entries per tier, AMOE free entry, rules)
+- Patron Perks (cameos, signed prints, shipping)
+- Community & Canon Voting
+- Account & Privacy
 
-| Tier | Monthly | Annual |
-|---|---|---|
-| Reader | $4.99 | $49.90 |
-| Initiate | $12.99 | $129.90 |
-| Patron | $24.99 | $249.90 |
+**Admin categories (~10 articles):**
+- Admin overview & access
+- Managing pages & content
+- Growth playbook & tools
+- Subscriptions dashboard
+- Raffle entries & winners
+- Stripe test vs live mode
+- Webhook troubleshooting
+- Publishing & domains
 
-Each product gets a Stripe tax code matched to its type (digital subscription for Reader/Initiate; mixed digital+physical for Patron).
+### 2. Step-by-step guided tour (overlay)
 
-## 3. Database
+`src/components/tour/` — lightweight driver:
+- `TourProvider` (context + localStorage `tour:<id>:done` flag)
+- `TourOverlay` (spotlight + tooltip card, prev/next/skip, progress dots)
+- `useTour(steps)` triggered on first visit to a route, or via "Restart tour" button in help center.
 
-New tables:
-- **subscribers** — links a user to their Stripe customer + active subscription, current tier, status, period end, optional shipping address (for Patron).
-- **raffle_entries** — one row per weekly entry, with `source` = `paid_tier` or `amoe` (free entry), week identifier, and user.
+**Reader tour** (auto on first `/` visit): Library → Series card → Reader CTA → Pricing → Account → Help.
+**Admin tour** (auto on first `/admin` visit): Admin panel → page editor → growth tab → subscriptions → publish.
 
-RLS: users see only their own rows; service role writes from webhook.
+Steps target elements via `data-tour="step-id"` attributes added to existing UI. No business logic changes.
 
-## 4. Checkout flow
+### 3. Tooltips & hover popovers
 
-- Pricing page lists 3 tiers with monthly/annual toggle.
-- "Subscribe" → server function creates a Stripe Checkout Session for the selected price.
-- Patron checkout enables `shipping_address_collection` (US + countries you ship to).
-- On success, redirect to `/account` with a "subscription active" banner.
+Reusable `<HelpTip id="...">` component using shadcn `Tooltip` (short) and `HoverCard` (rich). Wraps a small `(?)` icon. Each tip is keyed so dismissals/seen state persist in localStorage.
 
-## 5. Customer portal
+Sprinkle across high-value spots (no logic changes):
+- Pricing page: each tier card, monthly/annual toggle, raffle entries badge
+- Account page: subscription status, billing portal button, shipping address
+- Raffle pages: AMOE explanation, entry count
+- Reader: page nav, fullscreen
+- Admin: each panel section header
 
-"Manage subscription" button on `/account` opens Stripe's hosted Billing Portal so users can change tier, update payment method, update shipping address, or cancel.
+### 4. Training course
 
-## 6. Webhook
+`src/routes/learn.tsx` (Reader track) and `src/routes/_authenticated/admin.learn.tsx` (Admin track).
 
-Public route at `/api/public/stripe-webhook` verifies the Stripe signature and handles:
-- `checkout.session.completed` → upsert subscriber, store shipping address if provided.
-- `customer.subscription.updated` / `deleted` → update tier + status + period end.
-- `invoice.paid` → grant that week's paid raffle entry/entries for the tier.
+Course structure (5 modules each, slider answer = max depth):
+- Module list with progress bar, completion checkmarks (localStorage `course:<track>:<moduleId>`).
+- Each module: `src/routes/learn.$moduleId.tsx` — lesson content, "Mark complete" button, prev/next, end-of-module quiz (3 MC questions), optional certificate at 100%.
 
-## 7. Raffle compliance (AMOE)
+**Reader course (5 modules):**
+1. Welcome & creating your account
+2. Choosing a subscription tier
+3. Reading & navigating issues
+4. Raffles, rewards & AMOE
+5. Patron perks & community
 
-- Update tier copy: raffle entries are a perk, but a **free alternate entry** is always available.
-- New public page `/raffle/free-entry`: simple form (name, email, weekly entry) with rate limit (1 entry per email per week), writes to `raffle_entries` with `source='amoe'`.
-- Add a short Official Rules page (`/raffle/rules`) — placeholder text you can fill in with your final legal copy; required for any sweepstakes.
-- Link both from the pricing page and footer.
+**Admin course (5 modules):**
+1. Admin orientation & roles
+2. Content management
+3. Growth tools & analytics
+4. Subscriptions & Stripe operations
+5. Publishing, domains & maintenance
 
-## 8. Going live (your steps after build)
+Final lesson awards a printable "Astralnaut Certified" badge component (localStorage).
 
-1. Claim the Stripe account from Lovable → verify business details.
-2. Switch from test to live mode.
-3. Add real shipping countries + zones for Patron.
-4. Replace placeholder Official Rules with reviewed copy.
+### 5. Navigation wiring
+
+- Add **Help** link to `SiteHeader` nav and **Help / Training** column to `SiteFooter`.
+- Add **Help** + **Training** entries to the admin sidebar/header on admin routes.
+- Add `data-tour` attributes to existing nav items, CTAs, and admin panels.
+
+### 6. Content authoring
+
+Articles + lessons live as typed TS modules:
+```
+src/content/help/reader/*.ts
+src/content/help/admin/*.ts
+src/content/learn/reader/*.ts
+src/content/learn/admin/*.ts
+```
+Each exports `{ slug, title, category, summary, body (MDX-lite JSX or string with simple markdown renderer), related[] }`. Avoids new build deps — uses a small in-file markdown→JSX renderer or plain JSX bodies.
 
 ## Technical notes
 
-- Server functions (`createServerFn`) handle all Stripe API calls; secret key never touches the browser.
-- Webhook lives at `src/routes/api/public/stripe-webhook.ts` and uses `supabaseAdmin` after signature verification.
-- Subscriber lookups use `requireSupabaseAuth` middleware so RLS applies.
-- Annual price IDs are stored alongside monthly so the portal can offer upgrades/downgrades cleanly.
+- **Persistence:** all progress/dismissal in `localStorage` under namespaced keys (`astra:tour:*`, `astra:tip:*`, `astra:course:*`). SSR-safe wrapper hook (`useLocalStorage`) that defers reads to `useEffect`.
+- **No DB migrations, no server functions, no Stripe changes.**
+- **Styling:** reuse existing tokens (`--neon`, `--gold`, `--ink`, `--ink2`, `--border-line`); match current dark sci-fi aesthetic.
+- **SEO:** every help/learn route sets distinct `head()` meta. Sitemap updated to include `/help`, `/learn`, and top-level help articles.
+- **Accessibility:** tour overlay traps focus, ESC to skip; tooltips keyboard-accessible (shadcn defaults).
 
-## Out of scope (ask if you want these)
+## Out of scope
 
-- Proration rules beyond Stripe defaults
-- Coupons / promo codes
-- Gift subscriptions
-- Print fulfillment automation (you'll get shipping addresses; quarterly fulfillment is manual)
+- Backend tracking of course completion (local-only per your choice).
+- Video lessons / external course platform.
+- Editing existing subscription, raffle, or admin logic.
+
+## Open question
+
+The admin training references the admin panel features. I'll document what's currently in `/admin`, `/growth`, `/growth-package` as-is. If anything is missing or you'd like a feature added before documenting, flag it after approving this plan.
