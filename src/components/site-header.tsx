@@ -80,6 +80,7 @@ export function SiteHeader() {
               <Link
                 key={`${n.label}-${i}`}
                 {...(linkProps as { to: string })}
+                data-tour={n.tour}
                 className={`rounded-md px-3 py-2 text-sm font-medium hover:bg-white/5 hover:text-[var(--neon)] ${n.accent ? "text-[var(--gold)]" : "text-[var(--ink2)]"}`}
                 activeProps={{ className: "!text-[var(--neon)]" }}
                 activeOptions={n.exact ? { exact: true } : undefined}
