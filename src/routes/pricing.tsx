@@ -135,7 +135,8 @@ function Pricing() {
             Free first-act pages always remain free. Pages 10+ of every issue release on a tier-staggered weekly cadence.
           </p>
 
-          <div className="mt-8 inline-flex items-center gap-1 rounded-full border border-[var(--border-line)] p-1" role="tablist" aria-label="Billing interval">
+          <div className="mt-8 inline-flex items-center gap-2">
+            <div className="inline-flex items-center gap-1 rounded-full border border-[var(--border-line)] p-1" role="tablist" aria-label="Billing interval">
             <button
               role="tab"
               aria-selected={interval === "monthly"}
