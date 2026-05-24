@@ -121,8 +121,11 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <PaymentTestModeBanner />
-      <Outlet />
+      <TooltipProvider delayDuration={150}>
+        <PaymentTestModeBanner />
+        <Outlet />
+        <TourOverlay />
+      </TooltipProvider>
     </QueryClientProvider>
   );
 }
