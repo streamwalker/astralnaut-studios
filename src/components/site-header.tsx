@@ -145,6 +145,7 @@ export function SiteFooter() {
         ]} />
         <FooterCol title="Platform" links={[
           { to: "/pricing", label: "Pricing" },
+          { to: "/perks", label: "Your perks" },
           { to: "/account", label: "Your account" },
           { to: "/login", label: "Sign in" },
           { to: "/raffle/free-entry", label: "Free raffle entry" },
