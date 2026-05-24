@@ -2,6 +2,8 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { getIssueBundle } from "@/lib/public.functions";
+import { logStorageAccess } from "@/lib/storage-access.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { pageUrl } from "@/lib/storage";
 import { z } from "zod";
 
@@ -48,6 +50,26 @@ function Reader() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   });
+
+  // Best-effort access logging for paid-content auditing & burst detection.
+  useEffect(() => {
+    if (!current?.image_path) return;
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase.auth.getUser();
+      if (cancelled) return;
+      logStorageAccess({
+        data: {
+          paths: [current.image_path],
+          bucket: "comic-pages",
+          userId: data.user?.id ?? null,
+          comicId: current.id ?? null,
+          isFree,
+        },
+      }).catch(() => {});
+    })();
+    return () => { cancelled = true; };
+  }, [current?.id, current?.image_path, isFree]);
 
   return (
     <>
