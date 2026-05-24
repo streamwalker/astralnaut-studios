@@ -156,7 +156,9 @@ function Pricing() {
               }`}
             >
               Yearly · 2 months free
+            </button>
             </div>
+
             <HelpTip title="Monthly vs annual" description="Annual saves you about 2 months. Switch any time from your account." href="/help/choose-tier" />
           </div>
         </div>
