@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PerksRouteImport } from './routes/perks'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LearnRouteImport } from './routes/learn'
 import { Route as IndustryRouteImport } from './routes/industry'
@@ -44,6 +45,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerksRoute = PerksRouteImport.update({
+  id: '/perks',
+  path: '/perks',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -181,6 +187,7 @@ export interface FileRoutesByFullPath {
   '/industry': typeof IndustryRoute
   '/learn': typeof LearnRouteWithChildren
   '/login': typeof LoginRoute
+  '/perks': typeof PerksRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -208,6 +215,7 @@ export interface FileRoutesByTo {
   '/industry': typeof IndustryRoute
   '/learn': typeof LearnRouteWithChildren
   '/login': typeof LoginRoute
+  '/perks': typeof PerksRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -237,6 +245,7 @@ export interface FileRoutesById {
   '/industry': typeof IndustryRoute
   '/learn': typeof LearnRouteWithChildren
   '/login': typeof LoginRoute
+  '/perks': typeof PerksRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -266,6 +275,7 @@ export interface FileRouteTypes {
     | '/industry'
     | '/learn'
     | '/login'
+    | '/perks'
     | '/pricing'
     | '/sitemap.xml'
     | '/admin'
@@ -293,6 +303,7 @@ export interface FileRouteTypes {
     | '/industry'
     | '/learn'
     | '/login'
+    | '/perks'
     | '/pricing'
     | '/sitemap.xml'
     | '/admin'
@@ -321,6 +332,7 @@ export interface FileRouteTypes {
     | '/industry'
     | '/learn'
     | '/login'
+    | '/perks'
     | '/pricing'
     | '/sitemap.xml'
     | '/_authenticated/admin'
@@ -350,6 +362,7 @@ export interface RootRouteChildren {
   IndustryRoute: typeof IndustryRoute
   LearnRoute: typeof LearnRouteWithChildren
   LoginRoute: typeof LoginRoute
+  PerksRoute: typeof PerksRoute
   PricingRoute: typeof PricingRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   RaffleFreeEntryRoute: typeof RaffleFreeEntryRoute
@@ -372,6 +385,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perks': {
+      id: '/perks'
+      path: '/perks'
+      fullPath: '/perks'
+      preLoaderRoute: typeof PerksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -634,6 +654,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndustryRoute: IndustryRoute,
   LearnRoute: LearnRouteWithChildren,
   LoginRoute: LoginRoute,
+  PerksRoute: PerksRoute,
   PricingRoute: PricingRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   RaffleFreeEntryRoute: RaffleFreeEntryRoute,

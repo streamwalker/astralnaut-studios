@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { TierBadge } from "@/components/TierGate";
 import baLogo from "@/assets/battlefield-atlantis-logo.png";
 
 type NavItem = { to: string; label: string; exact?: boolean; accent?: boolean; params?: Record<string, string>; tour?: string };
@@ -9,8 +10,7 @@ const nav: NavItem[] = [
   { to: "/", label: "Library", exact: true, tour: "nav-library" },
   { to: "/battlefield-atlantis", label: "Characters" },
   { to: "/reader/$series/$issue", label: "Reader", params: { series: "battlefield-atlantis", issue: "1" }, tour: "nav-reader" },
-  { to: "/pricing", label: "Community" },
-  { to: "/pricing", label: "Rewards" },
+  { to: "/perks", label: "Perks" },
   { to: "/pricing", label: "Pricing", tour: "nav-pricing" },
   { to: "/help", label: "Help", tour: "nav-help" },
   { to: "/industry", label: "For Industry", accent: true },
