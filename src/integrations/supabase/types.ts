@@ -538,6 +538,42 @@ export type Database = {
         }
         Relationships: []
       }
+      security_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          actor_ip: string | null
+          actor_user_id: string | null
+          created_at: string
+          details: Json
+          id: string
+          kind: string
+          severity: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          actor_ip?: string | null
+          actor_user_id?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          kind: string
+          severity?: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          actor_ip?: string | null
+          actor_user_id?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          kind?: string
+          severity?: string
+        }
+        Relationships: []
+      }
       series: {
         Row: {
           comp_titles: string[] | null
@@ -604,6 +640,45 @@ export type Database = {
           key?: string
           updated_at?: string
           value?: string
+        }
+        Relationships: []
+      }
+      storage_access_logs: {
+        Row: {
+          bucket: string
+          comic_id: string | null
+          created_at: string
+          id: string
+          ip: string | null
+          is_free: boolean | null
+          path: string
+          referer: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          bucket?: string
+          comic_id?: string | null
+          created_at?: string
+          id?: string
+          ip?: string | null
+          is_free?: boolean | null
+          path: string
+          referer?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          bucket?: string
+          comic_id?: string | null
+          created_at?: string
+          id?: string
+          ip?: string | null
+          is_free?: boolean | null
+          path?: string
+          referer?: string | null
+          user_agent?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -732,6 +807,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      detect_storage_access_bursts: {
+        Args: { threshold?: number; window_seconds?: number }
+        Returns: number
+      }
       has_active_subscription: {
         Args: { check_env?: string; user_uuid: string }
         Returns: boolean
