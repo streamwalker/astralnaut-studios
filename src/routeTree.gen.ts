@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as LearnRouteImport } from './routes/learn'
 import { Route as IndustryRouteImport } from './routes/industry'
+import { Route as HelpRouteImport } from './routes/help'
 import { Route as DarkerAgesRouteImport } from './routes/darker-ages'
 import { Route as ChildrenOfAquariusRouteImport } from './routes/children-of-aquarius'
 import { Route as BattlefieldAtlantisRouteImport } from './routes/battlefield-atlantis'
@@ -22,11 +24,17 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RaffleRulesRouteImport } from './routes/raffle.rules'
 import { Route as RaffleFreeEntryRouteImport } from './routes/raffle.free-entry'
+import { Route as LearnModuleIdRouteImport } from './routes/learn.$moduleId'
+import { Route as HelpSlugRouteImport } from './routes/help.$slug'
 import { Route as AuthenticatedGrowthPackageRouteImport } from './routes/_authenticated/growth-package'
 import { Route as AuthenticatedGrowthRouteImport } from './routes/_authenticated/growth'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ReaderSeriesIssueRouteImport } from './routes/reader.$series.$issue'
+import { Route as AuthenticatedAdminLearnRouteImport } from './routes/_authenticated/admin.learn'
+import { Route as AuthenticatedAdminHelpRouteImport } from './routes/_authenticated/admin.help'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as AuthenticatedAdminLearnModuleIdRouteImport } from './routes/_authenticated/admin.learn.$moduleId'
+import { Route as AuthenticatedAdminHelpSlugRouteImport } from './routes/_authenticated/admin.help.$slug'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -43,9 +51,19 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LearnRoute = LearnRouteImport.update({
+  id: '/learn',
+  path: '/learn',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndustryRoute = IndustryRouteImport.update({
   id: '/industry',
   path: '/industry',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DarkerAgesRoute = DarkerAgesRouteImport.update({
@@ -92,6 +110,16 @@ const RaffleFreeEntryRoute = RaffleFreeEntryRouteImport.update({
   path: '/raffle/free-entry',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LearnModuleIdRoute = LearnModuleIdRouteImport.update({
+  id: '/$moduleId',
+  path: '/$moduleId',
+  getParentRoute: () => LearnRoute,
+} as any)
+const HelpSlugRoute = HelpSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => HelpRoute,
+} as any)
 const AuthenticatedGrowthPackageRoute =
   AuthenticatedGrowthPackageRouteImport.update({
     id: '/growth-package',
@@ -113,11 +141,33 @@ const ReaderSeriesIssueRoute = ReaderSeriesIssueRouteImport.update({
   path: '/reader/$series/$issue',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminLearnRoute = AuthenticatedAdminLearnRouteImport.update({
+  id: '/learn',
+  path: '/learn',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminHelpRoute = AuthenticatedAdminHelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedAdminLearnModuleIdRoute =
+  AuthenticatedAdminLearnModuleIdRouteImport.update({
+    id: '/$moduleId',
+    path: '/$moduleId',
+    getParentRoute: () => AuthenticatedAdminLearnRoute,
+  } as any)
+const AuthenticatedAdminHelpSlugRoute =
+  AuthenticatedAdminHelpSlugRouteImport.update({
+    id: '/$slug',
+    path: '/$slug',
+    getParentRoute: () => AuthenticatedAdminHelpRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -127,16 +177,24 @@ export interface FileRoutesByFullPath {
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
   '/darker-ages': typeof DarkerAgesRoute
+  '/help': typeof HelpRouteWithChildren
   '/industry': typeof IndustryRoute
+  '/learn': typeof LearnRouteWithChildren
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
+  '/help/$slug': typeof HelpSlugRoute
+  '/learn/$moduleId': typeof LearnModuleIdRoute
   '/raffle/free-entry': typeof RaffleFreeEntryRoute
   '/raffle/rules': typeof RaffleRulesRoute
+  '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
+  '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
+  '/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
+  '/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -146,16 +204,24 @@ export interface FileRoutesByTo {
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
   '/darker-ages': typeof DarkerAgesRoute
+  '/help': typeof HelpRouteWithChildren
   '/industry': typeof IndustryRoute
+  '/learn': typeof LearnRouteWithChildren
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
+  '/help/$slug': typeof HelpSlugRoute
+  '/learn/$moduleId': typeof LearnModuleIdRoute
   '/raffle/free-entry': typeof RaffleFreeEntryRoute
   '/raffle/rules': typeof RaffleRulesRoute
+  '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
+  '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
+  '/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
+  '/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
@@ -167,16 +233,24 @@ export interface FileRoutesById {
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
   '/darker-ages': typeof DarkerAgesRoute
+  '/help': typeof HelpRouteWithChildren
   '/industry': typeof IndustryRoute
+  '/learn': typeof LearnRouteWithChildren
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/growth': typeof AuthenticatedGrowthRoute
   '/_authenticated/growth-package': typeof AuthenticatedGrowthPackageRoute
+  '/help/$slug': typeof HelpSlugRoute
+  '/learn/$moduleId': typeof LearnModuleIdRoute
   '/raffle/free-entry': typeof RaffleFreeEntryRoute
   '/raffle/rules': typeof RaffleRulesRoute
+  '/_authenticated/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
+  '/_authenticated/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
+  '/_authenticated/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
+  '/_authenticated/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
@@ -188,16 +262,24 @@ export interface FileRouteTypes {
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
     | '/darker-ages'
+    | '/help'
     | '/industry'
+    | '/learn'
     | '/login'
     | '/pricing'
     | '/sitemap.xml'
     | '/admin'
     | '/growth'
     | '/growth-package'
+    | '/help/$slug'
+    | '/learn/$moduleId'
     | '/raffle/free-entry'
     | '/raffle/rules'
+    | '/admin/help'
+    | '/admin/learn'
     | '/reader/$series/$issue'
+    | '/admin/help/$slug'
+    | '/admin/learn/$moduleId'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -207,16 +289,24 @@ export interface FileRouteTypes {
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
     | '/darker-ages'
+    | '/help'
     | '/industry'
+    | '/learn'
     | '/login'
     | '/pricing'
     | '/sitemap.xml'
     | '/admin'
     | '/growth'
     | '/growth-package'
+    | '/help/$slug'
+    | '/learn/$moduleId'
     | '/raffle/free-entry'
     | '/raffle/rules'
+    | '/admin/help'
+    | '/admin/learn'
     | '/reader/$series/$issue'
+    | '/admin/help/$slug'
+    | '/admin/learn/$moduleId'
     | '/api/public/payments/webhook'
   id:
     | '__root__'
@@ -227,16 +317,24 @@ export interface FileRouteTypes {
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
     | '/darker-ages'
+    | '/help'
     | '/industry'
+    | '/learn'
     | '/login'
     | '/pricing'
     | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/_authenticated/growth'
     | '/_authenticated/growth-package'
+    | '/help/$slug'
+    | '/learn/$moduleId'
     | '/raffle/free-entry'
     | '/raffle/rules'
+    | '/_authenticated/admin/help'
+    | '/_authenticated/admin/learn'
     | '/reader/$series/$issue'
+    | '/_authenticated/admin/help/$slug'
+    | '/_authenticated/admin/learn/$moduleId'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -248,7 +346,9 @@ export interface RootRouteChildren {
   BattlefieldAtlantisRoute: typeof BattlefieldAtlantisRoute
   ChildrenOfAquariusRoute: typeof ChildrenOfAquariusRoute
   DarkerAgesRoute: typeof DarkerAgesRoute
+  HelpRoute: typeof HelpRouteWithChildren
   IndustryRoute: typeof IndustryRoute
+  LearnRoute: typeof LearnRouteWithChildren
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -281,11 +381,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/learn': {
+      id: '/learn'
+      path: '/learn'
+      fullPath: '/learn'
+      preLoaderRoute: typeof LearnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/industry': {
       id: '/industry'
       path: '/industry'
       fullPath: '/industry'
       preLoaderRoute: typeof IndustryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/darker-ages': {
@@ -351,6 +465,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RaffleFreeEntryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/learn/$moduleId': {
+      id: '/learn/$moduleId'
+      path: '/$moduleId'
+      fullPath: '/learn/$moduleId'
+      preLoaderRoute: typeof LearnModuleIdRouteImport
+      parentRoute: typeof LearnRoute
+    }
+    '/help/$slug': {
+      id: '/help/$slug'
+      path: '/$slug'
+      fullPath: '/help/$slug'
+      preLoaderRoute: typeof HelpSlugRouteImport
+      parentRoute: typeof HelpRoute
+    }
     '/_authenticated/growth-package': {
       id: '/_authenticated/growth-package'
       path: '/growth-package'
@@ -379,6 +507,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReaderSeriesIssueRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/learn': {
+      id: '/_authenticated/admin/learn'
+      path: '/learn'
+      fullPath: '/admin/learn'
+      preLoaderRoute: typeof AuthenticatedAdminLearnRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/help': {
+      id: '/_authenticated/admin/help'
+      path: '/help'
+      fullPath: '/admin/help'
+      preLoaderRoute: typeof AuthenticatedAdminHelpRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -386,17 +528,72 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/learn/$moduleId': {
+      id: '/_authenticated/admin/learn/$moduleId'
+      path: '/$moduleId'
+      fullPath: '/admin/learn/$moduleId'
+      preLoaderRoute: typeof AuthenticatedAdminLearnModuleIdRouteImport
+      parentRoute: typeof AuthenticatedAdminLearnRoute
+    }
+    '/_authenticated/admin/help/$slug': {
+      id: '/_authenticated/admin/help/$slug'
+      path: '/$slug'
+      fullPath: '/admin/help/$slug'
+      preLoaderRoute: typeof AuthenticatedAdminHelpSlugRouteImport
+      parentRoute: typeof AuthenticatedAdminHelpRoute
+    }
   }
 }
 
+interface AuthenticatedAdminHelpRouteChildren {
+  AuthenticatedAdminHelpSlugRoute: typeof AuthenticatedAdminHelpSlugRoute
+}
+
+const AuthenticatedAdminHelpRouteChildren: AuthenticatedAdminHelpRouteChildren =
+  {
+    AuthenticatedAdminHelpSlugRoute: AuthenticatedAdminHelpSlugRoute,
+  }
+
+const AuthenticatedAdminHelpRouteWithChildren =
+  AuthenticatedAdminHelpRoute._addFileChildren(
+    AuthenticatedAdminHelpRouteChildren,
+  )
+
+interface AuthenticatedAdminLearnRouteChildren {
+  AuthenticatedAdminLearnModuleIdRoute: typeof AuthenticatedAdminLearnModuleIdRoute
+}
+
+const AuthenticatedAdminLearnRouteChildren: AuthenticatedAdminLearnRouteChildren =
+  {
+    AuthenticatedAdminLearnModuleIdRoute: AuthenticatedAdminLearnModuleIdRoute,
+  }
+
+const AuthenticatedAdminLearnRouteWithChildren =
+  AuthenticatedAdminLearnRoute._addFileChildren(
+    AuthenticatedAdminLearnRouteChildren,
+  )
+
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminHelpRoute: typeof AuthenticatedAdminHelpRouteWithChildren
+  AuthenticatedAdminLearnRoute: typeof AuthenticatedAdminLearnRouteWithChildren
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminHelpRoute: AuthenticatedAdminHelpRouteWithChildren,
+  AuthenticatedAdminLearnRoute: AuthenticatedAdminLearnRouteWithChildren,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
 interface AuthenticatedRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedGrowthRoute: typeof AuthenticatedGrowthRoute
   AuthenticatedGrowthPackageRoute: typeof AuthenticatedGrowthPackageRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedGrowthRoute: AuthenticatedGrowthRoute,
   AuthenticatedGrowthPackageRoute: AuthenticatedGrowthPackageRoute,
 }
@@ -404,6 +601,26 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
+
+interface HelpRouteChildren {
+  HelpSlugRoute: typeof HelpSlugRoute
+}
+
+const HelpRouteChildren: HelpRouteChildren = {
+  HelpSlugRoute: HelpSlugRoute,
+}
+
+const HelpRouteWithChildren = HelpRoute._addFileChildren(HelpRouteChildren)
+
+interface LearnRouteChildren {
+  LearnModuleIdRoute: typeof LearnModuleIdRoute
+}
+
+const LearnRouteChildren: LearnRouteChildren = {
+  LearnModuleIdRoute: LearnModuleIdRoute,
+}
+
+const LearnRouteWithChildren = LearnRoute._addFileChildren(LearnRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -413,7 +630,9 @@ const rootRouteChildren: RootRouteChildren = {
   BattlefieldAtlantisRoute: BattlefieldAtlantisRoute,
   ChildrenOfAquariusRoute: ChildrenOfAquariusRoute,
   DarkerAgesRoute: DarkerAgesRoute,
+  HelpRoute: HelpRouteWithChildren,
   IndustryRoute: IndustryRoute,
+  LearnRoute: LearnRouteWithChildren,
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
