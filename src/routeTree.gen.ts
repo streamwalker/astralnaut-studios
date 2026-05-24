@@ -31,6 +31,7 @@ import { Route as AuthenticatedGrowthPackageRouteImport } from './routes/_authen
 import { Route as AuthenticatedGrowthRouteImport } from './routes/_authenticated/growth'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ReaderSeriesIssueRouteImport } from './routes/reader.$series.$issue'
+import { Route as AuthenticatedAdminSecurityRouteImport } from './routes/_authenticated/admin.security'
 import { Route as AuthenticatedAdminLearnRouteImport } from './routes/_authenticated/admin.learn'
 import { Route as AuthenticatedAdminHelpRouteImport } from './routes/_authenticated/admin.help'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
@@ -147,6 +148,12 @@ const ReaderSeriesIssueRoute = ReaderSeriesIssueRouteImport.update({
   path: '/reader/$series/$issue',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminSecurityRoute =
+  AuthenticatedAdminSecurityRouteImport.update({
+    id: '/security',
+    path: '/security',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminLearnRoute = AuthenticatedAdminLearnRouteImport.update({
   id: '/learn',
   path: '/learn',
@@ -199,6 +206,7 @@ export interface FileRoutesByFullPath {
   '/raffle/rules': typeof RaffleRulesRoute
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
+  '/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
   '/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
@@ -227,6 +235,7 @@ export interface FileRoutesByTo {
   '/raffle/rules': typeof RaffleRulesRoute
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
+  '/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
   '/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
@@ -257,6 +266,7 @@ export interface FileRoutesById {
   '/raffle/rules': typeof RaffleRulesRoute
   '/_authenticated/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/_authenticated/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
+  '/_authenticated/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
   '/_authenticated/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/_authenticated/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
@@ -287,6 +297,7 @@ export interface FileRouteTypes {
     | '/raffle/rules'
     | '/admin/help'
     | '/admin/learn'
+    | '/admin/security'
     | '/reader/$series/$issue'
     | '/admin/help/$slug'
     | '/admin/learn/$moduleId'
@@ -315,6 +326,7 @@ export interface FileRouteTypes {
     | '/raffle/rules'
     | '/admin/help'
     | '/admin/learn'
+    | '/admin/security'
     | '/reader/$series/$issue'
     | '/admin/help/$slug'
     | '/admin/learn/$moduleId'
@@ -344,6 +356,7 @@ export interface FileRouteTypes {
     | '/raffle/rules'
     | '/_authenticated/admin/help'
     | '/_authenticated/admin/learn'
+    | '/_authenticated/admin/security'
     | '/reader/$series/$issue'
     | '/_authenticated/admin/help/$slug'
     | '/_authenticated/admin/learn/$moduleId'
@@ -527,6 +540,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReaderSeriesIssueRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/security': {
+      id: '/_authenticated/admin/security'
+      path: '/security'
+      fullPath: '/admin/security'
+      preLoaderRoute: typeof AuthenticatedAdminSecurityRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/learn': {
       id: '/_authenticated/admin/learn'
       path: '/learn'
@@ -596,11 +616,13 @@ const AuthenticatedAdminLearnRouteWithChildren =
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminHelpRoute: typeof AuthenticatedAdminHelpRouteWithChildren
   AuthenticatedAdminLearnRoute: typeof AuthenticatedAdminLearnRouteWithChildren
+  AuthenticatedAdminSecurityRoute: typeof AuthenticatedAdminSecurityRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminHelpRoute: AuthenticatedAdminHelpRouteWithChildren,
   AuthenticatedAdminLearnRoute: AuthenticatedAdminLearnRouteWithChildren,
+  AuthenticatedAdminSecurityRoute: AuthenticatedAdminSecurityRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
@@ -665,13 +687,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
