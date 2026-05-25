@@ -82,7 +82,7 @@ export function CoverFan() {
   return (
     <>
       <div
-        className="relative mx-auto aspect-[5/6] w-full max-w-[560px]"
+        className="relative mx-auto aspect-[5/6] w-full max-w-[840px]"
         onMouseEnter={() => { pausedRef.current = true; }}
         onMouseLeave={() => { pausedRef.current = false; }}
       >
