@@ -1,5 +1,7 @@
-On `src/routes/index.tsx` (the homepage):
-1. Remove the outer `<div className="mx-auto max-w-7xl px-6 pt-10 pb-2 text-center">` wrapper around the logo so it flows inline with the page instead of sitting on a card-like block.
-2. Reduce the logo's `max-w-[720px]` to `max-w-[360px]` (50% smaller).
-3. Delete the "A subsidiary of Astralnaut Studios" subtitle line entirely.
-4. Adjust top/bottom spacing (e.g. `pt-6 pb-4`) so the reduced logo sits naturally between the site header and the hero section headline. Keep the neon drop-shadow filter.
+The visible "card" is the dark rectangular background baked into the logo PNG itself. Two changes:
+
+1. **Replace the logo asset** with the newly uploaded `user-uploads://Real_World_Comics_V3.png` → overwrite `src/assets/real-world-comics-logo.png`. Run it through background removal (`imagegen--edit_image` with `transparent_background: true`) so the metallic "Real World Comics" mark sits on transparency.
+
+2. **Update `src/routes/index.tsx`** logo `<img>` block: keep the current size (`max-w-[360px]`) and spacing, but since the asset is now transparent it will blend directly into the page background — no card edge. Keep the cyan drop-shadow for the glow.
+
+No other files change.
