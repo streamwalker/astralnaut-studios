@@ -53,14 +53,14 @@ function Home() {
       <SiteHeader />
       <main>
         {/* Brand mark */}
-        <div className="mx-auto max-w-7xl px-6 pt-10 pb-2 text-center">
+        <div className="pt-10 pb-2 text-center" style={{ paddingLeft: "96px", paddingRight: "96px" }}>
           <img
             src={rwcLogo}
             alt="Real World Comics"
             width={960}
             height={520}
             loading="eager"
-            className="mx-auto w-full max-w-[720px] h-auto"
+            className="mx-auto w-full h-auto"
             style={{ filter: "drop-shadow(0 0 28px rgba(34,211,255,0.35))" }}
           />
           <div className="eyebrow mt-3" style={{ color: "var(--gold)" }}>
