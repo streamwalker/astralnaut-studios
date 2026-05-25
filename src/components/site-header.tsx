@@ -8,7 +8,6 @@ import astralnautLogo from "@/assets/astralnaut-studios-logo.png";
 type NavItem = { to: string; label: string; exact?: boolean; accent?: boolean; params?: Record<string, string>; tour?: string };
 const nav: NavItem[] = [
   { to: "/", label: "Library", exact: true, tour: "nav-library" },
-  { to: "/battlefield-atlantis", label: "Characters" },
   { to: "/reader/$series/$issue", label: "Reader", params: { series: "battlefield-atlantis", issue: "1" }, tour: "nav-reader" },
   { to: "/perks", label: "Perks" },
   { to: "/pricing", label: "Pricing", tour: "nav-pricing" },
