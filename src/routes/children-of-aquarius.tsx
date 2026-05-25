@@ -3,6 +3,19 @@ import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { getSeriesBundle, getIssueBundle } from "@/lib/public.functions";
 import { pageUrl } from "@/lib/storage";
 import coaLogo from "@/assets/children-of-aquarius-logo.png";
+import castMichael from "@/assets/coa-cast/michael.png";
+import castLila from "@/assets/coa-cast/lila.png";
+import castJon from "@/assets/coa-cast/jon-monarch.png";
+import castBlaire from "@/assets/coa-cast/father-blaire.png";
+import castBurke from "@/assets/coa-cast/edmund-burke.png";
+
+const CAST = [
+  { img: castMichael, name: "Michael", role: "Heart of Christ", blurb: "A thoughtful Brooklyn 15-year-old, fiercely loyal and driven by justice." },
+  { img: castLila, name: "Lila", role: "Michael's Friend", blurb: "Sharp-witted voice of reason. Skeptical, ambitious, three steps ahead." },
+  { img: castJon, name: "Jon Monarch", role: "Cybernetic Operative", blurb: "Resurrected after 25,000 years. Shifts timelines and realities at will." },
+  { img: castBlaire, name: "Father Alistaire Blaire", role: "Protector of the Trinity", blurb: "Excommunicated immortal priest guarding the Christ Child across centuries." },
+  { img: castBurke, name: "Edmund Burke", role: "Strategic Operative", blurb: "Tactical, composed, and lethal in a bespoke three-piece suit." },
+];
 
 export const Route = createFileRoute("/children-of-aquarius")({
   loader: async () => {
@@ -97,6 +110,26 @@ function COAPage() {
                 </div>
               );
             })}
+          </div>
+        </section>
+
+        {/* Cast */}
+        <section className="mt-20">
+          <div className="eyebrow">Dramatis personae</div>
+          <h2 className="mt-2 text-3xl font-black">Cast</h2>
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {CAST.map((c) => (
+              <article key={c.name} className="card-rwc group overflow-hidden rounded-xl border" style={{ borderColor: "var(--border-line)" }}>
+                <div className="aspect-[16/10] overflow-hidden bg-black">
+                  <img src={c.img} alt={`${c.name} — ${c.role}`} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+                </div>
+                <div className="p-5">
+                  <div className="font-mono text-[10px] uppercase tracking-[2px] text-[var(--gold)]">{c.role}</div>
+                  <h3 className="mt-1 text-xl font-black text-white">{c.name}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--ink2)]">{c.blurb}</p>
+                </div>
+              </article>
+            ))}
           </div>
         </section>
 
