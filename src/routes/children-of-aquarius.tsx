@@ -13,6 +13,8 @@ import castStacey from "@/assets/coa-cast/stacey.png";
 import castAnnie from "@/assets/coa-cast/annie.png";
 import castGil from "@/assets/coa-cast/gil.png";
 import castJeff from "@/assets/coa-cast/jeff.png";
+import castRyokoPhaseOne from "@/assets/coa-cast/ryoko-phase-one.png";
+import castRyokoTactical from "@/assets/coa-cast/ryoko-tactical-ops.png";
 
 const CAST = [
   { img: castMichael, name: "Michael", role: "Heart of Christ", blurb: "A thoughtful Brooklyn 15-year-old, fiercely loyal and driven by justice." },
@@ -25,7 +27,10 @@ const CAST = [
   { img: castAnnie, name: "Annie", role: "Guide and Peacemaker", blurb: "Grounded, intuitive, and quietly magnetic, bringing empathy and wisdom wherever she goes." },
   { img: castGil, name: "Gil", role: "Michael's Father Figure", blurb: "A retired fire chief with quiet strength, hidden history, and an instinct to protect." },
   { img: castJeff, name: "Jeff", role: "Troubled Teen", blurb: "Guarded, observant, and creative—a Brooklyn outsider carrying more anger than he shows." },
+  { img: castRyokoPhaseOne, name: "Ryoko Tsurayaba", role: "The Head of Christ — Phase One", blurb: "Quietly intense 13-year-old psionic from Japan. Telekinesis, psychometry, and glimpses of past and future." },
+  { img: castRyokoTactical, name: "Ryoko Tsurayaba", role: "The Head of Christ — Tactical Ops", blurb: "Disciplined and calm under pressure. Precision force manipulation, levitation, and battlefield awareness." },
 ];
+
 
 export const Route = createFileRoute("/children-of-aquarius")({
   loader: async () => {
