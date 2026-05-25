@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { getSeriesBundle, getIssueBundle } from "@/lib/public.functions";
@@ -78,6 +79,16 @@ function COAPage() {
   const pages = issueBundle?.pages ?? [];
   const drops = issueBundle?.drops ?? [];
   const cover = pageUrl(issue?.cover_path);
+  const [activeCast, setActiveCast] = useState<typeof CAST[number] | null>(null);
+
+  useEffect(() => {
+    if (!activeCast) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setActiveCast(null); };
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => { document.body.style.overflow = prev; window.removeEventListener("keydown", onKey); };
+  }, [activeCast]);
 
   return (
     <>
@@ -131,8 +142,15 @@ function COAPage() {
           <div className="eyebrow">Dramatis personae</div>
           <h2 className="mt-2 text-3xl font-black">Cast</h2>
           <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-            {CAST.map((c) => (
-              <article key={c.name} className="card-rwc group overflow-hidden rounded-xl border" style={{ borderColor: "var(--border-line)" }}>
+            {CAST.map((c, i) => (
+              <button
+                key={c.name + i}
+                type="button"
+                onClick={() => setActiveCast(c)}
+                className="card-rwc group overflow-hidden rounded-xl border text-left focus:outline-none focus:ring-2 focus:ring-[var(--neon)]"
+                style={{ borderColor: "var(--border-line)" }}
+                aria-label={`View ${c.name} profile full screen`}
+              >
                 <div className="aspect-[16/10] overflow-hidden bg-black">
                   <img src={c.img} alt={`${c.name} — ${c.role}`} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
                 </div>
@@ -141,7 +159,7 @@ function COAPage() {
                   <h3 className="mt-1 text-xl font-black text-white">{c.name}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-[var(--ink2)]">{c.blurb}</p>
                 </div>
-              </article>
+              </button>
             ))}
           </div>
         </section>
@@ -176,6 +194,31 @@ function COAPage() {
         )}
       </main>
       <SiteFooter />
+      {activeCast && (
+        <div
+          onClick={() => setActiveCast(null)}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${activeCast.name} profile`}
+        >
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); setActiveCast(null); }}
+            className="absolute right-4 top-4 z-10 rounded-full border bg-black/60 px-3 py-1 font-mono text-xs text-white hover:bg-black"
+            style={{ borderColor: "var(--border-line)" }}
+            aria-label="Close"
+          >
+            ✕ Close
+          </button>
+          <img
+            src={activeCast.img}
+            alt={`${activeCast.name} — ${activeCast.role}`}
+            onClick={(e) => e.stopPropagation()}
+            className="max-h-[95vh] max-w-[95vw] object-contain"
+          />
+        </div>
+      )}
     </>
   );
 }
