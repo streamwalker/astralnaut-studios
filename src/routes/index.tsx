@@ -52,6 +52,23 @@ function Home() {
     <>
       <SiteHeader />
       <main>
+        {/* Brand mark */}
+        <div className="mx-auto max-w-7xl px-6 pt-10 pb-2 text-center">
+          <img
+            src={rwcLogo}
+            alt="Real World Comics"
+            width={960}
+            height={520}
+            loading="eager"
+            className="mx-auto w-full max-w-[720px] h-auto"
+            style={{ filter: "drop-shadow(0 0 28px rgba(34,211,255,0.35))" }}
+          />
+          <div className="eyebrow mt-3" style={{ color: "var(--gold)" }}>
+            A subsidiary of Astralnaut Studios
+          </div>
+        </div>
+
+
         {/* Hero */}
         <section className="mx-auto max-w-7xl px-6 py-16 md:py-24">
           <div className="grid items-center gap-12 md:grid-cols-2">
