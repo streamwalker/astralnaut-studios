@@ -3,7 +3,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { TierBadge } from "@/components/TierGate";
-import baLogo from "@/assets/battlefield-atlantis-logo.png";
+import astralnautLogo from "@/assets/astralnaut-studios-logo.png";
 
 type NavItem = { to: string; label: string; exact?: boolean; accent?: boolean; params?: Record<string, string>; tour?: string };
 const nav: NavItem[] = [
@@ -56,20 +56,13 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md" style={{ background: "rgba(2,0,12,0.7)", borderBottom: "1px solid var(--border-line)" }}>
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3">
-        <Link to="/" className="flex items-center gap-3">
-          <div
-            className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-lg"
-            style={{
-              background: "rgba(34,211,255,0.06)",
-              border: "1px solid rgba(34,211,255,0.35)",
-              boxShadow: "0 0 18px rgba(34,211,255,0.18) inset",
-            }}
-          >
-            <img src={baLogo} alt="Battlefield Atlantis" className="h-9 w-9 object-contain" />
-          </div>
-          <div className="text-sm font-extrabold uppercase tracking-[3px]" style={{ color: "var(--ink)" }}>
-            Astralnaut Studios
-          </div>
+        <Link to="/" className="flex items-center">
+          <img
+            src={astralnautLogo}
+            alt="Astralnaut Studios"
+            className="h-10 w-auto"
+            style={{ filter: "drop-shadow(0 0 12px rgba(34,211,255,0.35))" }}
+          />
         </Link>
         <nav className="hidden items-center gap-1 lg:flex">
           {nav.map((n, i) => {
