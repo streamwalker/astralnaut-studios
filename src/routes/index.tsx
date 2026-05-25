@@ -8,6 +8,7 @@ import { listSeries, getMilestone, getSiteCopy, getSubscriberCount } from "@/lib
 import { Link } from "@tanstack/react-router";
 import { CoverFan } from "@/components/cover-fan";
 import { CountUp } from "@/components/count-up";
+import rwcLogo from "@/assets/real-world-comics-logo.png";
 
 
 export const Route = createFileRoute("/")({
