@@ -8,6 +8,11 @@ import castLila from "@/assets/coa-cast/lila.png";
 import castJon from "@/assets/coa-cast/jon-monarch.png";
 import castBlaire from "@/assets/coa-cast/father-blaire.png";
 import castBurke from "@/assets/coa-cast/edmund-burke.png";
+import castSimon from "@/assets/coa-cast/simon-olatunji.png";
+import castStacey from "@/assets/coa-cast/stacey.png";
+import castAnnie from "@/assets/coa-cast/annie.png";
+import castGil from "@/assets/coa-cast/gil.png";
+import castJeff from "@/assets/coa-cast/jeff.png";
 
 const CAST = [
   { img: castMichael, name: "Michael", role: "Heart of Christ", blurb: "A thoughtful Brooklyn 15-year-old, fiercely loyal and driven by justice." },
@@ -15,6 +20,11 @@ const CAST = [
   { img: castJon, name: "Jon Monarch", role: "Cybernetic Operative", blurb: "Resurrected after 25,000 years. Shifts timelines and realities at will." },
   { img: castBlaire, name: "Father Alistaire Blaire", role: "Protector of the Trinity", blurb: "Excommunicated immortal priest guarding the Christ Child across centuries." },
   { img: castBurke, name: "Edmund Burke", role: "Strategic Operative", blurb: "Tactical, composed, and lethal in a bespoke three-piece suit." },
+  { img: castSimon, name: "Simon Olatunji", role: "The Hand of Christ", blurb: "A rescued herald-protector whose faith, strength, and purpose make him a living shield." },
+  { img: castStacey, name: "Stacey", role: "Michael's Friend", blurb: "Warm, upbeat, and brave under pressure—the glue that keeps the friend group together." },
+  { img: castAnnie, name: "Annie", role: "Guide and Peacemaker", blurb: "Grounded, intuitive, and quietly magnetic, bringing empathy and wisdom wherever she goes." },
+  { img: castGil, name: "Gil", role: "Michael's Father Figure", blurb: "A retired fire chief with quiet strength, hidden history, and an instinct to protect." },
+  { img: castJeff, name: "Jeff", role: "Troubled Teen", blurb: "Guarded, observant, and creative—a Brooklyn outsider carrying more anger than he shows." },
 ];
 
 export const Route = createFileRoute("/children-of-aquarius")({
@@ -92,7 +102,6 @@ function COAPage() {
           </div>
         </section>
 
-        {/* Page grid */}
         <section className="mt-20">
           <div className="eyebrow">Issue 1 · Page index</div>
           <h2 className="mt-2 text-3xl font-black">Pages</h2>
@@ -113,11 +122,10 @@ function COAPage() {
           </div>
         </section>
 
-        {/* Cast */}
         <section className="mt-20">
           <div className="eyebrow">Dramatis personae</div>
           <h2 className="mt-2 text-3xl font-black">Cast</h2>
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {CAST.map((c) => (
               <article key={c.name} className="card-rwc group overflow-hidden rounded-xl border" style={{ borderColor: "var(--border-line)" }}>
                 <div className="aspect-[16/10] overflow-hidden bg-black">
@@ -133,7 +141,6 @@ function COAPage() {
           </div>
         </section>
 
-        {/* Drop schedule */}
         {drops.length > 0 && (
           <section className="mt-20">
             <div className="eyebrow">Paid release schedule</div>
