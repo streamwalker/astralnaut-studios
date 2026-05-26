@@ -127,7 +127,9 @@ function Reader() {
                 src={img}
                 alt={current?.alt_text ?? `Page ${page}`}
                 onClick={() => setZoom(!zoom)}
-                onLoad={() => setFlashKey((k) => k + 1)}
+                onLoad={() => {
+                  if (!prefersReducedMotion) setFlashKey((k) => k + 1);
+                }}
                 className={`mx-auto h-auto w-full cursor-zoom-${zoom ? "out" : "in"} ${zoom ? "scale-150" : ""}`}
                 style={{ transition: "transform .3s ease", maxHeight: "85vh", objectFit: "contain" }}
               />
