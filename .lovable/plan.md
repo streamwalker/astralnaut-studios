@@ -1,70 +1,45 @@
 ## Goal
 
-Redesign `/battlefield-atlantis` to match the screenshots — a comic-book-styled hero, a richer "Issue #1" details section, an "All 20 pages" grid with FREE/LOCKED states + drop dates, and a polished cast strip.
+Bring the live animation feel from `realworldcomics.com/battlefield-atlantis` into our `/battlefield-atlantis` page. Three coordinated layers of motion — cover, hero, and page grid — using CSS only (no new deps), tuned to the existing `--neon` / `--plasma` / `--gold` tokens and respecting `prefers-reduced-motion`.
 
-## Sections to build (top → bottom)
+Scope: BA only. COA stays as-is.
 
-### 1. Hero (comic-book cover treatment)
-Two-column layout (cover left, copy right).
+## What changes
 
-**Left — cover plate:**
-- Cover image inside a thin glowing border.
-- Top-left **"$1.00 / ISSUE #1"** comic price-box badge.
-- Top-right **"9.5 PAGES · FREE"** neon-mint pill.
-- Left edge **"1ST EXPLOSIVE ISSUE"** yellow burst sticker stacked with 3 character mini-portraits.
-- Bottom-left **"WAR OF THE WORLDS BEGINS!"** red starburst.
-- Bottom overlay gradient + centered **"▶ READ 9.5 PAGES FREE"** gradient button.
-- Caption strip under cover: `FULL FIRST ACT + TITLE PAGE · FREE · PAGES 10–20 SUBSCRIBE`.
+### 1. Cover plate — animated lightning + glow pulse
+On the left cover plate inside the hero (the `$1.00 / ISSUE #1` framed cover):
 
-**Right — copy:**
-- Eyebrow: `⚡ ASTRALNAUT STUDIOS PRESENTS` (gold).
-- BA logo inside dark framed plate with subtle glow.
-- Italic gold tagline: *"Only one will rule."*
-- Logline paragraph with bolded terms (Tri-Planetary Coalition, Poseidon King of Alympia, Zeus).
-- 4-column KPI row: **9.5** pages free, **11** subscriber pages, **3 wks** to complete, **20** total pages.
-- Two CTAs: gradient `▶ Read 9.5 pages free` + gold `Subscribe from $4.99`.
-- Two info lines below: `📺 TV-STYLE STRUCTURE: …` and `⚡ EARLY ACCESS: …`.
+- Add an absolutely-positioned `.ba-cover-fx` overlay layer with two sublayers:
+  - `.ba-cover-fx__sparks` — radial-gradient streaks anchored top-center and mid-left that fade in/out on a 2.6s loop, evoking the lightning baked into the reference cover art.
+  - `.ba-cover-fx__embers` — small warm radial blooms bottom-right on a 3.4s offset loop (the explosion glow on the reference).
+- Wrap the cover frame in a `.ba-cover-glow` shell whose `box-shadow` pulses between `rgba(34,211,255,0.18)` and `rgba(160,64,255,0.28)` on a 4s loop (matches existing `--shadow-hero` register).
+- Overlays are `pointer-events: none` and `mix-blend-mode: screen` so the cover image and the existing `▶ READ 9.5 PAGES FREE` button stay clickable and visually unchanged.
 
-### 2. Issue #1 — "Only One Will Rule"
-Two-column layout.
+### 2. Hero — logo plate glow + ambient background drift
+Right column hero area:
 
-**Left:**
-- Large heading `Issue #1 — "Only One Will Rule"` + subtitle `The cold open. The council. The ultimatum. The team that should not exist.`
-- Green-bordered callout box: `📺 STRUCTURED LIKE TV · 9.5 FREE PAGES` + paragraph.
-- Three story-beat paragraphs with colored inline labels:
-  - `FIRST ACT · PAGES 1–9.` (green)
-  - `TITLE PAGE · PAGE 9.5.` (gold)
-  - `EPISODE BODY · PAGES 10–20.` (blue)
+- BA logo plate (`baLogo` image inside its framed plate) gets a `.ba-logo-glow` class: a soft `--neon`→`--plasma` halo behind the plate that breathes on a 5s ease-in-out loop, plus a one-shot subtle scale-in on mount.
+- Add a `.ba-hero-aurora` background layer (absolute, behind hero content, `pointer-events:none`) inside the hero section only. Two large blurred radial blooms slowly drift on independent 18s / 24s loops, contained to the hero so it doesn't fight the global page background.
 
-**Right — ISSUE DETAILS card:**
-- Rows: Series, Issue, Title, Writer, Studio, Total pages, Pages 1-9 (green "FREE · the full first act"), Page 9.5 (gold "FREE · title page"), Pages 10-20 (blue "Subscribers").
-- Embedded **NEXT DROP · PAGES 10–13** sub-card with Patron / Initiate / Reader date rows.
-- Footer rows: Issue completes, Variant covers.
+### 3. Page-grid hover FX
+On the existing "All 20 pages" grid:
 
-### 3. All 20 pages grid
-- Heading `All 20 pages` + subtitle `Click any unlocked page to jump straight to it. Locked pages drop weekly on Thursdays.`
-- 5-column responsive grid (2 on mobile, 3 on sm, 5 on lg).
-- Free pages (1–9): real page thumbnail, green `FREE · PAGE N` badge top-left.
-- Page 9.5: title-page thumbnail, gold `TITLE · 9.5` badge.
-- Locked pages (10–20): dark card with 🔒 emoji centered + gold `PATRON TUE · {date}` footer strip.
-- Free pages link to the reader; locked are non-interactive.
+- Free pages (1–9) and page 9.5 thumbnails: on hover, a diagonal lightning sweep (`.ba-page-card--free::after` with a gradient + `transform: translateX` on a 0.9s transition) plus a brief border flash to `--neon`. Cursor stays pointer; click target unchanged.
+- Locked pages (10–20): on hover, a slow gold shimmer sweep on the dark card surface and the 🔒 icon nudges up 2px with a soft `--gold` glow. Card remains non-interactive (no link change).
+- Both effects are CSS-only, no JS state.
 
-### 4. Meet the cast
-Keep the existing characters loader data; restyle to match screenshot:
-- Heading `Meet the cast` + subtitle.
-- Horizontal scroll/grid of cards with light-grey gradient background, name plate at top of card (uppercase), full-body portrait, footer with cyan eyebrow `FACTION · ROLE`, bold name, one-line role descriptor.
-- Keep click-to-expand dialog behavior already implemented.
+### 4. Reduced-motion guard
+Wrap every new keyframe / loop in `@media (prefers-reduced-motion: reduce)` and either disable the animation (`animation: none`) or replace with a single static, low-contrast variant — same pattern already used for `.page-flash--*` overlays. The hover sweeps degrade to a plain border/color change.
 
 ## Technical notes
 
-- All work confined to `src/routes/battlefield-atlantis.tsx`. No backend / loader changes — data already available from `getSeriesBundle` + `getIssueBundle`.
-- Drop dates for locked pages: hard-code the schedule shown in screenshots (May 12 / May 19 / May 26 Patron Tue), since this is presentation-only. (If you'd rather drive these from the DB, say so and I'll wire a `release_at` column instead.)
-- Mini-portrait thumbs on the cover sticker and the price-box `$1.00` badge are pure decorative chrome — rendered with characters[0..2] portrait_path when available.
-- Use existing design tokens (`--neon`, `--gold`, `--ink`, `--bg2`, `--mute`) plus a few inline gradient styles for the comic stickers (red starburst, yellow burst). No new global CSS files.
-- No changes to header/footer, routing, or other pages.
+- All CSS lives in `src/styles.css` appended after the existing reader flash block. New class prefix `.ba-` to avoid collisions.
+- All JSX changes confined to `src/routes/battlefield-atlantis.tsx`: add wrapper divs/classes on the cover plate, hero section, logo plate, and the two page-card variants. No prop/loader/data changes.
+- No new packages, no Motion/GSAP, no new assets. Existing tokens only.
+- Reader (`reader.$series.$issue.tsx`) and its per-page flash map are out of scope and untouched.
 
 ## Out of scope
 
-- Editing the reader, /children-of-aquarius, or homepage.
-- Real "release_at" scheduling in the DB.
-- Variant cover gallery (just shows the "3 available" count for now).
+- COA page (explicitly deferred).
+- Any change to copy, layout, drop dates, cast section, or routing.
+- Replacing the cover image with a video / Lottie.

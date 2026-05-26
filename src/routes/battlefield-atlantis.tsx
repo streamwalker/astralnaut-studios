@@ -88,11 +88,13 @@ function BAPage() {
         <Link to="/" className="text-xs text-[var(--mute)] hover:text-[var(--neon)]">← Back to slate</Link>
 
         {/* ============ HERO ============ */}
-        <section className="mt-6 grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-center">
+        <section className="ba-hero mt-6 grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-center">
+          <div className="ba-hero-aurora" aria-hidden="true" />
           {/* Cover plate */}
-          <div className="relative aspect-[1054/1491] overflow-hidden rounded-2xl ring-1 ring-white/10" style={{ boxShadow: "var(--shadow-hero)", background: "var(--gradient-panel)" }}>
+          <div className="ba-cover-glow relative aspect-[1054/1491] overflow-hidden rounded-2xl ring-1 ring-white/10" style={{ background: "var(--gradient-panel)" }}>
             {cover ? (
               <img src={cover} alt="Battlefield Atlantis cover" className="h-full w-full object-cover" />
+
             ) : (
               <div className="flex h-full items-center justify-center p-10 text-center">
                 <div>
@@ -102,8 +104,14 @@ function BAPage() {
                 </div>
               </div>
             )}
+            {/* Animated FX overlay (sparks + embers) */}
+            <div className="ba-cover-fx" aria-hidden="true">
+              <div className="ba-cover-fx__sparks" />
+              <div className="ba-cover-fx__embers" />
+            </div>
 
             {/* Top-left: $1.00 / ISSUE #1 comic price box */}
+
             <div className="absolute left-3 top-3 overflow-hidden rounded-sm border border-black/40 bg-[#f5e9c8] font-mono text-black shadow-md">
               <div className="flex border-b border-black/30 text-[10px] font-black">
                 <div className="border-r border-black/30 px-2 py-0.5">$1.00</div>
@@ -167,9 +175,10 @@ function BAPage() {
             <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[3px] text-[var(--gold)]">
               <span>⚡</span> Astralnaut Studios Presents
             </div>
-            <div className="mt-4 flex items-center justify-center rounded-xl border border-white/10 bg-black/60 p-6 shadow-2xl" style={{ boxShadow: "0 0 80px -20px rgba(34,211,238,0.35)" }}>
+            <div className="ba-logo-glow mt-4 flex items-center justify-center rounded-xl border border-white/10 bg-black/60 p-6">
               <img src={baLogo} alt="Battlefield Atlantis" className="max-h-32 w-auto" />
             </div>
+
             <h1 className="sr-only">Battlefield Atlantis</h1>
 
             <p className="mt-5 italic text-[var(--gold)]">"Only one will rule."</p>
@@ -304,17 +313,18 @@ function BAPage() {
 
               if (isFree) {
                 const card = (
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-md ring-1 ring-emerald-400/60">
+                  <div className="ba-page-card--free relative aspect-[3/4] overflow-hidden rounded-md ring-1 ring-emerald-400/60">
                     {thumb ? (
                       <img src={thumb} alt={`Page ${n}`} className="h-full w-full object-cover" />
                     ) : (
                       <div className="flex h-full items-center justify-center text-xs text-[var(--mute)]">Page {n}</div>
                     )}
-                    <div className="absolute left-2 top-2 rounded bg-emerald-400 px-2 py-0.5 text-[10px] font-black tracking-wider text-emerald-950">
+                    <div className="absolute left-2 top-2 rounded bg-emerald-400 px-2 py-0.5 text-[10px] font-black tracking-wider text-emerald-950 z-10">
                       FREE · PAGE {n}
                     </div>
                   </div>
                 );
+
                 return readerLink ? (
                   <Link key={n} {...readerLink} className="block transition hover:scale-[1.02]">{card}</Link>
                 ) : (
@@ -323,25 +333,27 @@ function BAPage() {
               }
 
               return (
-                <div key={n} className="relative flex aspect-[3/4] flex-col overflow-hidden rounded-md border border-white/5 bg-[#0a0e1f]">
-                  <div className="absolute left-2 top-2 rounded bg-white/5 px-2 py-0.5 text-[10px] font-black tracking-wider text-white/40">
+                <div key={n} className="ba-page-card--locked relative flex aspect-[3/4] flex-col overflow-hidden rounded-md border border-white/5 bg-[#0a0e1f]">
+                  <div className="absolute left-2 top-2 rounded bg-white/5 px-2 py-0.5 text-[10px] font-black tracking-wider text-white/40 z-10">
                     PAGE {n}
                   </div>
                   <div className="flex flex-1 items-center justify-center">
-                    <Lock className="h-8 w-8 text-yellow-700/70" />
+                    <Lock className="ba-lock h-8 w-8 text-yellow-700/70" />
                   </div>
                   {dropLabel && (
-                    <div className="bg-black/60 px-2 py-1.5 text-center font-mono text-[9px] font-black tracking-[1.5px] text-[var(--gold)]">
+                    <div className="bg-black/60 px-2 py-1.5 text-center font-mono text-[9px] font-black tracking-[1.5px] text-[var(--gold)] z-10">
                       {dropLabel}
                     </div>
                   )}
                 </div>
               );
+
             })}
 
             {/* Title page 9.5 — inserted at the end of the free row visually (after page 9, before page 10). We append it here for simplicity. */}
-            <div className="relative aspect-[3/4] overflow-hidden rounded-md ring-1 ring-[var(--gold)]/60 bg-[var(--bg2)]">
-              <div className="absolute left-2 top-2 rounded bg-[var(--gold)] px-2 py-0.5 text-[10px] font-black tracking-wider text-amber-950">
+            <div className="ba-page-card--free relative aspect-[3/4] overflow-hidden rounded-md ring-1 ring-[var(--gold)]/60 bg-[var(--bg2)]">
+              <div className="absolute left-2 top-2 rounded bg-[var(--gold)] px-2 py-0.5 text-[10px] font-black tracking-wider text-amber-950 z-10">
+
                 TITLE · 9.5
               </div>
               <div className="flex h-full items-center justify-center p-4 text-center">
