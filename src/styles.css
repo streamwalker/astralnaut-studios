@@ -119,3 +119,48 @@
   .badge-gold { background: rgba(244,201,93,0.12); color: var(--gold); border: 1px solid rgba(244,201,93,0.3); padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
 }
 
+/* Reader page first-view flash overlays */
+@keyframes page-flash-lightning {
+  0%   { opacity: 0; }
+  8%   { opacity: 1; }
+  14%  { opacity: 0.15; }
+  22%  { opacity: 0.95; }
+  30%  { opacity: 0.05; }
+  45%  { opacity: 0.6; }
+  100% { opacity: 0; }
+}
+@keyframes page-flash-explosion {
+  0%   { opacity: 0; transform: scale(0.4); }
+  10%  { opacity: 1; transform: scale(1.05); }
+  35%  { opacity: 0.85; transform: scale(1.15); }
+  100% { opacity: 0; transform: scale(1.4); }
+}
+@keyframes page-flash-pulse {
+  0%   { opacity: 0; }
+  20%  { opacity: 0.7; }
+  100% { opacity: 0; }
+}
+.page-flash {
+  position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+  opacity: 0; will-change: opacity, transform;
+}
+.page-flash--lightning {
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(180,220,255,0.95), rgba(80,140,255,0.5) 40%, transparent 70%),
+    linear-gradient(180deg, rgba(255,255,255,0.6), transparent 60%);
+  animation: page-flash-lightning 1.4s ease-out forwards;
+}
+.page-flash--explosion {
+  background:
+    radial-gradient(circle at 50% 55%, rgba(255,240,180,1) 0%, rgba(255,140,40,0.9) 25%, rgba(200,40,10,0.6) 55%, transparent 80%);
+  animation: page-flash-explosion 1.6s ease-out forwards;
+}
+.page-flash--pulse {
+  background: radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0.55), transparent 70%);
+  animation: page-flash-pulse 0.9s ease-out forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-flash { display: none; }
+}
+
+
