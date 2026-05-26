@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { getSeriesBundle, getIssueBundle } from "@/lib/public.functions";
 import { pageUrl } from "@/lib/storage";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Lock } from "lucide-react";
 import coaLogo from "@/assets/children-of-aquarius-logo.png";
 import castMichael from "@/assets/coa-cast/michael.png";
 import castLila from "@/assets/coa-cast/lila.png";
@@ -18,20 +19,19 @@ import castRyokoPhaseOne from "@/assets/coa-cast/ryoko-phase-one.png";
 import castRyokoTactical from "@/assets/coa-cast/ryoko-tactical-ops.png";
 
 const CAST = [
-  { img: castMichael, name: "Michael", role: "Heart of Christ", blurb: "A thoughtful Brooklyn 15-year-old, fiercely loyal and driven by justice." },
-  { img: castLila, name: "Lila", role: "Michael's Friend", blurb: "Sharp-witted voice of reason. Skeptical, ambitious, three steps ahead." },
-  { img: castJon, name: "Jon Monarch", role: "Cybernetic Operative", blurb: "Resurrected after 25,000 years. Shifts timelines and realities at will." },
-  { img: castBlaire, name: "Father Alistaire Blaire", role: "Protector of the Trinity", blurb: "Excommunicated immortal priest guarding the Christ Child across centuries." },
-  { img: castBurke, name: "Edmund Burke", role: "Strategic Operative", blurb: "Tactical, composed, and lethal in a bespoke three-piece suit." },
-  { img: castSimon, name: "Simon Olatunji", role: "The Hand of Christ", blurb: "A rescued herald-protector whose faith, strength, and purpose make him a living shield." },
-  { img: castStacey, name: "Stacey", role: "Michael's Friend", blurb: "Warm, upbeat, and brave under pressure—the glue that keeps the friend group together." },
-  { img: castAnnie, name: "Annie", role: "Guide and Peacemaker", blurb: "Grounded, intuitive, and quietly magnetic, bringing empathy and wisdom wherever she goes." },
-  { img: castGil, name: "Gil", role: "Michael's Father Figure", blurb: "A retired fire chief with quiet strength, hidden history, and an instinct to protect." },
-  { img: castJeff, name: "Jeff", role: "Troubled Teen", blurb: "Guarded, observant, and creative—a Brooklyn outsider carrying more anger than he shows." },
-  { img: castRyokoPhaseOne, name: "Ryoko Tsurayaba", role: "The Head of Christ — Phase One", blurb: "Quietly intense 13-year-old psionic from Japan. Telekinesis, psychometry, and glimpses of past and future." },
-  { img: castRyokoTactical, name: "Ryoko Tsurayaba", role: "The Head of Christ — Tactical Ops", blurb: "Disciplined and calm under pressure. Precision force manipulation, levitation, and battlefield awareness." },
+  { img: castMichael, name: "Michael", role: "Heart of Christ", faction: "The Trinity", blurb: "A thoughtful Brooklyn 15-year-old, fiercely loyal and driven by justice.", bio: "Michael is the Heart of the Trinity — compassion, conscience, and the moral center of the Christ Child's three-fold expression in the Aquarian Age." },
+  { img: castLila, name: "Lila", role: "Michael's Friend", faction: "Brooklyn Circle", blurb: "Sharp-witted voice of reason. Skeptical, ambitious, three steps ahead.", bio: "Lila reads people the way other kids read screens. She is the first to see the pattern, and the last to admit she is afraid of it." },
+  { img: castJon, name: "Jon Monarch", role: "Cybernetic Operative", faction: "Operatives", blurb: "Resurrected after 25,000 years. Shifts timelines and realities at will.", bio: "Jon Monarch returned to a world that buried him long ago. He moves between timelines with the casual cruelty of a man who has already paid every price." },
+  { img: castBlaire, name: "Father Alistaire Blaire", role: "Protector of the Trinity", faction: "Excommunicated Clergy", blurb: "Excommunicated immortal priest guarding the Christ Child across centuries.", bio: "Excommunicated by Rome, sustained by something older. Blaire has guarded the Trinity for longer than any church has existed." },
+  { img: castBurke, name: "Edmund Burke", role: "Strategic Operative", faction: "Operatives", blurb: "Tactical, composed, and lethal in a bespoke three-piece suit.", bio: "Where Jon improvises, Burke plans. He arrives early, leaves late, and never raises his voice." },
+  { img: castSimon, name: "Simon Olatunji", role: "The Hand of Christ", faction: "The Trinity", blurb: "A rescued herald-protector whose faith, strength, and purpose make him a living shield.", bio: "The Hand acts. Simon's strength is faith made physical — the Trinity's shield in the field." },
+  { img: castStacey, name: "Stacey", role: "Michael's Friend", faction: "Brooklyn Circle", blurb: "Warm, upbeat, and brave under pressure—the glue that keeps the friend group together.", bio: "Stacey holds the circle. The first to crack a joke, the last to leave a friend behind." },
+  { img: castAnnie, name: "Annie", role: "Guide and Peacemaker", faction: "Brooklyn Circle", blurb: "Grounded, intuitive, and quietly magnetic, bringing empathy and wisdom wherever she goes.", bio: "Annie's gift is presence. People tell her things they have not told themselves." },
+  { img: castGil, name: "Gil", role: "Michael's Father Figure", faction: "Brooklyn Circle", blurb: "A retired fire chief with quiet strength, hidden history, and an instinct to protect.", bio: "A retired fire chief who walked into more burning buildings than anyone remembers. He is not finished walking in." },
+  { img: castJeff, name: "Jeff", role: "Troubled Teen", faction: "Brooklyn Circle", blurb: "Guarded, observant, and creative—a Brooklyn outsider carrying more anger than he shows.", bio: "Jeff sees what others miss because he has spent his life being missed. The anger is loud. The art is louder." },
+  { img: castRyokoPhaseOne, name: "Ryoko Tsurayaba", role: "The Head of Christ — Phase One", faction: "The Trinity", blurb: "Quietly intense 13-year-old psionic from Japan. Telekinesis, psychometry, and glimpses of past and future.", bio: "The Head perceives. Ryoko's mind reaches through time the way other minds reach through a room." },
+  { img: castRyokoTactical, name: "Ryoko Tsurayaba", role: "The Head of Christ — Tactical Ops", faction: "The Trinity", blurb: "Disciplined and calm under pressure. Precision force manipulation, levitation, and battlefield awareness.", bio: "Phase Two Ryoko has been trained. The same gift, weaponized — and held in check by the same quiet center." },
 ];
-
 
 export const Route = createFileRoute("/children-of-aquarius")({
   loader: async () => {
@@ -51,6 +51,7 @@ export const Route = createFileRoute("/children-of-aquarius")({
       { property: "og:url", content: "/children-of-aquarius" },
       { property: "og:image", content: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/children-of-aquarius/issue-1/page-0.png" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/children-of-aquarius/issue-1/page-0.png" },
     ],
     links: [{ rel: "canonical", href: "/children-of-aquarius" }],
     scripts: [{
@@ -78,17 +79,25 @@ function COAPage() {
   const issue = issueBundle?.issue;
   const pages = issueBundle?.pages ?? [];
   const drops = issueBundle?.drops ?? [];
+  const factions = bundle.factions;
   const cover = pageUrl(issue?.cover_path);
-  const [activeCast, setActiveCast] = useState<typeof CAST[number] | null>(null);
+  const readerLink = issue
+    ? { to: "/reader/$series/$issue" as const, params: { series: bundle.series.slug, issue: String(issue.issue_number) } }
+    : null;
 
-  useEffect(() => {
-    if (!activeCast) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setActiveCast(null); };
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onKey);
-    return () => { document.body.style.overflow = prev; window.removeEventListener("keydown", onKey); };
-  }, [activeCast]);
+  const totalPages = Math.ceil(Number(issue?.total_pages ?? 24));
+  const freeCount = Number(issue?.free_pages ?? 9);
+  const paidCount = Number(issue?.paid_pages ?? 15);
+
+  // Build a per-page drop label map from issue_drops (week → pages[]).
+  const DROP_SCHEDULE: Record<number, string> = {};
+  for (const d of drops as Array<{ week: number; patron_date: string; pages: number[] }>) {
+    const label = `PATRON TUE · ${formatDropDate(d.patron_date)}`;
+    for (const p of d.pages ?? []) DROP_SCHEDULE[p] = label;
+  }
+
+  // Up to 3 hero sticker thumbs from the local cast.
+  const heroThumbs = [castMichael, castRyokoPhaseOne, castSimon];
 
   return (
     <>
@@ -96,133 +105,380 @@ function COAPage() {
       <main className="mx-auto max-w-7xl px-6 py-12">
         <Link to="/" className="text-xs text-[var(--mute)] hover:text-[var(--neon)]">← Back to slate</Link>
 
-        <section className="mt-6 grid gap-10 md:grid-cols-[1fr_1.4fr] md:items-center">
-          <div className="aspect-[1054/1491] overflow-hidden rounded-2xl" style={{ boxShadow: "var(--shadow-hero)", background: "var(--gradient-panel)" }}>
-            {cover ? <img src={cover} alt="Children of Aquarius cover" className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center p-10 text-center"><div><div className="eyebrow">Cover forthcoming</div><div className="mt-3 text-3xl font-black">Children of Aquarius</div><div className="mt-1 text-[var(--ink2)]">Issue 1 · The Age Begins</div></div></div>}
-          </div>
-          <div>
-            <div className="eyebrow">{bundle.series.genre}</div>
-            <img src={coaLogo} alt="Children of Aquarius" className="mt-3 max-h-32 w-auto" />
-            <h1 className="sr-only">Children of Aquarius</h1>
-            <div className="mt-2 font-mono text-sm text-[var(--mute)]">ISSUE 1 · {issue?.subtitle ?? issue?.title}</div>
-            <p className="mt-5 max-w-xl text-[var(--ink2)]">{bundle.series.logline}</p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              {issue && <Link to="/reader/$series/$issue" params={{ series: bundle.series.slug, issue: String(issue.issue_number) }} className="btn-cta">▶ Read first 9 pages free</Link>}
-              <Link to="/pricing" className="btn-ghost">Unlock all 24 pages</Link>
+        {/* ============ HERO ============ */}
+        <section className="mt-6 grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-center">
+          {/* Cover plate */}
+          <div className="relative aspect-[1054/1491] overflow-hidden rounded-2xl ring-1 ring-white/10" style={{ boxShadow: "var(--shadow-hero)", background: "var(--gradient-panel)" }}>
+            {cover ? (
+              <img src={cover} alt="Children of Aquarius cover" className="h-full w-full object-cover" />
+            ) : (
+              <div className="flex h-full items-center justify-center p-10 text-center">
+                <div>
+                  <div className="eyebrow">Cover forthcoming</div>
+                  <div className="mt-3 text-3xl font-black">Children of Aquarius</div>
+                  <div className="mt-1 text-[var(--ink2)]">Issue 1 · The Age Begins</div>
+                </div>
+              </div>
+            )}
+
+            {/* Top-left: $1.00 / ISSUE #1 comic price box */}
+            <div className="absolute left-3 top-3 overflow-hidden rounded-sm border border-black/40 bg-[#f5e9c8] font-mono text-black shadow-md">
+              <div className="flex border-b border-black/30 text-[10px] font-black">
+                <div className="border-r border-black/30 px-2 py-0.5">$1.00</div>
+                <div className="px-2 py-0.5">1</div>
+              </div>
+              <div className="px-2 py-1 text-[11px] font-black tracking-wider">ISSUE #1</div>
             </div>
-            <div className="mt-8 grid grid-cols-3 gap-6">
-              <KV label="Free pages" value="9" />
-              <KV label="Paid pages" value="15" />
-              <KV label="Cadence" value="3/wk" />
+
+            {/* Top-right: 9 PAGES FREE pill */}
+            <div className="absolute right-3 top-3 rounded-md bg-gradient-to-r from-violet-300 to-fuchsia-300 px-3 py-1.5 text-[11px] font-black tracking-wider text-violet-950 shadow-lg">
+              {freeCount} PAGES · FREE
+            </div>
+
+            {/* Left edge: starburst sticker + character mini-portraits */}
+            <div className="absolute left-3 top-24 flex flex-col items-center gap-1">
+              <div
+                className="flex h-14 w-14 items-center justify-center text-center text-[8px] font-black leading-tight text-violet-950"
+                style={{
+                  background: "radial-gradient(circle, #fde047 0%, #facc15 70%, #ca8a04 100%)",
+                  clipPath: "polygon(50% 0%, 61% 20%, 80% 12%, 75% 33%, 95% 38%, 80% 50%, 95% 62%, 75% 67%, 80% 88%, 61% 80%, 50% 100%, 39% 80%, 20% 88%, 25% 67%, 5% 62%, 20% 50%, 5% 38%, 25% 33%, 20% 12%, 39% 20%)",
+                }}
+              >
+                THE AGE<br />BEGINS!
+              </div>
+              {heroThumbs.map((src, i) => (
+                <div key={i} className="h-10 w-10 overflow-hidden rounded-sm border-2 border-black/70 shadow">
+                  <img src={src} alt="" className="h-full w-full object-cover" />
+                </div>
+              ))}
+            </div>
+
+            {/* Bottom-left: THE CHILD AWAKENS starburst */}
+            <div
+              className="absolute -left-2 bottom-16 flex h-28 w-28 -rotate-12 items-center justify-center text-center text-[11px] font-black leading-tight text-yellow-300 drop-shadow-[2px_2px_0_rgba(0,0,0,0.8)]"
+              style={{
+                background: "radial-gradient(circle, #7c3aed 0%, #4c1d95 80%)",
+                clipPath: "polygon(50% 0%, 58% 18%, 78% 8%, 72% 30%, 96% 28%, 80% 47%, 100% 60%, 78% 65%, 88% 88%, 65% 78%, 60% 100%, 45% 82%, 30% 100%, 25% 78%, 5% 88%, 15% 65%, 0% 55%, 18% 45%, 0% 28%, 22% 30%, 18% 8%, 38% 18%)",
+              }}
+            >
+              THE<br />CHILD<br />AWAKENS!
+            </div>
+
+            {/* Bottom CTA + caption strip */}
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-4 pb-3 pt-12">
+              {readerLink && (
+                <Link
+                  {...readerLink}
+                  className="block w-full rounded-full bg-gradient-to-r from-violet-400 via-fuchsia-500 to-amber-400 px-4 py-2.5 text-center text-sm font-black tracking-wider text-white shadow-xl transition hover:brightness-110"
+                >
+                  ▶ READ {freeCount} PAGES FREE
+                </Link>
+              )}
+              <div className="mt-2 text-center font-mono text-[10px] font-bold uppercase tracking-[2px] text-white/80">
+                First act free · Pages {freeCount + 1}–{totalPages} subscribe
+              </div>
+            </div>
+          </div>
+
+          {/* Copy column */}
+          <div>
+            <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[3px] text-[var(--gold)]">
+              <span>✶</span> Astralnaut Studios Presents
+            </div>
+            <div className="mt-4 flex items-center justify-center rounded-xl border border-white/10 bg-black/60 p-6 shadow-2xl" style={{ boxShadow: "0 0 80px -20px rgba(167,139,250,0.4)" }}>
+              <img src={coaLogo} alt="Children of Aquarius" className="max-h-32 w-auto" />
+            </div>
+            <h1 className="sr-only">Children of Aquarius</h1>
+
+            <p className="mt-5 italic text-[var(--gold)]">"The Age Begins. The Child Awakens."</p>
+
+            <p className="mt-4 max-w-xl leading-relaxed text-[var(--ink2)]">
+              An excommunicated priest gifts three young humans the powers of Christ to find and protect the{" "}
+              <strong className="text-white">Christ Child of the Aquarian Age</strong>. In Brooklyn, a 15-year-old named{" "}
+              <strong className="text-white">Michael</strong> wakes up to a calling older than any church.
+              Across centuries, <strong className="text-white">Father Alistaire Blaire</strong> has been waiting for him —
+              and so have the operatives sent to bury the prophecy before it begins.
+            </p>
+
+            <div className="mt-7 grid grid-cols-4 gap-4">
+              <Stat value={String(freeCount)} label="Pages free for all" />
+              <Stat value={String(paidCount)} label="Subscriber pages" />
+              <Stat value="5 wks" label="To complete issue" />
+              <Stat value={String(totalPages)} label="Total story pages" />
+            </div>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              {readerLink && (
+                <Link {...readerLink} className="rounded-md bg-gradient-to-r from-violet-400 via-fuchsia-500 to-amber-400 px-5 py-3 text-sm font-black text-white shadow-lg transition hover:brightness-110">
+                  ▶ Read {freeCount} pages free
+                </Link>
+              )}
+              <Link to="/pricing" className="rounded-md bg-gradient-to-r from-amber-300 to-yellow-500 px-5 py-3 text-sm font-black text-amber-950 shadow-lg transition hover:brightness-110">
+                Subscribe from $4.99
+              </Link>
+            </div>
+
+            <div className="mt-6 space-y-2 text-xs">
+              <div className="text-[var(--ink2)]">
+                <span className="mr-2">📺</span>
+                <span className="font-black uppercase tracking-wider text-[var(--neon)]">TV-Style Structure:</span>{" "}
+                Pages 1–{freeCount} the full first act · Pages {freeCount + 1}–{totalPages} episode body
+              </div>
+              <div className="text-[var(--ink2)]">
+                <span className="mr-2">⚡</span>
+                <span className="font-black uppercase tracking-wider text-[var(--gold)]">Early Access:</span>{" "}
+                Patron Tuesdays · Reader Thursdays · 3 pages/week · 5-week run
+              </div>
             </div>
           </div>
         </section>
 
+        {/* ============ ISSUE #1 DETAILS ============ */}
+        <section className="mt-20 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
+          <div>
+            <h2 className="text-4xl font-black md:text-5xl">Issue #1 — <span className="italic">"{issue?.subtitle ?? issue?.title ?? "The Age Begins"}"</span></h2>
+            <p className="mt-3 max-w-xl text-[var(--ink2)]">The calling. The priest. The three who were chosen before they were born.</p>
+
+            {/* Violet callout */}
+            <div className="mt-8 rounded-md border-l-4 border-violet-400 bg-violet-500/5 p-5">
+              <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[2px] text-violet-300">
+                <span>📺</span> Structured like TV · {freeCount} free pages
+              </div>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ink2)]">
+                Pages 1–{freeCount} are the full first act — free for everyone.
+                Pages {freeCount + 1}–{totalPages} are the episode body, releasing three per week to subscribers across five weeks.
+              </p>
+            </div>
+
+            <div className="mt-8 space-y-5 text-sm leading-relaxed text-[var(--ink2)]">
+              <p>
+                <span className="font-black uppercase tracking-wider text-violet-400">First Act · Pages 1–{freeCount}.</span>{" "}
+                The story opens in <strong className="text-[var(--gold)]">Brooklyn</strong>, present day. Michael — fifteen, sharp, and quietly furious at a world he cannot fix —
+                begins seeing things he should not be able to see. A priest no parish will claim,{" "}
+                <strong className="text-[var(--gold)]">Father Alistaire Blaire</strong>, has been waiting decades for the signs to align.
+                Across the city, two other children stir to the same call: the <strong className="text-[var(--gold)]">Hand</strong> and the{" "}
+                <strong className="text-[var(--gold)]">Head</strong>. The Trinity of the Aquarian Age is assembling — and the operatives who hunt it are already on the move.
+              </p>
+              <p>
+                <span className="font-black uppercase tracking-wider text-cyan-400">Episode Body · Pages {freeCount + 1}–{totalPages}.</span>{" "}
+                The subscriber-gated pages develop the consequences of the awakening. Blaire moves to gather the three before they are picked off.
+                Jon Monarch shifts a timeline. Edmund Burke closes a net. The issue closes on a confrontation designed to land the reader straight into Issue #2.
+              </p>
+            </div>
+          </div>
+
+          {/* Issue details card */}
+          <aside className="self-start rounded-xl border border-white/10 bg-[var(--bg2)]/60 p-6 shadow-xl backdrop-blur">
+            <div className="text-[11px] font-black uppercase tracking-[3px] text-[var(--mute)]">Issue Details</div>
+            <dl className="mt-5 divide-y divide-white/5 text-sm">
+              <DetailRow label="Series" value="Children of Aquarius" />
+              <DetailRow label="Issue" value="#1 · First Issue" />
+              <DetailRow label="Title" value={issue?.subtitle ?? issue?.title ?? "The Age Begins"} />
+              <DetailRow label="Writer" value="Phil" />
+              <DetailRow label="Studio" value="Astralnaut" />
+              <DetailRow label="Total pages" value={String(totalPages)} />
+              <DetailRow label={`Pages 1–${freeCount}`} value={<span className="text-violet-400">FREE · the full first act</span>} />
+              <DetailRow label={`Pages ${freeCount + 1}–${totalPages}`} value={<span className="text-cyan-400">Subscribers</span>} />
+            </dl>
+
+            {/* Next drop sub-card */}
+            {drops.length > 0 && (() => {
+              const next = drops[0] as { week: number; patron_date: string; reader_date: string; pages: number[] };
+              return (
+                <div className="mt-5 rounded-md border border-[var(--gold)]/30 bg-black/40 p-4">
+                  <div className="text-[10px] font-black uppercase tracking-[2px] text-[var(--gold)]">
+                    Next drop · Pages {next.pages.join(", ")} ({next.pages.length} pages)
+                  </div>
+                  <div className="mt-3 space-y-1.5 text-xs">
+                    <div className="flex justify-between"><span className="text-[var(--ink2)]">Patron</span><span className="font-mono text-cyan-300">Tue · {formatDropDate(next.patron_date)}</span></div>
+                    <div className="flex justify-between"><span className="text-[var(--ink2)]">Reader</span><span className="font-mono text-cyan-300">Thu · {formatDropDate(next.reader_date)}</span></div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            <dl className="mt-5 divide-y divide-white/5 text-sm">
+              <DetailRow label="Issue completes" value={drops.length > 0 ? `Week of ${formatDropDate((drops[drops.length - 1] as { reader_date: string }).reader_date)}` : "5-week run"} />
+              <DetailRow label="Cadence" value="3 pages / week" />
+            </dl>
+          </aside>
+        </section>
+
+        {/* ============ ALL PAGES ============ */}
         <section className="mt-20">
-          <div className="eyebrow">Issue 1 · Page index</div>
-          <h2 className="mt-2 text-3xl font-black">Pages</h2>
-          <div className="mt-6 grid grid-cols-3 gap-3 sm:grid-cols-6 lg:grid-cols-12">
-            {Array.from({ length: 24 }).map((_, idx) => {
+          <h2 className="text-4xl font-black md:text-5xl">All {totalPages} pages</h2>
+          <p className="mt-2 max-w-xl text-[var(--ink2)]">Click any unlocked page to jump straight to it. Locked pages drop weekly on Thursdays.</p>
+
+          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            {Array.from({ length: totalPages }).map((_, idx) => {
               const n = idx + 1;
-              const isFree = n <= 9;
+              const isFree = n <= freeCount;
               const found = pages.find((p: typeof pages[number]) => p.page_number === n);
               const thumb = pageUrl(found?.image_path);
+              const dropLabel = DROP_SCHEDULE[n];
+
+              if (isFree) {
+                const card = (
+                  <div className="relative aspect-[3/4] overflow-hidden rounded-md ring-1 ring-violet-400/60">
+                    {thumb ? (
+                      <img src={thumb} alt={`Page ${n}`} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-xs text-[var(--mute)]">Page {n}</div>
+                    )}
+                    <div className="absolute left-2 top-2 rounded bg-violet-400 px-2 py-0.5 text-[10px] font-black tracking-wider text-violet-950">
+                      FREE · PAGE {n}
+                    </div>
+                  </div>
+                );
+                return readerLink ? (
+                  <Link key={n} {...readerLink} className="block transition hover:scale-[1.02]">{card}</Link>
+                ) : (
+                  <div key={n}>{card}</div>
+                );
+              }
+
               return (
-                <div key={n} className="card-rwc relative aspect-[3/4] overflow-hidden">
-                  {thumb && isFree ? <img src={thumb} alt={`Page ${n}`} className="h-full w-full object-cover opacity-90" /> : <div className="flex h-full items-center justify-center text-xs text-[var(--mute)]">Locked</div>}
-                  <div className="absolute bottom-1 left-1 font-mono text-[10px]" style={{ color: isFree ? "var(--neon)" : "var(--mute)" }}>{isFree ? "FREE" : "LOCKED"}</div>
-                  <div className="absolute right-1 top-1 font-mono text-[10px] text-[var(--ink2)]">#{n}</div>
+                <div key={n} className="relative flex aspect-[3/4] flex-col overflow-hidden rounded-md border border-white/5 bg-[#0a0e1f]">
+                  <div className="absolute left-2 top-2 rounded bg-white/5 px-2 py-0.5 text-[10px] font-black tracking-wider text-white/40">
+                    PAGE {n}
+                  </div>
+                  <div className="flex flex-1 items-center justify-center">
+                    <Lock className="h-8 w-8 text-yellow-700/70" />
+                  </div>
+                  {dropLabel && (
+                    <div className="bg-black/60 px-2 py-1.5 text-center font-mono text-[9px] font-black tracking-[1.5px] text-[var(--gold)]">
+                      {dropLabel}
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
         </section>
 
-        <section className="mt-20">
-          <div className="eyebrow">Dramatis personae</div>
-          <h2 className="mt-2 text-3xl font-black">Cast</h2>
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-            {CAST.map((c, i) => (
-              <button
-                key={c.name + i}
-                type="button"
-                onClick={() => setActiveCast(c)}
-                className="card-rwc group overflow-hidden rounded-xl border text-left focus:outline-none focus:ring-2 focus:ring-[var(--neon)]"
-                style={{ borderColor: "var(--border-line)" }}
-                aria-label={`View ${c.name} profile full screen`}
-              >
-                <div className="aspect-[16/10] overflow-hidden bg-black">
-                  <img src={c.img} alt={`${c.name} — ${c.role}`} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
-                </div>
-                <div className="p-5">
-                  <div className="font-mono text-[10px] uppercase tracking-[2px] text-[var(--gold)]">{c.role}</div>
-                  <h3 className="mt-1 text-xl font-black text-white">{c.name}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-[var(--ink2)]">{c.blurb}</p>
-                </div>
-              </button>
-            ))}
-          </div>
-        </section>
-
-        {drops.length > 0 && (
+        {/* ============ FACTIONS ============ */}
+        {factions.length > 0 && (
           <section className="mt-20">
-            <div className="eyebrow">Paid release schedule</div>
-            <h2 className="mt-2 text-3xl font-black">Three pages a week. Five weeks.</h2>
-            <div className="mt-6 overflow-hidden rounded-xl border" style={{ borderColor: "var(--border-line)" }}>
-              <table className="w-full font-mono text-sm">
-                <thead style={{ background: "var(--bg-panel)" }}>
-                  <tr className="text-left">
-                    <th className="px-4 py-3 text-[var(--mute)]">Week</th>
-                    <th className="px-4 py-3 text-[var(--mute)]">Patron · Tue</th>
-                    <th className="px-4 py-3 text-[var(--mute)]">Reader · Thu</th>
-                    <th className="px-4 py-3 text-[var(--mute)]">Pages</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {drops.map((d: typeof drops[number]) => (
-                    <tr key={d.id} className="border-t" style={{ borderColor: "var(--border-line)" }}>
-                      <td className="px-4 py-3 font-bold text-[var(--gold)]">W{d.week}</td>
-                      <td className="px-4 py-3">{d.patron_date}</td>
-                      <td className="px-4 py-3">{d.reader_date}</td>
-                      <td className="px-4 py-3 text-[var(--neon)]">{d.pages.join(" · ")}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="eyebrow">Factions</div>
+            <h2 className="mt-2 text-3xl font-black">The orders in play.</h2>
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              {factions.map((f: typeof factions[number]) => {
+                const emblem = pageUrl(f.emblem_path);
+                const mottoBits = (f.acro ?? "").split("·").map((s: string) => s.trim()).filter(Boolean);
+                return (
+                  <Dialog key={f.id}>
+                    <DialogTrigger asChild>
+                      <button type="button" aria-label={`View ${f.name} details`} className="card-rwc group flex w-full items-center gap-5 p-6 text-left transition hover:ring-2 hover:ring-[var(--neon)] focus:outline-none focus:ring-2 focus:ring-[var(--neon)] cursor-pointer">
+                        <div className="flex h-24 w-24 flex-none items-center justify-center rounded-md bg-[var(--bg2)] p-2">
+                          {emblem ? <img src={emblem} alt={`${f.name} emblem`} className="h-full w-full object-contain" /> : <div className="text-[10px] text-[var(--mute)]">Emblem</div>}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="eyebrow" style={{ color: "var(--neon)" }}>{f.acro}</div>
+                          <h3 className="mt-2 text-xl font-black">{f.name}</h3>
+                          <p className="mt-2 line-clamp-2 text-sm text-[var(--ink2)]">{f.summary}</p>
+                          <div className="mt-3 text-[10px] font-bold uppercase tracking-[2px] text-[var(--mute)] transition group-hover:text-[var(--neon)]">Click to expand →</div>
+                        </div>
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl overflow-hidden p-0">
+                      <div className="grid grid-cols-1 gap-0 md:grid-cols-[1.05fr_1fr]">
+                        <div className="flex items-center justify-center bg-[var(--bg2)] p-6">
+                          {emblem && <img src={emblem} alt={`${f.name} brand sheet`} className="h-full max-h-[50vh] w-full object-contain animate-in fade-in zoom-in-95 duration-500 md:max-h-[70vh]" />}
+                        </div>
+                        <div className="max-h-[50vh] overflow-y-auto p-6 md:max-h-[70vh] md:p-8">
+                          <div className="eyebrow" style={{ color: "var(--neon)" }}>{f.acro}</div>
+                          <DialogTitle className="mt-2 text-2xl font-black md:text-3xl">{f.name}</DialogTitle>
+                          {f.summary && <DialogDescription className="mt-4 text-[var(--ink)]">{f.summary}</DialogDescription>}
+                          {mottoBits.length > 0 && (
+                            <div className="mt-4 flex flex-wrap gap-2">
+                              {mottoBits.map((m: string) => (
+                                <span key={m} className="rounded border border-[var(--gold)] px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[2px] text-[var(--gold)]">{m}</span>
+                              ))}
+                            </div>
+                          )}
+                          {f.bio && <div className="mt-5 space-y-3 text-sm leading-relaxed text-[var(--ink2)]">{f.bio.split(/\n\n+/).map((p: string, i: number) => <p key={i}>{p}</p>)}</div>}
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                );
+              })}
             </div>
           </section>
         )}
+
+        {/* ============ MEET THE CAST ============ */}
+        <section className="mt-20">
+          <h2 className="text-4xl font-black md:text-5xl">Meet the cast</h2>
+          <p className="mt-2 max-w-xl text-[var(--ink2)]">The Children of Aquarius ensemble — the Trinity, their protectors, the operatives, and the Brooklyn circle that holds them together.</p>
+
+          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            {CAST.map((c, i) => (
+              <Dialog key={c.name + i}>
+                <DialogTrigger asChild>
+                  <button type="button" aria-label={`View ${c.name} details`} className="group block w-full overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b from-slate-700/40 to-slate-900/60 text-left transition hover:ring-2 hover:ring-[var(--neon)] focus:outline-none focus:ring-2 focus:ring-[var(--neon)] cursor-pointer">
+                    <div className="relative aspect-[3/4] overflow-hidden bg-gradient-to-b from-slate-300/10 to-slate-900/30">
+                      <img src={c.img} alt={c.name} loading="lazy" className="h-full w-full object-cover transition group-hover:scale-105" />
+                      <div className="absolute inset-x-0 top-0 bg-gradient-to-b from-black/60 to-transparent px-3 py-2 text-center font-mono text-[10px] font-black uppercase tracking-[3px] text-white/90">
+                        {c.name}
+                      </div>
+                    </div>
+                    <div className="space-y-1 p-4">
+                      <div className="font-mono text-[10px] font-black uppercase tracking-[2px] text-violet-300">
+                        {c.faction} · {c.role}
+                      </div>
+                      <div className="text-lg font-black">{c.name}</div>
+                      <div className="line-clamp-1 text-xs text-[var(--ink2)]">{c.blurb}</div>
+                    </div>
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-w-7xl overflow-hidden p-1">
+                  <div className="grid grid-cols-1 gap-0 md:grid-cols-[2fr_1fr]">
+                    <div className="flex items-center justify-center bg-[var(--bg2)] p-4">
+                      <img src={c.img} alt={c.name} className="max-h-[50vh] w-full object-contain animate-in fade-in zoom-in-95 duration-500 md:max-h-[90vh]" />
+                    </div>
+                    <div className="max-h-[50vh] overflow-y-auto p-6 md:max-h-[90vh] md:p-8">
+                      <div className="eyebrow" style={{ color: "var(--neon)" }}>{c.faction}</div>
+                      <DialogTitle className="mt-2 text-2xl font-black md:text-3xl">{c.name}</DialogTitle>
+                      <div className="mt-1 font-mono text-xs text-[var(--mute)]">{c.role}</div>
+                      <DialogDescription className="mt-4 text-[var(--ink)]">{c.blurb}</DialogDescription>
+                      <div className="mt-4 space-y-3 text-sm leading-relaxed text-[var(--ink2)]"><p>{c.bio}</p></div>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            ))}
+          </div>
+        </section>
       </main>
       <SiteFooter />
-      {activeCast && (
-        <div
-          onClick={() => setActiveCast(null)}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 backdrop-blur-sm"
-          role="dialog"
-          aria-modal="true"
-          aria-label={`${activeCast.name} profile`}
-        >
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); setActiveCast(null); }}
-            className="absolute right-4 top-4 z-10 rounded-full border bg-black/60 px-3 py-1 font-mono text-xs text-white hover:bg-black"
-            style={{ borderColor: "var(--border-line)" }}
-            aria-label="Close"
-          >
-            ✕ Close
-          </button>
-          <img
-            src={activeCast.img}
-            alt={`${activeCast.name} — ${activeCast.role}`}
-            onClick={(e) => e.stopPropagation()}
-            className="max-h-[95vh] max-w-[95vw] object-contain"
-          />
-        </div>
-      )}
     </>
   );
 }
 
-function KV({ label, value }: { label: string; value: string }) {
-  return (<div><div className="font-mono text-2xl font-black text-[var(--gold)]">{value}</div><div className="text-[10px] font-bold uppercase tracking-[2px] text-[var(--mute)]">{label}</div></div>);
+function Stat({ value, label }: { value: string; label: string }) {
+  return (
+    <div>
+      <div className="text-3xl font-black text-white">{value}</div>
+      <div className="mt-1 text-[10px] font-black uppercase tracking-[2px] text-[var(--mute)]">{label}</div>
+    </div>
+  );
+}
+
+function DetailRow({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between gap-4 py-2.5">
+      <dt className="text-[var(--ink2)]">{label}</dt>
+      <dd className="text-right font-bold text-white">{value}</dd>
+    </div>
+  );
+}
+
+function formatDropDate(iso: string): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const month = d.toLocaleString("en-US", { month: "short", timeZone: "UTC" }).toUpperCase();
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  return `${month} ${day}`;
 }
