@@ -159,6 +159,15 @@
   background: radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0.55), transparent 70%);
   animation: page-flash-pulse 0.9s ease-out forwards;
 }
+@keyframes page-flash-ember {
+  0%   { opacity: 0; }
+  25%  { opacity: 0.55; }
+  100% { opacity: 0; }
+}
+.page-flash--ember {
+  background: radial-gradient(ellipse at 50% 60%, rgba(255,160,60,0.5), rgba(180,40,20,0.25) 45%, transparent 75%);
+  animation: page-flash-ember 1.2s ease-out forwards;
+}
 @media (prefers-reduced-motion: reduce) {
   .page-flash { display: none; }
 }
