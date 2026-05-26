@@ -25,13 +25,27 @@ export const Route = createFileRoute("/reader/$series/$issue")({
   component: Reader,
 });
 
-function flashVariantFor(page: number): "lightning" | "explosion" | "pulse" | null {
-  if (page === 1) return "lightning";
-  if (page === 2) return "explosion";
-  if (page === 4 || page === 5) return "lightning"; // Zeus lightning beats
-  if (page === 9) return "pulse";
-  return null;
+type FlashVariant = "lightning" | "explosion" | "pulse" | "ember";
+
+// Per-page flash overlay map, keyed by `${series-slug}:${issue-number}:${page-number}`.
+// Add entries here to tune the first-view animation for any specific page.
+const PAGE_FLASH_MAP: Record<string, FlashVariant> = {
+  // Battlefield Atlantis — Issue 1, pages 1–9 (free first act)
+  "battlefield-atlantis:1:1": "lightning",   // Saantris Station — first lightning beat
+  "battlefield-atlantis:1:2": "explosion",   // Vrenoa City annihilation
+  "battlefield-atlantis:1:3": "pulse",       // TPC council reveal
+  "battlefield-atlantis:1:4": "lightning",   // Poseidon ultimatum — Zeus lightning
+  "battlefield-atlantis:1:5": "lightning",   // Zeus reaction — sustained lightning
+  "battlefield-atlantis:1:6": "ember",       // Quiet aftermath
+  "battlefield-atlantis:1:7": "pulse",       // Nerrian galaxy wide shot
+  "battlefield-atlantis:1:8": "pulse",       // Alympia capital reveal
+  "battlefield-atlantis:1:9": "lightning",   // Act-one close — "we end it"
+};
+
+function flashVariantFor(series: string, issueNumber: number | string, page: number): FlashVariant | null {
+  return PAGE_FLASH_MAP[`${series}:${issueNumber}:${page}`] ?? null;
 }
+
 
 function Reader() {
   const { issue, pages } = Route.useLoaderData();
@@ -44,7 +58,7 @@ function Reader() {
   const img = pageUrl(current?.image_path);
   const [zoom, setZoom] = useState(false);
   const [flashKey, setFlashKey] = useState(0);
-  const flashVariant = flashVariantFor(page);
+  const flashVariant = flashVariantFor(issue.series.slug, issue.issue_number, page);
 
 
   function go(delta: number) {
