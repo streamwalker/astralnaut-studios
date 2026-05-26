@@ -7,6 +7,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { pageUrl } from "@/lib/storage";
 import { z } from "zod";
 
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const onChange = () => setReduced(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  return reduced;
+}
+
 export const Route = createFileRoute("/reader/$series/$issue")({
   validateSearch: (s) => ({ page: z.coerce.number().int().min(1).max(50).catch(1).parse(s.page ?? 1) }),
   loader: async ({ params }) => {
@@ -58,7 +70,9 @@ function Reader() {
   const img = pageUrl(current?.image_path);
   const [zoom, setZoom] = useState(false);
   const [flashKey, setFlashKey] = useState(0);
-  const flashVariant = flashVariantFor(issue.series.slug, issue.issue_number, page);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const rawVariant = flashVariantFor(issue.series.slug, issue.issue_number, page);
+  const flashVariant: FlashVariant | "reduced" | null = prefersReducedMotion ? (rawVariant ? "reduced" : null) : rawVariant;
 
 
   function go(delta: number) {
@@ -113,7 +127,9 @@ function Reader() {
                 src={img}
                 alt={current?.alt_text ?? `Page ${page}`}
                 onClick={() => setZoom(!zoom)}
-                onLoad={() => setFlashKey((k) => k + 1)}
+                onLoad={() => {
+                  if (!prefersReducedMotion) setFlashKey((k) => k + 1);
+                }}
                 className={`mx-auto h-auto w-full cursor-zoom-${zoom ? "out" : "in"} ${zoom ? "scale-150" : ""}`}
                 style={{ transition: "transform .3s ease", maxHeight: "85vh", objectFit: "contain" }}
               />
