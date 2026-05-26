@@ -70,7 +70,9 @@ function Reader() {
   const img = pageUrl(current?.image_path);
   const [zoom, setZoom] = useState(false);
   const [flashKey, setFlashKey] = useState(0);
-  const flashVariant = flashVariantFor(issue.series.slug, issue.issue_number, page);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const rawVariant = flashVariantFor(issue.series.slug, issue.issue_number, page);
+  const flashVariant: FlashVariant | "reduced" | null = prefersReducedMotion ? (rawVariant ? "reduced" : null) : rawVariant;
 
 
   function go(delta: number) {
