@@ -351,8 +351,9 @@ function BAPage() {
             })}
 
             {/* Title page 9.5 — inserted at the end of the free row visually (after page 9, before page 10). We append it here for simplicity. */}
-            <div className="relative aspect-[3/4] overflow-hidden rounded-md ring-1 ring-[var(--gold)]/60 bg-[var(--bg2)]">
-              <div className="absolute left-2 top-2 rounded bg-[var(--gold)] px-2 py-0.5 text-[10px] font-black tracking-wider text-amber-950">
+            <div className="ba-page-card--free relative aspect-[3/4] overflow-hidden rounded-md ring-1 ring-[var(--gold)]/60 bg-[var(--bg2)]">
+              <div className="absolute left-2 top-2 rounded bg-[var(--gold)] px-2 py-0.5 text-[10px] font-black tracking-wider text-amber-950 z-10">
+
                 TITLE · 9.5
               </div>
               <div className="flex h-full items-center justify-center p-4 text-center">
