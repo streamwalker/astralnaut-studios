@@ -175,9 +175,10 @@ function BAPage() {
             <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[3px] text-[var(--gold)]">
               <span>⚡</span> Astralnaut Studios Presents
             </div>
-            <div className="mt-4 flex items-center justify-center rounded-xl border border-white/10 bg-black/60 p-6 shadow-2xl" style={{ boxShadow: "0 0 80px -20px rgba(34,211,238,0.35)" }}>
+            <div className="ba-logo-glow mt-4 flex items-center justify-center rounded-xl border border-white/10 bg-black/60 p-6">
               <img src={baLogo} alt="Battlefield Atlantis" className="max-h-32 w-auto" />
             </div>
+
             <h1 className="sr-only">Battlefield Atlantis</h1>
 
             <p className="mt-5 italic text-[var(--gold)]">"Only one will rule."</p>
