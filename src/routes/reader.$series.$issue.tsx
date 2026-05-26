@@ -25,6 +25,14 @@ export const Route = createFileRoute("/reader/$series/$issue")({
   component: Reader,
 });
 
+function flashVariantFor(page: number): "lightning" | "explosion" | "pulse" | null {
+  if (page === 1) return "lightning";
+  if (page === 2) return "explosion";
+  if (page === 4 || page === 5) return "lightning"; // Zeus lightning beats
+  if (page === 9) return "pulse";
+  return null;
+}
+
 function Reader() {
   const { issue, pages } = Route.useLoaderData();
   const { page } = Route.useSearch();
@@ -35,6 +43,9 @@ function Reader() {
   const isFree = page <= freeMax;
   const img = pageUrl(current?.image_path);
   const [zoom, setZoom] = useState(false);
+  const [flashKey, setFlashKey] = useState(0);
+  const flashVariant = flashVariantFor(page);
+
 
   function go(delta: number) {
     const next = Math.min(total, Math.max(1, page + delta));
