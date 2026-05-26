@@ -275,14 +275,14 @@ function BAPage() {
             <div className="mt-5 rounded-md border border-[var(--gold)]/30 bg-black/40 p-4">
               <div className="text-[10px] font-black uppercase tracking-[2px] text-[var(--gold)]">Next drop · Pages 10–13 (4 pages)</div>
               <div className="mt-3 space-y-1.5 text-xs">
-                <div className="flex justify-between"><span className="text-[var(--ink2)]">Patron</span><span className="font-mono text-cyan-300">Tue · May 12</span></div>
-                <div className="flex justify-between"><span className="text-[var(--ink2)]">Initiate</span><span className="font-mono text-cyan-300">Wed · May 13</span></div>
-                <div className="flex justify-between"><span className="text-[var(--ink2)]">Reader</span><span className="font-mono text-cyan-300">Thu · May 14</span></div>
+                <div className="flex justify-between"><span className="text-[var(--ink2)]">Patron</span><span className="font-mono text-cyan-300">Tue · Jul 08</span></div>
+                <div className="flex justify-between"><span className="text-[var(--ink2)]">Initiate</span><span className="font-mono text-cyan-300">Wed · Jul 09</span></div>
+                <div className="flex justify-between"><span className="text-[var(--ink2)]">Reader</span><span className="font-mono text-cyan-300">Thu · Jul 10</span></div>
               </div>
             </div>
 
             <dl className="mt-5 divide-y divide-white/5 text-sm">
-              <DetailRow label="Issue completes" value="Week of May 26" />
+              <DetailRow label="Issue completes" value="End of July" />
               <DetailRow label="Variant covers" value="3 available" />
             </dl>
           </aside>
