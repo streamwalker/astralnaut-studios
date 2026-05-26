@@ -70,9 +70,18 @@ function Reader() {
   const img = pageUrl(current?.image_path);
   const [zoom, setZoom] = useState(false);
   const [flashKey, setFlashKey] = useState(0);
+  const [debugOpen, setDebugOpen] = useState(false);
+  const [debugVariant, setDebugVariant] = useState<FlashVariant | "reduced" | null>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
   const rawVariant = flashVariantFor(issue.series.slug, issue.issue_number, page);
-  const flashVariant: FlashVariant | "reduced" | null = prefersReducedMotion ? (rawVariant ? "reduced" : null) : rawVariant;
+  const mappedVariant: FlashVariant | "reduced" | null = prefersReducedMotion ? (rawVariant ? "reduced" : null) : rawVariant;
+  const flashVariant = debugVariant ?? mappedVariant;
+
+  function playFlash(v: FlashVariant | "reduced" | null) {
+    setDebugVariant(v);
+    setFlashKey((k) => k + 1);
+  }
+
 
 
   function go(delta: number) {
@@ -144,6 +153,48 @@ function Reader() {
           )}
         </div>
 
+        <div className="mt-3 flex justify-end">
+          <button
+            type="button"
+            onClick={() => setDebugOpen((o) => !o)}
+            className="font-mono text-[10px] uppercase tracking-[2px] text-[var(--mute)] hover:text-[var(--neon)]"
+            aria-expanded={debugOpen}
+          >
+            {debugOpen ? "× Close FX debug" : "⚙ FX debug"}
+          </button>
+        </div>
+        {debugOpen && (
+          <div className="mt-2 card-rwc flex flex-wrap items-center gap-2 p-3 text-xs">
+            <span className="font-mono uppercase tracking-[2px] text-[var(--mute)]">
+              Mapped: <span className="text-[var(--ink)]">{mappedVariant ?? "none"}</span>
+            </span>
+            <span className="ml-2 font-mono uppercase tracking-[2px] text-[var(--mute)]">Preview:</span>
+            {(["lightning", "explosion", "pulse", "ember", "reduced"] as const).map((v) => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => playFlash(v)}
+                className="btn-ghost px-2 py-1 text-[10px] uppercase tracking-[2px]"
+              >
+                {v}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => { setDebugVariant(null); setFlashKey((k) => k + 1); }}
+              className="btn-ghost px-2 py-1 text-[10px] uppercase tracking-[2px]"
+            >
+              Replay mapped
+            </button>
+            <button
+              type="button"
+              onClick={() => setDebugVariant(null)}
+              className="btn-ghost px-2 py-1 text-[10px] uppercase tracking-[2px]"
+            >
+              Reset
+            </button>
+          </div>
+        )}
 
         <div className="mt-4 flex items-center justify-between">
           <button onClick={() => go(-1)} disabled={page <= 1} className="btn-ghost disabled:opacity-30">← Prev</button>
