@@ -79,7 +79,7 @@ function BAPage() {
   const titlePageNum = 9.5;
 
   // Up to 3 character thumbs for the cover sticker.
-  const heroThumbs = characters.slice(0, 3).map((c) => pageUrl(c.portrait_path)).filter(Boolean) as string[];
+  const heroThumbs = characters.slice(0, 3).map((c: typeof characters[number]) => pageUrl(c.portrait_path)).filter(Boolean) as string[];
 
   return (
     <>
