@@ -208,7 +208,7 @@ function BAPage() {
               <div className="text-[var(--ink2)]">
                 <span className="mr-2">⚡</span>
                 <span className="font-black uppercase tracking-wider text-[var(--gold)]">Early Access:</span>{" "}
-                Patron Tuesdays · Initiate Wednesdays · Reader Thursdays · 4 pages/week · issue completes in 3 weeks
+                Patron Tuesdays · Initiate Wednesdays · Reader Thursdays · 4 pages/week · issue completes end of July
               </div>
             </div>
           </div>
