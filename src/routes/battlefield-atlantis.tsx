@@ -184,7 +184,7 @@ function BAPage() {
             <div className="mt-7 grid grid-cols-4 gap-4">
               <Stat value={String(freeCount)} label="Pages free for all" />
               <Stat value={String(paidCount)} label="Subscriber pages" />
-              <Stat value="3 wks" label="To complete issue" />
+              <Stat value="4 wks" label="To complete issue" />
               <Stat value={String(totalPages)} label="Total story pages" />
             </div>
 
