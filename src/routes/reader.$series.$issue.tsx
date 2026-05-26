@@ -58,7 +58,7 @@ function Reader() {
   const img = pageUrl(current?.image_path);
   const [zoom, setZoom] = useState(false);
   const [flashKey, setFlashKey] = useState(0);
-  const flashVariant = flashVariantFor(page);
+  const flashVariant = flashVariantFor(issue.series.slug, issue.issue_number, page);
 
 
   function go(delta: number) {
