@@ -49,17 +49,17 @@ export const Route = createFileRoute("/battlefield-atlantis")({
 
 // Locked-page drop schedule (presentation-only). Pages 10-20.
 const DROP_SCHEDULE: Record<number, string> = {
-  10: "PATRON TUE · MAY 12",
-  11: "PATRON TUE · MAY 12",
-  12: "PATRON TUE · MAY 12",
-  13: "PATRON TUE · MAY 12",
-  14: "PATRON TUE · MAY 19",
-  15: "PATRON TUE · MAY 19",
-  16: "PATRON TUE · MAY 19",
-  17: "PATRON TUE · MAY 19",
-  18: "PATRON TUE · MAY 26",
-  19: "PATRON TUE · MAY 26",
-  20: "PATRON TUE · MAY 26",
+  10: "PATRON TUE · JUL 08",
+  11: "PATRON TUE · JUL 08",
+  12: "PATRON TUE · JUL 08",
+  13: "PATRON TUE · JUL 08",
+  14: "PATRON TUE · JUL 15",
+  15: "PATRON TUE · JUL 15",
+  16: "PATRON TUE · JUL 15",
+  17: "PATRON TUE · JUL 15",
+  18: "PATRON TUE · JUL 22",
+  19: "PATRON TUE · JUL 22",
+  20: "PATRON TUE · JUL 22",
 };
 
 function BAPage() {
@@ -184,7 +184,7 @@ function BAPage() {
             <div className="mt-7 grid grid-cols-4 gap-4">
               <Stat value={String(freeCount)} label="Pages free for all" />
               <Stat value={String(paidCount)} label="Subscriber pages" />
-              <Stat value="3 wks" label="To complete issue" />
+              <Stat value="4 wks" label="To complete issue" />
               <Stat value={String(totalPages)} label="Total story pages" />
             </div>
 
@@ -208,7 +208,7 @@ function BAPage() {
               <div className="text-[var(--ink2)]">
                 <span className="mr-2">⚡</span>
                 <span className="font-black uppercase tracking-wider text-[var(--gold)]">Early Access:</span>{" "}
-                Patron Tuesdays · Initiate Wednesdays · Reader Thursdays · 4 pages/week · issue completes in 3 weeks
+                Patron Tuesdays · Initiate Wednesdays · Reader Thursdays · 4 pages/week · issue completes end of July
               </div>
             </div>
           </div>
@@ -275,14 +275,14 @@ function BAPage() {
             <div className="mt-5 rounded-md border border-[var(--gold)]/30 bg-black/40 p-4">
               <div className="text-[10px] font-black uppercase tracking-[2px] text-[var(--gold)]">Next drop · Pages 10–13 (4 pages)</div>
               <div className="mt-3 space-y-1.5 text-xs">
-                <div className="flex justify-between"><span className="text-[var(--ink2)]">Patron</span><span className="font-mono text-cyan-300">Tue · May 12</span></div>
-                <div className="flex justify-between"><span className="text-[var(--ink2)]">Initiate</span><span className="font-mono text-cyan-300">Wed · May 13</span></div>
-                <div className="flex justify-between"><span className="text-[var(--ink2)]">Reader</span><span className="font-mono text-cyan-300">Thu · May 14</span></div>
+                <div className="flex justify-between"><span className="text-[var(--ink2)]">Patron</span><span className="font-mono text-cyan-300">Tue · Jul 08</span></div>
+                <div className="flex justify-between"><span className="text-[var(--ink2)]">Initiate</span><span className="font-mono text-cyan-300">Wed · Jul 09</span></div>
+                <div className="flex justify-between"><span className="text-[var(--ink2)]">Reader</span><span className="font-mono text-cyan-300">Thu · Jul 10</span></div>
               </div>
             </div>
 
             <dl className="mt-5 divide-y divide-white/5 text-sm">
-              <DetailRow label="Issue completes" value="Week of May 26" />
+              <DetailRow label="Issue completes" value="End of July" />
               <DetailRow label="Variant covers" value="3 available" />
             </dl>
           </aside>
