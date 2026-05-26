@@ -1,5 +1,11 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { SiteHeader } from "@/components/site-header";
+import { getIssueBundle } from "@/lib/public.functions";
+import { logStorageAccess } from "@/lib/storage-access.functions";
+import { supabase } from "@/integrations/supabase/client";
+import { pageUrl } from "@/lib/storage";
+import { z } from "zod";
 
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
@@ -12,12 +18,6 @@ function usePrefersReducedMotion() {
   }, []);
   return reduced;
 }
-import { SiteHeader } from "@/components/site-header";
-import { getIssueBundle } from "@/lib/public.functions";
-import { logStorageAccess } from "@/lib/storage-access.functions";
-import { supabase } from "@/integrations/supabase/client";
-import { pageUrl } from "@/lib/storage";
-import { z } from "zod";
 
 export const Route = createFileRoute("/reader/$series/$issue")({
   validateSearch: (s) => ({ page: z.coerce.number().int().min(1).max(50).catch(1).parse(s.page ?? 1) }),
