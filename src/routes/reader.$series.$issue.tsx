@@ -94,13 +94,26 @@ function Reader() {
 
         <div className="mt-4 panel relative overflow-hidden">
           {isFree && img ? (
-            <img src={img} alt={current?.alt_text ?? `Page ${page}`} onClick={() => setZoom(!zoom)} className={`mx-auto h-auto w-full cursor-zoom-${zoom ? "out" : "in"} ${zoom ? "scale-150" : ""}`} style={{ transition: "transform .3s ease", maxHeight: "85vh", objectFit: "contain" }} />
+            <div className="relative">
+              <img
+                src={img}
+                alt={current?.alt_text ?? `Page ${page}`}
+                onClick={() => setZoom(!zoom)}
+                onLoad={() => setFlashKey((k) => k + 1)}
+                className={`mx-auto h-auto w-full cursor-zoom-${zoom ? "out" : "in"} ${zoom ? "scale-150" : ""}`}
+                style={{ transition: "transform .3s ease", maxHeight: "85vh", objectFit: "contain" }}
+              />
+              {flashVariant && flashKey > 0 && (
+                <div key={`${page}-${flashKey}`} className={`page-flash page-flash--${flashVariant}`} aria-hidden="true" />
+              )}
+            </div>
           ) : isFree && !img ? (
             <div className="aspect-[1054/1491] flex items-center justify-center p-10 text-center text-[var(--mute)]">Page art forthcoming</div>
           ) : (
             <Paywall page={page} freeMax={freeMax} dropAt={current?.drop_at} />
           )}
         </div>
+
 
         <div className="mt-4 flex items-center justify-between">
           <button onClick={() => go(-1)} disabled={page <= 1} className="btn-ghost disabled:opacity-30">← Prev</button>
