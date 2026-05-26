@@ -25,6 +25,14 @@ export const Route = createFileRoute("/reader/$series/$issue")({
   component: Reader,
 });
 
+function flashVariantFor(page: number): "lightning" | "explosion" | "pulse" | null {
+  if (page === 1) return "lightning";
+  if (page === 2) return "explosion";
+  if (page === 4 || page === 5) return "lightning"; // Zeus lightning beats
+  if (page === 9) return "pulse";
+  return null;
+}
+
 function Reader() {
   const { issue, pages } = Route.useLoaderData();
   const { page } = Route.useSearch();
@@ -35,6 +43,9 @@ function Reader() {
   const isFree = page <= freeMax;
   const img = pageUrl(current?.image_path);
   const [zoom, setZoom] = useState(false);
+  const [flashKey, setFlashKey] = useState(0);
+  const flashVariant = flashVariantFor(page);
+
 
   function go(delta: number) {
     const next = Math.min(total, Math.max(1, page + delta));
@@ -83,13 +94,26 @@ function Reader() {
 
         <div className="mt-4 panel relative overflow-hidden">
           {isFree && img ? (
-            <img src={img} alt={current?.alt_text ?? `Page ${page}`} onClick={() => setZoom(!zoom)} className={`mx-auto h-auto w-full cursor-zoom-${zoom ? "out" : "in"} ${zoom ? "scale-150" : ""}`} style={{ transition: "transform .3s ease", maxHeight: "85vh", objectFit: "contain" }} />
+            <div className="relative">
+              <img
+                src={img}
+                alt={current?.alt_text ?? `Page ${page}`}
+                onClick={() => setZoom(!zoom)}
+                onLoad={() => setFlashKey((k) => k + 1)}
+                className={`mx-auto h-auto w-full cursor-zoom-${zoom ? "out" : "in"} ${zoom ? "scale-150" : ""}`}
+                style={{ transition: "transform .3s ease", maxHeight: "85vh", objectFit: "contain" }}
+              />
+              {flashVariant && flashKey > 0 && (
+                <div key={`${page}-${flashKey}`} className={`page-flash page-flash--${flashVariant}`} aria-hidden="true" />
+              )}
+            </div>
           ) : isFree && !img ? (
             <div className="aspect-[1054/1491] flex items-center justify-center p-10 text-center text-[var(--mute)]">Page art forthcoming</div>
           ) : (
             <Paywall page={page} freeMax={freeMax} dropAt={current?.drop_at} />
           )}
         </div>
+
 
         <div className="mt-4 flex items-center justify-between">
           <button onClick={() => go(-1)} disabled={page <= 1} className="btn-ghost disabled:opacity-30">← Prev</button>
