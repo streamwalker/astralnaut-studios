@@ -313,17 +313,18 @@ function BAPage() {
 
               if (isFree) {
                 const card = (
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-md ring-1 ring-emerald-400/60">
+                  <div className="ba-page-card--free relative aspect-[3/4] overflow-hidden rounded-md ring-1 ring-emerald-400/60">
                     {thumb ? (
                       <img src={thumb} alt={`Page ${n}`} className="h-full w-full object-cover" />
                     ) : (
                       <div className="flex h-full items-center justify-center text-xs text-[var(--mute)]">Page {n}</div>
                     )}
-                    <div className="absolute left-2 top-2 rounded bg-emerald-400 px-2 py-0.5 text-[10px] font-black tracking-wider text-emerald-950">
+                    <div className="absolute left-2 top-2 rounded bg-emerald-400 px-2 py-0.5 text-[10px] font-black tracking-wider text-emerald-950 z-10">
                       FREE · PAGE {n}
                     </div>
                   </div>
                 );
+
                 return readerLink ? (
                   <Link key={n} {...readerLink} className="block transition hover:scale-[1.02]">{card}</Link>
                 ) : (
