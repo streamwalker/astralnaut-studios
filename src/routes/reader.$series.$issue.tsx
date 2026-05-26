@@ -70,9 +70,18 @@ function Reader() {
   const img = pageUrl(current?.image_path);
   const [zoom, setZoom] = useState(false);
   const [flashKey, setFlashKey] = useState(0);
+  const [debugOpen, setDebugOpen] = useState(false);
+  const [debugVariant, setDebugVariant] = useState<FlashVariant | "reduced" | null>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
   const rawVariant = flashVariantFor(issue.series.slug, issue.issue_number, page);
-  const flashVariant: FlashVariant | "reduced" | null = prefersReducedMotion ? (rawVariant ? "reduced" : null) : rawVariant;
+  const mappedVariant: FlashVariant | "reduced" | null = prefersReducedMotion ? (rawVariant ? "reduced" : null) : rawVariant;
+  const flashVariant = debugVariant ?? mappedVariant;
+
+  function playFlash(v: FlashVariant | "reduced" | null) {
+    setDebugVariant(v);
+    setFlashKey((k) => k + 1);
+  }
+
 
 
   function go(delta: number) {
