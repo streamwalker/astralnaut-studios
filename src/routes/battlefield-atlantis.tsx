@@ -49,17 +49,17 @@ export const Route = createFileRoute("/battlefield-atlantis")({
 
 // Locked-page drop schedule (presentation-only). Pages 10-20.
 const DROP_SCHEDULE: Record<number, string> = {
-  10: "PATRON TUE · MAY 12",
-  11: "PATRON TUE · MAY 12",
-  12: "PATRON TUE · MAY 12",
-  13: "PATRON TUE · MAY 12",
-  14: "PATRON TUE · MAY 19",
-  15: "PATRON TUE · MAY 19",
-  16: "PATRON TUE · MAY 19",
-  17: "PATRON TUE · MAY 19",
-  18: "PATRON TUE · MAY 26",
-  19: "PATRON TUE · MAY 26",
-  20: "PATRON TUE · MAY 26",
+  10: "PATRON TUE · JUL 08",
+  11: "PATRON TUE · JUL 08",
+  12: "PATRON TUE · JUL 08",
+  13: "PATRON TUE · JUL 08",
+  14: "PATRON TUE · JUL 15",
+  15: "PATRON TUE · JUL 15",
+  16: "PATRON TUE · JUL 15",
+  17: "PATRON TUE · JUL 15",
+  18: "PATRON TUE · JUL 22",
+  19: "PATRON TUE · JUL 22",
+  20: "PATRON TUE · JUL 22",
 };
 
 function BAPage() {
