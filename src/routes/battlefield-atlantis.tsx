@@ -333,20 +333,21 @@ function BAPage() {
               }
 
               return (
-                <div key={n} className="relative flex aspect-[3/4] flex-col overflow-hidden rounded-md border border-white/5 bg-[#0a0e1f]">
-                  <div className="absolute left-2 top-2 rounded bg-white/5 px-2 py-0.5 text-[10px] font-black tracking-wider text-white/40">
+                <div key={n} className="ba-page-card--locked relative flex aspect-[3/4] flex-col overflow-hidden rounded-md border border-white/5 bg-[#0a0e1f]">
+                  <div className="absolute left-2 top-2 rounded bg-white/5 px-2 py-0.5 text-[10px] font-black tracking-wider text-white/40 z-10">
                     PAGE {n}
                   </div>
                   <div className="flex flex-1 items-center justify-center">
-                    <Lock className="h-8 w-8 text-yellow-700/70" />
+                    <Lock className="ba-lock h-8 w-8 text-yellow-700/70" />
                   </div>
                   {dropLabel && (
-                    <div className="bg-black/60 px-2 py-1.5 text-center font-mono text-[9px] font-black tracking-[1.5px] text-[var(--gold)]">
+                    <div className="bg-black/60 px-2 py-1.5 text-center font-mono text-[9px] font-black tracking-[1.5px] text-[var(--gold)] z-10">
                       {dropLabel}
                     </div>
                   )}
                 </div>
               );
+
             })}
 
             {/* Title page 9.5 — inserted at the end of the free row visually (after page 9, before page 10). We append it here for simplicity. */}
