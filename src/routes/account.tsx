@@ -135,16 +135,14 @@ function AccountPage() {
                 )}
               </div>
 
-              {sub.shipping_line1 && (
-                <div className="mt-5 rounded-md border border-[var(--border-line)] p-4">
-                  <div className="text-[10px] font-bold uppercase tracking-[2px] text-[var(--mute)]">Print shipping address</div>
-                  <div className="mt-2 text-sm text-[var(--ink2)]">
-                    {sub.shipping_name && <div>{sub.shipping_name}</div>}
-                    <div>{sub.shipping_line1}</div>
-                    <div>{[sub.shipping_city, sub.shipping_postal_code].filter(Boolean).join(", ")}</div>
-                    <div>{sub.shipping_country}</div>
-                  </div>
-                </div>
+              {sub.price_id?.startsWith("patron_") && (
+                <ShippingForm
+                  initial={sub}
+                  onSave={async (values) => {
+                    await saveShipping({ data: { environment: getStripeEnvironment(), ...values } });
+                    setSub({ ...sub, ...values, shipping_country: values.shipping_country.toUpperCase() });
+                  }}
+                />
               )}
 
               <button onClick={openPortal} disabled={portalLoading} className="btn-cta mt-6">
