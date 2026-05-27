@@ -14,7 +14,10 @@ export function CourseOverview({ course }: { course: Course }) {
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-10">
-      <div className="text-[10px] font-bold uppercase tracking-[3px] text-[var(--gold)]">
+      <Link to="/" className="inline-flex items-center gap-1 text-sm text-[var(--ink2)] hover:text-[var(--neon)]">
+        ← Home
+      </Link>
+      <div className="mt-6 text-[10px] font-bold uppercase tracking-[3px] text-[var(--gold)]">
         Training course · {course.label}
       </div>
       <h1 className="mt-2 text-4xl font-extrabold text-[var(--ink)]">

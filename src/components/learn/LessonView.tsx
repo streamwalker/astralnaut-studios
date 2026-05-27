@@ -36,9 +36,12 @@ export function LessonView({ course, lesson }: { course: Course; lesson: Lesson 
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-10">
+      <Link to="/" className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-[var(--ink2)] hover:text-[var(--neon)]">
+        <ArrowLeft width={12} height={12} /> Home
+      </Link>
       <Link
         to={course.basePath as "/learn"}
-        className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-[var(--ink2)] hover:text-[var(--neon)]"
+        className="mt-2 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-[var(--ink2)] hover:text-[var(--neon)]"
       >
         <ArrowLeft width={12} height={12} /> Course overview
       </Link>
