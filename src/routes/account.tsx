@@ -299,7 +299,7 @@ function ShippingForm({
     "w-full rounded-md border border-[var(--border-line)] bg-black/30 px-3 py-2 text-sm text-[var(--ink)] focus:border-[var(--neon)] focus:outline-none";
 
   return (
-    <form onSubmit={submit} className="mt-5 rounded-md border border-[var(--border-line)] p-4">
+    <form id="patron-shipping" onSubmit={submit} className="mt-5 scroll-mt-24 rounded-md border border-[var(--border-line)] p-4">
       <div className="text-[10px] font-bold uppercase tracking-[2px] text-[var(--gold)]">
         Print shipping address
       </div>
