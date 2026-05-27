@@ -153,7 +153,7 @@ function BAPage() {
               {readerLink && (
                 <Link
                   {...readerLink}
-                  className="block w-full rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 px-4 py-2.5 text-center text-sm font-black tracking-wider text-white shadow-xl transition hover:brightness-110"
+                  className="ba-cta-glow block w-full rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 px-4 py-2.5 text-center text-sm font-black tracking-wider text-white shadow-xl transition hover:brightness-110"
                 >
                   ▶ READ 9.5 PAGES FREE
                 </Link>
