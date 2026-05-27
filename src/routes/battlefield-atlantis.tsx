@@ -88,10 +88,9 @@ function BAPage() {
         <Link to="/" className="text-xs text-[var(--mute)] hover:text-[var(--neon)]">← Back to slate</Link>
 
         {/* ============ HERO ============ */}
-        <section className="ba-hero mt-6 grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-center">
-          <div className="ba-hero-aurora" aria-hidden="true" />
+        <section className="mt-6 grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-center">
           {/* Cover plate */}
-          <div className="ba-cover-glow relative aspect-[1054/1491] overflow-hidden rounded-2xl ring-1 ring-white/10" style={{ background: "var(--gradient-panel)" }}>
+          <div className="relative aspect-[1054/1491] overflow-hidden rounded-2xl ring-1 ring-white/10" style={{ background: "var(--gradient-panel)", boxShadow: "var(--shadow-hero)" }}>
             {cover ? (
               <img src={cover} alt="Battlefield Atlantis cover" className="h-full w-full object-cover" />
 
@@ -104,11 +103,6 @@ function BAPage() {
                 </div>
               </div>
             )}
-            {/* Animated FX overlay (sparks + embers) */}
-            <div className="ba-cover-fx" aria-hidden="true">
-              <div className="ba-cover-fx__sparks" />
-              <div className="ba-cover-fx__embers" />
-            </div>
 
             {/* Top-left: $1.00 / ISSUE #1 comic price box */}
 
@@ -121,14 +115,14 @@ function BAPage() {
             </div>
 
             {/* Top-right: 9.5 PAGES FREE pill */}
-            <div className="absolute right-3 top-3 rounded-md bg-gradient-to-r from-emerald-300 to-cyan-300 px-3 py-1.5 text-[11px] font-black tracking-wider text-emerald-950 shadow-lg">
+            <div className="ba-pill-free absolute right-3 top-3 rounded-md bg-gradient-to-r from-emerald-300 to-cyan-300 px-3 py-1.5 text-[11px] font-black tracking-wider text-emerald-950 shadow-lg">
               9.5 PAGES · FREE
             </div>
 
             {/* Left edge: "1ST EXPLOSIVE ISSUE" sticker + character mini-portraits */}
             <div className="absolute left-3 top-24 flex flex-col items-center gap-1">
               <div
-                className="flex h-14 w-14 items-center justify-center text-center text-[8px] font-black leading-tight text-red-950"
+                className="ba-burst-yellow flex h-14 w-14 items-center justify-center text-center text-[8px] font-black leading-tight text-red-950"
                 style={{
                   background: "radial-gradient(circle, #fde047 0%, #facc15 70%, #ca8a04 100%)",
                   clipPath: "polygon(50% 0%, 61% 20%, 80% 12%, 75% 33%, 95% 38%, 80% 50%, 95% 62%, 75% 67%, 80% 88%, 61% 80%, 50% 100%, 39% 80%, 20% 88%, 25% 67%, 5% 62%, 20% 50%, 5% 38%, 25% 33%, 20% 12%, 39% 20%)",
@@ -145,7 +139,7 @@ function BAPage() {
 
             {/* Bottom-left: WAR OF THE WORLDS starburst */}
             <div
-              className="absolute -left-2 bottom-16 flex h-28 w-28 -rotate-12 items-center justify-center text-center text-[11px] font-black leading-tight text-yellow-300 drop-shadow-[2px_2px_0_rgba(0,0,0,0.8)]"
+              className="ba-burst-red absolute -left-2 bottom-16 flex h-28 w-28 items-center justify-center text-center text-[11px] font-black leading-tight text-yellow-300 drop-shadow-[2px_2px_0_rgba(0,0,0,0.8)]"
               style={{
                 background: "radial-gradient(circle, #dc2626 0%, #991b1b 80%)",
                 clipPath: "polygon(50% 0%, 58% 18%, 78% 8%, 72% 30%, 96% 28%, 80% 47%, 100% 60%, 78% 65%, 88% 88%, 65% 78%, 60% 100%, 45% 82%, 30% 100%, 25% 78%, 5% 88%, 15% 65%, 0% 55%, 18% 45%, 0% 28%, 22% 30%, 18% 8%, 38% 18%)",
@@ -159,7 +153,7 @@ function BAPage() {
               {readerLink && (
                 <Link
                   {...readerLink}
-                  className="block w-full rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 px-4 py-2.5 text-center text-sm font-black tracking-wider text-white shadow-xl transition hover:brightness-110"
+                  className="ba-cta-glow block w-full rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 px-4 py-2.5 text-center text-sm font-black tracking-wider text-white shadow-xl transition hover:brightness-110"
                 >
                   ▶ READ 9.5 PAGES FREE
                 </Link>
@@ -199,7 +193,7 @@ function BAPage() {
 
             <div className="mt-6 flex flex-wrap gap-3">
               {readerLink && (
-                <Link {...readerLink} className="rounded-md bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 px-5 py-3 text-sm font-black text-white shadow-lg transition hover:brightness-110">
+                <Link {...readerLink} className="ba-cta-glow rounded-md bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 px-5 py-3 text-sm font-black text-white shadow-lg transition hover:brightness-110">
                   ▶ Read 9.5 pages free
                 </Link>
               )}
