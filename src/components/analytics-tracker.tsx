@@ -40,7 +40,7 @@ async function logEvent(payload: {
       user_agent: typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 500) : null,
       metadata: payload.metadata ?? {},
     };
-    await supabase.from("analytics_events").insert(row);
+    await supabase.from("analytics_events").insert(row as never);
   } catch {
     /* swallow — analytics must never break the app */
   }
