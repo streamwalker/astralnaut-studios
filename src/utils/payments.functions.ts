@@ -65,21 +65,17 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         })
       : undefined;
 
-    const isPatron = PATRON_PRICE_IDS.has(data.priceId);
-
+    // Full compliance handling: Stripe handles tax calculation/collection/filing,
+    // fraud protection, dispute handling, and customer support (+3.5% per txn).
+    // Incompatible with automatic_tax, customer_update, shipping_address_collection.
+    // Patron print shipping is collected post-checkout via the account page.
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: stripePrice.id, quantity: 1 }],
       mode: "subscription",
       ui_mode: "embedded_page",
       return_url: data.returnUrl,
-      automatic_tax: { enabled: true },
-      ...(customerId && { customer: customerId, customer_update: { address: "auto", name: "auto", shipping: "auto" } }),
-      ...(isPatron && {
-        shipping_address_collection: {
-          // Limit to countries you'll ship the quarterly print to. Adjust as needed.
-          allowed_countries: ["US", "CA", "GB", "AU", "NZ", "IE", "DE", "FR", "NL", "BE", "ES", "IT", "SE", "NO", "DK", "FI"],
-        },
-      }),
+      managed_payments: { enabled: true },
+      ...(customerId && { customer: customerId }),
       ...(data.userId && {
         metadata: { userId: data.userId, tier_price: data.priceId },
         subscription_data: { metadata: { userId: data.userId, tier_price: data.priceId } },
