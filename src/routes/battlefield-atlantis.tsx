@@ -103,11 +103,6 @@ function BAPage() {
                 </div>
               </div>
             )}
-            {/* Animated FX overlay (sparks + embers) */}
-            <div className="ba-cover-fx" aria-hidden="true">
-              <div className="ba-cover-fx__sparks" />
-              <div className="ba-cover-fx__embers" />
-            </div>
 
             {/* Top-left: $1.00 / ISSUE #1 comic price box */}
 
