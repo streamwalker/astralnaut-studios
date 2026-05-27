@@ -1,6 +1,82 @@
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { type StripeEnv, createStripeClient } from "@/lib/stripe.server";
+
+const shippingSchema = z.object({
+  environment: z.enum(["sandbox", "live"]),
+  shipping_name: z.string().trim().min(1).max(200),
+  shipping_line1: z.string().trim().min(1).max(200),
+  shipping_line2: z.string().trim().max(200).optional().nullable(),
+  shipping_city: z.string().trim().min(1).max(100),
+  shipping_state: z.string().trim().max(100).optional().nullable(),
+  shipping_postal_code: z.string().trim().min(1).max(20),
+  shipping_country: z.string().trim().length(2),
+});
+
+export const updateShippingAddress = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => shippingSchema.parse(data))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+
+    const { data: sub, error: subError } = await supabase
+      .from("subscriptions")
+      .select("id, stripe_customer_id, price_id")
+      .eq("user_id", userId)
+      .eq("environment", data.environment)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (subError || !sub) throw new Error("No subscription found");
+    if (!sub.price_id?.startsWith("patron_")) {
+      throw new Error("Shipping address is only collected for Patron tier");
+    }
+
+    const line2 = data.shipping_line2?.trim() || null;
+    const state = data.shipping_state?.trim() || null;
+    const country = data.shipping_country.toUpperCase();
+
+    const { error: updateError } = await supabase
+      .from("subscriptions")
+      .update({
+        shipping_name: data.shipping_name,
+        shipping_line1: data.shipping_line1,
+        shipping_line2: line2,
+        shipping_city: data.shipping_city,
+        shipping_state: state,
+        shipping_postal_code: data.shipping_postal_code,
+        shipping_country: country,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", sub.id);
+    if (updateError) throw new Error(updateError.message);
+
+    // Best-effort sync to the Stripe customer record.
+    if (sub.stripe_customer_id) {
+      try {
+        const stripe = createStripeClient(data.environment);
+        await stripe.customers.update(sub.stripe_customer_id, {
+          name: data.shipping_name,
+          shipping: {
+            name: data.shipping_name,
+            address: {
+              line1: data.shipping_line1,
+              line2: line2 ?? undefined,
+              city: data.shipping_city,
+              state: state ?? undefined,
+              postal_code: data.shipping_postal_code,
+              country,
+            },
+          },
+        });
+      } catch (err) {
+        console.error("Stripe customer shipping sync failed", err);
+      }
+    }
+
+    return { success: true };
+  });
 
 async function resolveOrCreateCustomer(
   stripe: ReturnType<typeof createStripeClient>,
