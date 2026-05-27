@@ -107,9 +107,61 @@ function AccountPage() {
         <div className="eyebrow">Your account</div>
         <h1 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">{email || "Account"}</h1>
 
-        {checkout === "success" && (
+        {checkout === "success" && !loading && sub && (
+          <div className="mt-6 rounded-md border border-[var(--neon)] bg-[rgba(34,211,255,0.08)] p-5 text-sm text-[var(--ink)]">
+            <div className="text-[10px] font-bold uppercase tracking-[2px] text-[var(--neon)]">
+              Payment confirmed
+            </div>
+            <h2 className="mt-2 text-xl font-black tracking-tight">
+              You're on {TIER_LABELS[sub.price_id] || sub.price_id}.
+            </h2>
+            <p className="mt-2 text-[var(--ink2)]">
+              Welcome to Real World Comics. Your access is active
+              {sub.current_period_end
+                ? ` and renews on ${new Date(sub.current_period_end).toLocaleDateString()}.`
+                : "."}
+            </p>
+            <div className="mt-4 text-xs text-[var(--ink2)]">
+              <div className="text-[10px] font-bold uppercase tracking-[2px] text-[var(--gold)]">
+                Next steps
+              </div>
+              <ul className="mt-2 list-disc space-y-1 pl-5">
+                {sub.price_id?.startsWith("patron_") ? (
+                  <>
+                    <li>
+                      {sub.shipping_line1
+                        ? "Confirm your print shipping address below — we ship Patron rewards there."
+                        : "Add your print shipping address below so we can ship your Patron rewards."}
+                    </li>
+                    <li>
+                      <Link to="/" className="underline hover:text-[var(--neon)]">Jump into the library</Link>{" "}
+                      and start reading.
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li>
+                      <Link to="/" className="underline hover:text-[var(--neon)]">Open the library</Link>{" "}
+                      and start reading.
+                    </li>
+                    <li>You can manage or change your plan any time below.</li>
+                  </>
+                )}
+              </ul>
+            </div>
+            {sub.price_id?.startsWith("patron_") && !sub.shipping_line1 && (
+              <a
+                href="#patron-shipping"
+                className="btn-cta mt-5 inline-flex"
+              >
+                Add shipping address
+              </a>
+            )}
+          </div>
+        )}
+        {checkout === "success" && loading && (
           <div className="mt-6 rounded-md border border-[var(--neon)] bg-[rgba(34,211,255,0.08)] p-4 text-sm text-[var(--ink)]">
-            Subscription active. Welcome to Real World Comics.
+            Finalizing your subscription…
           </div>
         )}
 
@@ -247,7 +299,7 @@ function ShippingForm({
     "w-full rounded-md border border-[var(--border-line)] bg-black/30 px-3 py-2 text-sm text-[var(--ink)] focus:border-[var(--neon)] focus:outline-none";
 
   return (
-    <form onSubmit={submit} className="mt-5 rounded-md border border-[var(--border-line)] p-4">
+    <form id="patron-shipping" onSubmit={submit} className="mt-5 scroll-mt-24 rounded-md border border-[var(--border-line)] p-4">
       <div className="text-[10px] font-bold uppercase tracking-[2px] text-[var(--gold)]">
         Print shipping address
       </div>
