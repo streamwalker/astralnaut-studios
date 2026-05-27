@@ -35,7 +35,7 @@ async function resolveOrCreateCustomer(
   return created.id;
 }
 
-const PATRON_PRICE_IDS = new Set(["patron_monthly", "patron_yearly"]);
+
 
 export const createCheckoutSession = createServerFn({ method: "POST" })
   .inputValidator((data: {
