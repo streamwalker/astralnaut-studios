@@ -47,6 +47,9 @@ export function HelpLayout({ track, activeSlug, children, coursePath }: Props) {
     >
       <div className="mx-auto grid max-w-7xl gap-8 px-6 py-10 lg:grid-cols-[280px_1fr]">
         <aside className="space-y-5">
+          <Link to="/" className="inline-flex items-center gap-1 text-sm text-[var(--ink2)] hover:text-[var(--neon)]">
+            ← Home
+          </Link>
           <div>
             <div className="text-[10px] font-bold uppercase tracking-[3px] text-[var(--gold)]">
               {track.label}

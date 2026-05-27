@@ -60,8 +60,11 @@ function LoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
-      <Link to="/" className="mb-8 flex items-center gap-3">
+      <Link to="/" className="mb-2 flex items-center gap-3">
         <img src={logo} alt="Astralnaut Studios" className="h-10 w-auto" />
+      </Link>
+      <Link to="/" className="mb-6 text-sm text-muted-foreground hover:text-foreground">
+        ← Home
       </Link>
       <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-8 shadow-xl">
         <h1 className="text-2xl font-bold">{mode === "signin" ? "Sign in" : "Create account"}</h1>

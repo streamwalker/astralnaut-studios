@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { TierBadge } from "@/components/TierGate";
@@ -46,6 +46,8 @@ export function SiteHeader() {
   const { data } = useAdminSession();
   const isAdmin = !!data?.isAdmin;
   const nav_ = useNavigate();
+  const router = useRouter();
+  const isHome = router.state.location.pathname === "/";
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -55,14 +57,21 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md" style={{ background: "rgba(2,0,12,0.7)", borderBottom: "1px solid var(--border-line)" }}>
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3">
-        <Link to="/" className="flex items-center">
-          <img
-            src={astralnautLogo}
-            alt="Astralnaut Studios"
-            className="h-10 w-auto"
-            style={{ filter: "drop-shadow(0 0 12px rgba(34,211,255,0.35))" }}
-          />
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link to="/" className="flex items-center">
+            <img
+              src={astralnautLogo}
+              alt="Astralnaut Studios"
+              className="h-10 w-auto"
+              style={{ filter: "drop-shadow(0 0 12px rgba(34,211,255,0.35))" }}
+            />
+          </Link>
+          {!isHome && (
+            <Link to="/" className="hidden text-sm text-[var(--ink2)] hover:text-[var(--neon)] sm:block">
+              ← Home
+            </Link>
+          )}
+        </div>
         <nav className="hidden items-center gap-1 lg:flex">
           {nav.map((n, i) => {
             const linkProps = n.params
