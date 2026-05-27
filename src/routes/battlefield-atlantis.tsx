@@ -122,7 +122,7 @@ function BAPage() {
             {/* Left edge: "1ST EXPLOSIVE ISSUE" sticker + character mini-portraits */}
             <div className="absolute left-3 top-24 flex flex-col items-center gap-1">
               <div
-                className="flex h-14 w-14 items-center justify-center text-center text-[8px] font-black leading-tight text-red-950"
+                className="ba-burst-yellow flex h-14 w-14 items-center justify-center text-center text-[8px] font-black leading-tight text-red-950"
                 style={{
                   background: "radial-gradient(circle, #fde047 0%, #facc15 70%, #ca8a04 100%)",
                   clipPath: "polygon(50% 0%, 61% 20%, 80% 12%, 75% 33%, 95% 38%, 80% 50%, 95% 62%, 75% 67%, 80% 88%, 61% 80%, 50% 100%, 39% 80%, 20% 88%, 25% 67%, 5% 62%, 20% 50%, 5% 38%, 25% 33%, 20% 12%, 39% 20%)",
