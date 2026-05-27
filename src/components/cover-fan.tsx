@@ -4,6 +4,7 @@ import coaVariantA from "@/assets/coa-issue-1-variant-a.png";
 import baCover from "@/assets/ba-issue-1-variant.png";
 import baVariant2 from "@/assets/ba-issue-1-variant-2.png";
 import coaVariantB from "@/assets/coa-issue-1-variant-b.png";
+import baRyukenCrew from "@/assets/ba-issue-1-ryuken-crew.png";
 
 type Slot = {
   x: string;
@@ -15,16 +16,18 @@ type Slot = {
 };
 
 const slots: Slot[] = [
-  { x: "0%",   y: "0%",  rotate: 2,   scale: 1.0,  z: 50, width: "58%" },
-  { x: "55%",  y: "-4%", rotate: 8,   scale: 0.88, z: 40, width: "50%" },
-  { x: "25%",  y: "-18%",rotate: 14,  scale: 0.78, z: 30, width: "46%" },
+  { x: "0%",   y: "0%",  rotate: 2,   scale: 1.0,  z: 60, width: "58%" },
+  { x: "55%",  y: "-4%", rotate: 8,   scale: 0.88, z: 50, width: "50%" },
+  { x: "30%",  y: "-16%",rotate: 14,  scale: 0.78, z: 40, width: "46%" },
+  { x: "0%",   y: "-22%",rotate: 0,   scale: 0.72, z: 30, width: "44%" },
   { x: "-30%", y: "-16%",rotate: -14, scale: 0.78, z: 20, width: "46%" },
-  { x: "-55%", y: "2%",  rotate: -10, scale: 0.86, z: 10, width: "50%" },
+  { x: "-55%", y: "-4%", rotate: -10, scale: 0.86, z: 10, width: "50%" },
 ];
 
 const covers = [
   { src: baCover,      alt: "Battlefield Atlantis Issue 1" },
   { src: baVariant2,   alt: "Battlefield Atlantis Issue 1 — Variant Cover" },
+  { src: baRyukenCrew, alt: "Battlefield Atlantis Issue 1 — Ryuken Crew Cover" },
   { src: coaCover,     alt: "Children of Aquarius Issue 1" },
   { src: coaVariantA,  alt: "Children of Aquarius Issue 1 — Variant A" },
   { src: coaVariantB,  alt: "Children of Aquarius Issue 1 — Variant B" },
