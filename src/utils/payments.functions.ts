@@ -39,7 +39,7 @@ export const updateShippingAddress = createServerFn({ method: "POST" })
     const state = data.shipping_state?.trim() || null;
     const country = data.shipping_country.toUpperCase();
 
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseAdmin
       .from("subscriptions")
       .update({
         shipping_name: data.shipping_name,
@@ -51,7 +51,8 @@ export const updateShippingAddress = createServerFn({ method: "POST" })
         shipping_country: country,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", sub.id);
+      .eq("id", sub.id)
+      .eq("user_id", userId);
     if (updateError) throw new Error(updateError.message);
 
     // Best-effort sync to the Stripe customer record.
