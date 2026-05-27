@@ -21,6 +21,7 @@ export const updateShippingAddress = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
+    // RLS-scoped read confirms this subscription belongs to the caller.
     const { data: sub, error: subError } = await supabase
       .from("subscriptions")
       .select("id, stripe_customer_id, price_id")
