@@ -126,6 +126,7 @@ function RootComponent() {
         <PaymentTestModeBanner />
         <Outlet />
         <TourOverlay />
+        <AnalyticsTracker />
       </TooltipProvider>
     </QueryClientProvider>
   );
