@@ -115,7 +115,7 @@ function BAPage() {
             </div>
 
             {/* Top-right: 9.5 PAGES FREE pill */}
-            <div className="absolute right-3 top-3 rounded-md bg-gradient-to-r from-emerald-300 to-cyan-300 px-3 py-1.5 text-[11px] font-black tracking-wider text-emerald-950 shadow-lg">
+            <div className="ba-pill-free absolute right-3 top-3 rounded-md bg-gradient-to-r from-emerald-300 to-cyan-300 px-3 py-1.5 text-[11px] font-black tracking-wider text-emerald-950 shadow-lg">
               9.5 PAGES · FREE
             </div>
 
