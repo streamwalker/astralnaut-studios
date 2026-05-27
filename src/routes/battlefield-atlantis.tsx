@@ -193,7 +193,7 @@ function BAPage() {
 
             <div className="mt-6 flex flex-wrap gap-3">
               {readerLink && (
-                <Link {...readerLink} className="rounded-md bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 px-5 py-3 text-sm font-black text-white shadow-lg transition hover:brightness-110">
+                <Link {...readerLink} className="ba-cta-glow rounded-md bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 px-5 py-3 text-sm font-black text-white shadow-lg transition hover:brightness-110">
                   ▶ Read 9.5 pages free
                 </Link>
               )}
