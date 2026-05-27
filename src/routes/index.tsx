@@ -63,9 +63,6 @@ function Home() {
             className="mx-auto w-full h-auto"
             style={{ filter: "drop-shadow(0 0 28px rgba(34,211,255,0.35))" }}
           />
-          <div className="eyebrow mt-3" style={{ color: "var(--gold)" }}>
-            A subsidiary of Astralnaut Studios
-          </div>
         </div>
 
 
