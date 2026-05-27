@@ -88,10 +88,9 @@ function BAPage() {
         <Link to="/" className="text-xs text-[var(--mute)] hover:text-[var(--neon)]">← Back to slate</Link>
 
         {/* ============ HERO ============ */}
-        <section className="ba-hero mt-6 grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-center">
-          <div className="ba-hero-aurora" aria-hidden="true" />
+        <section className="mt-6 grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-center">
           {/* Cover plate */}
-          <div className="ba-cover-glow relative aspect-[1054/1491] overflow-hidden rounded-2xl ring-1 ring-white/10" style={{ background: "var(--gradient-panel)" }}>
+          <div className="relative aspect-[1054/1491] overflow-hidden rounded-2xl ring-1 ring-white/10" style={{ background: "var(--gradient-panel)", boxShadow: "var(--shadow-hero)" }}>
             {cover ? (
               <img src={cover} alt="Battlefield Atlantis cover" className="h-full w-full object-cover" />
 
