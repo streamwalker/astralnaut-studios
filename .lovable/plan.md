@@ -1,45 +1,53 @@
 ## Goal
 
-Bring the live animation feel from `realworldcomics.com/battlefield-atlantis` into our `/battlefield-atlantis` page. Three coordinated layers of motion — cover, hero, and page grid — using CSS only (no new deps), tuned to the existing `--neon` / `--plasma` / `--gold` tokens and respecting `prefers-reduced-motion`.
+Stop pulsing the whole cover/hero and instead pulse the actual decorative elements on the page, each in its own color. Match each effect to the element it's on.
 
-Scope: BA only. COA stays as-is.
+## What's wrong with the current pass
+
+- `ba-cover-glow` pulses a cyan→purple halo around the entire cover frame. Too broad, doesn't match anything specific on screen.
+- `ba-cover-fx` (sparks + embers) overlays generic blue/orange gradients on top of the cover art, which already has lightning and embers baked in. Adds noise, not signal.
+- `ba-hero-aurora` smears violet/cyan behind the whole hero — same "ambient" problem.
+- `ba-logo-glow` actually does match (cyan↔purple = the logo plate gradient). Keep it.
+- Page-grid hover sweeps are tied to real interaction. Keep them.
 
 ## What changes
 
-### 1. Cover plate — animated lightning + glow pulse
-On the left cover plate inside the hero (the `$1.00 / ISSUE #1` framed cover):
+### 1. Remove the broad ambient layers
+- Drop `.ba-cover-glow` from the cover wrapper. Restore the static `boxShadow: var(--shadow-hero)`.
+- Remove the `.ba-cover-fx` overlay block (sparks + embers) from the JSX.
+- Drop `.ba-hero-aurora` from the hero section.
+- Delete the now-unused CSS rules (`ba-cover-glow`, `ba-cover-fx*`, `ba-hero-aurora`, `ba-aurora-a/b`, `ba-sparks`, `ba-embers`) to keep the stylesheet tidy.
 
-- Add an absolutely-positioned `.ba-cover-fx` overlay layer with two sublayers:
-  - `.ba-cover-fx__sparks` — radial-gradient streaks anchored top-center and mid-left that fade in/out on a 2.6s loop, evoking the lightning baked into the reference cover art.
-  - `.ba-cover-fx__embers` — small warm radial blooms bottom-right on a 3.4s offset loop (the explosion glow on the reference).
-- Wrap the cover frame in a `.ba-cover-glow` shell whose `box-shadow` pulses between `rgba(34,211,255,0.18)` and `rgba(160,64,255,0.28)` on a 4s loop (matches existing `--shadow-hero` register).
-- Overlays are `pointer-events: none` and `mix-blend-mode: screen` so the cover image and the existing `▶ READ 9.5 PAGES FREE` button stay clickable and visually unchanged.
+### 2. Localized pulses, color-matched to each element
 
-### 2. Hero — logo plate glow + ambient background drift
-Right column hero area:
+Each new effect uses tokens drawn from the element it lives on — no foreign colors.
 
-- BA logo plate (`baLogo` image inside its framed plate) gets a `.ba-logo-glow` class: a soft `--neon`→`--plasma` halo behind the plate that breathes on a 5s ease-in-out loop, plus a one-shot subtle scale-in on mount.
-- Add a `.ba-hero-aurora` background layer (absolute, behind hero content, `pointer-events:none`) inside the hero section only. Two large blurred radial blooms slowly drift on independent 18s / 24s loops, contained to the hero so it doesn't fight the global page background.
+| Element | Effect | Color |
+|---|---|---|
+| Yellow "1ST EXPLOSIVE ISSUE!" starburst sticker | Slow scale + glow pulse, subtle rotation wobble | Yellow/gold (`#facc15` halo) — matches its own radial-gradient fill |
+| Red "WAR OF THE WORLDS BEGINS!" starburst | Heartbeat pulse (scale + red halo) | Red (`#dc2626` halo) — matches its own fill |
+| Cyan "9.5 PAGES · FREE" pill | Soft glow breathe | Emerald/cyan halo matching the pill's `from-emerald-300 to-cyan-300` gradient |
+| "▶ READ 9.5 PAGES FREE" CTA (bottom-of-cover + the duplicate in the copy column) | Slow gradient-glow pulse | Cyan→blue→purple halo matching the button's existing gradient |
+| BA logo plate | Keep `ba-logo-glow` as-is | Cyan↔purple — already matches |
 
-### 3. Page-grid hover FX
-On the existing "All 20 pages" grid:
+All effects:
+- Use `box-shadow` + `transform` (no overlay layers), so they affect only the element.
+- `will-change: transform, box-shadow` and respect `prefers-reduced-motion` (animation disabled, base styling preserved).
+- Tuned to gentle amplitudes / 2.5–4s loops so they read as accent, not jitter.
 
-- Free pages (1–9) and page 9.5 thumbnails: on hover, a diagonal lightning sweep (`.ba-page-card--free::after` with a gradient + `transform: translateX` on a 0.9s transition) plus a brief border flash to `--neon`. Cursor stays pointer; click target unchanged.
-- Locked pages (10–20): on hover, a slow gold shimmer sweep on the dark card surface and the 🔒 icon nudges up 2px with a soft `--gold` glow. Card remains non-interactive (no link change).
-- Both effects are CSS-only, no JS state.
-
-### 4. Reduced-motion guard
-Wrap every new keyframe / loop in `@media (prefers-reduced-motion: reduce)` and either disable the animation (`animation: none`) or replace with a single static, low-contrast variant — same pattern already used for `.page-flash--*` overlays. The hover sweeps degrade to a plain border/color change.
+### 3. Resulting feel
+- The cover image stays untouched and clean — its own lightning art reads as intended.
+- The comic-book stickers and the primary CTA "breathe" in their own colors, drawing the eye like a real comic cover would.
+- The BA logo continues its subtle cyan/purple breathing.
+- No competing ambient haze around the hero.
 
 ## Technical notes
 
-- All CSS lives in `src/styles.css` appended after the existing reader flash block. New class prefix `.ba-` to avoid collisions.
-- All JSX changes confined to `src/routes/battlefield-atlantis.tsx`: add wrapper divs/classes on the cover plate, hero section, logo plate, and the two page-card variants. No prop/loader/data changes.
-- No new packages, no Motion/GSAP, no new assets. Existing tokens only.
-- Reader (`reader.$series.$issue.tsx`) and its per-page flash map are out of scope and untouched.
+- All work in `src/routes/battlefield-atlantis.tsx` (remove 3 wrapper classes, add 4 element-level classes) and `src/styles.css` (drop 5 keyframe blocks, add 4 smaller ones).
+- No JS, no new deps, no layout changes.
+- The earlier hydration warning was SSR/client drift from the prior edit pass and clears on the next clean build; this pass also simplifies the JSX so it won't recur.
 
 ## Out of scope
 
-- COA page (explicitly deferred).
-- Any change to copy, layout, drop dates, cast section, or routing.
-- Replacing the cover image with a video / Lottie.
+- Reader, COA, layout, copy, data.
+- Page-card hover FX (already localized — kept as-is).
