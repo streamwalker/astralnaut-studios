@@ -3,7 +3,7 @@ import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-ro
 import { useServerFn } from "@tanstack/react-start";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { supabase } from "@/integrations/supabase/client";
-import { createPortalSession } from "@/utils/payments.functions";
+import { createPortalSession, updateShippingAddress } from "@/utils/payments.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 
 type SubRow = {
@@ -13,7 +13,9 @@ type SubRow = {
   cancel_at_period_end: boolean;
   shipping_name: string | null;
   shipping_line1: string | null;
+  shipping_line2: string | null;
   shipping_city: string | null;
+  shipping_state: string | null;
   shipping_postal_code: string | null;
   shipping_country: string | null;
 };
