@@ -12,6 +12,7 @@ import appCss from "../styles.css?url";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { TourOverlay } from "@/components/tour/TourOverlay";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AnalyticsTracker } from "@/components/analytics-tracker";
 
 function NotFoundComponent() {
   return (
@@ -125,6 +126,7 @@ function RootComponent() {
         <PaymentTestModeBanner />
         <Outlet />
         <TourOverlay />
+        <AnalyticsTracker />
       </TooltipProvider>
     </QueryClientProvider>
   );

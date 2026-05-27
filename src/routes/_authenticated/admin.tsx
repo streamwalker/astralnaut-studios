@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import logo from "@/assets/astralnaut-logo.png";
 import { PageRow } from "@/components/admin/page-row";
+import { AnalyticsPanel } from "@/components/admin/analytics-panel";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Astralnaut Studios" }] }),
@@ -172,6 +173,7 @@ function AdminPage() {
       </header>
 
       <main className="mx-auto grid max-w-6xl gap-10 px-6 py-12 lg:grid-cols-[1fr_1.1fr]">
+        <AnalyticsPanel />
         <section className="rounded-2xl border border-border bg-card p-6">
           <h2 className="text-xl font-bold">Upload comic pages</h2>
           <p className="mt-1 text-sm text-muted-foreground">
