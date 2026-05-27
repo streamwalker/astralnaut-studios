@@ -139,7 +139,7 @@ function BAPage() {
 
             {/* Bottom-left: WAR OF THE WORLDS starburst */}
             <div
-              className="absolute -left-2 bottom-16 flex h-28 w-28 -rotate-12 items-center justify-center text-center text-[11px] font-black leading-tight text-yellow-300 drop-shadow-[2px_2px_0_rgba(0,0,0,0.8)]"
+              className="ba-burst-red absolute -left-2 bottom-16 flex h-28 w-28 items-center justify-center text-center text-[11px] font-black leading-tight text-yellow-300 drop-shadow-[2px_2px_0_rgba(0,0,0,0.8)]"
               style={{
                 background: "radial-gradient(circle, #dc2626 0%, #991b1b 80%)",
                 clipPath: "polygon(50% 0%, 58% 18%, 78% 8%, 72% 30%, 96% 28%, 80% 47%, 100% 60%, 78% 65%, 88% 88%, 65% 78%, 60% 100%, 45% 82%, 30% 100%, 25% 78%, 5% 88%, 15% 65%, 0% 55%, 18% 45%, 0% 28%, 22% 30%, 18% 8%, 38% 18%)",
