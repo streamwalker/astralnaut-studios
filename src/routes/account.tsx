@@ -65,7 +65,7 @@ function AccountPage() {
       const env = getStripeEnvironment();
       const { data } = await supabase
         .from("subscriptions")
-        .select("status, price_id, current_period_end, cancel_at_period_end, shipping_name, shipping_line1, shipping_city, shipping_postal_code, shipping_country")
+        .select("status, price_id, current_period_end, cancel_at_period_end, shipping_name, shipping_line1, shipping_line2, shipping_city, shipping_state, shipping_postal_code, shipping_country")
         .eq("user_id", u.user.id)
         .eq("environment", env)
         .order("created_at", { ascending: false })
