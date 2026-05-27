@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import logo from "@/assets/astralnaut-logo.png";
 import { PageRow } from "@/components/admin/page-row";
+import { AnalyticsPanel } from "@/components/admin/analytics-panel";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Astralnaut Studios" }] }),
