@@ -51,6 +51,7 @@ function AccountPage() {
   const { checkout } = Route.useSearch();
   const navigate = useNavigate();
   const portal = useServerFn(createPortalSession);
+  const saveShipping = useServerFn(updateShippingAddress);
   const [email, setEmail] = useState<string>("");
   const [sub, setSub] = useState<SubRow | null>(null);
   const [loading, setLoading] = useState(true);
