@@ -3,7 +3,7 @@ import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-ro
 import { useServerFn } from "@tanstack/react-start";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { supabase } from "@/integrations/supabase/client";
-import { createPortalSession } from "@/utils/payments.functions";
+import { createPortalSession, updateShippingAddress } from "@/utils/payments.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
 
 type SubRow = {
@@ -13,7 +13,9 @@ type SubRow = {
   cancel_at_period_end: boolean;
   shipping_name: string | null;
   shipping_line1: string | null;
+  shipping_line2: string | null;
   shipping_city: string | null;
+  shipping_state: string | null;
   shipping_postal_code: string | null;
   shipping_country: string | null;
 };
@@ -49,6 +51,7 @@ function AccountPage() {
   const { checkout } = Route.useSearch();
   const navigate = useNavigate();
   const portal = useServerFn(createPortalSession);
+  const saveShipping = useServerFn(updateShippingAddress);
   const [email, setEmail] = useState<string>("");
   const [sub, setSub] = useState<SubRow | null>(null);
   const [loading, setLoading] = useState(true);
@@ -63,7 +66,7 @@ function AccountPage() {
       const env = getStripeEnvironment();
       const { data } = await supabase
         .from("subscriptions")
-        .select("status, price_id, current_period_end, cancel_at_period_end, shipping_name, shipping_line1, shipping_city, shipping_postal_code, shipping_country")
+        .select("status, price_id, current_period_end, cancel_at_period_end, shipping_name, shipping_line1, shipping_line2, shipping_city, shipping_state, shipping_postal_code, shipping_country")
         .eq("user_id", u.user.id)
         .eq("environment", env)
         .order("created_at", { ascending: false })
@@ -132,16 +135,14 @@ function AccountPage() {
                 )}
               </div>
 
-              {sub.shipping_line1 && (
-                <div className="mt-5 rounded-md border border-[var(--border-line)] p-4">
-                  <div className="text-[10px] font-bold uppercase tracking-[2px] text-[var(--mute)]">Print shipping address</div>
-                  <div className="mt-2 text-sm text-[var(--ink2)]">
-                    {sub.shipping_name && <div>{sub.shipping_name}</div>}
-                    <div>{sub.shipping_line1}</div>
-                    <div>{[sub.shipping_city, sub.shipping_postal_code].filter(Boolean).join(", ")}</div>
-                    <div>{sub.shipping_country}</div>
-                  </div>
-                </div>
+              {sub.price_id?.startsWith("patron_") && (
+                <ShippingForm
+                  initial={sub}
+                  onSave={async (values) => {
+                    await saveShipping({ data: { environment: getStripeEnvironment(), ...values } });
+                    setSub({ ...sub, ...values, shipping_country: values.shipping_country.toUpperCase() });
+                  }}
+                />
               )}
 
               <button onClick={openPortal} disabled={portalLoading} className="btn-cta mt-6">
@@ -193,5 +194,107 @@ function Row({ label, value }: { label: string; value: string }) {
       <span className="text-[var(--mute)]">{label}</span>
       <span className="font-semibold text-[var(--ink)]">{value}</span>
     </div>
+  );
+}
+
+type ShippingValues = {
+  shipping_name: string;
+  shipping_line1: string;
+  shipping_line2: string;
+  shipping_city: string;
+  shipping_state: string;
+  shipping_postal_code: string;
+  shipping_country: string;
+};
+
+function ShippingForm({
+  initial,
+  onSave,
+}: {
+  initial: SubRow;
+  onSave: (values: ShippingValues) => Promise<void>;
+}) {
+  const [values, setValues] = useState<ShippingValues>({
+    shipping_name: initial.shipping_name ?? "",
+    shipping_line1: initial.shipping_line1 ?? "",
+    shipping_line2: initial.shipping_line2 ?? "",
+    shipping_city: initial.shipping_city ?? "",
+    shipping_state: initial.shipping_state ?? "",
+    shipping_postal_code: initial.shipping_postal_code ?? "",
+    shipping_country: initial.shipping_country ?? "US",
+  });
+  const [saving, setSaving] = useState(false);
+  const [status, setStatus] = useState<{ kind: "ok" | "err"; msg: string } | null>(null);
+
+  const set = (k: keyof ShippingValues) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    setValues((v) => ({ ...v, [k]: e.target.value }));
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setStatus(null);
+    try {
+      await onSave(values);
+      setStatus({ kind: "ok", msg: "Shipping address saved." });
+    } catch (err) {
+      setStatus({ kind: "err", msg: err instanceof Error ? err.message : "Could not save address." });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const input =
+    "w-full rounded-md border border-[var(--border-line)] bg-black/30 px-3 py-2 text-sm text-[var(--ink)] focus:border-[var(--neon)] focus:outline-none";
+
+  return (
+    <form onSubmit={submit} className="mt-5 rounded-md border border-[var(--border-line)] p-4">
+      <div className="text-[10px] font-bold uppercase tracking-[2px] text-[var(--gold)]">
+        Print shipping address
+      </div>
+      <p className="mt-1 text-xs text-[var(--mute)]">Where we ship your Patron print rewards.</p>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <label className="sm:col-span-2 text-xs text-[var(--ink2)]">
+          Full name
+          <input className={`${input} mt-1`} value={values.shipping_name} onChange={set("shipping_name")} required maxLength={200} />
+        </label>
+        <label className="sm:col-span-2 text-xs text-[var(--ink2)]">
+          Address line 1
+          <input className={`${input} mt-1`} value={values.shipping_line1} onChange={set("shipping_line1")} required maxLength={200} />
+        </label>
+        <label className="sm:col-span-2 text-xs text-[var(--ink2)]">
+          Address line 2 (optional)
+          <input className={`${input} mt-1`} value={values.shipping_line2} onChange={set("shipping_line2")} maxLength={200} />
+        </label>
+        <label className="text-xs text-[var(--ink2)]">
+          City
+          <input className={`${input} mt-1`} value={values.shipping_city} onChange={set("shipping_city")} required maxLength={100} />
+        </label>
+        <label className="text-xs text-[var(--ink2)]">
+          State / Region
+          <input className={`${input} mt-1`} value={values.shipping_state} onChange={set("shipping_state")} maxLength={100} />
+        </label>
+        <label className="text-xs text-[var(--ink2)]">
+          Postal code
+          <input className={`${input} mt-1`} value={values.shipping_postal_code} onChange={set("shipping_postal_code")} required maxLength={20} />
+        </label>
+        <label className="text-xs text-[var(--ink2)]">
+          Country (2-letter)
+          <input
+            className={`${input} mt-1 uppercase`}
+            value={values.shipping_country}
+            onChange={set("shipping_country")}
+            required
+            minLength={2}
+            maxLength={2}
+          />
+        </label>
+      </div>
+      {status && (
+        <div className={`mt-3 text-xs ${status.kind === "ok" ? "text-[var(--neon)]" : "text-red-400"}`}>{status.msg}</div>
+      )}
+      <button type="submit" disabled={saving} className="btn-cta mt-4">
+        {saving ? "Saving…" : "Save shipping address"}
+      </button>
+    </form>
   );
 }
