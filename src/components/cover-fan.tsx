@@ -4,6 +4,7 @@ import coaVariantA from "@/assets/coa-issue-1-variant-a.png";
 import baCover from "@/assets/ba-issue-1-variant.png";
 import baVariant2 from "@/assets/ba-issue-1-variant-2.png";
 import coaVariantB from "@/assets/coa-issue-1-variant-b.png";
+import baRyukenCrew from "@/assets/ba-issue-1-ryuken-crew.png";
 
 type Slot = {
   x: string;
