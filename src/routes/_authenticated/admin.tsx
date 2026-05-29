@@ -160,6 +160,9 @@ function AdminPage() {
             <span className="text-sm font-semibold tracking-[0.18em]">ADMIN</span>
           </Link>
           <div className="flex items-center gap-3 text-sm">
+            <Link to="/admin/users" className="rounded-md border border-border px-3 py-1.5 text-xs font-bold uppercase tracking-[2px] text-muted-foreground hover:text-foreground">
+              Users
+            </Link>
             <Link to="/admin/security" className="rounded-md border border-border px-3 py-1.5 text-xs font-bold uppercase tracking-[2px] text-muted-foreground hover:text-foreground">
               Security
             </Link>
