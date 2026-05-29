@@ -100,17 +100,18 @@ function Reader() {
   });
 
   // Best-effort access logging for paid-content auditing & burst detection.
+  // Only logs when signed in — the server fn requires auth and derives the
+  // user id from the session, so clients can't spoof another user.
   useEffect(() => {
     if (!current?.image_path) return;
     let cancelled = false;
     (async () => {
       const { data } = await supabase.auth.getUser();
-      if (cancelled) return;
+      if (cancelled || !data.user) return;
       logStorageAccess({
         data: {
           paths: [current.image_path],
           bucket: "comic-pages",
-          userId: data.user?.id ?? null,
           comicId: current.id ?? null,
           isFree,
         },
