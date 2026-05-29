@@ -66,5 +66,12 @@ export const getIssueBundle = createServerFn({ method: "GET" })
       supabaseAdmin.from("comics").select("id,page_number,image_path,alt_text,is_free,drop_at,published_at,title").eq("issue_id", issue.id).order("page_number"),
       supabaseAdmin.from("issue_drops").select("*").eq("issue_id", issue.id).order("week"),
     ]);
-    return { issue, pages: pages ?? [], drops: drops ?? [] };
+    // Strip image_path for paid pages. The reader fetches signed URLs for
+    // paid pages via `getSignedComicPages`, which enforces subscription
+    // checks server-side. Returning raw paths here would let any visitor
+    // bypass the paywall via the hydrated loader state + public CDN.
+    const safePages = (pages ?? []).map((p) =>
+      p.is_free ? p : { ...p, image_path: "" },
+    );
+    return { issue, pages: safePages, drops: drops ?? [] };
   });
