@@ -31,6 +31,7 @@ import { Route as AuthenticatedGrowthPackageRouteImport } from './routes/_authen
 import { Route as AuthenticatedGrowthRouteImport } from './routes/_authenticated/growth'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ReaderSeriesIssueRouteImport } from './routes/reader.$series.$issue'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminSubscriptionTestRouteImport } from './routes/_authenticated/admin.subscription-test'
 import { Route as AuthenticatedAdminSecurityRouteImport } from './routes/_authenticated/admin.security'
 import { Route as AuthenticatedAdminLearnRouteImport } from './routes/_authenticated/admin.learn'
@@ -149,6 +150,11 @@ const ReaderSeriesIssueRoute = ReaderSeriesIssueRouteImport.update({
   path: '/reader/$series/$issue',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminSubscriptionTestRoute =
   AuthenticatedAdminSubscriptionTestRouteImport.update({
     id: '/subscription-test',
@@ -215,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
   '/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
@@ -245,6 +252,7 @@ export interface FileRoutesByTo {
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
   '/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
@@ -277,6 +285,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/_authenticated/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/_authenticated/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
   '/_authenticated/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/_authenticated/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
@@ -309,6 +318,7 @@ export interface FileRouteTypes {
     | '/admin/learn'
     | '/admin/security'
     | '/admin/subscription-test'
+    | '/admin/users'
     | '/reader/$series/$issue'
     | '/admin/help/$slug'
     | '/admin/learn/$moduleId'
@@ -339,6 +349,7 @@ export interface FileRouteTypes {
     | '/admin/learn'
     | '/admin/security'
     | '/admin/subscription-test'
+    | '/admin/users'
     | '/reader/$series/$issue'
     | '/admin/help/$slug'
     | '/admin/learn/$moduleId'
@@ -370,6 +381,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/learn'
     | '/_authenticated/admin/security'
     | '/_authenticated/admin/subscription-test'
+    | '/_authenticated/admin/users'
     | '/reader/$series/$issue'
     | '/_authenticated/admin/help/$slug'
     | '/_authenticated/admin/learn/$moduleId'
@@ -553,6 +565,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReaderSeriesIssueRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/subscription-test': {
       id: '/_authenticated/admin/subscription-test'
       path: '/subscription-test'
@@ -638,6 +657,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminLearnRoute: typeof AuthenticatedAdminLearnRouteWithChildren
   AuthenticatedAdminSecurityRoute: typeof AuthenticatedAdminSecurityRoute
   AuthenticatedAdminSubscriptionTestRoute: typeof AuthenticatedAdminSubscriptionTestRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -646,6 +666,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminSecurityRoute: AuthenticatedAdminSecurityRoute,
   AuthenticatedAdminSubscriptionTestRoute:
     AuthenticatedAdminSubscriptionTestRoute,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
@@ -710,3 +731,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
