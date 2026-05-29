@@ -98,13 +98,11 @@ export const getSignedComicPages = createServerFn({ method: "POST" })
 
     // 6. Best-effort audit log for any path we actually handed out a URL for.
     if (eligible.length > 0) {
-      void logStorageAccess({
-        data: {
-          paths: eligible,
-          bucket: BUCKET,
-          userId,
-          isFree: null,
-        },
+      void recordStorageAccess({
+        paths: eligible,
+        bucket: BUCKET,
+        userId,
+        isFree: null,
       }).catch(() => {});
     }
 
