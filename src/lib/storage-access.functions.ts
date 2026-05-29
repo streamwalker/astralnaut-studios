@@ -18,6 +18,7 @@ export const logStorageAccess = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => ClientInputSchema.parse(input))
   .handler(async ({ data, context }) => {
+    const { recordStorageAccess } = await import("./storage-access.server");
     return recordStorageAccess({
       paths: data.paths,
       bucket: data.bucket,
