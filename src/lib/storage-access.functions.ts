@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { recordStorageAccess } from "./storage-access.server";
+
 
 const ClientInputSchema = z.object({
   paths: z.array(z.string().min(1).max(500)).min(1).max(20),
