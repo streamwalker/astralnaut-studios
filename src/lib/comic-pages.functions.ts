@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { recordStorageAccess } from "./storage-access.functions";
+import { recordStorageAccess } from "./storage-access.server";
 
 const BUCKET = "comic-pages";
 const EXPIRES_IN = 60; // seconds
