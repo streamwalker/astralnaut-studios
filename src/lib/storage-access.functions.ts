@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { recordStorageAccess } from "./storage-access.server";
+
 
 const ClientInputSchema = z.object({
   paths: z.array(z.string().min(1).max(500)).min(1).max(20),
@@ -18,6 +18,7 @@ export const logStorageAccess = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => ClientInputSchema.parse(input))
   .handler(async ({ data, context }) => {
+    const { recordStorageAccess } = await import("./storage-access.server");
     return recordStorageAccess({
       paths: data.paths,
       bucket: data.bucket,
