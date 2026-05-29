@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { logStorageAccess } from "./storage-access.functions";
+import { recordStorageAccess } from "./storage-access.functions";
 
 const BUCKET = "comic-pages";
 const EXPIRES_IN = 60; // seconds
@@ -98,13 +98,11 @@ export const getSignedComicPages = createServerFn({ method: "POST" })
 
     // 6. Best-effort audit log for any path we actually handed out a URL for.
     if (eligible.length > 0) {
-      void logStorageAccess({
-        data: {
-          paths: eligible,
-          bucket: BUCKET,
-          userId,
-          isFree: null,
-        },
+      void recordStorageAccess({
+        paths: eligible,
+        bucket: BUCKET,
+        userId,
+        isFree: null,
       }).catch(() => {});
     }
 
