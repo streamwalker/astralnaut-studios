@@ -84,6 +84,7 @@ function AccountPage() {
   const [sub, setSub] = useState<SubRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [portalLoading, setPortalLoading] = useState(false);
+  useI18n();
 
   useEffect(() => {
     let mounted = true;
