@@ -1,59 +1,46 @@
-# Admin Users & Per-User Analytics
+# Redesign /account to match the README/account.html mockup
 
-Add a new admin route `/admin/users` that lists every account on the platform, lets admins invite/add/edit/grant access, and drills into per-user engagement metrics derived from the existing `analytics_events` table.
+The uploaded `account.html` + `README.md` describe a richer subscriber landing page for Real World Comics. The current `src/routes/account.tsx` is a minimal subscription panel. I'll rebuild it as a full subscriber dashboard styled to the mockup, but driven by **real auth + Stripe data** (not URL params).
 
-## New route
+## Scope
 
-`src/routes/_authenticated/admin.users.tsx`
-- Two views: **directory** (list) and **detail** (`?userId=...`).
-- Linked from the admin header next to "Security".
+Rebuild only `src/routes/account.tsx`. No backend / schema / business logic changes. All existing functionality (auth gate, Stripe portal, shipping form, sign out, `?checkout=success` banner) is preserved.
 
-## Directory view
+## Sections (mapped from README → live data)
 
-Table of all users with:
-- Email, display name, role badge (admin / user), subscription tier + status, last sign-in, sessions (last 30d), total time on site, last seen, signup date.
-- Search by email/name, filter by role and subscription status.
-- Row actions: **View metrics**, **Edit**, **Grant/revoke admin**, **Remove**.
-- Toolbar buttons: **Invite user** (sends Supabase invite email), **Add user** (create with temp password).
+1. **Hero** — Real World Comics logo, "The next page only drops here" headline, greeting uses `user.email` (or name from profile if available) instead of `?name=`. CTA → `/reader/...`.
+2. **Account status card** — tier badge color-themed by real `price_id` (Reader=cyan, Initiate=violet, Patron=amber). Shows member-since (`auth.users.created_at`), next billing (`current_period_end`), raffle entries/week derived from tier (1/3/10).
+3. **Tier-staggered drops strip** — Patron Tue / Initiate Wed / Reader Thu, with the user's actual tier highlighted "YOU".
+4. **The slate** — three series cards (Battlefield: Atlantis, Children of Aquarius live; Darker Ages Oct 2026) using existing logo imports from `@/assets/*-logo.png`.
+5. **Platform perks** — four pillars (Motion + sound, Tier-staggered drops, Canon voting, Raffles + cameos).
+6. **Raffle / community CTA** — gradient panel highlighting PS5 unlock at 1,000 subs + free-entry link to `/raffle/free-entry`.
+7. **Subscription management** — keeps existing "Manage subscription" button → `createPortalSession`, the Patron shipping form, change-tier explainer, sign out, `?checkout=success` confirmation banner.
+8. **Footer** — existing `<SiteFooter />`.
 
-## Detail view (per user)
+Skipping from the mockup (would require new data/assets not in scope):
+- Cast grid (12 character portraits) — assets not in project
+- Faction emblems (NDF / TPC) — uploaded as reference images only, not wired as app assets
+- Studio dispatches — no CMS/data source
 
-Header: avatar/initials, email, name, role, subscription, account created, last login.
+I can add these in a follow-up if you want — say the word and I'll wire the faction logos + cast grid as Lovable Assets.
 
-Sections:
-1. **Overview cards** — total sessions, total pageviews, total time on site, avg session length, last active.
-2. **Activity timeline** — recent pageviews + clicks (path, target, timestamp, duration) with pagination.
-3. **Top pages** — pages visited most, with view count and average time spent (what they linger on).
-4. **Top clicks** — most-clicked targets with counts (what they engaged with).
-5. **Sessions** — grouped by `session_id` with start/end, duration, page count.
-6. **Subscription panel** — current plan, period, Stripe customer id, shipping address (read-only).
-7. **Edit panel** — change display name, toggle admin role, send password reset, send magic link, delete user.
+## Styling
 
-All metrics computed from existing `analytics_events` rows filtered by `user_id`.
+Reuse existing design tokens in `src/styles.css` (`--bg`, `--bg2`, `--neon`, `--gold`, `--ink`, `--ink2`, `card-rwc`, `btn-cta`, `eyebrow`) so the redesign matches the rest of the site. The mockup's cyan/amber/violet tier accents map to existing tokens (neon ≈ cyan, gold ≈ amber) with one new inline violet accent for Initiate.
 
-## Server-side work (TanStack server functions, admin-gated)
+## Tier derivation
 
-New file `src/lib/admin-users.functions.ts` with `requireSupabaseAuth` + admin check, using `supabaseAdmin` for auth API calls. Functions:
-- `listUsers({ search, page })` — `supabaseAdmin.auth.admin.listUsers()` joined with `user_roles`, `subscriptions`, and aggregated `analytics_events` (sessions, last_seen, total_ms).
-- `getUserDetail({ userId })` — auth user + role + subscription + analytics aggregates + recent events.
-- `inviteUser({ email })` — `supabaseAdmin.auth.admin.inviteUserByEmail`.
-- `createUser({ email, password, displayName })` — `supabaseAdmin.auth.admin.createUser`.
-- `updateUser({ userId, displayName, email })` — `supabaseAdmin.auth.admin.updateUserById`.
-- `setUserRole({ userId, role, grant })` — insert/delete in `user_roles`.
-- `sendPasswordReset({ email })`, `deleteUser({ userId })`.
+```ts
+const tierKey = sub?.price_id?.split("_")[0]; // "reader" | "initiate" | "patron"
+const tierMeta = {
+  reader:   { label: "Reader",   day: "Thursday", entries: 1,  color: "var(--neon)" },
+  initiate: { label: "Initiate", day: "Wednesday", entries: 3,  color: "#C4A0FF" },
+  patron:   { label: "Patron",   day: "Tuesday",  entries: 10, color: "var(--gold)" },
+};
+```
 
-Every function verifies the caller is admin via `has_role(auth.uid(), 'admin')` before touching `supabaseAdmin`.
+## Files touched
 
-## Technical notes
+- `src/routes/account.tsx` — full rewrite of `AccountPage` component; `Route` config, `beforeLoad`, `ShippingForm`, and server-fn wiring kept intact.
 
-- `last_sign_in_at` comes from `auth.users` (only reachable via `supabaseAdmin`), so the directory must go through a server function — RLS-scoped browser queries can't see it.
-- "Time on page" / "lingered on" reuses the `page_leave` events already emitted by `AnalyticsTracker` (duration_ms per path).
-- "What they clicked" reuses the `click` events with their `target` description.
-- Invites and password resets use Supabase's built-in email templates — no new email infra needed.
-- Add the route to the admin header (`src/routes/_authenticated/admin.tsx`) as a "Users" pill.
-
-## Open questions
-
-1. Should "Add user" create the account silently with a temp password, or always go through the email **Invite** flow? (Invite is safer — user sets their own password.)
-2. For "grant access," is the only role admin/user, or do you also want a moderator/editor tier?
-3. Should deleting a user also wipe their `analytics_events` and `subscriptions` rows, or keep them for historical metrics?
+No other files change.
