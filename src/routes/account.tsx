@@ -147,11 +147,13 @@ function AccountPage() {
             className="mx-auto h-20 w-auto md:h-28"
             style={{ filter: "drop-shadow(0 0 24px rgba(60,220,255,0.25))" }}
           />
-          <div className="eyebrow mt-6 text-[var(--gold)]">Welcome back, {greeting}</div>
-          <h1 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">
-            The next page only drops here.
+          <div className="eyebrow mt-6 text-[var(--gold)]">
+            <span data-i18n="hero.welcome">Welcome back</span>, {greeting}
+          </div>
+          <h1 className="mt-3 text-4xl font-black tracking-tight md:text-5xl" data-i18n-html="hero.title">
+            The next page only drops <span className="accent">here</span>.
           </h1>
-          <p className="mx-auto mt-3 max-w-2xl text-[var(--ink2)]">
+          <p className="mx-auto mt-3 max-w-2xl text-[var(--ink2)]" data-i18n="hero.sub">
             Netflix for comics. Weekly drops. Real prizes. Canon you help shape. Built for readers, not pirates.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
@@ -159,6 +161,7 @@ function AccountPage() {
               to="/reader/$series/$issue"
               params={{ series: "battlefield-atlantis", issue: "1" }}
               className="btn-cta"
+              data-i18n="hero.cta.continue"
             >
               Keep reading →
             </Link>
