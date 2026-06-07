@@ -341,6 +341,32 @@ function AccountPage() {
           </div>
         </section>
 
+        {/* FACTIONS IN MOTION */}
+        <section className="mt-16">
+          <div className="eyebrow text-[var(--gold)]" data-i18n="factions.eyebrow">Factions in motion</div>
+          <h2 className="mt-2 text-2xl font-black md:text-3xl" data-i18n="factions.title">
+            The forces shaping the disclosure era.
+          </h2>
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <FactionTile
+              logo={ndfAsset.url}
+              name="Nerrian Defense Force"
+              short="NDF"
+              tagline="Vigilant · Protect · Prevail"
+              blurb="Standing army of the Nerrian homeworld. Doctrinal backbone of the Battlefield: Atlantis conflict."
+              accent="var(--neon)"
+            />
+            <FactionTile
+              logo={tpcAsset.url}
+              name="Tri-Planetary Coalition"
+              short="TPC"
+              tagline="Unity · Diplomacy · Commerce"
+              blurb="Three worlds, one charter. Trade lanes, treaty law, and the long peace the NDF was built to defend."
+              accent="var(--gold)"
+            />
+          </div>
+        </section>
+
         {/* PLATFORM PERKS */}
         <section className="mt-16">
           <div className="eyebrow text-[var(--gold)]">Platform perks</div>
