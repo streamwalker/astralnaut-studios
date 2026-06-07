@@ -3,6 +3,7 @@ import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { TierBadge } from "@/components/TierGate";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import astralnautLogo from "@/assets/astralnaut-studios-logo.png";
 
 type NavItem = { to: string; label: string; exact?: boolean; accent?: boolean; params?: Record<string, string>; tour?: string };
@@ -92,6 +93,7 @@ export function SiteHeader() {
           })}
         </nav>
         <div className="flex items-center gap-3">
+          <LanguageSwitcher />
           <TierBadge />
           {isAdmin ? (
             <>
