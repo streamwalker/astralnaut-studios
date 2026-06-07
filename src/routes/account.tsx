@@ -430,6 +430,37 @@ function Perk({ title, body }: { title: string; body: string }) {
   );
 }
 
+function FactionTile({
+  logo, name, short, tagline, blurb, accent,
+}: {
+  logo: string;
+  name: string;
+  short: string;
+  tagline: string;
+  blurb: string;
+  accent: string;
+}) {
+  return (
+    <div
+      className="card-rwc flex items-center gap-5 p-5"
+      style={{ borderColor: `${accent}40` }}
+    >
+      <div
+        className="flex h-24 w-24 flex-none items-center justify-center rounded-md bg-black/50 p-3"
+        style={{ boxShadow: `0 0 24px ${accent}30` }}
+      >
+        <img src={logo} alt={`${name} emblem`} className="max-h-full max-w-full object-contain" />
+      </div>
+      <div className="min-w-0">
+        <div className="text-[10px] font-bold uppercase tracking-[2px]" style={{ color: accent }}>{short}</div>
+        <div className="mt-0.5 text-base font-black leading-tight">{name}</div>
+        <div className="mt-1 text-[11px] font-semibold uppercase tracking-[1.5px] text-[var(--ink2)]">{tagline}</div>
+        <p className="mt-2 text-xs text-[var(--ink2)]">{blurb}</p>
+      </div>
+    </div>
+  );
+}
+
 function SeriesTile({
   logo, name, status, statusColor, blurb, to,
 }: {
