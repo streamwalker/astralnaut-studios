@@ -9,6 +9,9 @@ import rwcLogo from "@/assets/real-world-comics-logo.png";
 import baLogo from "@/assets/battlefield-atlantis-logo.png";
 import coaLogo from "@/assets/children-of-aquarius-logo.png";
 import daLogo from "@/assets/darker-ages-logo.png";
+import ndfAsset from "@/assets/factions/nerrian-defense-force-logo.png.asset.json";
+import tpcAsset from "@/assets/factions/tri-planetary-coalition-logo.png.asset.json";
+import { useI18n } from "@/hooks/useI18n";
 
 type SubRow = {
   status: string;
