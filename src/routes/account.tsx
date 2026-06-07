@@ -9,6 +9,9 @@ import rwcLogo from "@/assets/real-world-comics-logo.png";
 import baLogo from "@/assets/battlefield-atlantis-logo.png";
 import coaLogo from "@/assets/children-of-aquarius-logo.png";
 import daLogo from "@/assets/darker-ages-logo.png";
+import ndfAsset from "@/assets/factions/nerrian-defense-force-logo.png.asset.json";
+import tpcAsset from "@/assets/factions/tri-planetary-coalition-logo.png.asset.json";
+import { useI18n } from "@/hooks/useI18n";
 
 type SubRow = {
   status: string;
@@ -81,6 +84,7 @@ function AccountPage() {
   const [sub, setSub] = useState<SubRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [portalLoading, setPortalLoading] = useState(false);
+  useI18n();
 
   useEffect(() => {
     let mounted = true;
@@ -143,11 +147,13 @@ function AccountPage() {
             className="mx-auto h-20 w-auto md:h-28"
             style={{ filter: "drop-shadow(0 0 24px rgba(60,220,255,0.25))" }}
           />
-          <div className="eyebrow mt-6 text-[var(--gold)]">Welcome back, {greeting}</div>
-          <h1 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">
-            The next page only drops here.
+          <div className="eyebrow mt-6 text-[var(--gold)]">
+            <span data-i18n="hero.welcome">Welcome back</span>, {greeting}
+          </div>
+          <h1 className="mt-3 text-4xl font-black tracking-tight md:text-5xl" data-i18n-html="hero.title">
+            The next page only drops <span className="accent">here</span>.
           </h1>
-          <p className="mx-auto mt-3 max-w-2xl text-[var(--ink2)]">
+          <p className="mx-auto mt-3 max-w-2xl text-[var(--ink2)]" data-i18n="hero.sub">
             Netflix for comics. Weekly drops. Real prizes. Canon you help shape. Built for readers, not pirates.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
@@ -155,6 +161,7 @@ function AccountPage() {
               to="/reader/$series/$issue"
               params={{ series: "battlefield-atlantis", issue: "1" }}
               className="btn-cta"
+              data-i18n="hero.cta.continue"
             >
               Keep reading →
             </Link>
@@ -334,6 +341,32 @@ function AccountPage() {
           </div>
         </section>
 
+        {/* FACTIONS IN MOTION */}
+        <section className="mt-16">
+          <div className="eyebrow text-[var(--gold)]" data-i18n="factions.eyebrow">Factions in motion</div>
+          <h2 className="mt-2 text-2xl font-black md:text-3xl" data-i18n="factions.title">
+            The forces shaping the disclosure era.
+          </h2>
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <FactionTile
+              logo={ndfAsset.url}
+              name="Nerrian Defense Force"
+              short="NDF"
+              tagline="Vigilant · Protect · Prevail"
+              blurb="Standing army of the Nerrian homeworld. Doctrinal backbone of the Battlefield: Atlantis conflict."
+              accent="var(--neon)"
+            />
+            <FactionTile
+              logo={tpcAsset.url}
+              name="Tri-Planetary Coalition"
+              short="TPC"
+              tagline="Unity · Diplomacy · Commerce"
+              blurb="Three worlds, one charter. Trade lanes, treaty law, and the long peace the NDF was built to defend."
+              accent="var(--gold)"
+            />
+          </div>
+        </section>
+
         {/* PLATFORM PERKS */}
         <section className="mt-16">
           <div className="eyebrow text-[var(--gold)]">Platform perks</div>
@@ -393,6 +426,37 @@ function Perk({ title, body }: { title: string; body: string }) {
     <div className="card-rwc p-5">
       <div className="text-sm font-bold text-[var(--neon)]">{title}</div>
       <p className="mt-2 text-xs text-[var(--ink2)]">{body}</p>
+    </div>
+  );
+}
+
+function FactionTile({
+  logo, name, short, tagline, blurb, accent,
+}: {
+  logo: string;
+  name: string;
+  short: string;
+  tagline: string;
+  blurb: string;
+  accent: string;
+}) {
+  return (
+    <div
+      className="card-rwc flex items-center gap-5 p-5"
+      style={{ borderColor: `${accent}40` }}
+    >
+      <div
+        className="flex h-24 w-24 flex-none items-center justify-center rounded-md bg-black/50 p-3"
+        style={{ boxShadow: `0 0 24px ${accent}30` }}
+      >
+        <img src={logo} alt={`${name} emblem`} className="max-h-full max-w-full object-contain" />
+      </div>
+      <div className="min-w-0">
+        <div className="text-[10px] font-bold uppercase tracking-[2px]" style={{ color: accent }}>{short}</div>
+        <div className="mt-0.5 text-base font-black leading-tight">{name}</div>
+        <div className="mt-1 text-[11px] font-semibold uppercase tracking-[1.5px] text-[var(--ink2)]">{tagline}</div>
+        <p className="mt-2 text-xs text-[var(--ink2)]">{blurb}</p>
+      </div>
     </div>
   );
 }
