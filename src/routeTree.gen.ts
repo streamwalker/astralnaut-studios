@@ -34,11 +34,13 @@ import { Route as ReaderSeriesIssueRouteImport } from './routes/reader.$series.$
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminSubscriptionTestRouteImport } from './routes/_authenticated/admin.subscription-test'
 import { Route as AuthenticatedAdminSecurityRouteImport } from './routes/_authenticated/admin.security'
+import { Route as AuthenticatedAdminLettersRouteImport } from './routes/_authenticated/admin.letters'
 import { Route as AuthenticatedAdminLearnRouteImport } from './routes/_authenticated/admin.learn'
 import { Route as AuthenticatedAdminHelpRouteImport } from './routes/_authenticated/admin.help'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as AuthenticatedAdminLearnModuleIdRouteImport } from './routes/_authenticated/admin.learn.$moduleId'
 import { Route as AuthenticatedAdminHelpSlugRouteImport } from './routes/_authenticated/admin.help.$slug'
+import { Route as AuthenticatedReaderSeriesIssueLettersRouteImport } from './routes/_authenticated/reader.$series.$issue.letters'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -167,6 +169,12 @@ const AuthenticatedAdminSecurityRoute =
     path: '/admin/security',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAdminLettersRoute =
+  AuthenticatedAdminLettersRouteImport.update({
+    id: '/admin/letters',
+    path: '/admin/letters',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAdminLearnRoute = AuthenticatedAdminLearnRouteImport.update({
   id: '/admin/learn',
   path: '/admin/learn',
@@ -195,6 +203,12 @@ const AuthenticatedAdminHelpSlugRoute =
     path: '/$slug',
     getParentRoute: () => AuthenticatedAdminHelpRoute,
   } as any)
+const AuthenticatedReaderSeriesIssueLettersRoute =
+  AuthenticatedReaderSeriesIssueLettersRouteImport.update({
+    id: '/reader/$series/$issue/letters',
+    path: '/reader/$series/$issue/letters',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -218,6 +232,7 @@ export interface FileRoutesByFullPath {
   '/raffle/rules': typeof RaffleRulesRoute
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
+  '/admin/letters': typeof AuthenticatedAdminLettersRoute
   '/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -226,6 +241,7 @@ export interface FileRoutesByFullPath {
   '/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/reader/$series/$issue/letters': typeof AuthenticatedReaderSeriesIssueLettersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -249,6 +265,7 @@ export interface FileRoutesByTo {
   '/raffle/rules': typeof RaffleRulesRoute
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
+  '/admin/letters': typeof AuthenticatedAdminLettersRoute
   '/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -257,6 +274,7 @@ export interface FileRoutesByTo {
   '/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/reader/$series/$issue/letters': typeof AuthenticatedReaderSeriesIssueLettersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -282,6 +300,7 @@ export interface FileRoutesById {
   '/raffle/rules': typeof RaffleRulesRoute
   '/_authenticated/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/_authenticated/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
+  '/_authenticated/admin/letters': typeof AuthenticatedAdminLettersRoute
   '/_authenticated/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/_authenticated/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -290,6 +309,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/_authenticated/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/_authenticated/reader/$series/$issue/letters': typeof AuthenticatedReaderSeriesIssueLettersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -315,6 +335,7 @@ export interface FileRouteTypes {
     | '/raffle/rules'
     | '/admin/help'
     | '/admin/learn'
+    | '/admin/letters'
     | '/admin/security'
     | '/admin/subscription-test'
     | '/admin/users'
@@ -323,6 +344,7 @@ export interface FileRouteTypes {
     | '/admin/help/$slug'
     | '/admin/learn/$moduleId'
     | '/api/public/payments/webhook'
+    | '/reader/$series/$issue/letters'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -346,6 +368,7 @@ export interface FileRouteTypes {
     | '/raffle/rules'
     | '/admin/help'
     | '/admin/learn'
+    | '/admin/letters'
     | '/admin/security'
     | '/admin/subscription-test'
     | '/admin/users'
@@ -354,6 +377,7 @@ export interface FileRouteTypes {
     | '/admin/help/$slug'
     | '/admin/learn/$moduleId'
     | '/api/public/payments/webhook'
+    | '/reader/$series/$issue/letters'
   id:
     | '__root__'
     | '/'
@@ -378,6 +402,7 @@ export interface FileRouteTypes {
     | '/raffle/rules'
     | '/_authenticated/admin/help'
     | '/_authenticated/admin/learn'
+    | '/_authenticated/admin/letters'
     | '/_authenticated/admin/security'
     | '/_authenticated/admin/subscription-test'
     | '/_authenticated/admin/users'
@@ -386,6 +411,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/help/$slug'
     | '/_authenticated/admin/learn/$moduleId'
     | '/api/public/payments/webhook'
+    | '/_authenticated/reader/$series/$issue/letters'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -586,6 +612,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSecurityRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin/letters': {
+      id: '/_authenticated/admin/letters'
+      path: '/admin/letters'
+      fullPath: '/admin/letters'
+      preLoaderRoute: typeof AuthenticatedAdminLettersRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/admin/learn': {
       id: '/_authenticated/admin/learn'
       path: '/admin/learn'
@@ -620,6 +653,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/help/$slug'
       preLoaderRoute: typeof AuthenticatedAdminHelpSlugRouteImport
       parentRoute: typeof AuthenticatedAdminHelpRoute
+    }
+    '/_authenticated/reader/$series/$issue/letters': {
+      id: '/_authenticated/reader/$series/$issue/letters'
+      path: '/reader/$series/$issue/letters'
+      fullPath: '/reader/$series/$issue/letters'
+      preLoaderRoute: typeof AuthenticatedReaderSeriesIssueLettersRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
   }
 }
@@ -657,10 +697,12 @@ interface AuthenticatedRouteChildren {
   AuthenticatedGrowthPackageRoute: typeof AuthenticatedGrowthPackageRoute
   AuthenticatedAdminHelpRoute: typeof AuthenticatedAdminHelpRouteWithChildren
   AuthenticatedAdminLearnRoute: typeof AuthenticatedAdminLearnRouteWithChildren
+  AuthenticatedAdminLettersRoute: typeof AuthenticatedAdminLettersRoute
   AuthenticatedAdminSecurityRoute: typeof AuthenticatedAdminSecurityRoute
   AuthenticatedAdminSubscriptionTestRoute: typeof AuthenticatedAdminSubscriptionTestRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedReaderSeriesIssueLettersRoute: typeof AuthenticatedReaderSeriesIssueLettersRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -668,11 +710,14 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedGrowthPackageRoute: AuthenticatedGrowthPackageRoute,
   AuthenticatedAdminHelpRoute: AuthenticatedAdminHelpRouteWithChildren,
   AuthenticatedAdminLearnRoute: AuthenticatedAdminLearnRouteWithChildren,
+  AuthenticatedAdminLettersRoute: AuthenticatedAdminLettersRoute,
   AuthenticatedAdminSecurityRoute: AuthenticatedAdminSecurityRoute,
   AuthenticatedAdminSubscriptionTestRoute:
     AuthenticatedAdminSubscriptionTestRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedReaderSeriesIssueLettersRoute:
+    AuthenticatedReaderSeriesIssueLettersRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -722,3 +767,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
