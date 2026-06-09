@@ -508,6 +508,106 @@ export type Database = {
           },
         ]
       }
+      letter_comments: {
+        Row: {
+          body: string
+          created_at: string
+          display_name: string
+          hidden: boolean
+          id: string
+          letter_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          display_name: string
+          hidden?: boolean
+          id?: string
+          letter_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          display_name?: string
+          hidden?: boolean
+          id?: string
+          letter_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "letter_comments_letter_id_fkey"
+            columns: ["letter_id"]
+            isOneToOne: false
+            referencedRelation: "letters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      letters: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          body: string
+          created_at: string
+          display_name: string
+          editor_reply: string | null
+          feature_order: number | null
+          id: string
+          issue_id: string
+          location: string | null
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          body: string
+          created_at?: string
+          display_name: string
+          editor_reply?: string | null
+          feature_order?: number | null
+          id?: string
+          issue_id: string
+          location?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          body?: string
+          created_at?: string
+          display_name?: string
+          editor_reply?: string | null
+          feature_order?: number | null
+          id?: string
+          issue_id?: string
+          location?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "letters_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "issues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       milestones: {
         Row: {
           created_at: string
@@ -857,6 +957,10 @@ export type Database = {
         Args: { check_env?: string; user_uuid: string }
         Returns: boolean
       }
+      has_any_active_subscription: {
+        Args: { p_user: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -864,6 +968,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      issue_is_concluded: { Args: { p_issue: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "user"
