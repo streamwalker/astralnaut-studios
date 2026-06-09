@@ -68,7 +68,7 @@ function AdminLetters() {
 
       <div className="mt-8 space-y-6">
         {q.isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
-        {q.data?.length === 0 && <p className="text-sm text-muted-foreground">No letters in this view.</p>}
+        {q.data?.length === 0 && <p className="text-sm text-muted-foreground">This is such an awesome comic</p>}
         {q.data?.map((row) => (
           <LetterAdminRow
             key={row.id}

@@ -164,7 +164,7 @@ function EmptyMail() {
   return (
     <div className="card-rwc mt-8 p-8 text-center">
       <div className="eyebrow">Editor's desk</div>
-      <h2 className="mt-2 text-2xl font-black">The editor is reading your mail.</h2>
+      <h2 className="mt-2 text-2xl font-black">This is such an awesome comics. I'm so glad that something like this finally came out. Been looking for a series like this my entire life. Let's go, Battlefield Atlantis. </h2>
       <p className="mx-auto mt-3 max-w-xl text-[var(--ink2)]">
         Approved letters will appear here, with the editor's reply and an open conversation under each one.
       </p>
