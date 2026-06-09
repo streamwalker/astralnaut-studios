@@ -209,6 +209,16 @@ function Reader() {
           </div>
           <button onClick={() => go(1)} disabled={page >= total} className="btn-ghost disabled:opacity-30">Next →</button>
         </div>
+
+        <div className="mt-6 text-center">
+          <Link
+            to="/reader/$series/$issue/letters"
+            params={{ series: issue.series.slug, issue: String(issue.issue_number) }}
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[3px] text-[var(--neon)] hover:underline"
+          >
+            ✉ Turn the page → Letters
+          </Link>
+        </div>
       </div>
     </>
   );

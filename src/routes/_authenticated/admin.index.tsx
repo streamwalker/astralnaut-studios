@@ -166,6 +166,9 @@ function AdminPage() {
             <Link to="/admin/security" className="rounded-md border border-border px-3 py-1.5 text-xs font-bold uppercase tracking-[2px] text-muted-foreground hover:text-foreground">
               Security
             </Link>
+            <Link to="/admin/letters" className="rounded-md border border-border px-3 py-1.5 text-xs font-bold uppercase tracking-[2px] text-muted-foreground hover:text-foreground">
+              Letters
+            </Link>
             <Link to="/admin/subscription-test" className="rounded-md border border-[var(--neon)]/40 px-3 py-1.5 text-xs font-bold uppercase tracking-[2px] text-[var(--neon)] hover:bg-[var(--neon)]/10">
               Sub Test
             </Link>

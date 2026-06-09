@@ -1,44 +1,83 @@
-## What the archive contains
 
-- **Logos (new):** `astralnaut-studios-logo.png`, `real-world-comics-logo.png`, `battlefield-atlantis-logo-alt.png` (red variant), and two faction emblems (`nerrian-defense-force-logo.png`, `tri-planetary-coalition-logo.png`).
-- **`i18n.js` (123KB):** A 12-language translation module (en, es, fr, de, vi, yue, zh, ja, ar, hi, ko, tl) keyed off `data-i18n` / `data-i18n-html` attributes. Persists to localStorage. Arabic flips to RTL.
-- **`account.html` + `README.md`:** The latest version of the mockup, now including a **Factions in motion** section and i18n attributes on every string.
+# Letters Pages — "Battlefield at Letters" / "Mail of Aquarius" / "Darker Pages"
 
-The `/account` redesign from the previous turn already covers hero, status card, drops strip, slate, perks, raffle CTA, and subscription management. This archive adds what's still missing.
+Bring back the classic comic letters page: subscribers mail in, the editor (admin) picks a few, publishes them with an editorial reply, and other subscribers comment under each selected letter. The whole page only goes public once the issue's final story page has dropped.
 
-## Plan
+## User-facing surface
 
-### 1. Add new logo assets via Lovable Assets
-Register 5 new files as CDN-backed pointers (so they don't bloat the repo):
-- `src/assets/astralnaut-studios-logo.png.asset.json`
-- `src/assets/real-world-comics-logo-v2.png.asset.json` (replaces the existing one if you prefer the archive version — confirm in Q1 below)
-- `src/assets/battlefield-atlantis-logo-alt.png.asset.json`
-- `src/assets/nerrian-defense-force-logo.png.asset.json`
-- `src/assets/tri-planetary-coalition-logo.png.asset.json`
+**Per-issue letters route:** `/reader/$series/$issue/letters` (or `/letters/$series/$issue`)
+- Series-specific masthead with the branded title:
+  - `battlefield-atlantis` → **BATTLEFIELD AT LETTERS**
+  - `children-of-aquarius` → **MAIL OF AQUARIUS**
+  - `darker-ages` → **DARKER PAGES**
+- Newsprint two-column layout styled to evoke the uploaded references (bold masthead bar, two-column body, signature block right-aligned under each letter, italic editor reply with em-dash sign-off).
+- Three states:
+  1. **Issue not fully published** → "Letters open after Issue N concludes" + (if subscribed) a "Submit your letter" CTA that stores a draft for when it opens.
+  2. **Issue concluded, no approved letters yet** → "The editor is reading your mail" placeholder + submit form.
+  3. **Approved letters present** → Rendered letters with editorial replies and a per-letter comments thread.
+- Linked from the reader's last page ("Turn the page → Letters") and from each series page once unlocked.
 
-### 2. Add a "Factions in motion" section to `/account`
-Between the slate and the platform perks, add a two-card section showing the NDF and TPC emblems with their taglines pulled from the README ("Vigilant · Protect · Prevail" and "Unity · Diplomacy · Commerce"). Cards use existing `card-rwc` styling.
+**Submission form (subscribers only):**
+- Fields: subject, body (markdown-lite, length capped), display name (defaults to profile), city/handle line.
+- One pending submission per user per issue (can edit until approved/rejected).
 
-### 3. Wire up the 12-language switcher
-- Convert `i18n.js` (currently a `<script>`-tag module that mutates `window`) into a TypeScript module at `src/lib/i18n.ts` exporting `setLang(code)`, `getLang()`, `applyI18n(root)`, and the `LANGS`/`I18N` maps.
-- Build a small `<LanguageSwitcher />` dropdown component (uses existing shadcn `DropdownMenu`) placed in the site header next to the existing nav.
-- Add `data-i18n` attributes to the strings in `src/routes/account.tsx` that match the keys in the dictionary. A `useI18n()` hook applies translations on mount and on language change, and toggles `<html dir="rtl">` for Arabic.
-- Persist choice to `localStorage` (key `rwc.lang`), default to browser language with English fallback.
+**Comments under approved letters (subscribers only):**
+- Flat thread per letter, oldest-first, max length, soft-rate-limited.
+- Author can delete their own; admin can hide any.
 
-### What I'm skipping (and why)
+## Admin surface
 
-- **Cast grid (12 character portraits):** README points these at the live `astralnautstudios.com/assets/` CDN, but those URLs aren't guaranteed to resolve from this app and would create cross-origin image dependencies. I can add this in a follow-up if you upload the portraits or confirm the CDN is public.
-- **Studio dispatches:** README explicitly calls these placeholder copy. Needs a content source (CMS table or hardcoded list) — happy to add a `dispatches` table + simple admin if you want it.
-- **Alt BA logo:** Registered as an asset but not used anywhere yet (README calls it an optional "darker arc" cover treatment).
+New tab in `/admin`: **Letters**.
+- Filter by series + issue, status (pending / approved / rejected / hidden).
+- For each submission: full body, submitter, submitted-at, edit textarea for the **editorial reply**, approve / reject / hide buttons, "feature order" number.
+- Moderation for comments: list flagged/recent, hide/restore.
 
-## Two quick decisions
+## Visibility / publish gate
 
-**Q1 — Real World Comics logo:** The archive includes a new `real-world-comics-logo.png`. The app already has one at `src/assets/real-world-comics-logo.png`. Replace the existing one, or register the new one alongside as v2?
+A letters page is **publicly visible** only when every page of that issue is published (`comics.published_at <= now()` for all `page_number <= total_pages`). Computed in the server fn that loads the page; admins always see it. Subscribers can always submit (form visible when signed in + active sub) even before the page goes public, so mail accumulates ahead of the reveal.
 
-**Q2 — Scope of i18n:** Just translate `/account`, or also the homepage, pricing, perks, and series pages? Doing all of them is mostly a mechanical pass adding `data-i18n` attributes to existing strings — say the word and I'll expand the scope.
+## Data model (new tables, all RLS-on)
 
-## Files touched
+- **`letters`** — `id, issue_id (fk issues), user_id (fk auth.users), subject, body, display_name, location, status ('pending'|'approved'|'rejected'|'hidden'), editor_reply (nullable), feature_order (int, nullable), approved_at, approved_by, created_at, updated_at`. Unique `(issue_id, user_id)` while status in pending/approved.
+- **`letter_comments`** — `id, letter_id (fk letters), user_id, body, hidden (bool), created_at, updated_at`.
 
-- New: 5 `*.asset.json` pointers, `src/lib/i18n.ts`, `src/lib/i18n-dictionary.ts` (split out the 100KB dictionary), `src/components/language-switcher.tsx`, `src/hooks/useI18n.tsx`
-- Edited: `src/routes/account.tsx` (Factions section + `data-i18n` attributes), `src/components/site-header.tsx` (add switcher)
-- No backend, schema, or auth changes.
+RLS:
+- `letters`: subscriber can insert/update own pending row; subscriber can select own row any status; everyone authed can select approved rows **only when issue fully published** (enforced via security-definer helper `public.issue_is_concluded(issue_id)`); admin all.
+- `letter_comments`: any active subscriber can insert on an approved+visible letter; select where `hidden=false` and parent letter visible; author can update/delete own; admin all.
+
+GRANTs to `authenticated` + `service_role` per project rules.
+
+## Server functions (TanStack `createServerFn`)
+
+`src/lib/letters.functions.ts`:
+- `getLettersPage({ series, issue })` — returns `{ unlocked, issue, letters: [{...letter, comments: [...] }], canSubmit, mySubmission }`.
+- `submitLetter({ issueId, subject, body, displayName, location })` — subscriber-gated, upsert own pending row.
+- `addLetterComment({ letterId, body })` — subscriber-gated, rate-limited.
+- `deleteOwnComment({ commentId })`.
+
+`src/lib/admin-letters.functions.ts` (admin-only via `has_role`):
+- `listLetters({ filter })`, `setLetterStatus({ id, status, editorReply, featureOrder })`, `setCommentHidden`.
+
+All read RLS-respecting via `requireSupabaseAuth`; admin writes use the same supabase client plus a server-side `has_role` check.
+
+## Files
+
+**New**
+- `supabase/migrations/<ts>_letters.sql` — tables, helper fn, RLS, grants.
+- `src/lib/letters.functions.ts`, `src/lib/admin-letters.functions.ts`.
+- `src/routes/reader.$series.$issue.letters.tsx` — public letters page.
+- `src/routes/_authenticated/admin.letters.tsx` — admin curation UI.
+- `src/components/letters/LetterCard.tsx`, `LetterMasthead.tsx`, `SubmitLetterForm.tsx`, `LetterComments.tsx`.
+- `src/lib/letters-branding.ts` — series → masthead title/colors map.
+
+**Edited**
+- `src/routes/reader.$series.$issue.tsx` — "→ Letters" link on the final page.
+- `src/routes/battlefield-atlantis.tsx`, `children-of-aquarius.tsx`, `darker-ages.tsx` — link to letters page when unlocked.
+- `src/routes/_authenticated/admin.index.tsx` — nav link to Letters admin.
+
+## Open questions before build
+
+1. **Submission eligibility** — any active subscriber tier, or only Initiate/Patron?
+2. **Comment editing** — allow edits within N minutes, or delete-only?
+3. **Profanity / spam** — start with admin-hide-only, add an automated filter later?
+4. **Anonymous display** — allow "Name withheld" option, or always require a display name?
