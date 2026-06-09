@@ -275,3 +275,12 @@
 }
 
 
+
+/* Letters page newsprint styling */
+.newsprint {
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+  color: var(--ink);
+}
+.newsprint h3 {
+  font-family: inherit;
+}
