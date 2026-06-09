@@ -18,7 +18,7 @@ export const adminListLetters = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => ListInput.parse(input))
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.userId, context.supabase);
+    await assertAdmin(context.userId);
 
     let issueIds: string[] | null = null;
     if (data.seriesSlug && !data.issueId) {
@@ -58,8 +58,8 @@ export const adminSetLetterStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => SetStatusInput.parse(input))
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.userId, context.supabase);
-    const patch: Record<string, unknown> = { status: data.status };
+    await assertAdmin(context.userId);
+    const patch: Record<string, string | number | null> = { status: data.status };
     if (data.editorReply !== undefined) patch.editor_reply = data.editorReply || null;
     if (data.featureOrder !== undefined) patch.feature_order = data.featureOrder;
     if (data.status === "approved") {
@@ -77,7 +77,7 @@ export const adminSetCommentHidden = createServerFn({ method: "POST" })
     z.object({ id: z.string().uuid(), hidden: z.boolean() }).parse(input),
   )
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.userId, context.supabase);
+    await assertAdmin(context.userId);
     const { error } = await supabaseAdmin
       .from("letter_comments")
       .update({ hidden: data.hidden })
