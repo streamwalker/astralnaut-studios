@@ -66,7 +66,7 @@ export const adminSetLetterStatus = createServerFn({ method: "POST" })
       patch.approved_at = new Date().toISOString();
       patch.approved_by = context.userId;
     }
-    const { error } = await supabaseAdmin.from("letters").update(patch).eq("id", data.id);
+    const { error } = await supabaseAdmin.from("letters").update(patch as never).eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
