@@ -3,8 +3,8 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-async function assertAdmin(userId: string, supabase: { rpc: (n: string, p: unknown) => Promise<{ data: unknown }> }) {
-  const { data } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
+async function assertAdmin(userId: string) {
+  const { data } = await supabaseAdmin.rpc("has_role", { _user_id: userId, _role: "admin" });
   if (!data) throw new Error("Forbidden");
 }
 
