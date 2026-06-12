@@ -121,6 +121,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useCartSync();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -129,6 +130,7 @@ function RootComponent() {
         <Outlet />
         <TourOverlay />
         <AnalyticsTracker />
+        <Toaster position="top-right" />
       </TooltipProvider>
     </QueryClientProvider>
   );
