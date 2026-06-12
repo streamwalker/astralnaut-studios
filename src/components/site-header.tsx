@@ -10,6 +10,7 @@ type NavItem = { to: string; label: string; exact?: boolean; accent?: boolean; p
 const nav: NavItem[] = [
   { to: "/", label: "Library", exact: true, tour: "nav-library" },
   { to: "/reader/$series/$issue", label: "Reader", params: { series: "battlefield-atlantis", issue: "1" }, tour: "nav-reader" },
+  { to: "/shop", label: "Shop" },
   { to: "/perks", label: "Perks" },
   { to: "/pricing", label: "Pricing", tour: "nav-pricing" },
   { to: "/help", label: "Help", tour: "nav-help" },
