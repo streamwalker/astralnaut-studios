@@ -148,6 +148,7 @@ export function SiteFooter() {
           { to: "/darker-ages", label: "Darker Ages" },
         ]} />
         <FooterCol title="Platform" links={[
+          { to: "/shop", label: "Shop" },
           { to: "/pricing", label: "Pricing" },
           { to: "/perks", label: "Your perks" },
           { to: "/account", label: "Your account" },
