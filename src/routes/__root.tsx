@@ -13,6 +13,8 @@ import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { TourOverlay } from "@/components/tour/TourOverlay";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AnalyticsTracker } from "@/components/analytics-tracker";
+import { Toaster } from "@/components/ui/sonner";
+import { useCartSync } from "@/hooks/useCartSync";
 
 function NotFoundComponent() {
   return (
