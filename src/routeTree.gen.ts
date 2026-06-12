@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ShopRouteImport } from './routes/shop'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PerksRouteImport } from './routes/perks'
 import { Route as LoginRouteImport } from './routes/login'
@@ -25,6 +26,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RaffleRulesRouteImport } from './routes/raffle.rules'
 import { Route as RaffleFreeEntryRouteImport } from './routes/raffle.free-entry'
+import { Route as ProductHandleRouteImport } from './routes/product.$handle'
 import { Route as LearnModuleIdRouteImport } from './routes/learn.$moduleId'
 import { Route as HelpSlugRouteImport } from './routes/help.$slug'
 import { Route as AuthenticatedGrowthPackageRouteImport } from './routes/_authenticated/growth-package'
@@ -45,6 +47,11 @@ import { Route as AuthenticatedReaderSeriesIssueLettersRouteImport } from './rou
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -119,6 +126,11 @@ const RaffleRulesRoute = RaffleRulesRouteImport.update({
 const RaffleFreeEntryRoute = RaffleFreeEntryRouteImport.update({
   id: '/raffle/free-entry',
   path: '/raffle/free-entry',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductHandleRoute = ProductHandleRouteImport.update({
+  id: '/product/$handle',
+  path: '/product/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LearnModuleIdRoute = LearnModuleIdRouteImport.update({
@@ -223,11 +235,13 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/perks': typeof PerksRoute
   '/pricing': typeof PricingRoute
+  '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
+  '/product/$handle': typeof ProductHandleRoute
   '/raffle/free-entry': typeof RaffleFreeEntryRoute
   '/raffle/rules': typeof RaffleRulesRoute
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
@@ -256,11 +270,13 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/perks': typeof PerksRoute
   '/pricing': typeof PricingRoute
+  '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
+  '/product/$handle': typeof ProductHandleRoute
   '/raffle/free-entry': typeof RaffleFreeEntryRoute
   '/raffle/rules': typeof RaffleRulesRoute
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
@@ -291,11 +307,13 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/perks': typeof PerksRoute
   '/pricing': typeof PricingRoute
+  '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/growth': typeof AuthenticatedGrowthRoute
   '/_authenticated/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
+  '/product/$handle': typeof ProductHandleRoute
   '/raffle/free-entry': typeof RaffleFreeEntryRoute
   '/raffle/rules': typeof RaffleRulesRoute
   '/_authenticated/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
@@ -326,11 +344,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/perks'
     | '/pricing'
+    | '/shop'
     | '/sitemap.xml'
     | '/growth'
     | '/growth-package'
     | '/help/$slug'
     | '/learn/$moduleId'
+    | '/product/$handle'
     | '/raffle/free-entry'
     | '/raffle/rules'
     | '/admin/help'
@@ -359,11 +379,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/perks'
     | '/pricing'
+    | '/shop'
     | '/sitemap.xml'
     | '/growth'
     | '/growth-package'
     | '/help/$slug'
     | '/learn/$moduleId'
+    | '/product/$handle'
     | '/raffle/free-entry'
     | '/raffle/rules'
     | '/admin/help'
@@ -393,11 +415,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/perks'
     | '/pricing'
+    | '/shop'
     | '/sitemap.xml'
     | '/_authenticated/growth'
     | '/_authenticated/growth-package'
     | '/help/$slug'
     | '/learn/$moduleId'
+    | '/product/$handle'
     | '/raffle/free-entry'
     | '/raffle/rules'
     | '/_authenticated/admin/help'
@@ -428,7 +452,9 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PerksRoute: typeof PerksRoute
   PricingRoute: typeof PricingRoute
+  ShopRoute: typeof ShopRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ProductHandleRoute: typeof ProductHandleRoute
   RaffleFreeEntryRoute: typeof RaffleFreeEntryRoute
   RaffleRulesRoute: typeof RaffleRulesRoute
   ReaderSeriesIssueRoute: typeof ReaderSeriesIssueRoute
@@ -442,6 +468,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -547,6 +580,13 @@ declare module '@tanstack/react-router' {
       path: '/raffle/free-entry'
       fullPath: '/raffle/free-entry'
       preLoaderRoute: typeof RaffleFreeEntryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/$handle': {
+      id: '/product/$handle'
+      path: '/product/$handle'
+      fullPath: '/product/$handle'
+      preLoaderRoute: typeof ProductHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/learn/$moduleId': {
@@ -758,7 +798,9 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PerksRoute: PerksRoute,
   PricingRoute: PricingRoute,
+  ShopRoute: ShopRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ProductHandleRoute: ProductHandleRoute,
   RaffleFreeEntryRoute: RaffleFreeEntryRoute,
   RaffleRulesRoute: RaffleRulesRoute,
   ReaderSeriesIssueRoute: ReaderSeriesIssueRoute,
@@ -767,13 +809,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

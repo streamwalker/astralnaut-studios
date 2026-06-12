@@ -4,12 +4,14 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { TierBadge } from "@/components/TierGate";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { CartDrawer } from "@/components/cart-drawer";
 import astralnautLogo from "@/assets/astralnaut-studios-logo.png";
 
 type NavItem = { to: string; label: string; exact?: boolean; accent?: boolean; params?: Record<string, string>; tour?: string };
 const nav: NavItem[] = [
   { to: "/", label: "Library", exact: true, tour: "nav-library" },
   { to: "/reader/$series/$issue", label: "Reader", params: { series: "battlefield-atlantis", issue: "1" }, tour: "nav-reader" },
+  { to: "/shop", label: "Shop" },
   { to: "/perks", label: "Perks" },
   { to: "/pricing", label: "Pricing", tour: "nav-pricing" },
   { to: "/help", label: "Help", tour: "nav-help" },
@@ -94,6 +96,7 @@ export function SiteHeader() {
         </nav>
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
+          <CartDrawer />
           <TierBadge />
           {isAdmin ? (
             <>
@@ -147,6 +150,7 @@ export function SiteFooter() {
           { to: "/darker-ages", label: "Darker Ages" },
         ]} />
         <FooterCol title="Platform" links={[
+          { to: "/shop", label: "Shop" },
           { to: "/pricing", label: "Pricing" },
           { to: "/perks", label: "Your perks" },
           { to: "/account", label: "Your account" },
