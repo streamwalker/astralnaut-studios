@@ -12,6 +12,7 @@ import daLogo from "@/assets/darker-ages-logo.png";
 import ndfAsset from "@/assets/factions/nerrian-defense-force-logo.png.asset.json";
 import tpcAsset from "@/assets/factions/tri-planetary-coalition-logo.png.asset.json";
 import { useI18n } from "@/hooks/useI18n";
+import { StandingAndCancelFlow } from "@/components/account/StandingAndCancelFlow";
 
 type SubRow = {
   status: string;
@@ -250,9 +251,11 @@ function AccountPage() {
                 />
               )}
 
-              <button onClick={openPortal} disabled={portalLoading} className="btn-cta mt-6">
-                {portalLoading ? "Opening…" : "⚡ Manage subscription"}
-              </button>
+              <StandingAndCancelFlow
+                hasActiveSub={!!isActive}
+                portalLoading={portalLoading}
+                onManage={openPortal}
+              />
               <div className="mt-4 rounded-md border border-[var(--border-line)] bg-black/20 p-4 text-xs text-[var(--ink2)]">
                 <div className="text-[10px] font-bold uppercase tracking-[2px] text-[var(--gold)]">Changing tiers</div>
                 <ul className="mt-2 space-y-1.5">

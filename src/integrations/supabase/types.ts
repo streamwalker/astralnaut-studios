@@ -508,6 +508,48 @@ export type Database = {
           },
         ]
       }
+      leads: {
+        Row: {
+          confirm_token: string
+          confirmed: boolean
+          created_at: string
+          email: string
+          id: string
+          last_page: number | null
+          notified_at: string | null
+          series_slug: string | null
+          source: string
+          unsub_token: string
+          updated_at: string
+        }
+        Insert: {
+          confirm_token?: string
+          confirmed?: boolean
+          created_at?: string
+          email: string
+          id?: string
+          last_page?: number | null
+          notified_at?: string | null
+          series_slug?: string | null
+          source: string
+          unsub_token?: string
+          updated_at?: string
+        }
+        Update: {
+          confirm_token?: string
+          confirmed?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          last_page?: number | null
+          notified_at?: string | null
+          series_slug?: string | null
+          source?: string
+          unsub_token?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       letter_comments: {
         Row: {
           body: string
@@ -785,6 +827,33 @@ export type Database = {
         }
         Relationships: []
       }
+      site_stats: {
+        Row: {
+          campaign_goal: number
+          id: number
+          pages_published: number
+          series_live: number
+          subscriber_count: number
+          updated_at: string
+        }
+        Insert: {
+          campaign_goal?: number
+          id?: number
+          pages_published?: number
+          series_live?: number
+          subscriber_count?: number
+          updated_at?: string
+        }
+        Update: {
+          campaign_goal?: number
+          id?: number
+          pages_published?: number
+          series_live?: number
+          subscriber_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       storage_access_logs: {
         Row: {
           bucket: string
@@ -953,6 +1022,7 @@ export type Database = {
         Args: { threshold?: number; window_seconds?: number }
         Returns: number
       }
+      get_active_subscriber_count: { Args: never; Returns: number }
       has_active_subscription: {
         Args: { check_env?: string; user_uuid: string }
         Returns: boolean

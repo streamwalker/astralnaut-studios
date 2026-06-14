@@ -40,6 +40,8 @@ import { Route as AuthenticatedAdminLettersRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminLearnRouteImport } from './routes/_authenticated/admin.learn'
 import { Route as AuthenticatedAdminHelpRouteImport } from './routes/_authenticated/admin.help'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiPublicLeadsUnsubscribeRouteImport } from './routes/api/public/leads/unsubscribe'
+import { Route as ApiPublicLeadsConfirmRouteImport } from './routes/api/public/leads/confirm'
 import { Route as AuthenticatedAdminLearnModuleIdRouteImport } from './routes/_authenticated/admin.learn.$moduleId'
 import { Route as AuthenticatedAdminHelpSlugRouteImport } from './routes/_authenticated/admin.help.$slug'
 import { Route as AuthenticatedReaderSeriesIssueLettersRouteImport } from './routes/_authenticated/reader.$series.$issue.letters'
@@ -203,6 +205,17 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicLeadsUnsubscribeRoute =
+  ApiPublicLeadsUnsubscribeRouteImport.update({
+    id: '/api/public/leads/unsubscribe',
+    path: '/api/public/leads/unsubscribe',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicLeadsConfirmRoute = ApiPublicLeadsConfirmRouteImport.update({
+  id: '/api/public/leads/confirm',
+  path: '/api/public/leads/confirm',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminLearnModuleIdRoute =
   AuthenticatedAdminLearnModuleIdRouteImport.update({
     id: '/$moduleId',
@@ -254,6 +267,8 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
+  '/api/public/leads/confirm': typeof ApiPublicLeadsConfirmRoute
+  '/api/public/leads/unsubscribe': typeof ApiPublicLeadsUnsubscribeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/reader/$series/$issue/letters': typeof AuthenticatedReaderSeriesIssueLettersRoute
 }
@@ -289,6 +304,8 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
+  '/api/public/leads/confirm': typeof ApiPublicLeadsConfirmRoute
+  '/api/public/leads/unsubscribe': typeof ApiPublicLeadsUnsubscribeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/reader/$series/$issue/letters': typeof AuthenticatedReaderSeriesIssueLettersRoute
 }
@@ -326,6 +343,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/_authenticated/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
+  '/api/public/leads/confirm': typeof ApiPublicLeadsConfirmRoute
+  '/api/public/leads/unsubscribe': typeof ApiPublicLeadsUnsubscribeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/_authenticated/reader/$series/$issue/letters': typeof AuthenticatedReaderSeriesIssueLettersRoute
 }
@@ -363,6 +382,8 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/admin/help/$slug'
     | '/admin/learn/$moduleId'
+    | '/api/public/leads/confirm'
+    | '/api/public/leads/unsubscribe'
     | '/api/public/payments/webhook'
     | '/reader/$series/$issue/letters'
   fileRoutesByTo: FileRoutesByTo
@@ -398,6 +419,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/help/$slug'
     | '/admin/learn/$moduleId'
+    | '/api/public/leads/confirm'
+    | '/api/public/leads/unsubscribe'
     | '/api/public/payments/webhook'
     | '/reader/$series/$issue/letters'
   id:
@@ -434,6 +457,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/admin/help/$slug'
     | '/_authenticated/admin/learn/$moduleId'
+    | '/api/public/leads/confirm'
+    | '/api/public/leads/unsubscribe'
     | '/api/public/payments/webhook'
     | '/_authenticated/reader/$series/$issue/letters'
   fileRoutesById: FileRoutesById
@@ -458,6 +483,8 @@ export interface RootRouteChildren {
   RaffleFreeEntryRoute: typeof RaffleFreeEntryRoute
   RaffleRulesRoute: typeof RaffleRulesRoute
   ReaderSeriesIssueRoute: typeof ReaderSeriesIssueRoute
+  ApiPublicLeadsConfirmRoute: typeof ApiPublicLeadsConfirmRoute
+  ApiPublicLeadsUnsubscribeRoute: typeof ApiPublicLeadsUnsubscribeRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
@@ -680,6 +707,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/leads/unsubscribe': {
+      id: '/api/public/leads/unsubscribe'
+      path: '/api/public/leads/unsubscribe'
+      fullPath: '/api/public/leads/unsubscribe'
+      preLoaderRoute: typeof ApiPublicLeadsUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/leads/confirm': {
+      id: '/api/public/leads/confirm'
+      path: '/api/public/leads/confirm'
+      fullPath: '/api/public/leads/confirm'
+      preLoaderRoute: typeof ApiPublicLeadsConfirmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/learn/$moduleId': {
       id: '/_authenticated/admin/learn/$moduleId'
       path: '/$moduleId'
@@ -804,18 +845,10 @@ const rootRouteChildren: RootRouteChildren = {
   RaffleFreeEntryRoute: RaffleFreeEntryRoute,
   RaffleRulesRoute: RaffleRulesRoute,
   ReaderSeriesIssueRoute: ReaderSeriesIssueRoute,
+  ApiPublicLeadsConfirmRoute: ApiPublicLeadsConfirmRoute,
+  ApiPublicLeadsUnsubscribeRoute: ApiPublicLeadsUnsubscribeRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

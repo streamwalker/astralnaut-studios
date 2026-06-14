@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { supabase } from "@/integrations/supabase/client";
+import { submitLead } from "@/lib/leads.functions";
 
 const schema = z.object({
   name: z.string().trim().min(1, "Name required").max(200),
@@ -39,6 +41,7 @@ function FreeEntryPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<{ kind: "idle" | "loading" | "ok" | "err"; msg?: string }>({ kind: "idle" });
+  const captureLead = useServerFn(submitLead);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,9 +52,10 @@ function FreeEntryPage() {
       return;
     }
     const week = isoWeekKey();
+    const lowered = parsed.data.email.toLowerCase();
     const { error } = await supabase.from("raffle_entries").insert({
       name: parsed.data.name,
-      email: parsed.data.email.toLowerCase(),
+      email: lowered,
       week_key: week,
       source: "amoe",
     });
@@ -63,7 +67,14 @@ function FreeEntryPage() {
       }
       return;
     }
-    setStatus({ kind: "ok", msg: `Entry received for week ${week}. Good luck.` });
+    // Also capture as a lead so the free raffle grows the same re-engagement
+    // list as the reader interstitial. Best-effort — does not block success.
+    try {
+      await captureLead({ data: { email: lowered, source: "free_raffle" } });
+    } catch (e) {
+      console.warn("lead capture failed", e);
+    }
+    setStatus({ kind: "ok", msg: `Entry received for week ${week}. Check your inbox to confirm drop alerts. Good luck!` });
     setName("");
     setEmail("");
   };

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
@@ -8,17 +9,42 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import logo from "@/assets/astralnaut-logo.png";
 
+const searchSchema = z.object({
+  next: z.string().optional().catch(undefined),
+  plan: z.enum(["reader", "initiate", "patron"]).optional().catch(undefined),
+  interval: z.enum(["monthly", "yearly"]).optional().catch(undefined),
+});
+
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Sign in — Astralnaut Studios" }] }),
+  validateSearch: (s: Record<string, unknown>) => searchSchema.parse(s),
   component: LoginPage,
 });
 
 function LoginPage() {
   const nav = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const search = Route.useSearch();
+  // Default to sign-up when arriving with a selected plan — these visitors
+  // came from a "Start Reader · $4.99/mo" CTA, not an existing-account prompt.
+  const [mode, setMode] = useState<"signin" | "signup">(search.plan ? "signup" : "signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+
+  // Where to send the user after successful auth.
+  // If they came with a plan, take them straight back to /pricing with
+  // autocheckout=1 so the checkout modal opens immediately.
+  const successDestination = () => {
+    if (search.plan) {
+      const params = new URLSearchParams({
+        plan: search.plan,
+        ...(search.interval ? { interval: search.interval } : {}),
+        autocheckout: "1",
+      });
+      return `/pricing?${params.toString()}`;
+    }
+    return search.next || "/admin";
+  };
 
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +54,7 @@ function LoginPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin + "/admin" },
+          options: { emailRedirectTo: window.location.origin + successDestination() },
         });
         if (error) throw error;
         toast.success("Check your email to confirm your account.");
@@ -36,7 +62,7 @@ function LoginPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Welcome back.");
-        nav({ to: "/admin" });
+        window.location.assign(successDestination());
       }
     } catch (err) {
       toast.error((err as Error).message);
@@ -49,7 +75,7 @@ function LoginPage() {
     setBusy(true);
     try {
       const { error } = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin + "/admin",
+        redirect_uri: window.location.origin + successDestination(),
       });
       if (error) throw error;
     } catch (err) {
@@ -57,6 +83,10 @@ function LoginPage() {
       setBusy(false);
     }
   };
+
+  const planLabel = search.plan
+    ? `${search.plan[0].toUpperCase()}${search.plan.slice(1)}`
+    : null;
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
@@ -67,17 +97,28 @@ function LoginPage() {
         ← Home
       </Link>
       <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-8 shadow-xl">
-        <h1 className="text-2xl font-bold">{mode === "signin" ? "Sign in" : "Create account"}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Admin access for Astralnaut Studios.
-        </p>
+        {planLabel ? (
+          <>
+            <div className="text-[10px] font-bold uppercase tracking-[2px] text-[var(--neon)]">
+              Continue to checkout · {planLabel}
+            </div>
+            <h1 className="mt-2 text-2xl font-bold">
+              {mode === "signup" ? "Create your account" : "Sign in"}
+            </h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Quick account creation. We'll take you straight to checkout next.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="text-2xl font-bold">{mode === "signin" ? "Sign in" : "Create account"}</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Admin access for Astralnaut Studios.
+            </p>
+          </>
+        )}
 
-        <Button
-          onClick={handleGoogle}
-          disabled={busy}
-          variant="outline"
-          className="mt-6 w-full"
-        >
+        <Button onClick={handleGoogle} disabled={busy} variant="outline" className="mt-6 w-full">
           Continue with Google
         </Button>
 

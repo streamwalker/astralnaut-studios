@@ -1,82 +1,18 @@
 import { useState, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { z } from "zod";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { supabase } from "@/integrations/supabase/client";
 import { HelpTip } from "@/components/help/HelpTip";
-
-type Tier = {
-  key: "reader" | "initiate" | "patron";
-  name: string;
-  monthly: number;
-  yearly: number;
-  monthlyPriceId: string;
-  yearlyPriceId: string;
-  day: string;
-  offset: string;
-  perks: string[];
-  accent: string;
-  highlight?: boolean;
-};
-
-const tiers: Tier[] = [
-  {
-    key: "reader",
-    name: "Reader",
-    monthly: 4.99,
-    yearly: 49.9,
-    monthlyPriceId: "reader_monthly",
-    yearlyPriceId: "reader_yearly",
-    day: "Thursday",
-    offset: "0h ahead",
-    perks: [
-      "All series · all 20+ pages of every issue",
-      "Forum access",
-      "Canon voting power",
-      "Motion-comic reader",
-      "1 raffle entry per active week",
-    ],
-    accent: "var(--ink2)",
-  },
-  {
-    key: "initiate",
-    name: "Initiate",
-    monthly: 9.99,
-    yearly: 99.9,
-    monthlyPriceId: "initiate_monthly",
-    yearlyPriceId: "initiate_yearly",
-    day: "Wednesday",
-    offset: "24h ahead",
-    perks: [
-      "Everything in Reader",
-      "Pages drop 24 hours before Reader",
-      "3 raffle entries per week",
-      "Numbered digital variant covers",
-      "Behind-the-scenes process content",
-    ],
-    accent: "var(--neon)",
-    highlight: true,
-  },
-  {
-    key: "patron",
-    name: "Patron",
-    monthly: 24.99,
-    yearly: 249.9,
-    monthlyPriceId: "patron_monthly",
-    yearlyPriceId: "patron_yearly",
-    day: "Tuesday",
-    offset: "48h ahead",
-    perks: [
-      "Everything in Initiate",
-      "Pages drop 48 hours before Reader",
-      "10 raffle entries per week",
-      "Cameo eligibility — be drawn into an issue",
-      "Quarterly signed physical print run (shipped)",
-      "Direct creator Discord access",
-    ],
-    accent: "var(--plasma)",
-  },
-];
+import {
+  pricingTiers,
+  type PricingTier,
+  ctaLabel,
+  priceForInterval,
+} from "@/config/pricingTiers";
+import { siteConfig } from "@/config/siteConfig";
+import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -92,11 +28,17 @@ export const Route = createFileRoute("/pricing")({
     ],
     links: [{ rel: "canonical", href: "/pricing" }],
   }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    plan: z.enum(["reader", "initiate", "patron"]).optional().catch(undefined).parse(s.plan),
+    interval: z.enum(["monthly", "yearly"]).optional().catch(undefined).parse(s.interval),
+    autocheckout: s.autocheckout === "1" || s.autocheckout === 1 || s.autocheckout === true ? 1 : undefined,
+  }),
   component: Pricing,
 });
 
 function Pricing() {
-  const [interval, setInterval] = useState<"monthly" | "yearly">("monthly");
+  const search = Route.useSearch();
+  const [interval, setInterval] = useState<"monthly" | "yearly">(search.interval ?? "monthly");
   const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
   const navigate = useNavigate();
   const { openCheckout, isOpen, checkoutElement, closeCheckout } = useStripeCheckout();
@@ -111,18 +53,43 @@ function Pricing() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleSubscribe = (tier: Tier) => {
-    if (!user) {
-      navigate({ to: "/login", search: { next: "/pricing" } as never });
-      return;
-    }
+  const startCheckout = (tier: PricingTier, intv: "monthly" | "yearly") => {
+    if (!user) return;
     openCheckout({
-      priceId: interval === "monthly" ? tier.monthlyPriceId : tier.yearlyPriceId,
+      priceId: intv === "monthly" ? tier.monthlyPriceId : tier.yearlyPriceId,
       customerEmail: user.email,
       userId: user.id,
       returnUrl: `${window.location.origin}/account?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
     });
   };
+
+  const handleSubscribe = (tier: PricingTier) => {
+    const isLoggedIn = !!user;
+    track("pricing_cta_click", { tier: tier.key, interval, logged_in: isLoggedIn });
+    if (!isLoggedIn) {
+      // Take logged-out visitors to account creation pre-filled with their selection.
+      // The login page redirects back to /pricing with autocheckout=1 after sign-up
+      // so checkout opens automatically once the session exists.
+      navigate({
+        to: "/login",
+        search: { next: "/pricing", plan: tier.key, interval } as never,
+      });
+      return;
+    }
+    startCheckout(tier, interval);
+  };
+
+  // Auto-open checkout when arriving from login with a plan param.
+  useEffect(() => {
+    if (!user || !search.autocheckout || !search.plan) return;
+    const tier = pricingTiers.find((t) => t.key === search.plan);
+    if (!tier) return;
+    const intv = search.interval ?? interval;
+    startCheckout(tier, intv);
+    // Clear the params so a refresh doesn't re-open it.
+    navigate({ to: "/pricing", search: {} as never, replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, search.autocheckout, search.plan]);
 
   return (
     <>
@@ -137,44 +104,45 @@ function Pricing() {
 
           <div className="mt-8 inline-flex items-center gap-2">
             <div className="inline-flex items-center gap-1 rounded-full border border-[var(--border-line)] p-1" role="tablist" aria-label="Billing interval">
-            <button
-              role="tab"
-              aria-selected={interval === "monthly"}
-              onClick={() => setInterval("monthly")}
-              className={`rounded-full px-5 py-2 text-sm font-bold uppercase tracking-[2px] transition-colors ${
-                interval === "monthly" ? "bg-[var(--neon)] text-[#02000c]" : "text-[var(--ink2)] hover:text-[var(--neon)]"
-              }`}
-            >
-              Monthly
-            </button>
-            <button
-              role="tab"
-              aria-selected={interval === "yearly"}
-              onClick={() => setInterval("yearly")}
-              className={`rounded-full px-5 py-2 text-sm font-bold uppercase tracking-[2px] transition-colors ${
-                interval === "yearly" ? "bg-[var(--neon)] text-[#02000c]" : "text-[var(--ink2)] hover:text-[var(--neon)]"
-              }`}
-            >
-              Yearly · 2 months free
-            </button>
+              <button
+                role="tab"
+                aria-selected={interval === "monthly"}
+                onClick={() => setInterval("monthly")}
+                className={`rounded-full px-5 py-2 text-sm font-bold uppercase tracking-[2px] transition-colors ${
+                  interval === "monthly" ? "bg-[var(--neon)] text-[#02000c]" : "text-[var(--ink2)] hover:text-[var(--neon)]"
+                }`}
+              >
+                Monthly
+              </button>
+              <button
+                role="tab"
+                aria-selected={interval === "yearly"}
+                onClick={() => setInterval("yearly")}
+                className={`rounded-full px-5 py-2 text-sm font-bold uppercase tracking-[2px] transition-colors ${
+                  interval === "yearly" ? "bg-[var(--neon)] text-[#02000c]" : "text-[var(--ink2)] hover:text-[var(--neon)]"
+                }`}
+              >
+                Yearly · 2 months free
+              </button>
             </div>
 
             <HelpTip title="Monthly vs annual" description="Annual saves you about 2 months. Switch any time from your account." href="/help/choose-tier" />
           </div>
         </div>
 
-
         <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {tiers.map((t) => {
-            const price = interval === "monthly" ? t.monthly : t.yearly;
+          {pricingTiers.map((t) => {
+            const price = priceForInterval(t, interval);
             const suffix = interval === "monthly" ? "/mo" : "/yr";
+            const monthlyEquiv = interval === "yearly" ? t.priceYearly / 12 : null;
+            const isInitiateAnnual = t.highlightAnnual && interval === "yearly";
             return (
               <div
-                key={t.name}
-                className="card-rwc relative p-7"
-                style={t.highlight ? { borderColor: "var(--neon)" } : undefined}
+                key={t.key}
+                className="card-rwc relative flex flex-col p-7"
+                style={t.popular ? { borderColor: "var(--neon)" } : undefined}
               >
-                {t.highlight && (
+                {t.popular && (
                   <div
                     className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[2px]"
                     style={{ background: "var(--neon)", color: "#02000c" }}
@@ -187,12 +155,30 @@ function Pricing() {
                   ${price.toFixed(2)}
                   <span className="text-base font-bold text-[var(--mute)]">{suffix}</span>
                 </div>
-                {interval === "yearly" && (
-                  <div className="mt-1 text-xs text-[var(--mute)]">${(t.yearly / 12).toFixed(2)}/mo billed annually</div>
+                {monthlyEquiv !== null && (
+                  <div className="mt-1 text-xs text-[var(--mute)]">
+                    ~${monthlyEquiv.toFixed(2)}/mo billed annually
+                  </div>
                 )}
-                <div className="mt-2 text-sm text-[var(--mute)]">Reads {t.day} · {t.offset}</div>
+                {isInitiateAnnual && (
+                  <div
+                    className="mt-2 inline-flex w-fit items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[2px]"
+                    style={{ background: "rgba(34,211,255,0.10)", color: "var(--neon)", border: "1px solid var(--neon)" }}
+                  >
+                    2 months free
+                  </div>
+                )}
+                <div className="mt-3 text-sm text-[var(--ink2)]">{t.timingLabel}</div>
+                {t.valueCaption && (
+                  <p className="mt-2 text-xs text-[var(--mute)]">{t.valueCaption}</p>
+                )}
+                {t.popular && siteConfig.SHOW_ANNUAL_NUDGE && (
+                  <p className="mt-2 text-[11px] font-bold uppercase tracking-[2px]" style={{ color: "var(--gold)" }}>
+                    Most readers save with annual
+                  </p>
+                )}
                 <ul className="mt-6 space-y-2 text-sm text-[var(--ink2)]">
-                  {t.perks.map((p) => (
+                  {t.features.map((p) => (
                     <li key={p} className="flex gap-2">
                       <span style={{ color: t.accent }}>◉</span>
                       {p}
@@ -200,7 +186,7 @@ function Pricing() {
                   ))}
                 </ul>
                 <button onClick={() => handleSubscribe(t)} className="btn-cta mt-8 w-full justify-center">
-                  {user ? `Subscribe as ${t.name}` : `Sign in to start`}
+                  {ctaLabel(t, interval)}
                 </button>
               </div>
             );
