@@ -1,13 +1,16 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { SeriesCard } from "@/components/series-card";
 import { MilestoneStrip } from "@/components/milestone-strip";
-import { listSeries, getMilestone, getSiteCopy, getSubscriberCount } from "@/lib/public.functions";
-import { Link } from "@tanstack/react-router";
+import { ClosingBand } from "@/components/home/ClosingBand";
+import { HomePricingStrip } from "@/components/home/PricingStrip";
+import { listSeries, getMilestone, getSiteCopy } from "@/lib/public.functions";
+import { useSubscriberCount } from "@/hooks/useSubscriberCount";
 import { CoverFan } from "@/components/cover-fan";
 import { CountUp } from "@/components/count-up";
+import { track } from "@/lib/analytics";
 import rwcLogo from "@/assets/real-world-comics-logo.png";
 
 
@@ -41,12 +44,11 @@ function Home() {
   const seriesFn = useServerFn(listSeries);
   const milestoneFn = useServerFn(getMilestone);
   const copyFn = useServerFn(getSiteCopy);
-  const subCountFn = useServerFn(getSubscriberCount);
   const { data: series = [] } = useQuery({ queryKey: ["series"], queryFn: () => seriesFn({}) });
   const { data: milestone } = useQuery({ queryKey: ["milestone"], queryFn: () => milestoneFn({}) });
   const { data: copy = {} } = useQuery({ queryKey: ["copy"], queryFn: () => copyFn({}) });
-  const { data: subData } = useQuery({ queryKey: ["subscriber-count"], queryFn: () => subCountFn({}) });
-  const subscriberCount = subData?.count ?? milestone?.current_count ?? 0;
+  // Single source of truth for subscriber number + headline stats.
+  const { displayCount, pagesPublished, seriesLive } = useSubscriberCount();
 
   return (
     <>
@@ -98,16 +100,42 @@ function Home() {
               </div>
 
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link to="/reader/$series/$issue" params={{ series: "battlefield-atlantis", issue: "1" }} className="btn-cta">
+                <Link
+                  to="/reader/$series/$issue"
+                  params={{ series: "battlefield-atlantis", issue: "1" }}
+                  className="btn-cta"
+                  onClick={() => track("hero_cta_click", { target: "free_read" })}
+                >
                   ▶ {copy["home.cta.primary"] ?? "Read the first act free"}
                 </Link>
-                <Link to="/pricing" className="btn-ghost">{copy["home.cta.secondary"] ?? "See pricing"}</Link>
+                <Link
+                  to="/pricing"
+                  className="btn-ghost"
+                  onClick={() => track("hero_cta_click", { target: "pricing" })}
+                >
+                  {copy["home.cta.secondary"] ?? "See pricing"}
+                </Link>
               </div>
 
+              {/*
+                Hero stat band — single source of truth via useSubscriberCount.
+                When the live count is below the configured floor, we hide it
+                and show proof metrics instead (no raw "0 SUBSCRIBERS").
+              */}
               <div className="mt-12 grid max-w-md grid-cols-3 gap-8">
-                <Stat label="Subscribers" value={<CountUp value={subscriberCount} />} />
-                <Stat label="Series live" value="3" />
-                <Stat label="Pages so far" value={copy["home.stats.pages"] ?? "52"} />
+                {displayCount !== null ? (
+                  <>
+                    <Stat label="Subscribers" value={<CountUp value={displayCount} />} />
+                    <Stat label="Series live" value={String(seriesLive)} />
+                    <Stat label="Pages so far" value={String(pagesPublished)} />
+                  </>
+                ) : (
+                  <>
+                    <Stat label="Pages published" value={String(pagesPublished)} />
+                    <Stat label="Series live" value={String(seriesLive)} />
+                    <Stat label="New pages / week" value="5" />
+                  </>
+                )}
               </div>
             </div>
 
@@ -122,8 +150,6 @@ function Home() {
         {milestone && (
           <MilestoneStrip
             name={milestone.name}
-            current_count={milestone.current_count}
-            target_count={milestone.target_count}
             ends_at={milestone.ends_at}
             rewards={(milestone.rewards as { at: number; reward: string }[]) ?? []}
           />
@@ -140,6 +166,9 @@ function Home() {
           </div>
         </section>
 
+        {/* Compact pricing strip — same shared config as /pricing */}
+        <HomePricingStrip interval="monthly" />
+
         {/* What piracy can't give */}
         <section className="mx-auto max-w-7xl px-6 py-16">
           <div className="eyebrow">Why subscribe</div>
@@ -151,6 +180,9 @@ function Home() {
             <Pillar title="Raffles + cameos" body="Active subscription weeks = raffle entries. Patron tier unlocks cameo eligibility." />
           </div>
         </section>
+
+        {/* Closing conversion band */}
+        <ClosingBand />
       </main>
       <SiteFooter />
     </>
