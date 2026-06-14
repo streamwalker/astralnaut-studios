@@ -5,6 +5,7 @@ import { getIssueBundle } from "@/lib/public.functions";
 import { logStorageAccess } from "@/lib/storage-access.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { pageUrl } from "@/lib/storage";
+import { LeadCaptureInterstitial } from "@/components/reader/LeadCaptureInterstitial";
 import { z } from "zod";
 
 function usePrefersReducedMotion() {
@@ -150,7 +151,12 @@ function Reader() {
           ) : isFree && !img ? (
             <div className="aspect-[1054/1491] flex items-center justify-center p-10 text-center text-[var(--mute)]">Page art forthcoming</div>
           ) : (
-            <Paywall page={page} freeMax={freeMax} dropAt={current?.drop_at} />
+            <PaywallWithCapture
+              page={page}
+              freeMax={freeMax}
+              dropAt={current?.drop_at}
+              seriesSlug={issue.series.slug}
+            />
           )}
         </div>
 
@@ -222,6 +228,57 @@ function Reader() {
       </div>
     </>
   );
+}
+
+function PaywallWithCapture({
+  page,
+  freeMax,
+  dropAt,
+  seriesSlug,
+}: {
+  page: number;
+  freeMax: number;
+  dropAt?: string | null;
+  seriesSlug: string;
+}) {
+  const navigate = useNavigate();
+  // Show the soft email capture only on the FIRST locked page of the issue,
+  // and remember dismissal/submission per series in sessionStorage so it
+  // doesn't repeatedly nag readers paging through paywalled content.
+  const storageKey = `lead-capture-dismissed:${seriesSlug}`;
+  const [dismissed, setDismissed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.sessionStorage.getItem(storageKey) === "1";
+  });
+  const isFirstLockedPage = page === freeMax + 1;
+
+  useEffect(() => {
+    if (isFirstLockedPage && !dismissed && typeof window !== "undefined") {
+      import("@/lib/analytics").then(({ track }) =>
+        track("lead_capture_shown", { source: "free_act_wall", series_slug: seriesSlug, last_page: freeMax }),
+      );
+    }
+  }, [isFirstLockedPage, dismissed, seriesSlug, freeMax]);
+
+  const dismiss = () => {
+    if (typeof window !== "undefined") window.sessionStorage.setItem(storageKey, "1");
+    setDismissed(true);
+  };
+
+  if (isFirstLockedPage && !dismissed) {
+    return (
+      <LeadCaptureInterstitial
+        seriesSlug={seriesSlug}
+        lastPage={freeMax}
+        onDismiss={dismiss}
+        onPlans={() => {
+          dismiss();
+          navigate({ to: "/pricing" });
+        }}
+      />
+    );
+  }
+  return <Paywall page={page} freeMax={freeMax} dropAt={dropAt} />;
 }
 
 function Paywall({ page, freeMax, dropAt }: { page: number; freeMax: number; dropAt?: string | null }) {
