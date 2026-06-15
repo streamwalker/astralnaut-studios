@@ -101,21 +101,21 @@ function Home() {
 
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
-                  to="/reader/$series/$issue"
-                  params={{ series: "battlefield-atlantis", issue: "1" }}
-                  className="btn-cta"
-                  onClick={() => track("hero_cta_click", { target: "free_read" })}
-                >
-                  ▶ {copy["home.cta.primary"] ?? "Read the first act free"}
-                </Link>
-                <Link
                   to="/pricing"
-                  className="btn-ghost"
+                  className="btn-cta"
                   onClick={() => track("hero_cta_click", { target: "pricing" })}
                 >
                   {copy["home.cta.secondary"] ?? "See pricing"}
                 </Link>
+                <a
+                  href="#slate"
+                  className="btn-ghost"
+                  onClick={() => track("hero_cta_click", { target: "browse_slate" })}
+                >
+                  Browse the slate
+                </a>
               </div>
+
 
               {/*
                 Hero stat band — single source of truth via useSubscriberCount.
@@ -156,7 +156,7 @@ function Home() {
         )}
 
         {/* Series shelf */}
-        <section className="mx-auto max-w-7xl px-6 py-12">
+        <section id="slate" className="mx-auto max-w-7xl px-6 py-12 scroll-mt-24">
           <div className="flex items-baseline justify-between">
             <h2 className="text-3xl font-black md:text-4xl">The slate</h2>
             <div className="eyebrow">Three properties · One disclosure-era universe</div>
