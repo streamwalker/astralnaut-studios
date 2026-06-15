@@ -156,7 +156,7 @@ function Home() {
         )}
 
         {/* Series shelf */}
-        <section className="mx-auto max-w-7xl px-6 py-12">
+        <section id="slate" className="mx-auto max-w-7xl px-6 py-12 scroll-mt-24">
           <div className="flex items-baseline justify-between">
             <h2 className="text-3xl font-black md:text-4xl">The slate</h2>
             <div className="eyebrow">Three properties · One disclosure-era universe</div>
