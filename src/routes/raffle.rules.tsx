@@ -33,7 +33,7 @@ function RulesPage() {
           <p><strong>NO PURCHASE NECESSARY TO ENTER OR WIN. A PURCHASE WILL NOT INCREASE YOUR CHANCES OF WINNING.</strong></p>
 
           <h2 className="mt-8 text-xl font-bold text-[var(--ink)]">1. Sponsor</h2>
-          <p>Astralnaut Studios LLC ("Sponsor").</p>
+          <p>Real World Comics, LLC ("Sponsor"). Operated under the Astralnaut Studios imprint.</p>
 
           <h2 className="mt-6 text-xl font-bold text-[var(--ink)]">2. Eligibility</h2>
           <p>Open to legal residents of the United States who are 18 years of age or older at the time of entry. Void where prohibited by law. Subject to all applicable federal, state, and local laws and regulations.</p>
