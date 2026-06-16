@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
+import { RightsNotice } from "@/components/rights-notice";
 import { CartDrawer } from "@/components/cart-drawer";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
@@ -177,6 +178,7 @@ function ProductPage() {
             </Button>
           </div>
         </div>
+        <RightsNotice variant="product" title={product.title} />
       </div>
       <SiteFooter />
     </div>

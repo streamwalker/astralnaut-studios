@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
+import { RightsNotice } from "@/components/rights-notice";
 import { getSeriesBundle, getIssueBundle } from "@/lib/public.functions";
 import { pageUrl } from "@/lib/storage";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -49,7 +50,11 @@ export const Route = createFileRoute("/children-of-aquarius")({
       { property: "og:description", content: "Esoteric thriller. The Age Begins · The Child Awakens." },
       { property: "og:type", content: "article" },
       { property: "og:url", content: "/children-of-aquarius" },
+      { property: "og:site_name", content: "Real World Comics — Astralnaut Studios" },
+      { property: "article:author", content: "Phil Russell" },
+      { property: "article:publisher", content: "Real World Comics, LLC" },
       { property: "og:image", content: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/children-of-aquarius/issue-1/page-0.png" },
+      { property: "og:image:alt", content: "Children of Aquarius Issue 1 cover — Real World Comics" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/children-of-aquarius/issue-1/page-0.png" },
     ],
@@ -58,16 +63,21 @@ export const Route = createFileRoute("/children-of-aquarius")({
       type: "application/ld+json",
       children: JSON.stringify({
         "@context": "https://schema.org",
-        "@type": "Book",
-        name: "Children of Aquarius",
-        headline: "Children of Aquarius — Issue 1",
-        bookFormat: "https://schema.org/EBook",
+        "@type": "ComicIssue",
+        name: "Children of Aquarius — Issue #1: The Age Begins · The Child Awakens",
+        issueNumber: "1",
+        isPartOf: { "@type": "ComicSeries", name: "Children of Aquarius" },
+        author: { "@type": "Person", name: "Phil Russell" },
+        publisher: { "@type": "Organization", name: "Real World Comics, LLC" },
+        copyrightHolder: { "@type": "Organization", name: "Real World Comics, LLC" },
+        copyrightYear: 2026,
+        copyrightNotice: "© 2026 Real World Comics, LLC. All rights reserved.",
         genre: "Esoteric thriller",
+        inLanguage: "en",
+        isAccessibleForFree: true,
+        creativeWorkStatus: "Published",
         image: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/children-of-aquarius/issue-1/page-0.png",
-        author: { "@type": "Organization", name: "Astralnaut Studios" },
-        publisher: { "@type": "Organization", name: "Astralnaut Studios" },
         url: "https://astralnautstudios.com/children-of-aquarius",
-        description: "A priest gifts three young humans the powers of Christ to find and protect the Christ child of the Aquarian Age.",
       }),
     }],
   }),
@@ -450,6 +460,8 @@ function COAPage() {
             ))}
           </div>
         </section>
+        <RightsNotice variant="characters" />
+        <RightsNotice variant="series" title="Children of Aquarius" />
       </main>
       <SiteFooter />
     </>

@@ -141,7 +141,7 @@ export function SiteFooter() {
     <footer className="mt-24 border-t border-[var(--border-line)] py-12">
       <div className="mx-auto grid max-w-7xl gap-8 px-6 md:grid-cols-4">
         <div>
-          <div className="text-[10px] font-bold uppercase tracking-[3px]" style={{ color: "var(--gold)" }}>Astralnaut Studios LLC</div>
+          <div className="text-[10px] font-bold uppercase tracking-[3px]" style={{ color: "var(--gold)" }}>Astralnaut Studios</div>
           <p className="mt-2 text-sm text-[var(--mute)]">The next page only drops here. Built for readers, not pirates.</p>
         </div>
         <FooterCol title="Series" links={[
@@ -164,7 +164,9 @@ export function SiteFooter() {
           { to: "/industry", label: "Adaptation rights" },
         ]} />
       </div>
-      <div className="mx-auto mt-10 max-w-7xl px-6 text-xs text-[var(--fg-muted)]">© {new Date().getFullYear()} Astralnaut Studios LLC. All rights reserved.</div>
+      <div className="mx-auto mt-10 max-w-7xl px-6 text-xs leading-relaxed text-[var(--fg-muted)]">
+        © {new Date().getFullYear()} Real World Comics, LLC. All rights reserved. Astralnaut Studios and Real World Comics are imprints of Real World Comics, LLC.
+      </div>
     </footer>
   );
 }

@@ -20,9 +20,14 @@ export const Route = createFileRoute("/astralnaut-studios")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Organization",
-          name: "Astralnaut Studios LLC",
+          name: "Astralnaut Studios",
+          alternateName: "Astralnaut Studios (imprint of Real World Comics, LLC)",
           url: "https://astralnautstudios.com",
           sameAs: ["https://realworldcomics.com"],
+          parentOrganization: {
+            "@type": "Organization",
+            name: "Real World Comics, LLC",
+          },
         }),
       },
     ],
