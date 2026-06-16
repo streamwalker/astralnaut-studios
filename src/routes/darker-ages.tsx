@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
+import { RightsNotice } from "@/components/rights-notice";
 import daLogo from "@/assets/darker-ages-logo.png";
 
 export const Route = createFileRoute("/darker-ages")({

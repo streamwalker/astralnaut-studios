@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
+import { RightsNotice } from "@/components/rights-notice";
 import { getSeriesBundle, getIssueBundle } from "@/lib/public.functions";
 import { pageUrl } from "@/lib/storage";
 import baLogo from "@/assets/battlefield-atlantis-logo.png";
@@ -475,6 +476,8 @@ function BAPage() {
             </div>
           </section>
         )}
+        <RightsNotice variant="characters" />
+        <RightsNotice variant="series" title="Battlefield Atlantis" />
       </main>
       <SiteFooter />
     </>
