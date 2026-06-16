@@ -54,6 +54,9 @@ function DarkerAges() {
           <p className="mt-3 text-[var(--ink2)]">First-act pages drop October 2026. Subscribers get day-one access on the tier-staggered schedule.</p>
           <Link to="/pricing" className="btn-cta mt-6 inline-flex">Reserve your tier</Link>
         </div>
+        <div className="mx-auto mt-10 max-w-2xl text-left">
+          <RightsNotice variant="series" title="Darker Ages" />
+        </div>
       </main>
       <SiteFooter />
     </>

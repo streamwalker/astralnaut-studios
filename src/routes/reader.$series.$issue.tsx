@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/site-header";
+import { RightsNotice } from "@/components/rights-notice";
 import { getIssueBundle } from "@/lib/public.functions";
 import { logStorageAccess } from "@/lib/storage-access.functions";
 import { supabase } from "@/integrations/supabase/client";
@@ -225,6 +226,7 @@ function Reader() {
             ✉ Turn the page → Letters
           </Link>
         </div>
+        <RightsNotice variant="reader" title={issue.series.name} issueNumber={issue.issue_number} />
       </div>
     </>
   );

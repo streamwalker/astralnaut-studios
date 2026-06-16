@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
+import { RightsNotice } from "@/components/rights-notice";
 import { CartDrawer } from "@/components/cart-drawer";
 import { Button } from "@/components/ui/button";
 import { Loader2, ShoppingBag, ExternalLink } from "lucide-react";
@@ -92,6 +93,10 @@ function ShopPage() {
           </div>
         )}
       </section>
+
+      <div className="mx-auto max-w-7xl px-6 pb-8">
+        <RightsNotice variant="shop" />
+      </div>
 
       <SiteFooter />
     </div>
