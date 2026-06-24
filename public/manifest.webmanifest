@@ -1,0 +1,22 @@
+{
+  "name": "Real World Comics — Astralnaut Studios",
+  "short_name": "Astralnaut",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "/__l5e/assets-v1/d557ab80-2657-4a1c-9326-c2464e4635d6/astralnaut-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/__l5e/assets-v1/dc92c3a3-8de5-41b6-b66a-d12c459b0cd1/astralnaut-apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
