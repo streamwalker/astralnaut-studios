@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { track } from "@/lib/analytics";
 import videoAsset from "@/assets/battlefield-atlantis-teaser.mp4.asset.json";
 import posterAsset from "@/assets/battlefield-atlantis-teaser-poster.jpg.asset.json";
-import baLogo from "@/assets/battlefield-atlantis-logo-transparent.png";
+import baLogo from "@/assets/battlefield-atlantis-logo-clean.png";
 import coaLogo from "@/assets/children-of-aquarius-logo.png";
 import daLogo from "@/assets/darker-ages-logo.png";
 import coaCover from "@/assets/coa-issue-1-cover.png";
