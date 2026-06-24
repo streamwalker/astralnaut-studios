@@ -314,8 +314,11 @@ function SlotContent({ slot }: { slot: HeroSlot }) {
   const fallbackTitle = slot.titleText ?? slot.titleAlt ?? "";
 
   return (
-    <div id={`hero-slot-${slot.id}`} key={slot.id} className="animate-fade-in">
-      <div className="text-[11px] font-black uppercase tracking-[4px]" style={{ color: slot.accent ?? "var(--neon)" }}>
+    <div id={`hero-slot-${slot.id}`} key={slot.id} className="animate-fade-in relative z-20">
+      <div
+        className="pointer-events-none select-none text-[11px] font-black uppercase tracking-[4px]"
+        style={{ color: slot.accent ?? "var(--neon)" }}
+      >
         {slot.eyebrow}
       </div>
 
@@ -323,19 +326,22 @@ function SlotContent({ slot }: { slot: HeroSlot }) {
         <img
           src={slot.titleImage}
           alt={slot.titleAlt ?? ""}
-          className="mt-5 h-auto w-full max-w-[440px] drop-shadow-[0_8px_30px_rgba(0,0,0,0.7)]"
+          className="pointer-events-none select-none mt-5 h-auto w-full max-w-[440px] drop-shadow-[0_8px_30px_rgba(0,0,0,0.7)]"
           loading="eager"
+          draggable={false}
           onError={() => setImgFailed(true)}
         />
       ) : (
-        <h1 className="mt-5 text-4xl font-black leading-[1.02] tracking-tight text-white md:text-6xl drop-shadow-[0_4px_18px_rgba(0,0,0,0.7)]">
+        <h1 className="pointer-events-none select-none mt-5 text-4xl font-black leading-[1.02] tracking-tight text-white md:text-6xl drop-shadow-[0_4px_18px_rgba(0,0,0,0.7)]">
           {fallbackTitle}
         </h1>
       )}
 
-      <p className="mt-5 max-w-xl text-base text-white/85 md:text-lg">{slot.tagline}</p>
+      <p className="pointer-events-none select-none mt-5 max-w-xl text-base text-white/85 md:text-lg">
+        {slot.tagline}
+      </p>
 
-      <div className="mt-7 flex flex-wrap gap-3">
+      <div className="pointer-events-auto relative z-20 mt-7 flex flex-wrap gap-3">
         <CtaButton cta={slot.primary} slot={slot.id} variant="marvel" />
         {slot.secondary && <CtaButton cta={slot.secondary} slot={slot.id} variant="ghost" />}
       </div>
