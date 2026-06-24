@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { RightsNotice } from "@/components/rights-notice";
 import daLogo from "@/assets/darker-ages-logo.png";
+import daCoverAsset from "@/assets/darker-ages-issue-1-cover.png.asset.json";
 
 export const Route = createFileRoute("/darker-ages")({
   head: () => ({
@@ -13,9 +14,11 @@ export const Route = createFileRoute("/darker-ages")({
       { property: "og:url", content: "/darker-ages" },
       { property: "og:type", content: "article" },
       { property: "og:site_name", content: "Real World Comics — Astralnaut Studios" },
+      { property: "og:image", content: daCoverAsset.url },
+      { property: "twitter:image", content: daCoverAsset.url },
       { property: "article:author", content: "Phil Russell" },
       { property: "article:publisher", content: "Real World Comics, LLC" },
-      { property: "og:image:alt", content: "Darker Ages — Real World Comics" },
+      { property: "og:image:alt", content: "Darker Ages Issue #1 — The Astral Temptation cover" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/darker-ages" }],
@@ -49,6 +52,15 @@ function DarkerAges() {
         <img src={daLogo} alt="Darker Ages" className="mx-auto mt-6 max-h-48 w-auto" />
         <h1 className="sr-only">Darker Ages</h1>
         <p className="mx-auto mt-6 max-w-2xl text-xl text-[var(--ink2)]">After the protective magic of the old age has died, what was held back is loose.</p>
+        <figure className="mx-auto mt-12 max-w-[420px]">
+          <img
+            src={daCoverAsset.url}
+            alt="Darker Ages Issue #1 — The Astral Temptation cover"
+            className="w-full rounded-lg shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)] ring-1 ring-white/10"
+            loading="eager"
+          />
+          <figcaption className="mt-3 text-sm text-[var(--mute)]">Issue #1 — “The Astral Temptation”</figcaption>
+        </figure>
         <div className="mx-auto mt-10 max-w-md card-rwc p-8">
           <div className="eyebrow">Pre-launch</div>
           <p className="mt-3 text-[var(--ink2)]">First-act pages drop October 2026. Subscribers get day-one access on the tier-staggered schedule.</p>

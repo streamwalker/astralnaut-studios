@@ -1,25 +1,19 @@
 ## Goal
-
-Same luminance-keyed transparency treatment that fixed Battlefield Atlantis, now applied to:
-
-- `src/assets/darker-ages-logo.png` → `src/assets/darker-ages-logo-clean.png`
-- `src/assets/children-of-aquarius-logo.png` → `src/assets/children-of-aquarius-logo-clean.png`
+Use the uploaded "Darker Ages Issue One Cover Art 3" as the official cover for Darker Ages Issue #1, both on the Darker Ages series page and in the landing-page hero carousel (currently using a Battlefield Atlantis variant as a placeholder).
 
 ## Steps
 
-1. **Children of Aquarius** — source has a dark navy plate with bright blue glow. Same script as BA (threshold floor ~12, ceiling ~180) drops the plate cleanly and preserves the electric-blue halo as natural semi-transparency.
+1. **Upload the cover as a CDN asset**
+   - Run `lovable-assets create --file /mnt/user-uploads/Darker_Ages_Issue_One_Cover_Art_3.png --filename darker-ages-issue-1-cover.png` and write the pointer to `src/assets/darker-ages-issue-1-cover.png.asset.json`.
 
-2. **Darker Ages** — source has a bright orange/sunset sky baked in, not a dark plate. Pure luminance keying would leave the fire clouds as a glowing rectangle. So for DA, key on **chroma + darkness combined**:
-   - Use the darker channel (`min(R,G,B)`) instead of `max` for the alpha ramp — the metallic lettering has dark interior shadow lines that the silvery clouds don't, so this preserves the letters while attenuating the clouds.
-   - If the result still shows too much sky, fall back to AI re-cut with a strict prompt and edge feathering disabled. Decide after viewing the first attempt.
-   - Auto-crop to non-transparent bbox either way.
+2. **Landing page carousel (`src/components/home/HeroRotator.tsx`)**
+   - Replace the placeholder `daVariant` import (`ba-issue-1-variant.png`) with the new cover asset.
+   - Use it as the `backgroundImage` for the `darker-ages` slot. Keep the existing dark overlay so the title logo/CTAs stay readable.
 
-3. **Wire up imports** in `src/components/home/HeroRotator.tsx` — swap `daLogo` and `coaLogo` to the `-clean` versions.
+3. **Darker Ages page (`src/routes/darker-ages.tsx`)**
+   - Add the cover image below the eyebrow/logo block as the prominent Issue #1 cover (responsive, max-width ~420px, rounded with subtle shadow, alt text "Darker Ages Issue #1 — The Astral Temptation cover").
+   - Add `og:image` / `twitter:image` pointing to the new asset URL so social shares use the cover.
 
-4. **Visually verify** each output via `code--view` on the PNG before declaring done; iterate the threshold if needed.
-
-## Out of scope
-
-- No size/position/layout changes.
-- No copy changes.
-- PS5 Milestone slot untouched.
+## Notes
+- The page-content image stays a real `<img>` (not a background) for SEO and sharing.
+- No business-logic changes; presentation only.
