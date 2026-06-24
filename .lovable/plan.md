@@ -1,47 +1,29 @@
 ## Goal
 
-Both brand logos (Real World Comics, Battlefield Atlantis title treatment) currently sit on visible rectangular "cards" because their source PNGs have baked-in dark backgrounds. Strip the boxes, generate true transparent versions, and move RWC up into the header next to the Astralnaut Studios wordmark.
+Re-cut the Battlefield Atlantis title PNG against a clean transparent background. The current transparent version has fringe/halo artifacts from the AI background removal pass — that's what's reading as "horrible."
 
-## Changes
+## Approach
 
-### 1. Generate transparent-background versions of both logos
+Skip the generic background-removal route (which caused the halo) and instead use luminance-keying on the **original** logo PNG. The source has the wordmark on a near-black background, so we can drop the dark pixels directly with no AI re-generation involved — preserves every metallic edge and glow exactly as the source artwork intended.
 
-Use `imagegen--edit_image` on the existing PNGs with `transparent_background: true` to cut out the dark navy field around each lockup. Save as new assets:
+### Steps
 
-- `src/assets/real-world-comics-logo-transparent.png` (from `real-world-comics-logo.png`)
-- `src/assets/battlefield-atlantis-logo-transparent.png` (from the current BA title PNG referenced as `baLogo` in `HeroRotator.tsx`)
+1. **Process the source PNG locally** (`src/assets/battlefield-atlantis-logo.png`) with Python/PIL in the sandbox:
+   - Convert to RGBA.
+   - For each pixel, set alpha proportional to its luminance (max(R,G,B)).
+   - Apply a small floor (pixels darker than ~12/255 become fully transparent) and ceiling (pixels above ~180 stay fully opaque) so faint background noise drops out but edge anti-aliasing is preserved.
+   - Auto-crop to the non-transparent bounding box so the asset has no dead space.
+   - Save as `src/assets/battlefield-atlantis-logo-clean.png`.
 
-Both will render with no rectangle, no halo card — only the metallic wordmark.
+2. **Swap the import** in `src/components/home/HeroRotator.tsx` to point at the clean PNG.
 
-### 2. Site header (`src/components/site-header.tsx`)
+3. **Verify** with Playwright: load `/`, screenshot the BA hero slot, zoom into the logo edges to confirm no halo fringe.
 
-Place the RWC mark inline with the Astralnaut Studios logo so the two imprints read as one lockup in the menu bar:
+## Why this works
 
-```text
-[Astralnaut Studios logo]  |  [Real World Comics logo]     Library  Reader  Shop  ...
-```
-
-- Add the RWC transparent logo as a second `<img>` inside the existing left cluster (`<div className="flex items-center gap-4">`).
-- Separate the two with a thin vertical divider (`border-l border-white/15 h-7`) so the relationship is "studio under imprint" without a card.
-- Size: `h-7 md:h-8 w-auto` for RWC (slightly smaller than the Astralnaut mark since it's a wordmark). Same subtle cyan drop-shadow for visual parity.
-- Both wrapped in a single `Link to="/"` so the whole lockup is the home affordance.
-
-### 3. Home route (`src/routes/index.tsx`)
-
-- **Delete** the entire standalone RWC block (lines 58–83) — the halo div + the `<img>` with `mixBlendMode: screen`. The hero rotator becomes the first thing under the header.
-- Remove the now-unused `rwcLogo` import.
-
-### 4. Hero rotator (`src/components/home/HeroRotator.tsx`)
-
-- Swap the `baLogo` import to point at the new transparent BA title PNG so the dark rectangle stops covering the video.
-- No blend-mode hack needed — the transparent asset sits cleanly over any video frame.
+Luminance-keyed alpha is the standard technique for compositing glowing artwork on dark plates over arbitrary backgrounds. It keeps the cyan glow and red highlights as semi-transparent pixels (so they blend over the video instead of cutting hard at an alpha mask edge), and it can't introduce the white/blue fringe artifacts AI removal produced.
 
 ## Out of scope
 
-- No copy, layout, animation, or button changes.
-- No changes to the Darker Ages / Children of Aquarius / PS5 Milestone title treatments (those PNGs already read fine; revisit only if the user flags them).
-- No backend changes.
-
-## Verification
-
-After the edits: load `/` in Playwright headless, screenshot the header (RWC + Astralnaut lockup, no boxes) and the BA hero slot (title floats over the video with no black rectangle), and confirm.
+- No size, position, layout, or copy changes — same dimensions and placement as today.
+- RWC logo stays as-is (you didn't flag it).
