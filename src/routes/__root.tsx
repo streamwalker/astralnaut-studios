@@ -80,10 +80,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { name: "theme-color", content: "#0a0a0a" },
-      { name: "apple-mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-title", content: "Astralnaut" },
-      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { title: "Real World Comics — The next page only drops here" },
       { name: "description", content: "Five new pages a week. Motion-enhanced art. Subscriber-only votes that change the canon. Read the first act free." },
       { name: "author", content: "Phil Russell — Real World Comics, LLC (Astralnaut Studios)" },
@@ -103,10 +99,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", sizes: "any" },
-      { rel: "icon", type: "image/png", sizes: "512x512", href: iconPng.url },
-      { rel: "apple-touch-icon", sizes: "180x180", href: appleTouchIcon.url },
-      { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=swap" },
