@@ -7,6 +7,7 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { CartDrawer } from "@/components/cart-drawer";
 import { PromoBar } from "@/components/promo-bar";
 import astralnautLogo from "@/assets/astralnaut-studios-logo.png";
+import rwcLogo from "@/assets/real-world-comics-logo-transparent.png";
 
 type NavItem = { to: string; label: string; exact?: boolean; accent?: boolean; params?: Record<string, string>; tour?: string };
 const nav: NavItem[] = [
@@ -63,12 +64,19 @@ export function SiteHeader() {
       <PromoBar />
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3">
         <div className="flex items-center gap-4">
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center gap-3" aria-label="Astralnaut Studios — Real World Comics">
             <img
               src={astralnautLogo}
               alt="Astralnaut Studios"
               className="h-10 w-auto"
               style={{ filter: "drop-shadow(0 0 12px rgba(34,211,255,0.35))" }}
+            />
+            <span aria-hidden className="hidden h-7 w-px bg-white/15 sm:block" />
+            <img
+              src={rwcLogo}
+              alt="Real World Comics"
+              className="hidden h-7 w-auto sm:block md:h-8"
+              style={{ filter: "drop-shadow(0 0 10px rgba(34,211,255,0.3))" }}
             />
           </Link>
           {!isHome && (
