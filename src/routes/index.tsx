@@ -5,6 +5,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { SeriesCard } from "@/components/series-card";
 import { MilestoneStrip } from "@/components/milestone-strip";
 import { ClosingBand } from "@/components/home/ClosingBand";
+import { HeroVideoBackground } from "@/components/home/HeroVideoBackground";
 import { HomePricingStrip } from "@/components/home/PricingStrip";
 import { listSeries, getMilestone, getSiteCopy } from "@/lib/public.functions";
 import { useSubscriberCount } from "@/hooks/useSubscriberCount";
