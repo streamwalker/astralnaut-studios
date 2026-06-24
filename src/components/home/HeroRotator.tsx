@@ -40,7 +40,7 @@ const HERO_SLOTS: HeroSlot[] = [
     eyebrow: "Issue #1 is live · Read free",
     titleImage: baLogo,
     titleAlt: "Battlefield Atlantis",
-    tagline: "Earth's mightiest pilots scramble against a War-of-the-Worlds extinction event. The first act is free.",
+    tagline: "The world before our world began. Meet the heroes of old who paved the way for our world today. The First Act is Free.",
     primary: { label: "Read the first act free", to: "/reader/$series/$issue", params: { series: "battlefield-atlantis", issue: "1" } },
     secondary: { label: "See the series", to: "/battlefield-atlantis" },
     backgroundVideo: videoAsset.url,
