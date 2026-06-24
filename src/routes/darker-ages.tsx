@@ -52,6 +52,15 @@ function DarkerAges() {
         <img src={daLogo} alt="Darker Ages" className="mx-auto mt-6 max-h-48 w-auto" />
         <h1 className="sr-only">Darker Ages</h1>
         <p className="mx-auto mt-6 max-w-2xl text-xl text-[var(--ink2)]">After the protective magic of the old age has died, what was held back is loose.</p>
+        <figure className="mx-auto mt-12 max-w-[420px]">
+          <img
+            src={daCoverAsset.url}
+            alt="Darker Ages Issue #1 — The Astral Temptation cover"
+            className="w-full rounded-lg shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)] ring-1 ring-white/10"
+            loading="eager"
+          />
+          <figcaption className="mt-3 text-sm text-[var(--mute)]">Issue #1 — “The Astral Temptation”</figcaption>
+        </figure>
         <div className="mx-auto mt-10 max-w-md card-rwc p-8">
           <div className="eyebrow">Pre-launch</div>
           <p className="mt-3 text-[var(--ink2)]">First-act pages drop October 2026. Subscribers get day-one access on the tier-staggered schedule.</p>
