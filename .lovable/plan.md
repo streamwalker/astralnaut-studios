@@ -1,29 +1,25 @@
 ## Goal
 
-Re-cut the Battlefield Atlantis title PNG against a clean transparent background. The current transparent version has fringe/halo artifacts from the AI background removal pass — that's what's reading as "horrible."
+Same luminance-keyed transparency treatment that fixed Battlefield Atlantis, now applied to:
 
-## Approach
+- `src/assets/darker-ages-logo.png` → `src/assets/darker-ages-logo-clean.png`
+- `src/assets/children-of-aquarius-logo.png` → `src/assets/children-of-aquarius-logo-clean.png`
 
-Skip the generic background-removal route (which caused the halo) and instead use luminance-keying on the **original** logo PNG. The source has the wordmark on a near-black background, so we can drop the dark pixels directly with no AI re-generation involved — preserves every metallic edge and glow exactly as the source artwork intended.
+## Steps
 
-### Steps
+1. **Children of Aquarius** — source has a dark navy plate with bright blue glow. Same script as BA (threshold floor ~12, ceiling ~180) drops the plate cleanly and preserves the electric-blue halo as natural semi-transparency.
 
-1. **Process the source PNG locally** (`src/assets/battlefield-atlantis-logo.png`) with Python/PIL in the sandbox:
-   - Convert to RGBA.
-   - For each pixel, set alpha proportional to its luminance (max(R,G,B)).
-   - Apply a small floor (pixels darker than ~12/255 become fully transparent) and ceiling (pixels above ~180 stay fully opaque) so faint background noise drops out but edge anti-aliasing is preserved.
-   - Auto-crop to the non-transparent bounding box so the asset has no dead space.
-   - Save as `src/assets/battlefield-atlantis-logo-clean.png`.
+2. **Darker Ages** — source has a bright orange/sunset sky baked in, not a dark plate. Pure luminance keying would leave the fire clouds as a glowing rectangle. So for DA, key on **chroma + darkness combined**:
+   - Use the darker channel (`min(R,G,B)`) instead of `max` for the alpha ramp — the metallic lettering has dark interior shadow lines that the silvery clouds don't, so this preserves the letters while attenuating the clouds.
+   - If the result still shows too much sky, fall back to AI re-cut with a strict prompt and edge feathering disabled. Decide after viewing the first attempt.
+   - Auto-crop to non-transparent bbox either way.
 
-2. **Swap the import** in `src/components/home/HeroRotator.tsx` to point at the clean PNG.
+3. **Wire up imports** in `src/components/home/HeroRotator.tsx` — swap `daLogo` and `coaLogo` to the `-clean` versions.
 
-3. **Verify** with Playwright: load `/`, screenshot the BA hero slot, zoom into the logo edges to confirm no halo fringe.
-
-## Why this works
-
-Luminance-keyed alpha is the standard technique for compositing glowing artwork on dark plates over arbitrary backgrounds. It keeps the cyan glow and red highlights as semi-transparent pixels (so they blend over the video instead of cutting hard at an alpha mask edge), and it can't introduce the white/blue fringe artifacts AI removal produced.
+4. **Visually verify** each output via `code--view` on the PNG before declaring done; iterate the threshold if needed.
 
 ## Out of scope
 
-- No size, position, layout, or copy changes — same dimensions and placement as today.
-- RWC logo stays as-is (you didn't flag it).
+- No size/position/layout changes.
+- No copy changes.
+- PS5 Milestone slot untouched.
