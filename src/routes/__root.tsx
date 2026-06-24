@@ -9,8 +9,6 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
-import iconPng from "@/assets/astralnaut-icon-512.png.asset.json";
-import appleTouchIcon from "@/assets/astralnaut-apple-touch-icon.png.asset.json";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { TourOverlay } from "@/components/tour/TourOverlay";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -88,20 +86,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "Real World Comics — Astralnaut Studios" },
       { property: "article:publisher", content: "Real World Comics, LLC" },
       { property: "og:title", content: "Real World Comics — The next page only drops here" },
-      { property: "og:description", content: "Netflix for comics. Weekly drops, real prizes, canon you help shape." },
+      { property: "og:description", content: "Five new pages a week. Motion-enhanced art. Subscriber-only votes that change the canon. Read the first act free." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Real World Comics — The next page only drops here" },
-      { name: "twitter:description", content: "Netflix for comics. Weekly drops, real prizes, canon you help shape." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/QZAeNqy6yxOqJTh5qCxXoi9l0uO2/social-images/social-1779340513940-Image_5-20-26_at_11.18_PM_(2).webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/QZAeNqy6yxOqJTh5qCxXoi9l0uO2/social-images/social-1779340513940-Image_5-20-26_at_11.18_PM_(2).webp" },
+      { name: "twitter:description", content: "Five new pages a week. Motion-enhanced art. Subscriber-only votes that change the canon. Read the first act free." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/QZAeNqy6yxOqJTh5qCxXoi9l0uO2/social-images/social-1782306105059-Image_6-24-26_at_8.01_AM.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/QZAeNqy6yxOqJTh5qCxXoi9l0uO2/social-images/social-1782306105059-Image_6-24-26_at_8.01_AM.webp" },
       { name: "google-site-verification", content: "EgmLLVaNZgWO2RP5Vsz7saG00ZwyVOIZ_GWN0pMMk6E" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", sizes: "any" },
-      { rel: "icon", type: "image/png", href: iconPng.url },
-      { rel: "apple-touch-icon", href: appleTouchIcon.url },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=swap" },
