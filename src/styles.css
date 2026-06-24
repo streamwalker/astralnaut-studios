@@ -114,6 +114,48 @@
   .btn-cta { background: var(--gradient-cta); color: #02000c; font-weight: 700; padding: .85rem 1.25rem; border-radius: 10px; display: inline-flex; align-items: center; gap: .5rem; }
   .btn-ghost { background: rgba(255,255,255,0.04); color: var(--ink); border: 1px solid var(--border-line); padding: .85rem 1.25rem; border-radius: 10px; }
   .btn-ghost:hover { border-color: var(--neon); }
+
+  /* Marvel-style angled-corner CTA — solid red, sharp bottom-left clip, uppercase tracked label. */
+  .btn-marvel {
+    --marvel-red: #ed1d24;
+    background: var(--marvel-red);
+    color: #fff;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 13px;
+    padding: 14px 22px 14px 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+    transition: filter .18s ease, transform .18s ease, background-color .18s ease;
+    box-shadow: 0 10px 28px -10px rgba(237,29,36,0.7);
+  }
+  .btn-marvel:hover { background: #ff2a31; filter: brightness(1.08); transform: translateY(-1px); }
+  .btn-marvel:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+  /* Ghost variant tuned for over-image hero use. */
+  .btn-hero-ghost {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.4);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 12px;
+    padding: 13px 20px;
+    border-radius: 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    transition: background-color .18s ease, border-color .18s ease;
+  }
+  .btn-hero-ghost:hover { background: rgba(255,255,255,0.16); border-color: #fff; }
+
+  /* Reveal-on-scroll helper used by useInView. */
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.is-visible { opacity: 1; transform: translateY(0); }
   .badge-free { background: rgba(34,211,255,0.12); color: var(--neon); border: 1px solid rgba(34,211,255,0.3); padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
   .badge-locked { background: rgba(255,255,255,0.04); color: var(--mute); border: 1px solid var(--border-line); padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
   .badge-gold { background: rgba(244,201,93,0.12); color: var(--gold); border: 1px solid rgba(244,201,93,0.3); padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
