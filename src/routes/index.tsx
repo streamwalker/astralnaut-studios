@@ -5,10 +5,11 @@ import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { SeriesCard } from "@/components/series-card";
 import { MilestoneStrip } from "@/components/milestone-strip";
 import { ClosingBand } from "@/components/home/ClosingBand";
-import { HeroVideoBackground } from "@/components/home/HeroVideoBackground";
+import { HeroRotator } from "@/components/home/HeroRotator";
 import { HomePricingStrip } from "@/components/home/PricingStrip";
 import { listSeries, getMilestone, getSiteCopy } from "@/lib/public.functions";
 import { useSubscriberCount } from "@/hooks/useSubscriberCount";
+import { useInView } from "@/hooks/useInView";
 import { CoverFan } from "@/components/cover-fan";
 import { CountUp } from "@/components/count-up";
 import { track } from "@/lib/analytics";
@@ -48,47 +49,46 @@ function Home() {
   const { data: series = [] } = useQuery({ queryKey: ["series"], queryFn: () => seriesFn({}) });
   const { data: milestone } = useQuery({ queryKey: ["milestone"], queryFn: () => milestoneFn({}) });
   const { data: copy = {} } = useQuery({ queryKey: ["copy"], queryFn: () => copyFn({}) });
-  // Single source of truth for subscriber number + headline stats.
   const { displayCount, pagesPublished, seriesLive } = useSubscriberCount();
 
   return (
     <>
       <SiteHeader />
       <main>
-        {/* Brand mark */}
-        <div className="pt-10 pb-2 text-center" style={{ paddingLeft: "96px", paddingRight: "96px" }}>
+        {/* Brand mark — compact, above the rotator (header already carries Astralnaut Studios). */}
+        <div className="pt-4 pb-2 text-center">
           <img
             src={rwcLogo}
             alt="Real World Comics"
             width={960}
             height={520}
             loading="eager"
-            className="mx-auto w-full h-auto"
-            style={{ filter: "drop-shadow(0 0 28px rgba(34,211,255,0.35))" }}
+            className="mx-auto h-auto w-[260px] md:w-[320px]"
+            style={{ filter: "drop-shadow(0 0 18px rgba(34,211,255,0.35))" }}
           />
         </div>
 
+        {/* Cinematic hero rotator — Marvel.com pattern. Slot 1 carries the BA teaser video. */}
+        <HeroRotator />
 
-        {/* Hero */}
-        <section className="relative overflow-hidden">
-          <HeroVideoBackground />
-          <div className="relative z-10 mx-auto max-w-7xl px-6 py-16 md:py-24 min-h-[70vh] md:min-h-[78vh] flex items-center">
-            <div className="grid items-center gap-12 md:grid-cols-2 w-full">
+        {/* Stat band + ambient CoverFan — used to live in the hero, now a chapter break under it. */}
+        <RevealSection className="relative" innerClassName="mx-auto max-w-7xl px-6 py-16">
+          <div className="grid items-center gap-12 md:grid-cols-2">
             <div>
               <div className="eyebrow flex items-center gap-2">
                 <span aria-hidden>⚡</span>
                 {copy["home.hero.eyebrow"] ?? "New episodes every week · Netflix for comics"}
               </div>
-              <h1 className="mt-6 text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">
+              <h2 className="mt-5 text-4xl font-black leading-[1.05] tracking-tight md:text-5xl">
                 {copy["home.hero.title"] ?? "The next page only drops here."}
-              </h1>
-              <p className="mt-6 max-w-xl text-lg text-[var(--ink2)]">
+              </h2>
+              <p className="mt-5 max-w-xl text-lg text-[var(--ink2)]">
                 Five new pages a week. Motion-enhanced art. Creator commentary. Subscriber-only votes that change the canon. Real prizes for real readers —{" "}
                 <span style={{ color: "var(--gold)" }} className="font-semibold">PlayStation 5 unlocks at 1,000 subscribers.</span>
               </p>
 
               <div
-                className="mt-8 inline-flex max-w-xl items-center gap-3 rounded-xl px-4 py-3"
+                className="mt-7 inline-flex max-w-xl items-center gap-3 rounded-xl px-4 py-3"
                 style={{ background: "rgba(34,211,255,0.06)", border: "1px solid rgba(34,211,255,0.3)" }}
               >
                 <span className="text-2xl" aria-hidden>📺</span>
@@ -102,7 +102,7 @@ function Home() {
                 </div>
               </div>
 
-              <div className="mt-8 flex flex-wrap gap-3">
+              <div className="mt-7 flex flex-wrap gap-3">
                 <Link
                   to="/pricing"
                   className="btn-cta"
@@ -119,13 +119,7 @@ function Home() {
                 </a>
               </div>
 
-
-              {/*
-                Hero stat band — single source of truth via useSubscriberCount.
-                When the live count is below the configured floor, we hide it
-                and show proof metrics instead (no raw "0 SUBSCRIBERS").
-              */}
-              <div className="mt-12 grid max-w-md grid-cols-3 gap-8">
+              <div className="mt-10 grid max-w-md grid-cols-3 gap-8">
                 {displayCount !== null ? (
                   <>
                     <Stat label="Subscribers" value={<CountUp value={displayCount} />} />
@@ -145,10 +139,8 @@ function Home() {
             <div className="relative">
               <CoverFan />
             </div>
-            </div>
           </div>
-        </section>
-
+        </RevealSection>
 
         {/* Milestone */}
         {milestone && (
@@ -159,29 +151,49 @@ function Home() {
           />
         )}
 
-        {/* Series shelf */}
-        <section id="slate" className="mx-auto max-w-7xl px-6 py-12 scroll-mt-24">
-          <div className="flex items-baseline justify-between">
-            <h2 className="text-3xl font-black md:text-4xl">The slate</h2>
-            <div className="eyebrow">Three properties · One disclosure-era universe</div>
-          </div>
-          <div className="mt-8 flex flex-col gap-6">
-            {series.map((s) => <SeriesCard key={s.id} {...s} />)}
+        {/* Series shelf — banded section. */}
+        <section
+          id="slate"
+          className="relative scroll-mt-24"
+          style={{
+            background:
+              "radial-gradient(120% 80% at 0% 0%, rgba(34,211,255,0.08), transparent 55%), radial-gradient(120% 80% at 100% 100%, rgba(160,64,255,0.08), transparent 55%)",
+            borderTop: "1px solid var(--border-line)",
+            borderBottom: "1px solid var(--border-line)",
+          }}
+        >
+          <div className="mx-auto max-w-7xl px-6 py-16">
+            <div className="flex items-baseline justify-between">
+              <h2 className="text-3xl font-black md:text-4xl">The slate</h2>
+              <div className="eyebrow">Three properties · One disclosure-era universe</div>
+            </div>
+            <div className="mt-8 flex flex-col gap-6">
+              {series.map((s) => <SeriesCard key={s.id} {...s} />)}
+            </div>
           </div>
         </section>
 
-        {/* Compact pricing strip — same shared config as /pricing */}
+        {/* Pricing strip */}
         <HomePricingStrip interval="monthly" />
 
-        {/* What piracy can't give */}
-        <section className="mx-auto max-w-7xl px-6 py-16">
-          <div className="eyebrow">Why subscribe</div>
-          <h2 className="mt-3 text-3xl font-black md:text-4xl">Pirated PNGs can't give you this.</h2>
-          <div className="mt-8 grid gap-4 md:grid-cols-4">
-            <Pillar title="Motion + sound" body="Per-page CSS animations layered onto the static art. Lightning pulses, hologram glow, debris fields." />
-            <Pillar title="Tier-staggered drops" body="Patron Tuesday. Initiate Wednesday. Reader Thursday. Always 48 hours ahead at the top tier." />
-            <Pillar title="Canon voting" body="Subscribers vote on canon-altering decisions. Your read literally changes the story." />
-            <Pillar title="Raffles + cameos" body="Active subscription weeks = raffle entries. Patron tier unlocks cameo eligibility." />
+        {/* Why subscribe — banded section. */}
+        <section
+          className="relative"
+          style={{
+            background:
+              "radial-gradient(120% 80% at 100% 0%, rgba(244,201,93,0.08), transparent 55%), linear-gradient(180deg, transparent, rgba(0,0,0,0.25))",
+            borderTop: "1px solid var(--border-line)",
+          }}
+        >
+          <div className="mx-auto max-w-7xl px-6 py-16">
+            <div className="eyebrow">Why subscribe</div>
+            <h2 className="mt-3 text-3xl font-black md:text-4xl">Pirated PNGs can't give you this.</h2>
+            <div className="mt-8 grid gap-4 md:grid-cols-4">
+              <Pillar title="Motion + sound" body="Per-page CSS animations layered onto the static art. Lightning pulses, hologram glow, debris fields." />
+              <Pillar title="Tier-staggered drops" body="Patron Tuesday. Initiate Wednesday. Reader Thursday. Always 48 hours ahead at the top tier." />
+              <Pillar title="Canon voting" body="Subscribers vote on canon-altering decisions. Your read literally changes the story." />
+              <Pillar title="Raffles + cameos" body="Active subscription weeks = raffle entries. Patron tier unlocks cameo eligibility." />
+            </div>
           </div>
         </section>
 
@@ -190,6 +202,23 @@ function Home() {
       </main>
       <SiteFooter />
     </>
+  );
+}
+
+function RevealSection({
+  className = "",
+  innerClassName = "",
+  children,
+}: {
+  className?: string;
+  innerClassName?: string;
+  children: React.ReactNode;
+}) {
+  const [ref, inView] = useInView<HTMLDivElement>();
+  return (
+    <section ref={ref} className={`${className} reveal ${inView ? "is-visible" : ""}`}>
+      <div className={innerClassName}>{children}</div>
+    </section>
   );
 }
 
@@ -203,7 +232,7 @@ function Stat({ label, value }: { label: string; value: React.ReactNode }) {
 }
 function Pillar({ title, body }: { title: string; body: string }) {
   return (
-    <div className="card-rwc p-5">
+    <div className="card-rwc p-5 transition-transform duration-300 hover:-translate-y-1">
       <h3 className="text-lg font-black">{title}</h3>
       <p className="mt-2 text-sm text-[var(--ink2)]">{body}</p>
     </div>

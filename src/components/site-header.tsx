@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { TierBadge } from "@/components/TierGate";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { CartDrawer } from "@/components/cart-drawer";
+import { PromoBar } from "@/components/promo-bar";
 import astralnautLogo from "@/assets/astralnaut-studios-logo.png";
 
 type NavItem = { to: string; label: string; exact?: boolean; accent?: boolean; params?: Record<string, string>; tour?: string };
@@ -59,6 +60,7 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md" style={{ background: "rgba(2,0,12,0.7)", borderBottom: "1px solid var(--border-line)" }}>
+      <PromoBar />
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3">
         <div className="flex items-center gap-4">
           <Link to="/" className="flex items-center">
