@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { RightsNotice } from "@/components/rights-notice";
 import daLogo from "@/assets/darker-ages-logo.png";
+import daCoverAsset from "@/assets/darker-ages-issue-1-cover.png.asset.json";
 
 export const Route = createFileRoute("/darker-ages")({
   head: () => ({
