@@ -5,6 +5,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { SeriesCard } from "@/components/series-card";
 import { MilestoneStrip } from "@/components/milestone-strip";
 import { ClosingBand } from "@/components/home/ClosingBand";
+import { HeroVideoBackground } from "@/components/home/HeroVideoBackground";
 import { HomePricingStrip } from "@/components/home/PricingStrip";
 import { listSeries, getMilestone, getSiteCopy } from "@/lib/public.functions";
 import { useSubscriberCount } from "@/hooks/useSubscriberCount";
@@ -69,8 +70,10 @@ function Home() {
 
 
         {/* Hero */}
-        <section className="mx-auto max-w-7xl px-6 py-16 md:py-24">
-          <div className="grid items-center gap-12 md:grid-cols-2">
+        <section className="relative overflow-hidden">
+          <HeroVideoBackground />
+          <div className="relative z-10 mx-auto max-w-7xl px-6 py-16 md:py-24 min-h-[70vh] md:min-h-[78vh] flex items-center">
+            <div className="grid items-center gap-12 md:grid-cols-2 w-full">
             <div>
               <div className="eyebrow flex items-center gap-2">
                 <span aria-hidden>⚡</span>
@@ -141,6 +144,7 @@ function Home() {
 
             <div className="relative">
               <CoverFan />
+            </div>
             </div>
           </div>
         </section>
