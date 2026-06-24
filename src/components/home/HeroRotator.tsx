@@ -7,7 +7,8 @@ import baLogo from "@/assets/battlefield-atlantis-logo-clean.png";
 import coaLogo from "@/assets/children-of-aquarius-logo-clean.png";
 import daLogo from "@/assets/darker-ages-logo-clean.png";
 import coaCover from "@/assets/coa-issue-1-cover.png";
-import daVariant from "@/assets/ba-issue-1-variant.png"; // fallback art; swap when DA cover lands
+import daCoverAsset from "@/assets/darker-ages-issue-1-cover.png.asset.json";
+const daCover = daCoverAsset.url;
 
 type CTA = { label: string; to: string; params?: Record<string, string> };
 
