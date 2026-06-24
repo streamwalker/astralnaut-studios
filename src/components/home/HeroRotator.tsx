@@ -56,7 +56,7 @@ const HERO_SLOTS: HeroSlot[] = [
     tagline: "A medieval reckoning told through firelight, blood, and prophecy. Witness the world before the gods left.",
     primary: { label: "Enter the series", to: "/darker-ages" },
     secondary: { label: "See pricing", to: "/pricing" },
-    backgroundImage: daVariant,
+    backgroundImage: daCover,
     overlay:
       "linear-gradient(90deg, rgba(28,8,2,0.94) 0%, rgba(28,8,2,0.7) 40%, rgba(28,8,2,0.3) 80%, rgba(28,8,2,0.1) 100%)",
     accent: "#f97316",
