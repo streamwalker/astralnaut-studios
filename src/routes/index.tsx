@@ -70,8 +70,10 @@ function Home() {
 
 
         {/* Hero */}
-        <section className="mx-auto max-w-7xl px-6 py-16 md:py-24">
-          <div className="grid items-center gap-12 md:grid-cols-2">
+        <section className="relative overflow-hidden">
+          <HeroVideoBackground />
+          <div className="relative z-10 mx-auto max-w-7xl px-6 py-16 md:py-24 min-h-[70vh] md:min-h-[78vh] flex items-center">
+            <div className="grid items-center gap-12 md:grid-cols-2 w-full">
             <div>
               <div className="eyebrow flex items-center gap-2">
                 <span aria-hidden>⚡</span>
