@@ -145,6 +145,7 @@ function Home() {
             <div className="relative">
               <CoverFan />
             </div>
+            </div>
           </div>
         </section>
 
