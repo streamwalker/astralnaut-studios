@@ -9,6 +9,8 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import iconPng from "@/assets/astralnaut-icon-512.png.asset.json";
+import appleTouchIcon from "@/assets/astralnaut-apple-touch-icon.png.asset.json";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { TourOverlay } from "@/components/tour/TourOverlay";
 import { TooltipProvider } from "@/components/ui/tooltip";
