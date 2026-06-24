@@ -80,6 +80,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "theme-color", content: "#0a0a0a" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-title", content: "Astralnaut" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { title: "Real World Comics — The next page only drops here" },
       { name: "description", content: "Five new pages a week. Motion-enhanced art. Subscriber-only votes that change the canon. Read the first act free." },
       { name: "author", content: "Phil Russell — Real World Comics, LLC (Astralnaut Studios)" },
