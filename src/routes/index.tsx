@@ -55,16 +55,30 @@ function Home() {
     <>
       <SiteHeader />
       <main>
-        {/* Brand mark — compact, above the rotator (header already carries Astralnaut Studios). */}
-        <div className="pt-4 pb-2 text-center">
+        {/* Brand mark — embedded into the page via screen blend so the logo's black
+            field drops out and the metallic glow reads as part of the background. */}
+        <div className="relative pt-6 pb-4 text-center">
+          {/* Ambient halo that the logo sits inside of — uses page tokens so it feels native. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-1/2 -z-0 h-[320px] w-[680px] -translate-x-1/2 -translate-y-1/2 md:h-[380px] md:w-[820px]"
+            style={{
+              background:
+                "radial-gradient(ellipse at center, rgba(34,211,255,0.18) 0%, rgba(34,211,255,0.06) 35%, rgba(0,0,0,0) 70%)",
+              filter: "blur(2px)",
+            }}
+          />
           <img
             src={rwcLogo}
             alt="Real World Comics"
             width={960}
             height={520}
             loading="eager"
-            className="mx-auto h-auto w-[260px] md:w-[320px]"
-            style={{ filter: "drop-shadow(0 0 18px rgba(34,211,255,0.35))" }}
+            className="relative mx-auto h-auto w-[320px] md:w-[420px]"
+            style={{
+              mixBlendMode: "screen",
+              filter: "drop-shadow(0 0 24px rgba(34,211,255,0.35)) drop-shadow(0 0 60px rgba(34,211,255,0.15))",
+            }}
           />
         </div>
 
