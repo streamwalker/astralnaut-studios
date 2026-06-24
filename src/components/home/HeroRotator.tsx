@@ -303,22 +303,33 @@ function SlotPanel({
 }
 
 function SlotContent({ slot }: { slot: HeroSlot }) {
+  const [imgFailed, setImgFailed] = useState(false);
+
+  // Reset failure flag if the slot's logo changes.
+  useEffect(() => {
+    setImgFailed(false);
+  }, [slot.titleImage]);
+
+  const showImage = !!slot.titleImage && !imgFailed;
+  const fallbackTitle = slot.titleText ?? slot.titleAlt ?? "";
+
   return (
     <div id={`hero-slot-${slot.id}`} key={slot.id} className="animate-fade-in">
       <div className="text-[11px] font-black uppercase tracking-[4px]" style={{ color: slot.accent ?? "var(--neon)" }}>
         {slot.eyebrow}
       </div>
 
-      {slot.titleImage ? (
+      {showImage ? (
         <img
           src={slot.titleImage}
           alt={slot.titleAlt ?? ""}
           className="mt-5 h-auto w-full max-w-[440px] drop-shadow-[0_8px_30px_rgba(0,0,0,0.7)]"
           loading="eager"
+          onError={() => setImgFailed(true)}
         />
       ) : (
-        <h1 className="mt-5 text-4xl font-black leading-[1.02] tracking-tight text-white md:text-6xl">
-          {slot.titleText}
+        <h1 className="mt-5 text-4xl font-black leading-[1.02] tracking-tight text-white md:text-6xl drop-shadow-[0_4px_18px_rgba(0,0,0,0.7)]">
+          {fallbackTitle}
         </h1>
       )}
 
