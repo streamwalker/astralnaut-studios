@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { STRATEGY, type Block } from "@/content/growth-strategy";
 import { PLAYBOOK } from "@/content/growth-playbook";
 
@@ -23,6 +25,36 @@ const TABS: { id: Tab; label: string; sub: string }[] = [
 
 function GrowthPackagePage() {
   const { tab } = Route.useSearch();
+
+  const { data: isAdmin, isLoading: roleLoading } = useQuery({
+    queryKey: ["growth-package-admin"],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return false;
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      return !!data;
+    },
+  });
+
+  if (roleLoading) {
+    return <div className="flex min-h-screen items-center justify-center text-[var(--mute)]">Checking access…</div>;
+  }
+  if (!isAdmin) {
+    return (
+      <div className="flex min-h-screen items-center justify-center px-4">
+        <div className="max-w-md rounded-2xl border border-white/10 bg-[var(--bg2)] p-8 text-center">
+          <h1 className="text-xl font-bold text-[var(--ink)]">Not authorized</h1>
+          <p className="mt-2 text-sm text-[var(--mute)]">Admin access is required to view the Growth Package.</p>
+          <Link to="/" className="mt-6 inline-block rounded-md border border-white/15 px-4 py-2 text-xs text-[var(--ink2)] hover:border-[var(--neon)] hover:text-[var(--neon)]">Back to home</Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)]">
