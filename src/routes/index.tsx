@@ -13,6 +13,7 @@ import { useInView } from "@/hooks/useInView";
 import { CoverFan } from "@/components/cover-fan";
 import { CountUp } from "@/components/count-up";
 import { track } from "@/lib/analytics";
+import { OG_DEFAULT_IMAGE, OG_DEFAULT_ALT, OG_DEFAULT_WIDTH, OG_DEFAULT_HEIGHT, SITE_URL } from "@/lib/seo";
 
 
 
@@ -24,16 +25,23 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Real World Comics — Astralnaut Studios" },
       { property: "og:description", content: "The next page only drops here. Five new pages a week. Built for readers, not pirates." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/" },
+      { property: "og:url", content: `${SITE_URL}/` },
+      { property: "og:image", content: OG_DEFAULT_IMAGE },
+      { property: "og:image:width", content: OG_DEFAULT_WIDTH },
+      { property: "og:image:height", content: OG_DEFAULT_HEIGHT },
+      { property: "og:image:alt", content: OG_DEFAULT_ALT },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_DEFAULT_IMAGE },
+      { name: "twitter:image:alt", content: OG_DEFAULT_ALT },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/` }],
     scripts: [{
       type: "application/ld+json",
       children: JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Organization",
         name: "Astralnaut Studios",
-        url: "/",
+        url: SITE_URL,
         sameAs: [],
         founder: { "@type": "Person", name: "Phil" },
       }),
