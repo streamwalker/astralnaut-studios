@@ -1,37 +1,54 @@
-# Remaining Security Findings — Triage
+## Goal
+Log every unique visitor's IP (plus minimal context) so you can distinguish your own traffic from organic users.
 
-The previous round closed `analytics_event_type_open` and `growth_pkg_no_admin`. A fresh scan shows the Supabase/RLS scanners are clean. What's left are transitive npm advisories surfaced by the supply-chain scanner.
+## Approach
 
-## Findings still open
+### 1. New table: `visitor_hits`
+Columns:
+- `id uuid pk default gen_random_uuid()`
+- `ip text` (from `CF-Connecting-IP` / `X-Forwarded-For`)
+- `ip_hash text` (sha256 of ip+day, for unique-per-day counting without PII duplication)
+- `user_agent text`
+- `path text`
+- `referrer text`
+- `country text` (from `CF-IPCountry` header if present)
+- `user_id uuid null` (if signed in)
+- `created_at timestamptz default now()`
 
-| # | id | Severity | Source | Reachable in our app? |
-|---|----|----------|--------|----------------------|
-| 1 | `vulnerable_dependencies_high` (ws / undici via `@cloudflare/vite-plugin` + `@tanstack/react-start`) | High | Transitive | No — `ws` and `undici` ship inside build tooling and the SSR fetch path; none of the four CVEs (SOCKS5 proxy reuse, TLS bypass, WebSocket fragment DoS, memory exhaustion) apply to our usage (no SOCKS proxy, no inbound `ws` server, no untrusted WS clients). |
-| 2 | `vulnerable_dependencies_medium` (ws/undici/js-yaml + TanStack server-function deserialization GHSA-9m65-766c-r333) | Medium | Transitive | Mostly no — same as above for ws/undici/js-yaml. **The TanStack advisory is the one that matters**: a crafted inbound server-function request can be routed to a sibling client-referenced server function. We use `createServerFn` heavily, several gated by `requireSupabaseAuth`. |
-| 3 | (Counted by user as "3rd") No third active finding in the latest scan — likely the stale `vulnerable_dependencies_*` row split. Confirmed via `security--get_scan_results`. |
+RLS:
+- `GRANT SELECT` to authenticated, `GRANT ALL` to service_role.
+- SELECT policy: admins only (`public.has_role(auth.uid(),'admin')`).
+- No insert policy needed — writes go through the server route using the service role.
 
-## Recommendation
+Index: `(created_at desc)`, `(ip)`, unique `(ip_hash, path)` partial to dedupe within day (optional — or keep all hits).
 
-Fix in this order, in a single PR:
+### 2. Server route: `src/routes/api/public/track.ts`
+- `POST` handler.
+- Reads IP from request headers (`cf-connecting-ip`, `x-forwarded-for` first hop, `x-real-ip`).
+- Validates input with zod (`path`, `referrer`).
+- Inserts into `visitor_hits` via `supabaseAdmin` (loaded inside handler).
+- Returns 204.
+- No signature needed (public beacon), but rate-limit by ignoring if path is missing/oversized.
 
-### Step 1 — Bump `@tanstack/react-start` (addresses GHSA-9m65-766c-r333 + several undici CVEs)
-```bash
-bun add @tanstack/react-start@latest @tanstack/react-router@latest
-bun run build:dev   # verify SSR + server fns still compile
-```
-The TanStack advisory is patched in 1.169+. This is the only finding with a plausible exploit path in our codebase.
+### 3. Client beacon
+- New tiny module `src/lib/track-visit.ts` that POSTs `{ path, referrer }` to `/api/public/track` via `navigator.sendBeacon` (fallback to `fetch keepalive`).
+- Wired in `src/routes/__root.tsx` inside a `useEffect` that fires on route change (subscribe to `router.subscribe('onResolved', ...)` or watch `location.pathname`).
+- Runs once per pathname per session (in-memory `Set`) to avoid spam.
 
-### Step 2 — Bump `@cloudflare/vite-plugin` (clears the rest of the ws/undici chain)
-```bash
-bun add -d @cloudflare/vite-plugin@latest
-bun run build:dev
-```
-Build-time only; zero runtime impact, but it clears the high-severity row from the scanner.
+### 4. Admin view
+- New route `src/routes/_authenticated/admin.visitors.tsx` (or a tab on existing `/admin`).
+- Lists last 500 hits with IP, country, path, UA, time.
+- Aggregates: unique IPs today / 7d / 30d.
+- Lets you tag/recognize your own IP visually (simple client-side filter input — "hide IP =").
 
-### Step 3 — Re-scan and mark fixed
-Run `security--run_security_scan`; for any rows that drop out, call `manage_security_finding` with `mark_as_fixed`. If the TanStack advisory persists after the bump (no patched version yet), ignore it with a memory note that all server fns are auth-gated or input-validated and we have no public unauthenticated server fn that performs privileged writes.
+### 5. Self-identification
+Simplest: just look at the table and recognize your IP. Optional follow-up (not in this plan): an `ignored_ips` table you can add your IP to, with the admin view auto-filtering them out.
 
-## Out of scope (do not touch)
-- `analytics_events` RLS — fixed last round
-- `/growth-package` admin gate — fixed last round
-- Any other RLS / GRANT changes — scanners are clean
+## Out of scope
+- GeoIP enrichment beyond the `CF-IPCountry` header.
+- Bot filtering (can add UA blocklist later).
+- GDPR/cookie banner changes — IP logging for security/abuse-prevention is generally legitimate interest, but let me know if you want a privacy note added.
+
+## Confirm before I build
+1. OK to store raw IP, or hash-only?
+2. Add an `ignored_ips` allowlist now, or just eyeball the table for v1?

@@ -33,6 +33,8 @@ import { Route as AuthenticatedGrowthPackageRouteImport } from './routes/_authen
 import { Route as AuthenticatedGrowthRouteImport } from './routes/_authenticated/growth'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as ReaderSeriesIssueRouteImport } from './routes/reader.$series.$issue'
+import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
+import { Route as AuthenticatedAdminVisitorsRouteImport } from './routes/_authenticated/admin.visitors'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminSubscriptionTestRouteImport } from './routes/_authenticated/admin.subscription-test'
 import { Route as AuthenticatedAdminSecurityRouteImport } from './routes/_authenticated/admin.security'
@@ -166,6 +168,17 @@ const ReaderSeriesIssueRoute = ReaderSeriesIssueRouteImport.update({
   path: '/reader/$series/$issue',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
+  id: '/api/public/track',
+  path: '/api/public/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminVisitorsRoute =
+  AuthenticatedAdminVisitorsRouteImport.update({
+    id: '/admin/visitors',
+    path: '/admin/visitors',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   id: '/admin/users',
   path: '/admin/users',
@@ -263,6 +276,8 @@ export interface FileRoutesByFullPath {
   '/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
+  '/api/public/track': typeof ApiPublicTrackRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
@@ -300,6 +315,8 @@ export interface FileRoutesByTo {
   '/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
+  '/api/public/track': typeof ApiPublicTrackRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
@@ -339,6 +356,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/_authenticated/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/_authenticated/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
+  '/api/public/track': typeof ApiPublicTrackRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
@@ -378,6 +397,8 @@ export interface FileRouteTypes {
     | '/admin/security'
     | '/admin/subscription-test'
     | '/admin/users'
+    | '/admin/visitors'
+    | '/api/public/track'
     | '/reader/$series/$issue'
     | '/admin/'
     | '/admin/help/$slug'
@@ -415,6 +436,8 @@ export interface FileRouteTypes {
     | '/admin/security'
     | '/admin/subscription-test'
     | '/admin/users'
+    | '/admin/visitors'
+    | '/api/public/track'
     | '/reader/$series/$issue'
     | '/admin'
     | '/admin/help/$slug'
@@ -453,6 +476,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/security'
     | '/_authenticated/admin/subscription-test'
     | '/_authenticated/admin/users'
+    | '/_authenticated/admin/visitors'
+    | '/api/public/track'
     | '/reader/$series/$issue'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/help/$slug'
@@ -482,6 +507,7 @@ export interface RootRouteChildren {
   ProductHandleRoute: typeof ProductHandleRoute
   RaffleFreeEntryRoute: typeof RaffleFreeEntryRoute
   RaffleRulesRoute: typeof RaffleRulesRoute
+  ApiPublicTrackRoute: typeof ApiPublicTrackRoute
   ReaderSeriesIssueRoute: typeof ReaderSeriesIssueRoute
   ApiPublicLeadsConfirmRoute: typeof ApiPublicLeadsConfirmRoute
   ApiPublicLeadsUnsubscribeRoute: typeof ApiPublicLeadsUnsubscribeRoute
@@ -658,6 +684,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReaderSeriesIssueRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/track': {
+      id: '/api/public/track'
+      path: '/api/public/track'
+      fullPath: '/api/public/track'
+      preLoaderRoute: typeof ApiPublicTrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/visitors': {
+      id: '/_authenticated/admin/visitors'
+      path: '/admin/visitors'
+      fullPath: '/admin/visitors'
+      preLoaderRoute: typeof AuthenticatedAdminVisitorsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/admin/users': {
       id: '/_authenticated/admin/users'
       path: '/admin/users'
@@ -782,6 +822,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAdminSecurityRoute: typeof AuthenticatedAdminSecurityRoute
   AuthenticatedAdminSubscriptionTestRoute: typeof AuthenticatedAdminSubscriptionTestRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
+  AuthenticatedAdminVisitorsRoute: typeof AuthenticatedAdminVisitorsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedReaderSeriesIssueLettersRoute: typeof AuthenticatedReaderSeriesIssueLettersRoute
 }
@@ -796,6 +837,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminSubscriptionTestRoute:
     AuthenticatedAdminSubscriptionTestRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
+  AuthenticatedAdminVisitorsRoute: AuthenticatedAdminVisitorsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedReaderSeriesIssueLettersRoute:
     AuthenticatedReaderSeriesIssueLettersRoute,
@@ -844,6 +886,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductHandleRoute: ProductHandleRoute,
   RaffleFreeEntryRoute: RaffleFreeEntryRoute,
   RaffleRulesRoute: RaffleRulesRoute,
+  ApiPublicTrackRoute: ApiPublicTrackRoute,
   ReaderSeriesIssueRoute: ReaderSeriesIssueRoute,
   ApiPublicLeadsConfirmRoute: ApiPublicLeadsConfirmRoute,
   ApiPublicLeadsUnsubscribeRoute: ApiPublicLeadsUnsubscribeRoute,
@@ -852,13 +895,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

@@ -15,8 +15,10 @@ import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { TourOverlay } from "@/components/tour/TourOverlay";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AnalyticsTracker } from "@/components/analytics-tracker";
+import { VisitorTracker } from "@/components/visitor-tracker";
 import { Toaster } from "@/components/ui/sonner";
 import { useCartSync } from "@/hooks/useCartSync";
+
 
 function NotFoundComponent() {
   return (
@@ -141,8 +143,10 @@ function RootComponent() {
         <PaymentTestModeBanner />
         <Outlet />
         <TourOverlay />
-        <AnalyticsTracker />
-        <Toaster position="top-right" />
+          <AnalyticsTracker />
+          <VisitorTracker />
+          <Toaster position="top-right" />
+
       </TooltipProvider>
     </QueryClientProvider>
   );
