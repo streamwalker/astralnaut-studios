@@ -2,6 +2,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { HelpLayout } from "@/components/help/HelpLayout";
 import { ArticleView } from "@/components/help/ArticleView";
 import { readerHelp } from "@/content/help/reader";
+import { OG_DEFAULT_IMAGE, OG_DEFAULT_ALT, OG_DEFAULT_WIDTH, OG_DEFAULT_HEIGHT, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/help/$slug")({
   loader: ({ params }) => {
@@ -9,17 +10,28 @@ export const Route = createFileRoute("/help/$slug")({
     if (!article) throw notFound();
     return { article };
   },
-  head: ({ loaderData }) => {
+  head: ({ params, loaderData }) => {
     const a = loaderData?.article;
     const title = a ? `${a.title} — Help Center` : "Help Center";
     const desc = a?.summary ?? "Astralnaut Studios reader help.";
+    const url = `${SITE_URL}/help/${params.slug}`;
     return {
       meta: [
         { title },
         { name: "description", content: desc },
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
+        { property: "og:image", content: OG_DEFAULT_IMAGE },
+        { property: "og:image:width", content: OG_DEFAULT_WIDTH },
+        { property: "og:image:height", content: OG_DEFAULT_HEIGHT },
+        { property: "og:image:alt", content: OG_DEFAULT_ALT },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:image", content: OG_DEFAULT_IMAGE },
+        { name: "twitter:image:alt", content: OG_DEFAULT_ALT },
       ],
+      links: [{ rel: "canonical", href: url }],
     };
   },
   component: HelpArticleRoute,
