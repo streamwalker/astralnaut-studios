@@ -12,6 +12,7 @@ import {
   type ShopifyProduct,
 } from "@/lib/shopify";
 import { useCartStore } from "@/stores/cartStore";
+import { OG_DEFAULT_IMAGE, OG_DEFAULT_ALT, OG_DEFAULT_WIDTH, OG_DEFAULT_HEIGHT, SITE_URL, absUrl } from "@/lib/seo";
 
 async function fetchProduct(handle: string): Promise<ShopifyProduct["node"] | null> {
   const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
@@ -26,12 +27,35 @@ const productQuery = (handle: string) =>
   });
 
 export const Route = createFileRoute("/product/$handle")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `${params.handle} — Astralnaut Studios Shop` },
-      { property: "og:title", content: `${params.handle} — Astralnaut Studios Shop` },
-    ],
-  }),
+  head: ({ params, loaderData }) => {
+    const product = loaderData as ShopifyProduct["node"] | null | undefined;
+    const title = product?.title ?? params.handle;
+    const desc = product?.description?.slice(0, 200) ?? "Official Astralnaut Studios merch.";
+    const imgSrc = product?.images?.edges?.[0]?.node?.url;
+    const img = imgSrc ? absUrl(imgSrc) : OG_DEFAULT_IMAGE;
+    const imgAlt = product?.images?.edges?.[0]?.node?.altText ?? OG_DEFAULT_ALT;
+    const url = `${SITE_URL}/product/${params.handle}`;
+    return {
+      meta: [
+        { title: `${title} — Astralnaut Studios Shop` },
+        { name: "description", content: desc },
+        { property: "og:title", content: `${title} — Astralnaut Studios Shop` },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: url },
+        { property: "og:image", content: img },
+        ...(imgSrc ? [] : [
+          { property: "og:image:width", content: OG_DEFAULT_WIDTH },
+          { property: "og:image:height", content: OG_DEFAULT_HEIGHT },
+        ]),
+        { property: "og:image:alt", content: imgAlt },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:image", content: img },
+        { name: "twitter:image:alt", content: imgAlt },
+      ],
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
   loader: ({ context, params }) =>
     context.queryClient.ensureQueryData(productQuery(params.handle)),
   component: ProductPage,
