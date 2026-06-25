@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { listSeries } from "@/lib/public.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { SeriesCard } from "@/components/series-card";
+import { OG_DEFAULT_IMAGE, OG_DEFAULT_ALT, OG_DEFAULT_WIDTH, OG_DEFAULT_HEIGHT, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/astralnaut-studios")({
   head: () => ({
@@ -12,8 +13,17 @@ export const Route = createFileRoute("/astralnaut-studios")({
       { name: "description", content: "Astralnaut Studios is the independent comics studio behind Battlefield Atlantis, Children of Aquarius, and Darker Ages. Serialized prestige comics. Adaptation-ready IP." },
       { property: "og:title", content: "Astralnaut Studios — Independent Comics, Built for the Disclosure Era" },
       { property: "og:description", content: "Three serialized properties. Weekly tier-staggered page drops. Adaptation-ready IP." },
-      { rel: "canonical", href: "https://astralnautstudios.com/astralnaut-studios" },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE_URL}/astralnaut-studios` },
+      { property: "og:image", content: OG_DEFAULT_IMAGE },
+      { property: "og:image:width", content: OG_DEFAULT_WIDTH },
+      { property: "og:image:height", content: OG_DEFAULT_HEIGHT },
+      { property: "og:image:alt", content: OG_DEFAULT_ALT },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_DEFAULT_IMAGE },
+      { name: "twitter:image:alt", content: OG_DEFAULT_ALT },
     ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/astralnaut-studios` }],
     scripts: [
       {
         type: "application/ld+json",
