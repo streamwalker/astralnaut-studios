@@ -89,12 +89,25 @@ const HERO_SLOTS: HeroSlot[] = [
   },
 ];
 
-const AUTOPLAY_MS = 15000;
+const DEFAULT_AUTOPLAY_MS = 15000;
+const AUTOPLAY_STORAGE_KEY = "hero:autoplayMs";
+
+function readAutoplayMs(): number {
+  if (typeof window === "undefined") return DEFAULT_AUTOPLAY_MS;
+  const raw = window.localStorage.getItem(AUTOPLAY_STORAGE_KEY);
+  const n = raw ? Number(raw) : NaN;
+  if (!Number.isFinite(n) || n < 1000) return DEFAULT_AUTOPLAY_MS;
+  return n;
+}
 
 export function HeroRotator() {
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
+  // hoverPaused (mouse/focus), userPaused (explicit toggle), hiddenPaused (tab hidden)
+  const [hoverPaused, setHoverPaused] = useState(false);
+  const [userPaused, setUserPaused] = useState(false);
+  const [hiddenPaused, setHiddenPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [autoplayMs, setAutoplayMs] = useState<number>(DEFAULT_AUTOPLAY_MS);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   // Detect reduced motion (disables autoplay + video).
@@ -107,22 +120,36 @@ export function HeroRotator() {
     return () => mq.removeEventListener?.("change", onChange);
   }, []);
 
+  // Read admin-configured autoplay duration from localStorage.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setAutoplayMs(readAutoplayMs());
+    const onStorage = (e: StorageEvent) => {
+      if (e.key && e.key !== AUTOPLAY_STORAGE_KEY) return;
+      setAutoplayMs(readAutoplayMs());
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   // Pause on tab-hidden.
   useEffect(() => {
     if (typeof document === "undefined") return;
-    const onVis = () => setPaused(document.hidden);
+    const onVis = () => setHiddenPaused(document.hidden);
     document.addEventListener("visibilitychange", onVis);
     return () => document.removeEventListener("visibilitychange", onVis);
   }, []);
+
+  const paused = hoverPaused || userPaused || hiddenPaused;
 
   // Autoplay.
   useEffect(() => {
     if (paused || reducedMotion) return;
     const t = window.setTimeout(() => {
       setActive((i) => (i + 1) % HERO_SLOTS.length);
-    }, AUTOPLAY_MS);
+    }, autoplayMs);
     return () => window.clearTimeout(t);
-  }, [active, paused, reducedMotion]);
+  }, [active, paused, reducedMotion, autoplayMs]);
 
   // Fire view event per slot.
   useEffect(() => {
