@@ -89,25 +89,12 @@ const HERO_SLOTS: HeroSlot[] = [
   },
 ];
 
-const DEFAULT_AUTOPLAY_MS = 15000;
-const AUTOPLAY_STORAGE_KEY = "hero:autoplayMs";
-
-function readAutoplayMs(): number {
-  if (typeof window === "undefined") return DEFAULT_AUTOPLAY_MS;
-  const raw = window.localStorage.getItem(AUTOPLAY_STORAGE_KEY);
-  const n = raw ? Number(raw) : NaN;
-  if (!Number.isFinite(n) || n < 1000) return DEFAULT_AUTOPLAY_MS;
-  return n;
-}
+const AUTOPLAY_MS = 15000;
 
 export function HeroRotator() {
   const [active, setActive] = useState(0);
-  // hoverPaused (mouse/focus), userPaused (explicit toggle), hiddenPaused (tab hidden)
-  const [hoverPaused, setHoverPaused] = useState(false);
-  const [userPaused, setUserPaused] = useState(false);
-  const [hiddenPaused, setHiddenPaused] = useState(false);
+  const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
-  const [autoplayMs, setAutoplayMs] = useState<number>(DEFAULT_AUTOPLAY_MS);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   // Detect reduced motion (disables autoplay + video).
@@ -120,36 +107,22 @@ export function HeroRotator() {
     return () => mq.removeEventListener?.("change", onChange);
   }, []);
 
-  // Read admin-configured autoplay duration from localStorage.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    setAutoplayMs(readAutoplayMs());
-    const onStorage = (e: StorageEvent) => {
-      if (e.key && e.key !== AUTOPLAY_STORAGE_KEY) return;
-      setAutoplayMs(readAutoplayMs());
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
-
   // Pause on tab-hidden.
   useEffect(() => {
     if (typeof document === "undefined") return;
-    const onVis = () => setHiddenPaused(document.hidden);
+    const onVis = () => setPaused(document.hidden);
     document.addEventListener("visibilitychange", onVis);
     return () => document.removeEventListener("visibilitychange", onVis);
   }, []);
-
-  const paused = hoverPaused || userPaused || hiddenPaused;
 
   // Autoplay.
   useEffect(() => {
     if (paused || reducedMotion) return;
     const t = window.setTimeout(() => {
       setActive((i) => (i + 1) % HERO_SLOTS.length);
-    }, autoplayMs);
+    }, AUTOPLAY_MS);
     return () => window.clearTimeout(t);
-  }, [active, paused, reducedMotion, autoplayMs]);
+  }, [active, paused, reducedMotion]);
 
   // Fire view event per slot.
   useEffect(() => {
@@ -185,10 +158,10 @@ export function HeroRotator() {
       aria-roledescription="carousel"
       aria-label="Featured properties"
       className="relative w-full overflow-hidden min-h-[560px] md:min-h-[640px]"
-      onMouseEnter={() => setHoverPaused(true)}
-      onMouseLeave={() => setHoverPaused(false)}
-      onFocus={() => setHoverPaused(true)}
-      onBlur={() => setHoverPaused(false)}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
       onKeyDown={onKey}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
@@ -209,23 +182,6 @@ export function HeroRotator() {
           <SlotContent slot={HERO_SLOTS[active]!} />
         </div>
       </div>
-
-      {/* Play / pause toggle so visitors can hold a slide while reading. */}
-      <button
-        type="button"
-        onClick={() => setUserPaused((p) => !p)}
-        aria-pressed={userPaused}
-        aria-label={userPaused ? "Resume carousel autoplay" : "Pause carousel autoplay"}
-        title={userPaused ? "Resume autoplay" : "Pause autoplay"}
-        className="absolute right-3 top-3 z-30 inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/45 text-white backdrop-blur-md transition-colors hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white/60 sm:right-5 sm:top-5"
-      >
-        {userPaused ? (
-          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
-        ) : (
-          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z" /></svg>
-        )}
-      </button>
-
 
       {/* Marvel-style tab strip. */}
       <div
