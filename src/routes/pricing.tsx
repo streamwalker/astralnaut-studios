@@ -13,6 +13,7 @@ import {
 } from "@/config/pricingTiers";
 import { siteConfig } from "@/config/siteConfig";
 import { track } from "@/lib/analytics";
+import { OG_DEFAULT_IMAGE, OG_DEFAULT_ALT, OG_DEFAULT_WIDTH, OG_DEFAULT_HEIGHT, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -24,9 +25,18 @@ export const Route = createFileRoute("/pricing")({
           "Three subscription tiers, monthly or annual. Reader $4.99, Initiate $9.99, Patron $24.99. Tier-staggered weekly drops, raffles, canon voting. Free no-purchase raffle entry available.",
       },
       { property: "og:title", content: "Real World Comics — Pricing" },
-      { property: "og:url", content: "/pricing" },
+      { property: "og:description", content: "Three tiers. Monthly or annual. Tier-staggered weekly drops, raffles, canon voting." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE_URL}/pricing` },
+      { property: "og:image", content: OG_DEFAULT_IMAGE },
+      { property: "og:image:width", content: OG_DEFAULT_WIDTH },
+      { property: "og:image:height", content: OG_DEFAULT_HEIGHT },
+      { property: "og:image:alt", content: OG_DEFAULT_ALT },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_DEFAULT_IMAGE },
+      { name: "twitter:image:alt", content: OG_DEFAULT_ALT },
     ],
-    links: [{ rel: "canonical", href: "/pricing" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/pricing` }],
   }),
   validateSearch: (s: Record<string, unknown>) => ({
     plan: z.enum(["reader", "initiate", "patron"]).optional().catch(undefined).parse(s.plan),
