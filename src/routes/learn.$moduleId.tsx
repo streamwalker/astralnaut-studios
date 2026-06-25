@@ -1,6 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { LessonView } from "@/components/learn/LessonView";
 import { readerCourse } from "@/content/learn/reader";
+import { OG_DEFAULT_IMAGE, OG_DEFAULT_ALT, OG_DEFAULT_WIDTH, OG_DEFAULT_HEIGHT, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/learn/$moduleId")({
   loader: ({ params }) => {
@@ -8,16 +9,28 @@ export const Route = createFileRoute("/learn/$moduleId")({
     if (!lesson) throw notFound();
     return { lesson };
   },
-  head: ({ loaderData }) => {
+  head: ({ params, loaderData }) => {
     const l = loaderData?.lesson;
     const title = l ? `${l.title} — Training` : "Training";
+    const desc = l?.summary ?? "Reader training module.";
+    const url = `${SITE_URL}/learn/${params.moduleId}`;
     return {
       meta: [
         { title },
-        { name: "description", content: l?.summary ?? "Reader training module." },
+        { name: "description", content: desc },
         { property: "og:title", content: title },
-        { property: "og:description", content: l?.summary ?? "" },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
+        { property: "og:image", content: OG_DEFAULT_IMAGE },
+        { property: "og:image:width", content: OG_DEFAULT_WIDTH },
+        { property: "og:image:height", content: OG_DEFAULT_HEIGHT },
+        { property: "og:image:alt", content: OG_DEFAULT_ALT },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:image", content: OG_DEFAULT_IMAGE },
+        { name: "twitter:image:alt", content: OG_DEFAULT_ALT },
       ],
+      links: [{ rel: "canonical", href: url }],
     };
   },
   component: LessonRoute,
