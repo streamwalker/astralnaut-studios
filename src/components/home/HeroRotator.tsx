@@ -152,12 +152,14 @@ export function HeroRotator() {
     touchX.current = null;
   };
 
+  const nextIdx = (active + 1) % HERO_SLOTS.length;
+
   return (
     <section
       ref={rootRef}
       aria-roledescription="carousel"
       aria-label="Featured properties"
-      className="relative w-full overflow-hidden min-h-[560px] md:min-h-[640px]"
+      className="relative w-full overflow-hidden min-h-[480px] sm:min-h-[560px] md:min-h-[640px]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -172,12 +174,13 @@ export function HeroRotator() {
           key={slot.id}
           slot={slot}
           isActive={i === active}
+          shouldRender={i === active || i === nextIdx}
           allowVideo={!reducedMotion}
         />
       ))}
 
       {/* Content rendered over the active background. */}
-      <div className="pointer-events-none relative z-20 mx-auto flex min-h-[560px] max-w-7xl items-center px-6 pb-20 pt-10 md:min-h-[640px] md:pb-24 md:pt-16">
+      <div className="pointer-events-none relative z-20 mx-auto flex min-h-[480px] max-w-7xl items-center px-4 pb-16 pt-6 sm:min-h-[560px] sm:px-6 sm:pb-20 sm:pt-10 md:min-h-[640px] md:pb-24 md:pt-16">
         <div className="pointer-events-auto max-w-2xl">
           <SlotContent slot={HERO_SLOTS[active]!} />
         </div>
@@ -190,7 +193,7 @@ export function HeroRotator() {
         className="absolute inset-x-0 bottom-0 z-30 border-t border-white/10 backdrop-blur-md"
         style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.75))" }}
       >
-        <div className="mx-auto flex max-w-7xl gap-2 overflow-x-auto px-3 py-2 sm:px-6 sm:py-3">
+        <div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-2 py-1.5 sm:gap-2 sm:px-6 sm:py-3">
           {HERO_SLOTS.map((slot, i) => {
             const isActive = i === active;
             return (
@@ -201,10 +204,10 @@ export function HeroRotator() {
                 aria-selected={isActive}
                 aria-controls={`hero-slot-${slot.id}`}
                 onClick={() => setActive(i)}
-                className="group relative shrink-0 px-3 py-2 text-left transition-colors sm:px-4"
+                className="group relative shrink-0 px-2 py-1.5 text-left transition-colors sm:px-4 sm:py-2"
               >
                 <div
-                  className={`text-[10px] font-black uppercase tracking-[2.5px] transition-colors ${
+                  className={`text-[9px] font-black uppercase tracking-[2px] transition-colors sm:text-[10px] sm:tracking-[2.5px] ${
                     isActive ? "text-white" : "text-white/55 group-hover:text-white/90"
                   }`}
                 >
@@ -212,7 +215,7 @@ export function HeroRotator() {
                 </div>
                 <div
                   aria-hidden
-                  className="absolute inset-x-3 top-0 h-[3px] origin-left transition-transform duration-300"
+                  className="absolute inset-x-2 top-0 h-[3px] origin-left transition-transform duration-300 sm:inset-x-3"
                   style={{
                     background: slot.accent ?? "#ed1d24",
                     transform: isActive ? "scaleX(1)" : "scaleX(0)",
@@ -230,10 +233,12 @@ export function HeroRotator() {
 function SlotPanel({
   slot,
   isActive,
+  shouldRender,
   allowVideo,
 }: {
   slot: HeroSlot;
   isActive: boolean;
+  shouldRender: boolean;
   allowVideo: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -258,13 +263,14 @@ function SlotPanel({
       className={`absolute inset-0 transition-opacity duration-700 ${isActive ? "opacity-100" : "opacity-0"}`}
       style={{ pointerEvents: isActive ? "auto" : "none" }}
     >
-      {/* Always paint the still image first so something is on screen instantly. */}
-      {(slot.backgroundImage || slot.backgroundPoster) && (
+      {/* Only paint the still for the active slot + the next one. Off-screen slots stay unloaded. */}
+      {shouldRender && (slot.backgroundImage || slot.backgroundPoster) && (
         <img
           className="absolute inset-0 h-full w-full object-cover"
           src={slot.backgroundImage ?? slot.backgroundPoster}
           alt=""
           loading={isActive ? "eager" : "lazy"}
+          decoding="async"
           fetchPriority={isActive ? "high" : "low"}
           aria-hidden
         />

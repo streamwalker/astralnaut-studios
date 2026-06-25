@@ -14,6 +14,8 @@ import { CoverFan } from "@/components/cover-fan";
 import { CountUp } from "@/components/count-up";
 import { track } from "@/lib/analytics";
 import { OG_DEFAULT_IMAGE, OG_DEFAULT_ALT, OG_DEFAULT_WIDTH, OG_DEFAULT_HEIGHT, SITE_URL } from "@/lib/seo";
+import heroPosterAsset from "@/assets/battlefield-atlantis-teaser-poster.jpg.asset.json";
+const heroPoster = heroPosterAsset.url;
 
 
 
@@ -34,7 +36,10 @@ export const Route = createFileRoute("/")({
       { name: "twitter:image", content: OG_DEFAULT_IMAGE },
       { name: "twitter:image:alt", content: OG_DEFAULT_ALT },
     ],
-    links: [{ rel: "canonical", href: `${SITE_URL}/` }],
+    links: [
+      { rel: "canonical", href: `${SITE_URL}/` },
+      { rel: "preload", as: "image", href: heroPoster, fetchpriority: "high" },
+    ],
     scripts: [{
       type: "application/ld+json",
       children: JSON.stringify({

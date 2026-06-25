@@ -62,20 +62,28 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md" style={{ background: "rgba(2,0,12,0.7)", borderBottom: "1px solid var(--border-line)" }}>
       <PromoBar />
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3">
-        <div className="flex items-center gap-4">
-          <Link to="/" className="flex items-center gap-3" aria-label="Astralnaut Studios — Real World Comics">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5 sm:gap-6 sm:px-6 sm:py-3">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+          <Link to="/" className="flex min-w-0 items-center gap-2 sm:gap-3" aria-label="Astralnaut Studios — Real World Comics">
             <img
               src={astralnautLogo}
               alt="Astralnaut Studios"
-              className="h-10 w-auto"
+              width={160}
+              height={80}
+              className="h-8 w-auto sm:h-10"
+              decoding="async"
+              fetchPriority="high"
               style={{ filter: "drop-shadow(0 0 12px rgba(34,211,255,0.35))" }}
             />
             <span aria-hidden className="hidden h-7 w-px bg-white/15 sm:block" />
             <img
               src={rwcLogo}
               alt="Real World Comics"
+              width={160}
+              height={90}
               className="hidden h-7 w-auto sm:block md:h-8"
+              decoding="async"
+              loading="lazy"
               style={{ filter: "drop-shadow(0 0 10px rgba(34,211,255,0.3))" }}
             />
           </Link>
@@ -139,7 +147,7 @@ export function SiteHeader() {
           ) : (
             <Link to="/login" data-tour="nav-account" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Sign in</Link>
           )}
-          <Link to="/reader/$series/$issue" params={{ series: "battlefield-atlantis", issue: "1" }} className="btn-cta text-sm">Start reading →</Link>
+          <Link to="/reader/$series/$issue" params={{ series: "battlefield-atlantis", issue: "1" }} className="btn-cta hidden text-sm sm:inline-flex">Start reading →</Link>
         </div>
       </div>
     </header>
