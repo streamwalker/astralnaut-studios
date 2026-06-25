@@ -1013,6 +1013,42 @@ export type Database = {
         }
         Relationships: []
       }
+      visitor_hits: {
+        Row: {
+          country: string | null
+          created_at: string
+          id: string
+          ip: string | null
+          ip_hash: string | null
+          path: string | null
+          referrer: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          id?: string
+          ip?: string | null
+          ip_hash?: string | null
+          path?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          id?: string
+          ip?: string | null
+          ip_hash?: string | null
+          path?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
