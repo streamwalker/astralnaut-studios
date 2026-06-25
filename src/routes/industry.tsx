@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
+import { OG_DEFAULT_IMAGE, OG_DEFAULT_ALT, OG_DEFAULT_WIDTH, OG_DEFAULT_HEIGHT, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/industry")({
   head: () => ({
@@ -8,9 +9,17 @@ export const Route = createFileRoute("/industry")({
       { name: "description", content: "Three independently-owned IP properties available for film, TV, and game adaptation. Sole rights holder: Real World Comics, LLC. NDA-ready." },
       { property: "og:title", content: "Astralnaut Studios — Adaptation Rights" },
       { property: "og:description", content: "Three-property slate. UAP disclosure-era narratives. 100% owned. NDA-ready." },
-      { property: "og:url", content: "/industry" },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE_URL}/industry` },
+      { property: "og:image", content: OG_DEFAULT_IMAGE },
+      { property: "og:image:width", content: OG_DEFAULT_WIDTH },
+      { property: "og:image:height", content: OG_DEFAULT_HEIGHT },
+      { property: "og:image:alt", content: OG_DEFAULT_ALT },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_DEFAULT_IMAGE },
+      { name: "twitter:image:alt", content: OG_DEFAULT_ALT },
     ],
-    links: [{ rel: "canonical", href: "/industry" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/industry` }],
   }),
   component: Industry,
 });
