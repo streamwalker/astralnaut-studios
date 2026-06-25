@@ -89,7 +89,7 @@ const HERO_SLOTS: HeroSlot[] = [
   },
 ];
 
-const AUTOPLAY_MS = 7000;
+const AUTOPLAY_MS = 15000;
 
 export function HeroRotator() {
   const [active, setActive] = useState(0);
