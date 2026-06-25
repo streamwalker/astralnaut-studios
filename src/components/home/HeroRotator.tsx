@@ -185,10 +185,10 @@ export function HeroRotator() {
       aria-roledescription="carousel"
       aria-label="Featured properties"
       className="relative w-full overflow-hidden min-h-[560px] md:min-h-[640px]"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
+      onMouseEnter={() => setHoverPaused(true)}
+      onMouseLeave={() => setHoverPaused(false)}
+      onFocus={() => setHoverPaused(true)}
+      onBlur={() => setHoverPaused(false)}
       onKeyDown={onKey}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
