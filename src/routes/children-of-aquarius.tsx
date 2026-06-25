@@ -49,7 +49,7 @@ export const Route = createFileRoute("/children-of-aquarius")({
       { property: "og:title", content: "Children of Aquarius — Issue 1" },
       { property: "og:description", content: "Esoteric thriller. The Age Begins · The Child Awakens." },
       { property: "og:type", content: "article" },
-      { property: "og:url", content: "/children-of-aquarius" },
+      { property: "og:url", content: "https://astralnautstudios.com/children-of-aquarius" },
       { property: "og:site_name", content: "Real World Comics — Astralnaut Studios" },
       { property: "article:author", content: "Phil Russell" },
       { property: "article:publisher", content: "Real World Comics, LLC" },
@@ -57,8 +57,9 @@ export const Route = createFileRoute("/children-of-aquarius")({
       { property: "og:image:alt", content: "Children of Aquarius Issue 1 cover — Real World Comics" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/children-of-aquarius/issue-1/page-0.png" },
+      { name: "twitter:image:alt", content: "Children of Aquarius Issue 1 cover — Real World Comics" },
     ],
-    links: [{ rel: "canonical", href: "/children-of-aquarius" }],
+    links: [{ rel: "canonical", href: "https://astralnautstudios.com/children-of-aquarius" }],
     scripts: [{
       type: "application/ld+json",
       children: JSON.stringify({
