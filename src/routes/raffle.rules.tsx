@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
+import { OG_DEFAULT_IMAGE, OG_DEFAULT_ALT, OG_DEFAULT_WIDTH, OG_DEFAULT_HEIGHT, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/raffle/rules")({
   head: () => ({
@@ -11,9 +12,18 @@ export const Route = createFileRoute("/raffle/rules")({
           "Official rules for the Real World Comics weekly subscriber raffle, including the no-purchase-necessary free entry method.",
       },
       { property: "og:title", content: "Official raffle rules — Real World Comics" },
-      { property: "og:url", content: "/raffle/rules" },
+      { property: "og:description", content: "Weekly subscriber raffle — official rules and free entry method." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE_URL}/raffle/rules` },
+      { property: "og:image", content: OG_DEFAULT_IMAGE },
+      { property: "og:image:width", content: OG_DEFAULT_WIDTH },
+      { property: "og:image:height", content: OG_DEFAULT_HEIGHT },
+      { property: "og:image:alt", content: OG_DEFAULT_ALT },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_DEFAULT_IMAGE },
+      { name: "twitter:image:alt", content: OG_DEFAULT_ALT },
     ],
-    links: [{ rel: "canonical", href: "/raffle/rules" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/raffle/rules` }],
   }),
   component: RulesPage,
 });

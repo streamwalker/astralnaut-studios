@@ -22,7 +22,7 @@ export const Route = createFileRoute("/battlefield-atlantis")({
       { property: "og:title", content: "Battlefield Atlantis — Issue 1" },
       { property: "og:description", content: "Hard sci-fi space opera. First 9.5 pages free." },
       { property: "og:type", content: "article" },
-      { property: "og:url", content: "/battlefield-atlantis" },
+      { property: "og:url", content: "https://astralnautstudios.com/battlefield-atlantis" },
       { property: "og:site_name", content: "Real World Comics — Astralnaut Studios" },
       { property: "article:author", content: "Phil Russell" },
       { property: "article:publisher", content: "Real World Comics, LLC" },
@@ -30,8 +30,9 @@ export const Route = createFileRoute("/battlefield-atlantis")({
       { property: "og:image:alt", content: "Battlefield Atlantis Issue 1 cover — Real World Comics" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/battlefield-atlantis/issue-1/variant-cover-m.png" },
+      { name: "twitter:image:alt", content: "Battlefield Atlantis Issue 1 cover — Real World Comics" },
     ],
-    links: [{ rel: "canonical", href: "/battlefield-atlantis" }],
+    links: [{ rel: "canonical", href: "https://astralnautstudios.com/battlefield-atlantis" }],
     scripts: [{
       type: "application/ld+json",
       children: JSON.stringify({

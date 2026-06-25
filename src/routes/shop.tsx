@@ -11,6 +11,7 @@ import {
   type ShopifyProduct,
 } from "@/lib/shopify";
 import { useCartStore } from "@/stores/cartStore";
+import { OG_DEFAULT_IMAGE, OG_DEFAULT_ALT, OG_DEFAULT_WIDTH, OG_DEFAULT_HEIGHT, SITE_URL } from "@/lib/seo";
 
 const TIKTOK_SHOP_URL = "https://www.tiktok.com/@astralnautstudios";
 
@@ -36,7 +37,17 @@ export const Route = createFileRoute("/shop")({
       },
       { property: "og:title", content: "Shop — Astralnaut Studios" },
       { property: "og:description", content: "Official tees and merch from Astralnaut Studios." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE_URL}/shop` },
+      { property: "og:image", content: OG_DEFAULT_IMAGE },
+      { property: "og:image:width", content: OG_DEFAULT_WIDTH },
+      { property: "og:image:height", content: OG_DEFAULT_HEIGHT },
+      { property: "og:image:alt", content: OG_DEFAULT_ALT },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_DEFAULT_IMAGE },
+      { name: "twitter:image:alt", content: OG_DEFAULT_ALT },
     ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/shop` }],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(productsQuery),
   component: ShopPage,

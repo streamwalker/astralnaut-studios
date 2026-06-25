@@ -1,26 +1,39 @@
-## Change 1 — Hero rotator tagline (Battlefield Atlantis slot)
+## Goal
 
-File: `src/components/home/HeroRotator.tsx` (line 43)
+Make every shareable page render a correct, image-rich preview on Facebook, LinkedIn, iMessage, Slack, Discord, X/Twitter, etc.
 
-Replace the BA slot `tagline`:
+## Current state
 
-- From: "Earth's mightiest pilots scramble against a War-of-the-Worlds extinction event. The first act is free."
-- To: **"The world before our world began. Meet the heroes of old who paved the way for our world today. The First Act is Free."**
+- `__root.tsx` already sets sitewide `og:site_name`, `og:title/description/type`, `twitter:card=summary_large_image`, `twitter:title/description`, and an `og:image` pointing at a temporary upload URL.
+- Most leaf routes set `og:title`, `og:description`, and many set `og:url` + canonical, but those URLs are relative (`/darker-ages`) — social crawlers require absolute URLs.
+- Series leaves (`darker-ages`, `battlefield-atlantis`, `children-of-aquarius`) already have per-page `og:image`. Other routes inherit only the root image.
+- Missing routes (no per-page `og:image` or absolute URL): `index`, `shop`, `pricing`, `perks`, `learn`, `learn.$moduleId`, `industry`, `astralnaut-studios`, `help`, `help.$slug`, `raffle.rules`, `raffle.free-entry`, `product.$handle`.
 
-## Change 2 — Series card blurb (Battlefield Atlantis logline)
+## Changes
 
-The text in screenshot 2 is the BA `logline` stored in the database; it renders inside the Battlefield Atlantis series card on the landing page (and anywhere else `listSeries` is consumed).
+### 1. Default brand social image (1200×630)
+Generate one premium-quality `og-default.jpg` (Astralnaut Studios brand, dark cosmic backdrop, "Real World Comics" wordmark, legible at preview size), upload via `lovable-assets`, and store the asset JSON at `src/assets/og-default.jpg.asset.json`.
 
-Add a new migration `supabase/migrations/<timestamp>_update_ba_logline.sql` that runs:
+### 2. `src/routes/__root.tsx`
+- Remove `og:image` and `twitter:image` from the root `head()` (per project guidance — root meta concatenates into every match and can stomp leaf images).
+- Keep all other sitewide tags.
 
-```sql
-UPDATE public.series
-SET logline = 'Twenty-five thousand years ago, our galaxy was known as the Nerrian Galaxy. The planets Earth, Ares, and Mars are hosts to a technologically advanced society of human beings and many other alien races. Zeus and the Allies — Astra and Orion the Hunter — are sanctioned by the TPC to handle threats too great for the Nerrian Defense Force to handle alone.'
-WHERE slug = 'battlefield-atlantis';
-```
+### 3. Per-route fixes
+For every route's `head()`:
+- Rewrite `og:url` and `<link rel="canonical">` to absolute `https://astralnautstudios.com/<path>` (fix existing relative ones; add where missing on shareable pages).
+- Add `og:image` + `twitter:image` (absolute URL) and `og:image:alt` / `twitter:image:alt`. Use the per-page hero/cover where one exists; otherwise the new brand `og-default.jpg`.
+- Add `og:image:width=1200`, `og:image:height=630` on routes using the default image.
+- Add `og:type` (`website` for marketing pages, `article` for help/learn detail, `product` for `product.$handle`).
+- Add `twitter:site` / `twitter:creator` (use `@AstralnautStu` placeholder — will confirm handle with user before publishing if not already known).
 
-No schema changes, no policy changes — content only.
+Routes touched: `index.tsx`, `shop.tsx`, `pricing.tsx`, `perks.tsx`, `learn.tsx`, `learn.$moduleId.tsx`, `industry.tsx`, `astralnaut-studios.tsx`, `help.tsx`, `help.$slug.tsx`, `raffle.rules.tsx`, `raffle.free-entry.tsx`, `product.$handle.tsx`, `darker-ages.tsx`, `battlefield-atlantis.tsx`, `children-of-aquarius.tsx`.
 
-## Out of scope (ask if you want these too)
+### 4. Note to user
+Crawlers cache previews — existing shared links won't update until Facebook/X/LinkedIn debuggers are re-scraped.
 
-- The BA route's `<meta name="description">` (line 21 of `src/routes/battlefield-atlantis.tsx`) and the in-page hero paragraph (line 191) still contain the older "Saantris Station / Coalition splits" copy. They are not in either screenshot, so I'll leave them alone unless you'd like them rewritten to match the new tone.
+## Out of scope
+- Sitemap, robots, structured data (already present where needed).
+- No backend/data changes.
+
+## Open question
+Do you have official X/Twitter and Facebook handles to wire into `twitter:site`, `twitter:creator`, and `article:publisher`? If not, I'll omit them rather than guess.
