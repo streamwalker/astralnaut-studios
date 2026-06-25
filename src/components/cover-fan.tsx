@@ -122,7 +122,8 @@ export function CoverFan() {
                 src={c.src}
                 alt={c.alt}
                 className="block h-full w-full object-cover pointer-events-none"
-                loading="eager"
+                loading="lazy"
+                decoding="async"
                 draggable={false}
               />
             </button>
