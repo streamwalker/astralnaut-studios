@@ -93,8 +93,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Real World Comics — The next page only drops here" },
       { name: "twitter:description", content: "Five new pages a week. Motion-enhanced art. Subscriber-only votes that change the canon. Read the first act free." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/QZAeNqy6yxOqJTh5qCxXoi9l0uO2/social-images/social-1782306105059-Image_6-24-26_at_8.01_AM.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/QZAeNqy6yxOqJTh5qCxXoi9l0uO2/social-images/social-1782306105059-Image_6-24-26_at_8.01_AM.webp" },
       { name: "google-site-verification", content: "EgmLLVaNZgWO2RP5Vsz7saG00ZwyVOIZ_GWN0pMMk6E" },
     ],
     links: [
