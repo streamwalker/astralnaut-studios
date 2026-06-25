@@ -210,6 +210,23 @@ export function HeroRotator() {
         </div>
       </div>
 
+      {/* Play / pause toggle so visitors can hold a slide while reading. */}
+      <button
+        type="button"
+        onClick={() => setUserPaused((p) => !p)}
+        aria-pressed={userPaused}
+        aria-label={userPaused ? "Resume carousel autoplay" : "Pause carousel autoplay"}
+        title={userPaused ? "Resume autoplay" : "Pause autoplay"}
+        className="absolute right-3 top-3 z-30 inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/45 text-white backdrop-blur-md transition-colors hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white/60 sm:right-5 sm:top-5"
+      >
+        {userPaused ? (
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+        ) : (
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z" /></svg>
+        )}
+      </button>
+
+
       {/* Marvel-style tab strip. */}
       <div
         role="tablist"
