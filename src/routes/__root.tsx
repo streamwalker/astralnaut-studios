@@ -18,6 +18,7 @@ import { AnalyticsTracker } from "@/components/analytics-tracker";
 import { VisitorTracker } from "@/components/visitor-tracker";
 import { Toaster } from "@/components/ui/sonner";
 import { useCartSync } from "@/hooks/useCartSync";
+import { CookieConsent } from "@/components/cookie-consent";
 
 
 function NotFoundComponent() {
@@ -145,7 +146,9 @@ function RootComponent() {
         <TourOverlay />
           <AnalyticsTracker />
           <VisitorTracker />
+          <CookieConsent />
           <Toaster position="top-right" />
+
 
       </TooltipProvider>
     </QueryClientProvider>

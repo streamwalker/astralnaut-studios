@@ -9,15 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrustRouteImport } from './routes/trust'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SubprocessorsRouteImport } from './routes/subprocessors'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PerksRouteImport } from './routes/perks'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LearnRouteImport } from './routes/learn'
 import { Route as IndustryRouteImport } from './routes/industry'
 import { Route as HelpRouteImport } from './routes/help'
+import { Route as DsarRouteImport } from './routes/dsar'
 import { Route as DarkerAgesRouteImport } from './routes/darker-ages'
+import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ChildrenOfAquariusRouteImport } from './routes/children-of-aquarius'
 import { Route as BattlefieldAtlantisRouteImport } from './routes/battlefield-atlantis'
 import { Route as AstralnautStudiosRouteImport } from './routes/astralnaut-studios'
@@ -48,6 +54,21 @@ import { Route as AuthenticatedAdminLearnModuleIdRouteImport } from './routes/_a
 import { Route as AuthenticatedAdminHelpSlugRouteImport } from './routes/_authenticated/admin.help.$slug'
 import { Route as AuthenticatedReaderSeriesIssueLettersRouteImport } from './routes/_authenticated/reader.$series.$issue.letters'
 
+const TrustRoute = TrustRouteImport.update({
+  id: '/trust',
+  path: '/trust',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubprocessorsRoute = SubprocessorsRouteImport.update({
+  id: '/subprocessors',
+  path: '/subprocessors',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -56,6 +77,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -88,9 +114,19 @@ const HelpRoute = HelpRouteImport.update({
   path: '/help',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DsarRoute = DsarRouteImport.update({
+  id: '/dsar',
+  path: '/dsar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DarkerAgesRoute = DarkerAgesRouteImport.update({
   id: '/darker-ages',
   path: '/darker-ages',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChildrenOfAquariusRoute = ChildrenOfAquariusRouteImport.update({
@@ -254,15 +290,21 @@ export interface FileRoutesByFullPath {
   '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
+  '/cookies': typeof CookiesRoute
   '/darker-ages': typeof DarkerAgesRoute
+  '/dsar': typeof DsarRoute
   '/help': typeof HelpRouteWithChildren
   '/industry': typeof IndustryRoute
   '/learn': typeof LearnRouteWithChildren
   '/login': typeof LoginRoute
   '/perks': typeof PerksRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/subprocessors': typeof SubprocessorsRoute
+  '/terms': typeof TermsRoute
+  '/trust': typeof TrustRoute
   '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/help/$slug': typeof HelpSlugRoute
@@ -293,15 +335,21 @@ export interface FileRoutesByTo {
   '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
+  '/cookies': typeof CookiesRoute
   '/darker-ages': typeof DarkerAgesRoute
+  '/dsar': typeof DsarRoute
   '/help': typeof HelpRouteWithChildren
   '/industry': typeof IndustryRoute
   '/learn': typeof LearnRouteWithChildren
   '/login': typeof LoginRoute
   '/perks': typeof PerksRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/subprocessors': typeof SubprocessorsRoute
+  '/terms': typeof TermsRoute
+  '/trust': typeof TrustRoute
   '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/help/$slug': typeof HelpSlugRoute
@@ -334,15 +382,21 @@ export interface FileRoutesById {
   '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
+  '/cookies': typeof CookiesRoute
   '/darker-ages': typeof DarkerAgesRoute
+  '/dsar': typeof DsarRoute
   '/help': typeof HelpRouteWithChildren
   '/industry': typeof IndustryRoute
   '/learn': typeof LearnRouteWithChildren
   '/login': typeof LoginRoute
   '/perks': typeof PerksRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/subprocessors': typeof SubprocessorsRoute
+  '/terms': typeof TermsRoute
+  '/trust': typeof TrustRoute
   '/_authenticated/growth': typeof AuthenticatedGrowthRoute
   '/_authenticated/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/help/$slug': typeof HelpSlugRoute
@@ -375,15 +429,21 @@ export interface FileRouteTypes {
     | '/astralnaut-studios'
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
+    | '/cookies'
     | '/darker-ages'
+    | '/dsar'
     | '/help'
     | '/industry'
     | '/learn'
     | '/login'
     | '/perks'
     | '/pricing'
+    | '/privacy'
     | '/shop'
     | '/sitemap.xml'
+    | '/subprocessors'
+    | '/terms'
+    | '/trust'
     | '/growth'
     | '/growth-package'
     | '/help/$slug'
@@ -414,15 +474,21 @@ export interface FileRouteTypes {
     | '/astralnaut-studios'
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
+    | '/cookies'
     | '/darker-ages'
+    | '/dsar'
     | '/help'
     | '/industry'
     | '/learn'
     | '/login'
     | '/perks'
     | '/pricing'
+    | '/privacy'
     | '/shop'
     | '/sitemap.xml'
+    | '/subprocessors'
+    | '/terms'
+    | '/trust'
     | '/growth'
     | '/growth-package'
     | '/help/$slug'
@@ -454,15 +520,21 @@ export interface FileRouteTypes {
     | '/astralnaut-studios'
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
+    | '/cookies'
     | '/darker-ages'
+    | '/dsar'
     | '/help'
     | '/industry'
     | '/learn'
     | '/login'
     | '/perks'
     | '/pricing'
+    | '/privacy'
     | '/shop'
     | '/sitemap.xml'
+    | '/subprocessors'
+    | '/terms'
+    | '/trust'
     | '/_authenticated/growth'
     | '/_authenticated/growth-package'
     | '/help/$slug'
@@ -495,15 +567,21 @@ export interface RootRouteChildren {
   AstralnautStudiosRoute: typeof AstralnautStudiosRoute
   BattlefieldAtlantisRoute: typeof BattlefieldAtlantisRoute
   ChildrenOfAquariusRoute: typeof ChildrenOfAquariusRoute
+  CookiesRoute: typeof CookiesRoute
   DarkerAgesRoute: typeof DarkerAgesRoute
+  DsarRoute: typeof DsarRoute
   HelpRoute: typeof HelpRouteWithChildren
   IndustryRoute: typeof IndustryRoute
   LearnRoute: typeof LearnRouteWithChildren
   LoginRoute: typeof LoginRoute
   PerksRoute: typeof PerksRoute
   PricingRoute: typeof PricingRoute
+  PrivacyRoute: typeof PrivacyRoute
   ShopRoute: typeof ShopRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SubprocessorsRoute: typeof SubprocessorsRoute
+  TermsRoute: typeof TermsRoute
+  TrustRoute: typeof TrustRoute
   ProductHandleRoute: typeof ProductHandleRoute
   RaffleFreeEntryRoute: typeof RaffleFreeEntryRoute
   RaffleRulesRoute: typeof RaffleRulesRoute
@@ -516,6 +594,27 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/trust': {
+      id: '/trust'
+      path: '/trust'
+      fullPath: '/trust'
+      preLoaderRoute: typeof TrustRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/subprocessors': {
+      id: '/subprocessors'
+      path: '/subprocessors'
+      fullPath: '/subprocessors'
+      preLoaderRoute: typeof SubprocessorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -528,6 +627,13 @@ declare module '@tanstack/react-router' {
       path: '/shop'
       fullPath: '/shop'
       preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -572,11 +678,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HelpRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dsar': {
+      id: '/dsar'
+      path: '/dsar'
+      fullPath: '/dsar'
+      preLoaderRoute: typeof DsarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/darker-ages': {
       id: '/darker-ages'
       path: '/darker-ages'
       fullPath: '/darker-ages'
       preLoaderRoute: typeof DarkerAgesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/children-of-aquarius': {
@@ -874,15 +994,21 @@ const rootRouteChildren: RootRouteChildren = {
   AstralnautStudiosRoute: AstralnautStudiosRoute,
   BattlefieldAtlantisRoute: BattlefieldAtlantisRoute,
   ChildrenOfAquariusRoute: ChildrenOfAquariusRoute,
+  CookiesRoute: CookiesRoute,
   DarkerAgesRoute: DarkerAgesRoute,
+  DsarRoute: DsarRoute,
   HelpRoute: HelpRouteWithChildren,
   IndustryRoute: IndustryRoute,
   LearnRoute: LearnRouteWithChildren,
   LoginRoute: LoginRoute,
   PerksRoute: PerksRoute,
   PricingRoute: PricingRoute,
+  PrivacyRoute: PrivacyRoute,
   ShopRoute: ShopRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SubprocessorsRoute: SubprocessorsRoute,
+  TermsRoute: TermsRoute,
+  TrustRoute: TrustRoute,
   ProductHandleRoute: ProductHandleRoute,
   RaffleFreeEntryRoute: RaffleFreeEntryRoute,
   RaffleRulesRoute: RaffleRulesRoute,
