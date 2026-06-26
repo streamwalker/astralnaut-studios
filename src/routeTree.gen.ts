@@ -27,6 +27,7 @@ import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ChildrenOfAquariusRouteImport } from './routes/children-of-aquarius'
 import { Route as BattlefieldAtlantisRouteImport } from './routes/battlefield-atlantis'
 import { Route as AstralnautStudiosRouteImport } from './routes/astralnaut-studios'
+import { Route as ArchiveRouteImport } from './routes/archive'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
@@ -35,6 +36,14 @@ import { Route as RaffleFreeEntryRouteImport } from './routes/raffle.free-entry'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
 import { Route as LearnModuleIdRouteImport } from './routes/learn.$moduleId'
 import { Route as HelpSlugRouteImport } from './routes/help.$slug'
+import { Route as ArchiveTimelineRouteImport } from './routes/archive.timeline'
+import { Route as ArchiveQuartermasterRouteImport } from './routes/archive.quartermaster'
+import { Route as ArchivePersonnelRouteImport } from './routes/archive.personnel'
+import { Route as ArchiveEvidenceRouteImport } from './routes/archive.evidence'
+import { Route as ArchiveDocumentsRouteImport } from './routes/archive.documents'
+import { Route as ArchiveDatabaseRouteImport } from './routes/archive.database'
+import { Route as ArchiveClearanceRouteImport } from './routes/archive.clearance'
+import { Route as ArchiveBriefingsRouteImport } from './routes/archive.briefings'
 import { Route as AuthenticatedGrowthPackageRouteImport } from './routes/_authenticated/growth-package'
 import { Route as AuthenticatedGrowthRouteImport } from './routes/_authenticated/growth'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
@@ -144,6 +153,11 @@ const AstralnautStudiosRoute = AstralnautStudiosRouteImport.update({
   path: '/astralnaut-studios',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ArchiveRoute = ArchiveRouteImport.update({
+  id: '/archive',
+  path: '/archive',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AccountRoute = AccountRouteImport.update({
   id: '/account',
   path: '/account',
@@ -182,6 +196,46 @@ const HelpSlugRoute = HelpSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => HelpRoute,
+} as any)
+const ArchiveTimelineRoute = ArchiveTimelineRouteImport.update({
+  id: '/timeline',
+  path: '/timeline',
+  getParentRoute: () => ArchiveRoute,
+} as any)
+const ArchiveQuartermasterRoute = ArchiveQuartermasterRouteImport.update({
+  id: '/quartermaster',
+  path: '/quartermaster',
+  getParentRoute: () => ArchiveRoute,
+} as any)
+const ArchivePersonnelRoute = ArchivePersonnelRouteImport.update({
+  id: '/personnel',
+  path: '/personnel',
+  getParentRoute: () => ArchiveRoute,
+} as any)
+const ArchiveEvidenceRoute = ArchiveEvidenceRouteImport.update({
+  id: '/evidence',
+  path: '/evidence',
+  getParentRoute: () => ArchiveRoute,
+} as any)
+const ArchiveDocumentsRoute = ArchiveDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => ArchiveRoute,
+} as any)
+const ArchiveDatabaseRoute = ArchiveDatabaseRouteImport.update({
+  id: '/database',
+  path: '/database',
+  getParentRoute: () => ArchiveRoute,
+} as any)
+const ArchiveClearanceRoute = ArchiveClearanceRouteImport.update({
+  id: '/clearance',
+  path: '/clearance',
+  getParentRoute: () => ArchiveRoute,
+} as any)
+const ArchiveBriefingsRoute = ArchiveBriefingsRouteImport.update({
+  id: '/briefings',
+  path: '/briefings',
+  getParentRoute: () => ArchiveRoute,
 } as any)
 const AuthenticatedGrowthPackageRoute =
   AuthenticatedGrowthPackageRouteImport.update({
@@ -287,6 +341,7 @@ const AuthenticatedReaderSeriesIssueLettersRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/archive': typeof ArchiveRouteWithChildren
   '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
@@ -307,6 +362,14 @@ export interface FileRoutesByFullPath {
   '/trust': typeof TrustRoute
   '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
+  '/archive/briefings': typeof ArchiveBriefingsRoute
+  '/archive/clearance': typeof ArchiveClearanceRoute
+  '/archive/database': typeof ArchiveDatabaseRoute
+  '/archive/documents': typeof ArchiveDocumentsRoute
+  '/archive/evidence': typeof ArchiveEvidenceRoute
+  '/archive/personnel': typeof ArchivePersonnelRoute
+  '/archive/quartermaster': typeof ArchiveQuartermasterRoute
+  '/archive/timeline': typeof ArchiveTimelineRoute
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
   '/product/$handle': typeof ProductHandleRoute
@@ -332,6 +395,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/archive': typeof ArchiveRouteWithChildren
   '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
@@ -352,6 +416,14 @@ export interface FileRoutesByTo {
   '/trust': typeof TrustRoute
   '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
+  '/archive/briefings': typeof ArchiveBriefingsRoute
+  '/archive/clearance': typeof ArchiveClearanceRoute
+  '/archive/database': typeof ArchiveDatabaseRoute
+  '/archive/documents': typeof ArchiveDocumentsRoute
+  '/archive/evidence': typeof ArchiveEvidenceRoute
+  '/archive/personnel': typeof ArchivePersonnelRoute
+  '/archive/quartermaster': typeof ArchiveQuartermasterRoute
+  '/archive/timeline': typeof ArchiveTimelineRoute
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
   '/product/$handle': typeof ProductHandleRoute
@@ -379,6 +451,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/account': typeof AccountRoute
+  '/archive': typeof ArchiveRouteWithChildren
   '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
@@ -399,6 +472,14 @@ export interface FileRoutesById {
   '/trust': typeof TrustRoute
   '/_authenticated/growth': typeof AuthenticatedGrowthRoute
   '/_authenticated/growth-package': typeof AuthenticatedGrowthPackageRoute
+  '/archive/briefings': typeof ArchiveBriefingsRoute
+  '/archive/clearance': typeof ArchiveClearanceRoute
+  '/archive/database': typeof ArchiveDatabaseRoute
+  '/archive/documents': typeof ArchiveDocumentsRoute
+  '/archive/evidence': typeof ArchiveEvidenceRoute
+  '/archive/personnel': typeof ArchivePersonnelRoute
+  '/archive/quartermaster': typeof ArchiveQuartermasterRoute
+  '/archive/timeline': typeof ArchiveTimelineRoute
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
   '/product/$handle': typeof ProductHandleRoute
@@ -426,6 +507,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/account'
+    | '/archive'
     | '/astralnaut-studios'
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
@@ -446,6 +528,14 @@ export interface FileRouteTypes {
     | '/trust'
     | '/growth'
     | '/growth-package'
+    | '/archive/briefings'
+    | '/archive/clearance'
+    | '/archive/database'
+    | '/archive/documents'
+    | '/archive/evidence'
+    | '/archive/personnel'
+    | '/archive/quartermaster'
+    | '/archive/timeline'
     | '/help/$slug'
     | '/learn/$moduleId'
     | '/product/$handle'
@@ -471,6 +561,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/account'
+    | '/archive'
     | '/astralnaut-studios'
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
@@ -491,6 +582,14 @@ export interface FileRouteTypes {
     | '/trust'
     | '/growth'
     | '/growth-package'
+    | '/archive/briefings'
+    | '/archive/clearance'
+    | '/archive/database'
+    | '/archive/documents'
+    | '/archive/evidence'
+    | '/archive/personnel'
+    | '/archive/quartermaster'
+    | '/archive/timeline'
     | '/help/$slug'
     | '/learn/$moduleId'
     | '/product/$handle'
@@ -517,6 +616,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/account'
+    | '/archive'
     | '/astralnaut-studios'
     | '/battlefield-atlantis'
     | '/children-of-aquarius'
@@ -537,6 +637,14 @@ export interface FileRouteTypes {
     | '/trust'
     | '/_authenticated/growth'
     | '/_authenticated/growth-package'
+    | '/archive/briefings'
+    | '/archive/clearance'
+    | '/archive/database'
+    | '/archive/documents'
+    | '/archive/evidence'
+    | '/archive/personnel'
+    | '/archive/quartermaster'
+    | '/archive/timeline'
     | '/help/$slug'
     | '/learn/$moduleId'
     | '/product/$handle'
@@ -564,6 +672,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AccountRoute: typeof AccountRoute
+  ArchiveRoute: typeof ArchiveRouteWithChildren
   AstralnautStudiosRoute: typeof AstralnautStudiosRoute
   BattlefieldAtlantisRoute: typeof BattlefieldAtlantisRoute
   ChildrenOfAquariusRoute: typeof ChildrenOfAquariusRoute
@@ -720,6 +829,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AstralnautStudiosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/archive': {
+      id: '/archive'
+      path: '/archive'
+      fullPath: '/archive'
+      preLoaderRoute: typeof ArchiveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/account': {
       id: '/account'
       path: '/account'
@@ -775,6 +891,62 @@ declare module '@tanstack/react-router' {
       fullPath: '/help/$slug'
       preLoaderRoute: typeof HelpSlugRouteImport
       parentRoute: typeof HelpRoute
+    }
+    '/archive/timeline': {
+      id: '/archive/timeline'
+      path: '/timeline'
+      fullPath: '/archive/timeline'
+      preLoaderRoute: typeof ArchiveTimelineRouteImport
+      parentRoute: typeof ArchiveRoute
+    }
+    '/archive/quartermaster': {
+      id: '/archive/quartermaster'
+      path: '/quartermaster'
+      fullPath: '/archive/quartermaster'
+      preLoaderRoute: typeof ArchiveQuartermasterRouteImport
+      parentRoute: typeof ArchiveRoute
+    }
+    '/archive/personnel': {
+      id: '/archive/personnel'
+      path: '/personnel'
+      fullPath: '/archive/personnel'
+      preLoaderRoute: typeof ArchivePersonnelRouteImport
+      parentRoute: typeof ArchiveRoute
+    }
+    '/archive/evidence': {
+      id: '/archive/evidence'
+      path: '/evidence'
+      fullPath: '/archive/evidence'
+      preLoaderRoute: typeof ArchiveEvidenceRouteImport
+      parentRoute: typeof ArchiveRoute
+    }
+    '/archive/documents': {
+      id: '/archive/documents'
+      path: '/documents'
+      fullPath: '/archive/documents'
+      preLoaderRoute: typeof ArchiveDocumentsRouteImport
+      parentRoute: typeof ArchiveRoute
+    }
+    '/archive/database': {
+      id: '/archive/database'
+      path: '/database'
+      fullPath: '/archive/database'
+      preLoaderRoute: typeof ArchiveDatabaseRouteImport
+      parentRoute: typeof ArchiveRoute
+    }
+    '/archive/clearance': {
+      id: '/archive/clearance'
+      path: '/clearance'
+      fullPath: '/archive/clearance'
+      preLoaderRoute: typeof ArchiveClearanceRouteImport
+      parentRoute: typeof ArchiveRoute
+    }
+    '/archive/briefings': {
+      id: '/archive/briefings'
+      path: '/briefings'
+      fullPath: '/archive/briefings'
+      preLoaderRoute: typeof ArchiveBriefingsRouteImport
+      parentRoute: typeof ArchiveRoute
     }
     '/_authenticated/growth-package': {
       id: '/_authenticated/growth-package'
@@ -967,6 +1139,31 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface ArchiveRouteChildren {
+  ArchiveBriefingsRoute: typeof ArchiveBriefingsRoute
+  ArchiveClearanceRoute: typeof ArchiveClearanceRoute
+  ArchiveDatabaseRoute: typeof ArchiveDatabaseRoute
+  ArchiveDocumentsRoute: typeof ArchiveDocumentsRoute
+  ArchiveEvidenceRoute: typeof ArchiveEvidenceRoute
+  ArchivePersonnelRoute: typeof ArchivePersonnelRoute
+  ArchiveQuartermasterRoute: typeof ArchiveQuartermasterRoute
+  ArchiveTimelineRoute: typeof ArchiveTimelineRoute
+}
+
+const ArchiveRouteChildren: ArchiveRouteChildren = {
+  ArchiveBriefingsRoute: ArchiveBriefingsRoute,
+  ArchiveClearanceRoute: ArchiveClearanceRoute,
+  ArchiveDatabaseRoute: ArchiveDatabaseRoute,
+  ArchiveDocumentsRoute: ArchiveDocumentsRoute,
+  ArchiveEvidenceRoute: ArchiveEvidenceRoute,
+  ArchivePersonnelRoute: ArchivePersonnelRoute,
+  ArchiveQuartermasterRoute: ArchiveQuartermasterRoute,
+  ArchiveTimelineRoute: ArchiveTimelineRoute,
+}
+
+const ArchiveRouteWithChildren =
+  ArchiveRoute._addFileChildren(ArchiveRouteChildren)
+
 interface HelpRouteChildren {
   HelpSlugRoute: typeof HelpSlugRoute
 }
@@ -991,6 +1188,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AccountRoute: AccountRoute,
+  ArchiveRoute: ArchiveRouteWithChildren,
   AstralnautStudiosRoute: AstralnautStudiosRoute,
   BattlefieldAtlantisRoute: BattlefieldAtlantisRoute,
   ChildrenOfAquariusRoute: ChildrenOfAquariusRoute,
