@@ -11,6 +11,7 @@ const NAV = [
   { to: "/archive/timeline", label: "Timeline" },
   { to: "/archive/quartermaster", label: "Quartermaster" },
   { to: "/archive/clearance", label: "Clearance" },
+  { to: "/archive/wallet", label: "Wallet" },
 ] as const;
 
 export function ArchiveShell({ children }: { children: ReactNode }) {

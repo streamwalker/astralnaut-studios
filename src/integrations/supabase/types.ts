@@ -56,6 +56,149 @@ export type Database = {
         }
         Relationships: []
       }
+      archive_redemption_catalog: {
+        Row: {
+          active: boolean
+          category: string
+          code: string
+          cost_tokens: number
+          created_at: string
+          description: string
+          id: string
+          name: string
+          payload: Json
+        }
+        Insert: {
+          active?: boolean
+          category: string
+          code: string
+          cost_tokens: number
+          created_at?: string
+          description?: string
+          id?: string
+          name: string
+          payload?: Json
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          code?: string
+          cost_tokens?: number
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          payload?: Json
+        }
+        Relationships: []
+      }
+      archive_redemptions: {
+        Row: {
+          catalog_code: string
+          catalog_id: string
+          category: string
+          cost_tokens: number
+          created_at: string
+          granted_months: number
+          id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          catalog_code: string
+          catalog_id: string
+          category: string
+          cost_tokens: number
+          created_at?: string
+          granted_months?: number
+          id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          catalog_code?: string
+          catalog_id?: string
+          category?: string
+          cost_tokens?: number
+          created_at?: string
+          granted_months?: number
+          id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "archive_redemptions_catalog_id_fkey"
+            columns: ["catalog_id"]
+            isOneToOne: false
+            referencedRelation: "archive_redemption_catalog"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      archive_wallet_ledger: {
+        Row: {
+          created_at: string
+          delta: number
+          id: string
+          kind: string
+          metadata: Json
+          reason: string
+          source: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          delta: number
+          id?: string
+          kind: string
+          metadata?: Json
+          reason: string
+          source?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          delta?: number
+          id?: string
+          kind?: string
+          metadata?: Json
+          reason?: string
+          source?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      archive_wallets: {
+        Row: {
+          created_at: string
+          lifetime_tokens: number
+          rank: string
+          tokens: number
+          updated_at: string
+          user_id: string
+          xp: number
+        }
+        Insert: {
+          created_at?: string
+          lifetime_tokens?: number
+          rank?: string
+          tokens?: number
+          updated_at?: string
+          user_id: string
+          xp?: number
+        }
+        Update: {
+          created_at?: string
+          lifetime_tokens?: number
+          rank?: string
+          tokens?: number
+          updated_at?: string
+          user_id?: string
+          xp?: number
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           body_md: string
@@ -1054,6 +1197,30 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      archive_redeem: {
+        Args: { p_catalog_id: string }
+        Returns: {
+          catalog_code: string
+          catalog_id: string
+          category: string
+          cost_tokens: number
+          created_at: string
+          granted_months: number
+          id: string
+          status: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "archive_redemptions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      archive_subscription_months_used: {
+        Args: { p_user: string }
+        Returns: number
+      }
       detect_storage_access_bursts: {
         Args: { threshold?: number; window_seconds?: number }
         Returns: number
