@@ -1,0 +1,103 @@
+/* Archive HUD chrome — scoped to /archive/* routes via .archive-root */
+.archive-root {
+  --hud-bg: #03060a;
+  --hud-fg: #b8f1ff;
+  --hud-dim: #4d7a8a;
+  --hud-accent: #00e0ff;
+  --hud-warn: #ff3b3b;
+  --hud-gold: #d4af37;
+  background: var(--hud-bg);
+  color: var(--hud-fg);
+  font-family: ui-monospace, "JetBrains Mono", "Fira Code", Menlo, monospace;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+.archive-root::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 224, 255, 0.04) 0px,
+    rgba(0, 224, 255, 0.04) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  z-index: 1;
+  mix-blend-mode: screen;
+}
+.archive-root::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.7) 100%);
+  z-index: 1;
+}
+.archive-root > * { position: relative; z-index: 2; }
+
+.archive-bracket {
+  position: relative;
+  border: 1px solid rgba(0, 224, 255, 0.25);
+  background: rgba(0, 20, 30, 0.45);
+  backdrop-filter: blur(6px);
+}
+.archive-bracket::before,
+.archive-bracket::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--hud-accent);
+}
+.archive-bracket::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+.archive-bracket::after  { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+.archive-stamp {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border: 2px solid var(--hud-warn);
+  color: var(--hud-warn);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  font-size: 0.7rem;
+  transform: rotate(-3deg);
+  text-transform: uppercase;
+}
+
+.archive-caret::after {
+  content: "▌";
+  margin-left: 2px;
+  animation: archive-blink 1s steps(2, start) infinite;
+  color: var(--hud-accent);
+}
+@keyframes archive-blink { to { visibility: hidden; } }
+
+.archive-scan {
+  position: relative;
+  overflow: hidden;
+}
+.archive-scan::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--hud-accent), transparent);
+  animation: archive-scan-move 3s linear infinite;
+  opacity: 0.6;
+  pointer-events: none;
+}
+@keyframes archive-scan-move {
+  0% { top: -2px; }
+  100% { top: 100%; }
+}
+
+.archive-redacted {
+  background: #000;
+  color: transparent;
+  user-select: none;
+  padding: 0 0.25em;
+  border-radius: 1px;
+}
