@@ -36,6 +36,7 @@ import { Route as RaffleFreeEntryRouteImport } from './routes/raffle.free-entry'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
 import { Route as LearnModuleIdRouteImport } from './routes/learn.$moduleId'
 import { Route as HelpSlugRouteImport } from './routes/help.$slug'
+import { Route as ArchiveWalletRouteImport } from './routes/archive.wallet'
 import { Route as ArchiveTimelineRouteImport } from './routes/archive.timeline'
 import { Route as ArchiveQuartermasterRouteImport } from './routes/archive.quartermaster'
 import { Route as ArchivePersonnelRouteImport } from './routes/archive.personnel'
@@ -49,6 +50,7 @@ import { Route as AuthenticatedGrowthRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as ReaderSeriesIssueRouteImport } from './routes/reader.$series.$issue'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
+import { Route as ApiPublicGameEventsRouteImport } from './routes/api/public/game-events'
 import { Route as AuthenticatedAdminVisitorsRouteImport } from './routes/_authenticated/admin.visitors'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminSubscriptionTestRouteImport } from './routes/_authenticated/admin.subscription-test'
@@ -197,6 +199,11 @@ const HelpSlugRoute = HelpSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => HelpRoute,
 } as any)
+const ArchiveWalletRoute = ArchiveWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => ArchiveRoute,
+} as any)
 const ArchiveTimelineRoute = ArchiveTimelineRouteImport.update({
   id: '/timeline',
   path: '/timeline',
@@ -261,6 +268,11 @@ const ReaderSeriesIssueRoute = ReaderSeriesIssueRouteImport.update({
 const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
   id: '/api/public/track',
   path: '/api/public/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicGameEventsRoute = ApiPublicGameEventsRouteImport.update({
+  id: '/api/public/game-events',
+  path: '/api/public/game-events',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminVisitorsRoute =
@@ -370,6 +382,7 @@ export interface FileRoutesByFullPath {
   '/archive/personnel': typeof ArchivePersonnelRoute
   '/archive/quartermaster': typeof ArchiveQuartermasterRoute
   '/archive/timeline': typeof ArchiveTimelineRoute
+  '/archive/wallet': typeof ArchiveWalletRoute
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
   '/product/$handle': typeof ProductHandleRoute
@@ -382,6 +395,7 @@ export interface FileRoutesByFullPath {
   '/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
+  '/api/public/game-events': typeof ApiPublicGameEventsRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -424,6 +438,7 @@ export interface FileRoutesByTo {
   '/archive/personnel': typeof ArchivePersonnelRoute
   '/archive/quartermaster': typeof ArchiveQuartermasterRoute
   '/archive/timeline': typeof ArchiveTimelineRoute
+  '/archive/wallet': typeof ArchiveWalletRoute
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
   '/product/$handle': typeof ProductHandleRoute
@@ -436,6 +451,7 @@ export interface FileRoutesByTo {
   '/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
+  '/api/public/game-events': typeof ApiPublicGameEventsRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -480,6 +496,7 @@ export interface FileRoutesById {
   '/archive/personnel': typeof ArchivePersonnelRoute
   '/archive/quartermaster': typeof ArchiveQuartermasterRoute
   '/archive/timeline': typeof ArchiveTimelineRoute
+  '/archive/wallet': typeof ArchiveWalletRoute
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
   '/product/$handle': typeof ProductHandleRoute
@@ -492,6 +509,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
+  '/api/public/game-events': typeof ApiPublicGameEventsRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -536,6 +554,7 @@ export interface FileRouteTypes {
     | '/archive/personnel'
     | '/archive/quartermaster'
     | '/archive/timeline'
+    | '/archive/wallet'
     | '/help/$slug'
     | '/learn/$moduleId'
     | '/product/$handle'
@@ -548,6 +567,7 @@ export interface FileRouteTypes {
     | '/admin/subscription-test'
     | '/admin/users'
     | '/admin/visitors'
+    | '/api/public/game-events'
     | '/api/public/track'
     | '/reader/$series/$issue'
     | '/admin/'
@@ -590,6 +610,7 @@ export interface FileRouteTypes {
     | '/archive/personnel'
     | '/archive/quartermaster'
     | '/archive/timeline'
+    | '/archive/wallet'
     | '/help/$slug'
     | '/learn/$moduleId'
     | '/product/$handle'
@@ -602,6 +623,7 @@ export interface FileRouteTypes {
     | '/admin/subscription-test'
     | '/admin/users'
     | '/admin/visitors'
+    | '/api/public/game-events'
     | '/api/public/track'
     | '/reader/$series/$issue'
     | '/admin'
@@ -645,6 +667,7 @@ export interface FileRouteTypes {
     | '/archive/personnel'
     | '/archive/quartermaster'
     | '/archive/timeline'
+    | '/archive/wallet'
     | '/help/$slug'
     | '/learn/$moduleId'
     | '/product/$handle'
@@ -657,6 +680,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/subscription-test'
     | '/_authenticated/admin/users'
     | '/_authenticated/admin/visitors'
+    | '/api/public/game-events'
     | '/api/public/track'
     | '/reader/$series/$issue'
     | '/_authenticated/admin/'
@@ -694,6 +718,7 @@ export interface RootRouteChildren {
   ProductHandleRoute: typeof ProductHandleRoute
   RaffleFreeEntryRoute: typeof RaffleFreeEntryRoute
   RaffleRulesRoute: typeof RaffleRulesRoute
+  ApiPublicGameEventsRoute: typeof ApiPublicGameEventsRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
   ReaderSeriesIssueRoute: typeof ReaderSeriesIssueRoute
   ApiPublicLeadsConfirmRoute: typeof ApiPublicLeadsConfirmRoute
@@ -892,6 +917,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HelpSlugRouteImport
       parentRoute: typeof HelpRoute
     }
+    '/archive/wallet': {
+      id: '/archive/wallet'
+      path: '/wallet'
+      fullPath: '/archive/wallet'
+      preLoaderRoute: typeof ArchiveWalletRouteImport
+      parentRoute: typeof ArchiveRoute
+    }
     '/archive/timeline': {
       id: '/archive/timeline'
       path: '/timeline'
@@ -981,6 +1013,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/track'
       fullPath: '/api/public/track'
       preLoaderRoute: typeof ApiPublicTrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/game-events': {
+      id: '/api/public/game-events'
+      path: '/api/public/game-events'
+      fullPath: '/api/public/game-events'
+      preLoaderRoute: typeof ApiPublicGameEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/visitors': {
@@ -1148,6 +1187,7 @@ interface ArchiveRouteChildren {
   ArchivePersonnelRoute: typeof ArchivePersonnelRoute
   ArchiveQuartermasterRoute: typeof ArchiveQuartermasterRoute
   ArchiveTimelineRoute: typeof ArchiveTimelineRoute
+  ArchiveWalletRoute: typeof ArchiveWalletRoute
 }
 
 const ArchiveRouteChildren: ArchiveRouteChildren = {
@@ -1159,6 +1199,7 @@ const ArchiveRouteChildren: ArchiveRouteChildren = {
   ArchivePersonnelRoute: ArchivePersonnelRoute,
   ArchiveQuartermasterRoute: ArchiveQuartermasterRoute,
   ArchiveTimelineRoute: ArchiveTimelineRoute,
+  ArchiveWalletRoute: ArchiveWalletRoute,
 }
 
 const ArchiveRouteWithChildren =
@@ -1210,6 +1251,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductHandleRoute: ProductHandleRoute,
   RaffleFreeEntryRoute: RaffleFreeEntryRoute,
   RaffleRulesRoute: RaffleRulesRoute,
+  ApiPublicGameEventsRoute: ApiPublicGameEventsRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
   ReaderSeriesIssueRoute: ReaderSeriesIssueRoute,
   ApiPublicLeadsConfirmRoute: ApiPublicLeadsConfirmRoute,

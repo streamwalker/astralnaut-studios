@@ -74,7 +74,7 @@ export const Route = createFileRoute("/api/public/game-events")({
           .from("archive_wallets")
           .upsert(userIds.map((user_id) => ({ user_id })), { onConflict: "user_id" });
 
-        const ledgerRows: Array<Record<string, unknown>> = [];
+        const ledgerRows: Array<{ user_id: string; kind: "xp" | "token"; delta: number; reason: string; source: string; metadata: Record<string, unknown> }> = [];
         const walletDeltas = new Map<string, { xp: number; tokens: number }>();
 
         for (const ev of parsed.events) {
