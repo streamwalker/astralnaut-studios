@@ -182,8 +182,19 @@ export function SiteFooter() {
           { to: "/industry", label: "Adaptation rights" },
         ]} />
       </div>
-      <div className="mx-auto mt-10 max-w-7xl px-6 text-xs leading-relaxed text-[var(--fg-muted)]">
-        © {new Date().getFullYear()} Real World Comics, LLC. All rights reserved. Astralnaut Studios and Real World Comics are imprints of Real World Comics, LLC.
+      <div className="mx-auto mt-10 max-w-7xl px-6">
+        <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-[var(--mute)]">
+          <Link to="/trust" className="hover:text-[var(--neon)]">Trust & Security</Link>
+          <Link to="/privacy" className="hover:text-[var(--neon)]">Privacy</Link>
+          <Link to="/terms" className="hover:text-[var(--neon)]">Terms</Link>
+          <Link to="/cookies" className="hover:text-[var(--neon)]">Cookies</Link>
+          <Link to="/subprocessors" className="hover:text-[var(--neon)]">Subprocessors</Link>
+          <Link to="/dsar" className="hover:text-[var(--neon)]">Privacy request</Link>
+          <a href="/.well-known/security.txt" className="hover:text-[var(--neon)]">security.txt</a>
+        </div>
+        <div className="mt-4 text-xs leading-relaxed text-[var(--fg-muted)]">
+          © {new Date().getFullYear()} Real World Comics, LLC. All rights reserved. Astralnaut Studios and Real World Comics are imprints of Real World Comics, LLC.
+        </div>
       </div>
     </footer>
   );
