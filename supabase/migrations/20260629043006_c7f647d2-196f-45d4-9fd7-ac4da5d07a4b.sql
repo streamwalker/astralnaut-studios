@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX IF NOT EXISTS raffle_entries_amoe_email_week_unique ON public.raffle_entries (lower(email), week_key) WHERE source = 'amoe';
