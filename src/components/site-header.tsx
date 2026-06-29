@@ -147,7 +147,20 @@ export function SiteHeader() {
           ) : (
             <Link to="/login" data-tour="nav-account" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Sign in</Link>
           )}
-          <Link to="/reader/$series/$issue" params={{ series: "battlefield-atlantis", issue: "1" }} className="btn-cta hidden text-sm sm:inline-flex">Start reading →</Link>
+          {isHome ? (
+            <a
+              href="#slate"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById("slate")?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              className="btn-cta hidden text-sm sm:inline-flex"
+            >
+              Start reading →
+            </a>
+          ) : (
+            <Link to="/" hash="slate" className="btn-cta hidden text-sm sm:inline-flex">Start reading →</Link>
+          )}
         </div>
       </div>
     </header>
