@@ -9,11 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UnsolicitedSubmissionsRouteImport } from './routes/unsolicited-submissions'
 import { Route as TrustRouteImport } from './routes/trust'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SubscriptionPolicyRouteImport } from './routes/subscription-policy'
 import { Route as SubprocessorsRouteImport } from './routes/subprocessors'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as ShippingReturnsRouteImport } from './routes/shipping-returns'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PerksRouteImport } from './routes/perks'
@@ -23,8 +26,13 @@ import { Route as IndustryRouteImport } from './routes/industry'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as DsarRouteImport } from './routes/dsar'
 import { Route as DarkerAgesRouteImport } from './routes/darker-ages'
+import { Route as CorporateRouteImport } from './routes/corporate'
+import { Route as CopyrightDmcaRouteImport } from './routes/copyright-dmca'
 import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as ContentAccessibilityRouteImport } from './routes/content-accessibility'
+import { Route as CommunityGuidelinesRouteImport } from './routes/community-guidelines'
 import { Route as ChildrenOfAquariusRouteImport } from './routes/children-of-aquarius'
+import { Route as CanonCameoTermsRouteImport } from './routes/canon-cameo-terms'
 import { Route as BattlefieldAtlantisRouteImport } from './routes/battlefield-atlantis'
 import { Route as AstralnautStudiosRouteImport } from './routes/astralnaut-studios'
 import { Route as ArchiveRouteImport } from './routes/archive'
@@ -69,6 +77,11 @@ import { Route as AuthenticatedAdminLearnModuleIdRouteImport } from './routes/_a
 import { Route as AuthenticatedAdminHelpSlugRouteImport } from './routes/_authenticated/admin.help.$slug'
 import { Route as AuthenticatedReaderSeriesIssueLettersRouteImport } from './routes/_authenticated/reader.$series.$issue.letters'
 
+const UnsolicitedSubmissionsRoute = UnsolicitedSubmissionsRouteImport.update({
+  id: '/unsolicited-submissions',
+  path: '/unsolicited-submissions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TrustRoute = TrustRouteImport.update({
   id: '/trust',
   path: '/trust',
@@ -77,6 +90,11 @@ const TrustRoute = TrustRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubscriptionPolicyRoute = SubscriptionPolicyRouteImport.update({
+  id: '/subscription-policy',
+  path: '/subscription-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SubprocessorsRoute = SubprocessorsRouteImport.update({
@@ -92,6 +110,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShippingReturnsRoute = ShippingReturnsRouteImport.update({
+  id: '/shipping-returns',
+  path: '/shipping-returns',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -139,14 +162,39 @@ const DarkerAgesRoute = DarkerAgesRouteImport.update({
   path: '/darker-ages',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CorporateRoute = CorporateRouteImport.update({
+  id: '/corporate',
+  path: '/corporate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CopyrightDmcaRoute = CopyrightDmcaRouteImport.update({
+  id: '/copyright-dmca',
+  path: '/copyright-dmca',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CookiesRoute = CookiesRouteImport.update({
   id: '/cookies',
   path: '/cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContentAccessibilityRoute = ContentAccessibilityRouteImport.update({
+  id: '/content-accessibility',
+  path: '/content-accessibility',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommunityGuidelinesRoute = CommunityGuidelinesRouteImport.update({
+  id: '/community-guidelines',
+  path: '/community-guidelines',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChildrenOfAquariusRoute = ChildrenOfAquariusRouteImport.update({
   id: '/children-of-aquarius',
   path: '/children-of-aquarius',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CanonCameoTermsRoute = CanonCameoTermsRouteImport.update({
+  id: '/canon-cameo-terms',
+  path: '/canon-cameo-terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BattlefieldAtlantisRoute = BattlefieldAtlantisRouteImport.update({
@@ -382,8 +430,13 @@ export interface FileRoutesByFullPath {
   '/archive': typeof ArchiveRouteWithChildren
   '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
+  '/canon-cameo-terms': typeof CanonCameoTermsRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
+  '/community-guidelines': typeof CommunityGuidelinesRoute
+  '/content-accessibility': typeof ContentAccessibilityRoute
   '/cookies': typeof CookiesRoute
+  '/copyright-dmca': typeof CopyrightDmcaRoute
+  '/corporate': typeof CorporateRoute
   '/darker-ages': typeof DarkerAgesRoute
   '/dsar': typeof DsarRoute
   '/help': typeof HelpRouteWithChildren
@@ -393,11 +446,14 @@ export interface FileRoutesByFullPath {
   '/perks': typeof PerksRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/shipping-returns': typeof ShippingReturnsRoute
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subprocessors': typeof SubprocessorsRoute
+  '/subscription-policy': typeof SubscriptionPolicyRoute
   '/terms': typeof TermsRoute
   '/trust': typeof TrustRoute
+  '/unsolicited-submissions': typeof UnsolicitedSubmissionsRoute
   '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/archive/briefings': typeof ArchiveBriefingsRoute
@@ -442,8 +498,13 @@ export interface FileRoutesByTo {
   '/archive': typeof ArchiveRouteWithChildren
   '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
+  '/canon-cameo-terms': typeof CanonCameoTermsRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
+  '/community-guidelines': typeof CommunityGuidelinesRoute
+  '/content-accessibility': typeof ContentAccessibilityRoute
   '/cookies': typeof CookiesRoute
+  '/copyright-dmca': typeof CopyrightDmcaRoute
+  '/corporate': typeof CorporateRoute
   '/darker-ages': typeof DarkerAgesRoute
   '/dsar': typeof DsarRoute
   '/help': typeof HelpRouteWithChildren
@@ -453,11 +514,14 @@ export interface FileRoutesByTo {
   '/perks': typeof PerksRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/shipping-returns': typeof ShippingReturnsRoute
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subprocessors': typeof SubprocessorsRoute
+  '/subscription-policy': typeof SubscriptionPolicyRoute
   '/terms': typeof TermsRoute
   '/trust': typeof TrustRoute
+  '/unsolicited-submissions': typeof UnsolicitedSubmissionsRoute
   '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/archive/briefings': typeof ArchiveBriefingsRoute
@@ -504,8 +568,13 @@ export interface FileRoutesById {
   '/archive': typeof ArchiveRouteWithChildren
   '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
+  '/canon-cameo-terms': typeof CanonCameoTermsRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
+  '/community-guidelines': typeof CommunityGuidelinesRoute
+  '/content-accessibility': typeof ContentAccessibilityRoute
   '/cookies': typeof CookiesRoute
+  '/copyright-dmca': typeof CopyrightDmcaRoute
+  '/corporate': typeof CorporateRoute
   '/darker-ages': typeof DarkerAgesRoute
   '/dsar': typeof DsarRoute
   '/help': typeof HelpRouteWithChildren
@@ -515,11 +584,14 @@ export interface FileRoutesById {
   '/perks': typeof PerksRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/shipping-returns': typeof ShippingReturnsRoute
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subprocessors': typeof SubprocessorsRoute
+  '/subscription-policy': typeof SubscriptionPolicyRoute
   '/terms': typeof TermsRoute
   '/trust': typeof TrustRoute
+  '/unsolicited-submissions': typeof UnsolicitedSubmissionsRoute
   '/_authenticated/growth': typeof AuthenticatedGrowthRoute
   '/_authenticated/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/archive/briefings': typeof ArchiveBriefingsRoute
@@ -566,8 +638,13 @@ export interface FileRouteTypes {
     | '/archive'
     | '/astralnaut-studios'
     | '/battlefield-atlantis'
+    | '/canon-cameo-terms'
     | '/children-of-aquarius'
+    | '/community-guidelines'
+    | '/content-accessibility'
     | '/cookies'
+    | '/copyright-dmca'
+    | '/corporate'
     | '/darker-ages'
     | '/dsar'
     | '/help'
@@ -577,11 +654,14 @@ export interface FileRouteTypes {
     | '/perks'
     | '/pricing'
     | '/privacy'
+    | '/shipping-returns'
     | '/shop'
     | '/sitemap.xml'
     | '/subprocessors'
+    | '/subscription-policy'
     | '/terms'
     | '/trust'
+    | '/unsolicited-submissions'
     | '/growth'
     | '/growth-package'
     | '/archive/briefings'
@@ -626,8 +706,13 @@ export interface FileRouteTypes {
     | '/archive'
     | '/astralnaut-studios'
     | '/battlefield-atlantis'
+    | '/canon-cameo-terms'
     | '/children-of-aquarius'
+    | '/community-guidelines'
+    | '/content-accessibility'
     | '/cookies'
+    | '/copyright-dmca'
+    | '/corporate'
     | '/darker-ages'
     | '/dsar'
     | '/help'
@@ -637,11 +722,14 @@ export interface FileRouteTypes {
     | '/perks'
     | '/pricing'
     | '/privacy'
+    | '/shipping-returns'
     | '/shop'
     | '/sitemap.xml'
     | '/subprocessors'
+    | '/subscription-policy'
     | '/terms'
     | '/trust'
+    | '/unsolicited-submissions'
     | '/growth'
     | '/growth-package'
     | '/archive/briefings'
@@ -687,8 +775,13 @@ export interface FileRouteTypes {
     | '/archive'
     | '/astralnaut-studios'
     | '/battlefield-atlantis'
+    | '/canon-cameo-terms'
     | '/children-of-aquarius'
+    | '/community-guidelines'
+    | '/content-accessibility'
     | '/cookies'
+    | '/copyright-dmca'
+    | '/corporate'
     | '/darker-ages'
     | '/dsar'
     | '/help'
@@ -698,11 +791,14 @@ export interface FileRouteTypes {
     | '/perks'
     | '/pricing'
     | '/privacy'
+    | '/shipping-returns'
     | '/shop'
     | '/sitemap.xml'
     | '/subprocessors'
+    | '/subscription-policy'
     | '/terms'
     | '/trust'
+    | '/unsolicited-submissions'
     | '/_authenticated/growth'
     | '/_authenticated/growth-package'
     | '/archive/briefings'
@@ -749,8 +845,13 @@ export interface RootRouteChildren {
   ArchiveRoute: typeof ArchiveRouteWithChildren
   AstralnautStudiosRoute: typeof AstralnautStudiosRoute
   BattlefieldAtlantisRoute: typeof BattlefieldAtlantisRoute
+  CanonCameoTermsRoute: typeof CanonCameoTermsRoute
   ChildrenOfAquariusRoute: typeof ChildrenOfAquariusRoute
+  CommunityGuidelinesRoute: typeof CommunityGuidelinesRoute
+  ContentAccessibilityRoute: typeof ContentAccessibilityRoute
   CookiesRoute: typeof CookiesRoute
+  CopyrightDmcaRoute: typeof CopyrightDmcaRoute
+  CorporateRoute: typeof CorporateRoute
   DarkerAgesRoute: typeof DarkerAgesRoute
   DsarRoute: typeof DsarRoute
   HelpRoute: typeof HelpRouteWithChildren
@@ -760,11 +861,14 @@ export interface RootRouteChildren {
   PerksRoute: typeof PerksRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
+  ShippingReturnsRoute: typeof ShippingReturnsRoute
   ShopRoute: typeof ShopRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SubprocessorsRoute: typeof SubprocessorsRoute
+  SubscriptionPolicyRoute: typeof SubscriptionPolicyRoute
   TermsRoute: typeof TermsRoute
   TrustRoute: typeof TrustRoute
+  UnsolicitedSubmissionsRoute: typeof UnsolicitedSubmissionsRoute
   ProductHandleRoute: typeof ProductHandleRoute
   RaffleFreeEntryRoute: typeof RaffleFreeEntryRoute
   RaffleRulesRoute: typeof RaffleRulesRoute
@@ -780,6 +884,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/unsolicited-submissions': {
+      id: '/unsolicited-submissions'
+      path: '/unsolicited-submissions'
+      fullPath: '/unsolicited-submissions'
+      preLoaderRoute: typeof UnsolicitedSubmissionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/trust': {
       id: '/trust'
       path: '/trust'
@@ -792,6 +903,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/subscription-policy': {
+      id: '/subscription-policy'
+      path: '/subscription-policy'
+      fullPath: '/subscription-policy'
+      preLoaderRoute: typeof SubscriptionPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/subprocessors': {
@@ -813,6 +931,13 @@ declare module '@tanstack/react-router' {
       path: '/shop'
       fullPath: '/shop'
       preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shipping-returns': {
+      id: '/shipping-returns'
+      path: '/shipping-returns'
+      fullPath: '/shipping-returns'
+      preLoaderRoute: typeof ShippingReturnsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -878,6 +1003,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DarkerAgesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/corporate': {
+      id: '/corporate'
+      path: '/corporate'
+      fullPath: '/corporate'
+      preLoaderRoute: typeof CorporateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/copyright-dmca': {
+      id: '/copyright-dmca'
+      path: '/copyright-dmca'
+      fullPath: '/copyright-dmca'
+      preLoaderRoute: typeof CopyrightDmcaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cookies': {
       id: '/cookies'
       path: '/cookies'
@@ -885,11 +1024,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CookiesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/content-accessibility': {
+      id: '/content-accessibility'
+      path: '/content-accessibility'
+      fullPath: '/content-accessibility'
+      preLoaderRoute: typeof ContentAccessibilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/community-guidelines': {
+      id: '/community-guidelines'
+      path: '/community-guidelines'
+      fullPath: '/community-guidelines'
+      preLoaderRoute: typeof CommunityGuidelinesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/children-of-aquarius': {
       id: '/children-of-aquarius'
       path: '/children-of-aquarius'
       fullPath: '/children-of-aquarius'
       preLoaderRoute: typeof ChildrenOfAquariusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/canon-cameo-terms': {
+      id: '/canon-cameo-terms'
+      path: '/canon-cameo-terms'
+      fullPath: '/canon-cameo-terms'
+      preLoaderRoute: typeof CanonCameoTermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/battlefield-atlantis': {
@@ -1316,8 +1476,13 @@ const rootRouteChildren: RootRouteChildren = {
   ArchiveRoute: ArchiveRouteWithChildren,
   AstralnautStudiosRoute: AstralnautStudiosRoute,
   BattlefieldAtlantisRoute: BattlefieldAtlantisRoute,
+  CanonCameoTermsRoute: CanonCameoTermsRoute,
   ChildrenOfAquariusRoute: ChildrenOfAquariusRoute,
+  CommunityGuidelinesRoute: CommunityGuidelinesRoute,
+  ContentAccessibilityRoute: ContentAccessibilityRoute,
   CookiesRoute: CookiesRoute,
+  CopyrightDmcaRoute: CopyrightDmcaRoute,
+  CorporateRoute: CorporateRoute,
   DarkerAgesRoute: DarkerAgesRoute,
   DsarRoute: DsarRoute,
   HelpRoute: HelpRouteWithChildren,
@@ -1327,11 +1492,14 @@ const rootRouteChildren: RootRouteChildren = {
   PerksRoute: PerksRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
+  ShippingReturnsRoute: ShippingReturnsRoute,
   ShopRoute: ShopRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SubprocessorsRoute: SubprocessorsRoute,
+  SubscriptionPolicyRoute: SubscriptionPolicyRoute,
   TermsRoute: TermsRoute,
   TrustRoute: TrustRoute,
+  UnsolicitedSubmissionsRoute: UnsolicitedSubmissionsRoute,
   ProductHandleRoute: ProductHandleRoute,
   RaffleFreeEntryRoute: RaffleFreeEntryRoute,
   RaffleRulesRoute: RaffleRulesRoute,

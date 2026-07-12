@@ -1,146 +1,160 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useServerFn } from "@tanstack/react-router";
 import { useState } from "react";
-import { SiteHeader, SiteFooter } from "@/components/site-header";
-import { LEGAL } from "@/lib/legal-meta";
+import { LegalPage, metaFor } from "@/components/legal-page";
+import { LEGAL_CONFIG } from "@/config/legal";
+import { submitDsarRequest } from "@/lib/dsar.functions";
+
+const D = LEGAL_CONFIG.documents.privacy;
 
 export const Route = createFileRoute("/dsar")({
-  head: () => ({
-    meta: [
-      { title: "Privacy Request — Real World Comics" },
-      { name: "description", content: "Submit a privacy request: access, deletion, correction, portability, or opt-out of sale or sharing under GDPR, CCPA, and other US state privacy laws." },
-      { property: "og:title", content: "Privacy Request — Real World Comics" },
-      { property: "og:description", content: "Exercise your privacy rights with Streamwalkers Corporation." },
-    ],
+  head: () => metaFor({
+    title: "Your Privacy Rights — Streamwalkers Corporation",
+    description: "Submit an access, correction, deletion, portability, opt-out, or appeal request under GDPR, CCPA/CPRA, and other US state privacy laws.",
+    path: "/dsar",
   }),
   component: DsarPage,
 });
 
-const REQUEST_TYPES = [
-  { value: "access", label: "Access — give me a copy of my data" },
-  { value: "delete", label: "Delete — erase my data" },
-  { value: "correct", label: "Correct — fix inaccurate data" },
-  { value: "portability", label: "Portability — export my data" },
-  { value: "opt_out_sale", label: "Opt out of sale / sharing of my personal information" },
-  { value: "opt_out_profiling", label: "Opt out of profiling / targeted advertising" },
-  { value: "other", label: "Other" },
-];
+const TYPES = [
+  { v: "access",             label: "Access — give me a copy of my data" },
+  { v: "correct",            label: "Correct — fix inaccurate data" },
+  { v: "delete",             label: "Delete — erase my data" },
+  { v: "portability",        label: "Portability — export my data" },
+  { v: "opt_out_sale",       label: "Opt out of sale / sharing of my personal information" },
+  { v: "opt_out_profiling",  label: "Opt out of profiling / targeted advertising" },
+  { v: "appeal",             label: "Appeal a prior privacy-request decision" },
+  { v: "other",              label: "Other" },
+] as const;
 
 const REGIONS = [
-  { value: "us_ca", label: "California (CCPA/CPRA)" },
-  { value: "us_other", label: "Other US state" },
-  { value: "eu", label: "EU / EEA (GDPR)" },
-  { value: "uk", label: "United Kingdom (UK GDPR)" },
-  { value: "other", label: "Other / not listed" },
+  "California (CCPA/CPRA)",
+  "Other US state",
+  "EU / EEA (GDPR)",
+  "United Kingdom (UK GDPR)",
+  "Other / not listed",
 ];
 
 function DsarPage() {
-  const [state, setState] = useState<"idle" | "sent">("idle");
+  const submit = useServerFn(submitDsarRequest);
+  const [state, setState] = useState<"idle" | "submitting" | "done" | "error">("idle");
+  const [reference, setReference] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [form, setForm] = useState({
-    email: "",
-    requestType: "access",
-    region: "us_ca",
+    requestType: "access" as (typeof TYPES)[number]["v"],
+    requesterEmail: "",
+    region: REGIONS[0],
     details: "",
-    agent: false,
+    authorizedAgent: false,
   });
 
-  function buildMailto() {
-    const subject = encodeURIComponent(`Privacy Request — ${form.requestType}`);
-    const body = encodeURIComponent(
-      `Request type: ${form.requestType}\n` +
-      `Region: ${form.region}\n` +
-      `Account email: ${form.email}\n` +
-      `Submitting as authorized agent: ${form.agent ? "yes" : "no"}\n\n` +
-      `Details:\n${form.details}\n`
-    );
-    return `mailto:${LEGAL.privacyEmail}?subject=${subject}&body=${body}`;
-  }
-
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    window.location.href = buildMailto();
-    setState("sent");
+    setState("submitting");
+    setErrorMsg(null);
+    try {
+      const res = await submit({ data: form });
+      setReference(res.referenceId);
+      setState("done");
+    } catch (err) {
+      setState("error");
+      setErrorMsg(err instanceof Error ? err.message : "Something went wrong. Please try again or email " + LEGAL_CONFIG.contacts.privacy + ".");
+    }
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
-      <main className="mx-auto max-w-2xl px-6 py-16">
-        <h1 className="text-3xl font-black text-[var(--ink)] md:text-5xl">Privacy request</h1>
-        <p className="mt-3 text-sm leading-relaxed text-[var(--mute)]">
-          Use this form to exercise your rights under the GDPR, the California Consumer Privacy Act, and other US state privacy laws. We will verify your identity (typically by confirming the email on file) and respond within the statutory window — 30 days under GDPR, 45 days under CCPA, extendable as permitted.
-        </p>
-        <p className="mt-2 text-sm leading-relaxed text-[var(--mute)]">
-          Submitting this form opens your email client with a pre-filled message to <a className="underline" href={`mailto:${LEGAL.privacyEmail}`}>{LEGAL.privacyEmail}</a>. If your mail client doesn't open, copy the contents and send the email manually.
-        </p>
+    <LegalPage
+      title="Your Privacy Rights"
+      eyebrow="Streamwalkers Corporation"
+      effective={D.effective}
+      updated={D.updated}
+      version={D.version}
+      canonical="/dsar"
+    >
+      <p>Under GDPR, UK GDPR, CCPA/CPRA, and comparable US state laws, you may request access, correction, deletion, portability, restriction, opt-out of sale/sharing/profiling, withdrawal of consent, or an appeal of a prior decision. See section 9 of our <a href="/privacy" className="underline">Privacy Policy</a>.</p>
+      <p>We may need to verify your identity before completing your request. We do not unlawfully discriminate against people for exercising these rights.</p>
 
-        <form onSubmit={onSubmit} className="mt-8 space-y-5 text-sm">
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--ink)]">Account email</label>
+      {state === "done" && reference ? (
+        <div className="mt-6 rounded-lg border border-[var(--border-line)] bg-black/30 p-5">
+          <p className="text-[var(--ink)] font-semibold">We received your request.</p>
+          <p className="mt-2 text-sm">Reference ID: <code className="rounded bg-white/10 px-2 py-1">{reference}</code></p>
+          <p className="mt-2 text-sm">If your email is deliverable, you will receive a confirmation at the address you provided. We may reach out to verify your identity before completing the request.</p>
+        </div>
+      ) : (
+        <form onSubmit={onSubmit} className="mt-6 space-y-4">
+          <Field label="What are you requesting?">
+            <select
+              className="w-full rounded border border-[var(--border-line)] bg-black/40 p-2 text-sm"
+              value={form.requestType}
+              onChange={(e) => setForm({ ...form, requestType: e.target.value as typeof form.requestType })}
+              required
+            >
+              {TYPES.map((t) => <option key={t.v} value={t.v}>{t.label}</option>)}
+            </select>
+          </Field>
+
+          <Field label="Your email">
             <input
               type="email"
               required
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="mt-2 w-full rounded border border-[var(--border-line)] bg-transparent px-3 py-2 text-[var(--ink)]"
-              placeholder="you@example.com"
+              autoComplete="email"
+              className="w-full rounded border border-[var(--border-line)] bg-black/40 p-2 text-sm"
+              value={form.requesterEmail}
+              onChange={(e) => setForm({ ...form, requesterEmail: e.target.value })}
             />
-          </div>
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--ink)]">Request type</label>
+          </Field>
+
+          <Field label="Your region">
             <select
-              value={form.requestType}
-              onChange={(e) => setForm({ ...form, requestType: e.target.value })}
-              className="mt-2 w-full rounded border border-[var(--border-line)] bg-transparent px-3 py-2 text-[var(--ink)]"
-            >
-              {REQUEST_TYPES.map((r) => (
-                <option key={r.value} value={r.value} className="bg-black">{r.label}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--ink)]">Region</label>
-            <select
+              className="w-full rounded border border-[var(--border-line)] bg-black/40 p-2 text-sm"
               value={form.region}
               onChange={(e) => setForm({ ...form, region: e.target.value })}
-              className="mt-2 w-full rounded border border-[var(--border-line)] bg-transparent px-3 py-2 text-[var(--ink)]"
             >
-              {REGIONS.map((r) => (
-                <option key={r.value} value={r.value} className="bg-black">{r.label}</option>
-              ))}
+              {REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
-          </div>
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--ink)]">Details (optional)</label>
+          </Field>
+
+          <Field label="Additional details (optional)">
             <textarea
+              rows={4}
+              maxLength={4000}
+              className="w-full rounded border border-[var(--border-line)] bg-black/40 p-2 text-sm"
               value={form.details}
               onChange={(e) => setForm({ ...form, details: e.target.value })}
-              rows={5}
-              className="mt-2 w-full rounded border border-[var(--border-line)] bg-transparent px-3 py-2 text-[var(--ink)]"
-              placeholder="Anything specific you want us to know."
+              placeholder="Do not include sensitive government identifiers here."
             />
-          </div>
-          <label className="flex items-center gap-2 text-xs text-[var(--mute)]">
+          </Field>
+
+          <label className="flex items-start gap-3 text-sm text-[var(--mute)]">
             <input
               type="checkbox"
-              checked={form.agent}
-              onChange={(e) => setForm({ ...form, agent: e.target.checked })}
+              checked={form.authorizedAgent}
+              onChange={(e) => setForm({ ...form, authorizedAgent: e.target.checked })}
+              className="mt-1"
             />
-            I am submitting this on behalf of someone else as an authorized agent.
+            <span>I am submitting this request as an authorized agent on behalf of a data subject. (I understand additional verification may be required.)</span>
           </label>
+
+          {errorMsg ? <p className="text-sm text-red-400">{errorMsg}</p> : null}
 
           <button
             type="submit"
-            className="rounded bg-[var(--neon,#22d3ee)] px-4 py-2 text-xs font-bold uppercase tracking-wider text-black hover:opacity-90"
+            disabled={state === "submitting"}
+            className="rounded bg-[var(--gold)] px-4 py-2 text-sm font-semibold text-black disabled:opacity-50"
           >
-            Send privacy request
+            {state === "submitting" ? "Submitting..." : "Submit privacy request"}
           </button>
-
-          {state === "sent" && (
-            <p className="text-xs text-[var(--mute)]">Your email client should have opened. If not, email us directly at <a className="underline" href={`mailto:${LEGAL.privacyEmail}`}>{LEGAL.privacyEmail}</a>.</p>
-          )}
+          <p className="text-xs text-[var(--fg-muted)]">Or email {LEGAL_CONFIG.contacts.privacy}.</p>
         </form>
-      </main>
-      <SiteFooter />
-    </div>
+      )}
+    </LegalPage>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-[var(--ink)]">{label}</span>
+      {children}
+    </label>
   );
 }
