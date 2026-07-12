@@ -194,7 +194,7 @@ function Home() {
               <Pillar title="Motion + sound" body="Per-page CSS animations layered onto the static art. Lightning pulses, hologram glow, debris fields." />
               <Pillar title="Tier-staggered drops" body="Patron Tuesday. Initiate Wednesday. Reader Thursday. Always 48 hours ahead at the top tier." />
               <Pillar title="Canon voting" body="Subscribers vote on canon-altering decisions. Your read literally changes the story." />
-              <Pillar title="Sweepstakes + cameos" body="Active subscription weeks = sweepstakes entries. Patron tier unlocks cameo eligibility." />
+              <Pillar title="Sweepstakes + cameos" body="Weekly Sweepstakes with one entry per eligible person — no purchase necessary. Patron tier unlocks cameo eligibility." />
             </div>
           </div>
         </section>

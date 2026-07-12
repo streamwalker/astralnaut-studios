@@ -46,9 +46,9 @@ const TIER_META: Record<TierKey, {
   color: string;
   glow: string;
 }> = {
-  reader:   { label: "Reader",   day: "Thursday",  entries: 1,  color: "var(--neon)", glow: "rgba(60,220,255,0.25)" },
-  initiate: { label: "Initiate", day: "Wednesday", entries: 3,  color: "#C4A0FF",     glow: "rgba(196,160,255,0.25)" },
-  patron:   { label: "Patron",   day: "Tuesday",   entries: 10, color: "var(--gold)", glow: "rgba(255,184,64,0.25)" },
+  reader:   { label: "Reader",   day: "Thursday",  entries: 1, color: "var(--neon)", glow: "rgba(60,220,255,0.25)" },
+  initiate: { label: "Initiate", day: "Wednesday", entries: 1, color: "#C4A0FF",     glow: "rgba(196,160,255,0.25)" },
+  patron:   { label: "Patron",   day: "Tuesday",   entries: 1, color: "var(--gold)", glow: "rgba(255,184,64,0.25)" },
 };
 
 function tierKeyFromPriceId(priceId: string | null | undefined): TierKey | null {

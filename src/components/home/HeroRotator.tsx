@@ -80,7 +80,7 @@ const HERO_SLOTS: HeroSlot[] = [
     tab: "PS5 Milestone",
     eyebrow: "Subscriber unlock · 1,000",
     titleText: "A PlayStation 5 unlocks at 1,000 subscribers.",
-    tagline: "Every active subscription week earns sweepstakes entries. Patron tier unlocks cameo eligibility.",
+    tagline: "Patron tier unlocks cameo eligibility. Weekly Sweepstakes coming soon — one entry per eligible person, no purchase necessary.",
     primary: { label: "See the milestone", to: "/pricing" },
     secondary: { label: "Browse the slate", to: "/" },
     overlay:

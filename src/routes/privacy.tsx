@@ -64,7 +64,7 @@ function PrivacyPage() {
         <P>See our <Link to="/cookies" className="underline">Cookie Policy</Link>. Optional cookies are off until you accept them and can be revoked anytime.</P>
 
         <H2>10. Children</H2>
-        <P>The service is not directed to children under 13 (or under 16 in jurisdictions that set that bar for online services). We do not knowingly collect personal data from children. If you believe a child has provided us data, contact us and we will delete it.</P>
+        <P>The service is intended solely for adults 18 years of age or older. We do not knowingly collect personal data from anyone under 18. If you believe a minor has provided us data, contact us and we will delete it.</P>
 
         <H2>11. Security</H2>
         <P>TLS in transit, encryption at rest via our cloud provider, role-based access controls, hashed passwords, and audit-logged admin actions. See <Link to="/trust" className="underline">Trust & Security</Link> for details and how to report a vulnerability.</P>
