@@ -163,7 +163,7 @@ export function AnalyticsTracker() {
       window.removeEventListener("pagehide", flush);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [router]);
+  }, [router, consented]);
 
   return null;
 }
