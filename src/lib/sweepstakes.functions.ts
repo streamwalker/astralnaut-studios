@@ -556,3 +556,88 @@ export const advanceToAlternate = createServerFn({ method: "POST" })
     if (uErr) throw new Error(uErr.message);
     return { drawing: updated };
   });
+
+// ---------- BACKFILL subscriber auto-entries (admin) ----------------------
+// Idempotent: safe to run when a promotion opens, or later, or repeatedly.
+// Inserts one entry per user with a currently active paid subscription that
+// does not already have an entry for this promotion. Deduplication is
+// enforced by the UNIQUE (promotion_id, dedup_key) index — so re-running is
+// a no-op for anyone already entered by any path.
+export const backfillSubscriberEntries = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { promotionId: string }) =>
+    z.object({ promotionId: z.string().uuid() }).parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!isAdmin) throw new Error("Forbidden");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: promo, error: pErr } = await supabaseAdmin
+      .from("sweepstakes_promotions")
+      .select("*")
+      .eq("id", data.promotionId)
+      .single();
+    if (pErr || !promo) throw new Error("Promotion not found");
+    requireActivatablePromotionRow(promo);
+
+    // All distinct users with an active/trialing subscription across envs.
+    const { data: subs, error: sErr } = await supabaseAdmin
+      .from("subscriptions")
+      .select("user_id, status, current_period_end")
+      .in("status", ["active", "trialing"]);
+    if (sErr) throw new Error(sErr.message);
+
+    const nowMs = Date.now();
+    const userIds = Array.from(
+      new Set(
+        (subs ?? [])
+          .filter((s) => !s.current_period_end || new Date(s.current_period_end).getTime() > nowMs)
+          .map((s) => s.user_id)
+          .filter((v): v is string => !!v),
+      ),
+    );
+
+    const attestation = `${LEGAL_CONFIG.sweepstakes.entryCap} ${LEGAL_CONFIG.sweepstakes.amoeParity}`;
+    let created = 0;
+    let alreadyEntered = 0;
+    const errors: string[] = [];
+
+    for (const uid of userIds) {
+      const { data: userRow } = await supabaseAdmin.auth.admin.getUserById(uid);
+      const email = userRow?.user?.email;
+      if (!email) continue;
+      const normalized = normalizeEmail(email);
+      const dedup = dedupKeyFor(normalized, uid);
+      const { data: row, error } = await supabaseAdmin
+        .from("sweepstakes_entries")
+        .upsert(
+          {
+            promotion_id: promo.id,
+            user_id: uid,
+            entrant_email: normalized,
+            entry_method: "subscriber_auto",
+            eligibility_attested: true,
+            attestation_text: attestation,
+            rules_version: promo.rules_version,
+            dedup_key: dedup,
+          },
+          { onConflict: "promotion_id,dedup_key", ignoreDuplicates: true },
+        )
+        .select()
+        .maybeSingle();
+      if (error) {
+        errors.push(`${uid}: ${error.message}`);
+      } else if (row) {
+        created += 1;
+      } else {
+        alreadyEntered += 1;
+      }
+    }
+
+    return { totalEligible: userIds.length, created, alreadyEntered, errors };
+  });
