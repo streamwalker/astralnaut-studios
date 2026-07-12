@@ -61,7 +61,7 @@ export function hasFeature(tier: Tier, feature: Feature): boolean {
   return TIER_RANK[tier] >= TIER_RANK[FEATURE_MIN_TIER[feature]];
 }
 
-/** Weekly raffle entries auto-granted by tier (0 = none, AMOE entry is separate). */
+/** Weekly sweepstakes entries auto-granted by tier (0 = none, AMOE entry is separate). */
 export function raffleEntriesFor(tier: Tier): number {
   return tier === "patron" ? 10 : tier === "initiate" ? 3 : tier === "reader" ? 1 : 0;
 }

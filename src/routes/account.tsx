@@ -234,7 +234,7 @@ function AccountPage() {
                   label={sub?.cancel_at_period_end ? "Access until" : "Next billing"}
                   value={sub?.current_period_end ? new Date(sub.current_period_end).toLocaleDateString() : "—"}
                 />
-                <Stat label="Raffle entries / week" value={`${tier.entries}`} accent={tier.color} />
+                <Stat label="Sweepstakes entries / week" value={`${tier.entries}`} accent={tier.color} />
               </div>
             )}
           </div>
@@ -378,11 +378,11 @@ function AccountPage() {
             <Perk title="Motion + sound" body="Pages with parallax, ambient score, and SFX. Optional — read silently any time." />
             <Perk title="Tier-staggered drops" body="Your tier decides when you get the next page. Patron first." />
             <Perk title="Canon voting" body="Readers vote on branching beats. Outcomes show up in print." />
-            <Perk title="Raffles + cameos" body={`${tier ? tier.entries : 1} raffle entries per active week. Patron tier = cameo eligibility.`} />
+            <Perk title="Sweepstakes + cameos" body={`${tier ? tier.entries : 1} sweepstakes entries per active week. Patron tier = cameo eligibility.`} />
           </div>
         </section>
 
-        {/* RAFFLE CTA */}
+        {/* SWEEPSTAKES CTA */}
         <section className="mt-16 overflow-hidden rounded-2xl border border-[var(--gold)]/40 p-8 md:p-12"
           style={{ background: "radial-gradient(circle at 30% 20%, rgba(255,184,64,0.18), transparent 60%), radial-gradient(circle at 80% 80%, rgba(60,220,255,0.14), transparent 60%), #0B0E1C" }}
         >
@@ -391,13 +391,13 @@ function AccountPage() {
               <div className="text-[10px] font-bold uppercase tracking-[3px]" style={{ color: "var(--gold)" }}>Marquee prize</div>
               <h2 className="mt-2 text-3xl font-black md:text-4xl">PlayStation 5 unlocks at 1,000 subscribers.</h2>
               <p className="mt-3 text-[var(--ink2)]">
-                Every active subscription week earns raffle entries — {tier?.entries ?? 1} per week at your tier.
+                Every active subscription week earns sweepstakes entries — {tier?.entries ?? 1} per week at your tier.
                 No subscription? You can still enter for free, once per cycle.
               </p>
             </div>
             <div className="flex flex-col gap-3">
-              <Link to="/raffle/rules" className="btn-cta">See raffle rules</Link>
-              <Link to="/raffle/free-entry" className="text-center text-xs font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">
+              <Link to="/sweepstakes/rules" className="btn-cta">See sweepstakes rules</Link>
+              <Link to="/sweepstakes/free-entry" className="text-center text-xs font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">
                 Or enter for free →
               </Link>
             </div>

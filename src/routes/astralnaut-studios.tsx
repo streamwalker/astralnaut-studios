@@ -59,7 +59,7 @@ const TIERS = [
       "Quarterly signed physical print",
       "Cameo eligibility",
       "Direct creator Discord channel",
-      "10 raffle entries per week",
+      "10 sweepstakes entries per week",
     ],
   },
   {
@@ -68,7 +68,7 @@ const TIERS = [
       "Pages 24 hours before Reader tier",
       "Numbered digital variant covers",
       "Behind-the-scenes process content",
-      "3 raffle entries per week",
+      "3 sweepstakes entries per week",
     ],
   },
   {
@@ -77,7 +77,7 @@ const TIERS = [
       "All series, all 20 pages of every issue",
       "Community forum + voting",
       "Motion-reader edition",
-      "1 raffle entry per active reading week",
+      "1 sweepstakes entry per active reading week",
     ],
   },
 ];

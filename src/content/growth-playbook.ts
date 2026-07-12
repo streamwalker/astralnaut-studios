@@ -116,7 +116,7 @@ export const PLAYBOOK: Block[] = [
       ],
       [
         "Phase1ChannelCommunityCost$15/mo (boost)CadenceOne-time setup, daily moderationOwnerCommunity Mgr (Phil at first)",
-        "WhySubscribers who join Discord churn 60% less than subscribers who do not. The Discord is the retention engine. HowCreate 4 channels per series (lore, theories, art-of-the-week, reactions), 1 cross-series meta channel, 1 announcements, 1 introductions, 1 raffle. Tier roles auto-assigned via webhook from subscription. Daily founder post in announcements. KPI / proof pointDiscord join rate > 35% of new subs · DAU > 8% of members"
+        "WhySubscribers who join Discord churn 60% less than subscribers who do not. The Discord is the retention engine. HowCreate 4 channels per series (lore, theories, art-of-the-week, reactions), 1 cross-series meta channel, 1 announcements, 1 introductions, 1 sweepstakes. Tier roles auto-assigned via webhook from subscription. Daily founder post in announcements. KPI / proof pointDiscord join rate > 35% of new subs · DAU > 8% of members"
       ]
     ]
   },
@@ -359,11 +359,11 @@ export const PLAYBOOK: Block[] = [
     "rows": [
       [
         "#23",
-        "Subscriber-Drawn Cameo Raffle"
+        "Subscriber-Drawn Cameo Sweepstakes"
       ],
       [
         "Phase3ChannelCommunity / PRCost$2K artist time + $0 prizeCadenceQuarterlyOwnerFounder + Artist",
-        "WhyA subscriber drawn into a future panel is a story they tell forever. Cameos generate user-generated content (proud posts) that markets the platform organically. HowEach quarter, draw one Patron-tier subscriber. Their likeness becomes a named background character in the next issue. Subscriber receives original art of their panel. Recipient required to post (release clause in raffle terms). KPI / proof point5K social mentions per cameo cycle"
+        "WhyA subscriber drawn into a future panel is a story they tell forever. Cameos generate user-generated content (proud posts) that markets the platform organically. HowEach quarter, draw one Patron-tier subscriber. Their likeness becomes a named background character in the next issue. Subscriber receives original art of their panel. Recipient required to post (release clause in sweepstakes terms). KPI / proof point5K social mentions per cameo cycle"
       ]
     ]
   },
@@ -415,7 +415,7 @@ export const PLAYBOOK: Block[] = [
       ],
       [
         "Phase3ChannelLoyaltyCost$500/console + $500/monthCadenceMonthlyOwnerCommunity Mgr",
-        "WhyHigh-perceived-value prizes generate disproportionate referral activity. PlayStation 5 specifically over-indexes for the comics demographic. HowMonthly raffle: 1 PS5 winner. Entries earned by reading new pages (1 entry per tier-eligible week), referrals (5 entries per confirmed conversion), and Discord activity (1 entry per week active). KPI / proof pointReferral lift > 18% during raffle months"
+        "WhyHigh-perceived-value prizes generate disproportionate referral activity. PlayStation 5 specifically over-indexes for the comics demographic. HowMonthly sweepstakes: 1 PS5 winner. Entries earned by reading new pages (1 entry per tier-eligible week), referrals (5 entries per confirmed conversion), and Discord activity (1 entry per week active). KPI / proof pointReferral lift > 18% during sweepstakes months"
       ]
     ]
   },

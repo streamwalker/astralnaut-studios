@@ -398,7 +398,7 @@ export const STRATEGY: Block[] = [
   },
   {
     "k": "p",
-    "t": "Run the first \"Subscriber-Drawn Cameo\" raffle. Patron-tier subscribers eligible to be illustrated into a future panel. Promote heavily."
+    "t": "Run the first \"Subscriber-Drawn Cameo\" sweepstakes. Patron-tier subscribers eligible to be illustrated into a future panel. Promote heavily."
   },
   {
     "k": "p",
@@ -822,7 +822,7 @@ export const STRATEGY: Block[] = [
   },
   {
     "k": "p",
-    "t": "End of month: monthly raffle drawing (PlayStation, original art, signed prints, walk-on cameos). Tier-weighted entries."
+    "t": "End of month: monthly sweepstakes drawing (PlayStation, original art, signed prints, walk-on cameos). Tier-weighted entries."
   },
   {
     "k": "h2",
@@ -992,7 +992,7 @@ export const STRATEGY: Block[] = [
       [
         "Week 7",
         "Jul 2–8",
-        "Activate Reddit Ads test ($500). First monthly raffle drawing (PlayStation 5). First \"Founder Letter\" email."
+        "Activate Reddit Ads test ($500). First monthly sweepstakes drawing (PlayStation 5). First \"Founder Letter\" email."
       ],
       [
         "Week 8",
@@ -1165,7 +1165,7 @@ export const STRATEGY: Block[] = [
         "12%"
       ],
       [
-        "Cameo raffle entries/mo",
+        "Cameo sweepstakes entries/mo",
         "500",
         "4K",
         "35K",
@@ -1250,7 +1250,7 @@ export const STRATEGY: Block[] = [
         "$3,500"
       ],
       [
-        "Misc (raffles, prizes, PR)",
+        "Misc (sweepstakes, prizes, PR)",
         "$1,500"
       ],
       [

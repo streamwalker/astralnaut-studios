@@ -60,7 +60,7 @@ Hit **Restart guided tour** from the Help Center anytime. It points to every key
       summary: "Reader, Initiate, Patron — what each includes and how to switch.",
       body: `## The three tiers
 
-| Tier | Monthly | Annual | Raffle entries/week | Highlights |
+| Tier | Monthly | Annual | Sweepstakes entries/week | Highlights |
 |---|---|---|---|---|
 | Reader | $4.99 | $49.90 | 1 | Forum, canon voting |
 | Initiate | $9.99 | $99.90 | 3 | + numbered digital variants |
@@ -80,7 +80,7 @@ Pricing page → toggle billing cycle → pick a tier → checkout.`,
           answerIndex: 2,
         },
         {
-          q: "How many raffle entries per week does Initiate get?",
+          q: "How many sweepstakes entries per week does Initiate get?",
           options: ["1", "3", "10"],
           answerIndex: 1,
         },
@@ -129,8 +129,8 @@ Library → series → issue cover, or hit **Start reading** in the header for t
       ],
     },
     {
-      id: "04-raffles",
-      title: "Raffles, rewards & free entry",
+      id: "04-sweepstakes",
+      title: "Sweepstakes, rewards & free entry",
       summary: "Get the most out of weekly entries and the AMOE path.",
       body: `## Entries per tier
 
@@ -142,7 +142,7 @@ Entries are granted automatically each billing cycle.
 
 ## Free path (AMOE)
 
-No purchase necessary. Go to **/raffle/free-entry** and submit your details. Limits apply per the rules.
+No purchase necessary. Go to **/sweepstakes/free-entry** and submit your details. Limits apply per the rules.
 
 ## What you can win
 
@@ -150,16 +150,16 @@ Numbered variant covers, signed prints, original art, and cameos (Patron only).
 
 ## Rules
 
-The binding text lives at **/raffle/rules**.`,
+The binding text lives at **/sweepstakes/rules**.`,
       quiz: [
         {
-          q: "Do you have to subscribe to enter raffles?",
+          q: "Do you have to subscribe to enter sweepstakes?",
           options: ["Yes, always.", "No — the AMOE path is free.", "Only during launches."],
           answerIndex: 1,
         },
         {
           q: "Where do the official rules live?",
-          options: ["/help", "/raffle/rules", "Only in the email confirmation"],
+          options: ["/help", "/sweepstakes/rules", "Only in the email confirmation"],
           answerIndex: 1,
         },
         {

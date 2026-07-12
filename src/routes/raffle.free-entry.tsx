@@ -20,19 +20,19 @@ function isoWeekKey(d: Date = new Date()): string {
   return `${date.getUTCFullYear()}-W${String(weekNum).padStart(2, "0")}`;
 }
 
-export const Route = createFileRoute("/raffle/free-entry")({
+export const Route = createFileRoute("/sweepstakes/free-entry")({
   head: () => ({
     meta: [
-      { title: "Free raffle entry — Real World Comics" },
+      { title: "Free sweepstakes entry — Real World Comics" },
       {
         name: "description",
         content:
-          "Submit a free, no-purchase-necessary entry into the Real World Comics weekly raffle. One entry per email, per week.",
+          "Submit a free, no-purchase-necessary entry into the Real World Comics weekly sweepstakes. One entry per email, per week.",
       },
-      { property: "og:title", content: "Free raffle entry — Real World Comics" },
+      { property: "og:title", content: "Free sweepstakes entry — Real World Comics" },
       { property: "og:description", content: "No purchase necessary. One free entry per email, per week." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://astralnautstudios.com/raffle/free-entry" },
+      { property: "og:url", content: "https://astralnautstudios.com/sweepstakes/free-entry" },
       { property: "og:image", content: "https://astralnautstudios.com/__l5e/assets-v1/aad8fea5-618d-49b0-9d8d-e8d2cac107db/og-default.jpg" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
@@ -41,7 +41,7 @@ export const Route = createFileRoute("/raffle/free-entry")({
       { name: "twitter:image", content: "https://astralnautstudios.com/__l5e/assets-v1/aad8fea5-618d-49b0-9d8d-e8d2cac107db/og-default.jpg" },
       { name: "twitter:image:alt", content: "Real World Comics — Astralnaut Studios" },
     ],
-    links: [{ rel: "canonical", href: "https://astralnautstudios.com/raffle/free-entry" }],
+    links: [{ rel: "canonical", href: "https://astralnautstudios.com/sweepstakes/free-entry" }],
   }),
   component: FreeEntryPage,
 });
@@ -76,7 +76,7 @@ function FreeEntryPage() {
       }
       return;
     }
-    // Also capture as a lead so the free raffle grows the same re-engagement
+    // Also capture as a lead so the free sweepstakes grows the same re-engagement
     // list as the reader interstitial. Best-effort — does not block success.
     try {
       await captureLead({ data: { email: lowered, source: "free_raffle" } });
@@ -93,9 +93,9 @@ function FreeEntryPage() {
       <SiteHeader />
       <main className="mx-auto max-w-2xl px-6 py-16">
         <div className="eyebrow">No purchase necessary</div>
-        <h1 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">Free weekly raffle entry</h1>
+        <h1 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">Free weekly sweepstakes entry</h1>
         <p className="mt-4 text-[var(--ink2)]">
-          You do not need to subscribe to enter the Real World Comics weekly raffle. Submit one free entry per week using
+          You do not need to subscribe to enter the Real World Comics weekly sweepstakes. Submit one free entry per week using
           the form below. Subscribers receive additional automatic entries as a perk of their tier.
         </p>
 
@@ -132,7 +132,7 @@ function FreeEntryPage() {
 
         <p className="mt-6 text-xs text-[var(--mute)]">
           By entering, you agree to the{" "}
-          <Link to="/raffle/rules" className="underline hover:text-[var(--neon)]">official rules</Link>.
+          <Link to="/sweepstakes/rules" className="underline hover:text-[var(--neon)]">official rules</Link>.
           One free entry per email per calendar week. Open only where permitted by law.
         </p>
       </main>

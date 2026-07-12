@@ -89,7 +89,7 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
 }
 
 async function handleInvoicePaid(invoice: any, env: StripeEnv) {
-  // Grant weekly raffle entries when an invoice is paid (renewal or initial)
+  // Grant weekly sweepstakes entries when an invoice is paid (renewal or initial)
   const userId = invoice.subscription_details?.metadata?.userId
     || invoice.parent?.subscription_details?.metadata?.userId;
   const subId = invoice.subscription || invoice.parent?.subscription_details?.subscription;

@@ -12,13 +12,13 @@ export const readerHelp: HelpTrack = {
       summary: "What the platform is, who it's for, and how to get the most out of it.",
       body: `## What is Astralnaut Studios?
 
-Astralnaut Studios is a creator-direct comics platform. New pages drop here first, you can vote on canon, win original art through raffles, and support creators directly through tiered subscriptions.
+Astralnaut Studios is a creator-direct comics platform. New pages drop here first, you can vote on canon, win original art through sweepstakes, and support creators directly through tiered subscriptions.
 
 ## What you can do as a reader
 
 - **Read** ongoing series in the in-browser reader.
-- **Subscribe** to unlock premium issues and raffle entries.
-- **Enter raffles** for cameos, signed prints, and exclusive variant covers.
+- **Subscribe** to unlock premium issues and sweepstakes entries.
+- **Enter sweepstakes** for cameos, signed prints, and exclusive variant covers.
 - **Vote** on community canon decisions.
 - **Earn** patron perks like quarterly signed physical prints.
 
@@ -42,7 +42,7 @@ Astralnaut Studios is a creator-direct comics platform. New pages drop here firs
 
 ## Sign in later
 
-Use the same **Sign in** link. Your reading progress, raffle entries, and subscription stay attached to your account.
+Use the same **Sign in** link. Your reading progress, sweepstakes entries, and subscription stay attached to your account.
 
 ## Trouble signing in?
 
@@ -103,9 +103,9 @@ From the library, pick a series, then click an issue cover. Or use the **Start r
       summary: "Reader, Initiate, and Patron — what's included and how to pick.",
       body: `## The three tiers
 
-- **Reader — $4.99/mo or $49.90/yr.** Forum access, canon voting, 1 raffle entry per week.
-- **Initiate — $9.99/mo or $99.90/yr.** 3 raffle entries per week, numbered digital variant covers.
-- **Patron — $24.99/mo or $249.90/yr.** 10 raffle entries per week, cameo eligibility, quarterly signed physical print, and direct creator Discord access.
+- **Reader — $4.99/mo or $49.90/yr.** Forum access, canon voting, 1 sweepstakes entry per week.
+- **Initiate — $9.99/mo or $99.90/yr.** 3 sweepstakes entries per week, numbered digital variant covers.
+- **Patron — $24.99/mo or $249.90/yr.** 10 sweepstakes entries per week, cameo eligibility, quarterly signed physical print, and direct creator Discord access.
 
 ## Monthly vs annual
 
@@ -117,7 +117,7 @@ Annual plans give you ~2 months free. You can switch any time from your account.
 2. Toggle **Monthly** or **Annual**.
 3. Click the tier you want — checkout opens in a secure window.
 4. After payment, your perks unlock immediately.`,
-      related: ["manage-subscription", "raffle-entries", "patron-perks"],
+      related: ["manage-subscription", "sweepstakes-entries", "patron-perks"],
     },
     {
       slug: "manage-subscription",
@@ -143,9 +143,9 @@ Contact us through the support link in the portal. We handle refunds case-by-cas
       related: ["choose-tier"],
     },
     {
-      slug: "raffle-entries",
-      title: "How raffles work",
-      category: "Raffles & Rewards",
+      slug: "sweepstakes-entries",
+      title: "How sweepstakes work",
+      category: "Sweepstakes & Rewards",
       summary: "Entry counts per tier, what you can win, and how winners are picked.",
       body: `## Entries per tier
 
@@ -164,36 +164,36 @@ Entries are granted automatically each billing cycle.
 
 ## How winners are drawn
 
-Drawings happen on a fixed schedule, audited and random. See **Raffle rules** for full mechanics, eligibility, and odds.`,
-      related: ["amoe", "raffle-rules"],
+Drawings happen on a fixed schedule, audited and random. See **Sweepstakes rules** for full mechanics, eligibility, and odds.`,
+      related: ["amoe", "sweepstakes-rules"],
     },
     {
       slug: "amoe",
       title: "Free entry (no purchase necessary)",
-      category: "Raffles & Rewards",
-      summary: "How to enter raffles without subscribing — Alternate Method of Entry.",
+      category: "Sweepstakes & Rewards",
+      summary: "How to enter sweepstakes without subscribing — Alternate Method of Entry.",
       body: `## The free path
 
 We offer a free Alternate Method of Entry (AMOE) so anyone can participate.
 
 ## How to enter
 
-1. Go to **/raffle/free-entry**.
+1. Go to **/sweepstakes/free-entry**.
 2. Fill in your details.
 3. Submit — your entry is logged the same way a paid one is.
 
 ## Rules
 
 - Limits apply per person and per period.
-- Full eligibility, drawing dates, and prize details live on the **Raffle rules** page.`,
-      related: ["raffle-entries", "raffle-rules"],
+- Full eligibility, drawing dates, and prize details live on the **Sweepstakes rules** page.`,
+      related: ["sweepstakes-entries", "sweepstakes-rules"],
     },
     {
-      slug: "raffle-rules",
-      title: "Raffle rules (full text)",
-      category: "Raffles & Rewards",
+      slug: "sweepstakes-rules",
+      title: "Sweepstakes rules (full text)",
+      category: "Sweepstakes & Rewards",
       summary: "Official rules, eligibility, odds, and prize details.",
-      body: `The full official rules are published at **/raffle/rules**. They cover:
+      body: `The full official rules are published at **/sweepstakes/rules**. They cover:
 
 - Eligibility (age, location)
 - Entry periods and drawing dates
@@ -258,7 +258,7 @@ All paid tiers. Free accounts can read forum threads but not vote on canon decis
 
 - Email and login info.
 - Subscription status and history.
-- Raffle entries.
+- Sweepstakes entries.
 - Reading progress.
 - Shipping address (Patron only).
 

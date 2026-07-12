@@ -186,8 +186,8 @@ export function SiteFooter() {
           { to: "/perks", label: "Your perks" },
           { to: "/account", label: "Your account" },
           { to: "/login", label: "Sign in" },
-          { to: "/raffle/free-entry", label: "Free raffle entry" },
-          { to: "/raffle/rules", label: "Raffle rules" },
+          { to: "/sweepstakes/free-entry", label: "Free sweepstakes entry" },
+          { to: "/sweepstakes/rules", label: "Sweepstakes rules" },
         ]} />
         <FooterCol title="Learn" links={[
           { to: "/help", label: "Help Center" },

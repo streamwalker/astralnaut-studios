@@ -22,10 +22,10 @@ export const Route = createFileRoute("/pricing")({
       {
         name: "description",
         content:
-          "Three subscription tiers, monthly or annual. Reader $4.99, Initiate $9.99, Patron $24.99. Tier-staggered weekly drops, raffles, canon voting. Free no-purchase raffle entry available.",
+          "Three subscription tiers, monthly or annual. Reader $4.99, Initiate $9.99, Patron $24.99. Tier-staggered weekly drops, sweepstakes, canon voting. Free no-purchase sweepstakes entry available.",
       },
       { property: "og:title", content: "Real World Comics — Pricing" },
-      { property: "og:description", content: "Three tiers. Monthly or annual. Tier-staggered weekly drops, raffles, canon voting." },
+      { property: "og:description", content: "Three tiers. Monthly or annual. Tier-staggered weekly drops, sweepstakes, canon voting." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${SITE_URL}/pricing` },
       { property: "og:image", content: OG_DEFAULT_IMAGE },
@@ -207,10 +207,10 @@ function Pricing() {
           Tier-staggered drops: Patron Tuesday · Initiate Wednesday · Reader Thursday. Cancel anytime from your account.
         </p>
         <p className="mt-3 text-center text-xs text-[var(--mute)]">
-          No purchase necessary to enter the weekly raffle.{" "}
-          <Link to="/raffle/free-entry" className="underline hover:text-[var(--neon)]">Free entry form</Link>
+          No purchase necessary to enter the weekly sweepstakes.{" "}
+          <Link to="/sweepstakes/free-entry" className="underline hover:text-[var(--neon)]">Free entry form</Link>
           {" · "}
-          <Link to="/raffle/rules" className="underline hover:text-[var(--neon)]">Official rules</Link>
+          <Link to="/sweepstakes/rules" className="underline hover:text-[var(--neon)]">Official rules</Link>
         </p>
 
         {isOpen && (

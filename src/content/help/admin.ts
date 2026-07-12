@@ -60,7 +60,7 @@ Currently series are wired in code under \`src/routes/\`. To add a new series, d
 
 ## Recommended cadence
 
-- **Weekly:** check subscription growth, raffle entries, and forum activity.
+- **Weekly:** check subscription growth, sweepstakes entries, and forum activity.
 - **Monthly:** review tier conversion and run one promotion from the playbook.
 - **Quarterly:** ship a tentpole event (variant cover drop, cameo announcement).`,
       related: ["subscriptions-dashboard"],
@@ -78,12 +78,12 @@ Subscription state is mirrored from Stripe into the **subscriptions** table by t
 
 - **Active by tier** — Reader / Initiate / Patron split.
 - **Cancellations this period** — flag if it spikes.
-- **Raffle entries granted** — should match active subs × weekly entries.`,
+- **Sweepstakes entries granted** — should match active subs × weekly entries.`,
       related: ["stripe-modes", "webhook-troubleshooting"],
     },
     {
-      slug: "raffle-admin",
-      title: "Raffle entries & winners",
+      slug: "sweepstakes-admin",
+      title: "Sweepstakes entries & winners",
       category: "Operations",
       summary: "Audit entries, run a drawing, and notify winners.",
       body: `## Entries
@@ -99,7 +99,7 @@ Every entry — paid or AMOE — lives in the **raffle_entries** table with a \`
 
 ## Compliance
 
-Always honor the published rules at **/raffle/rules** and the AMOE path. Keep an audit trail.`,
+Always honor the published rules at **/sweepstakes/rules** and the AMOE path. Keep an audit trail.`,
       related: ["subscriptions-dashboard"],
     },
     {
@@ -128,7 +128,7 @@ The platform manages the live switch through the connector. Re-confirm products 
       body: `## Symptoms
 
 - A user paid but the tier didn't unlock.
-- Raffle entries weren't granted.
+- Sweepstakes entries weren't granted.
 - A cancellation isn't reflected.
 
 ## Where to look

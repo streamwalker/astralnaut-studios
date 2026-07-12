@@ -11,7 +11,7 @@ export const Route = createFileRoute("/help")({
       {
         name: "description",
         content:
-          "Searchable guides for readers: account, subscriptions, raffles, patron perks, and more.",
+          "Searchable guides for readers: account, subscriptions, sweepstakes, patron perks, and more.",
       },
       { property: "og:title", content: "Help Center — Astralnaut Studios" },
       {
