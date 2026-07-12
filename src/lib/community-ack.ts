@@ -25,13 +25,15 @@ export async function hasCommunityAck(): Promise<boolean> {
   if (!user.user) return false;
   const { data } = await supabase
     .from("consent_events")
-    .select("id")
+    .select("id, metadata")
     .eq("user_id", user.user.id)
     .eq("event_type", "community_guidelines_ack")
-    .eq("document_version", version())
-    .limit(1)
-    .maybeSingle();
-  const ack = Boolean(data);
+    .order("created_at", { ascending: false })
+    .limit(5);
+  const ack = Boolean((data ?? []).find((r) => {
+    const meta = (r.metadata ?? {}) as Record<string, unknown>;
+    return meta.version === version();
+  }));
   if (ack && typeof window !== "undefined") {
     try { localStorage.setItem(LOCAL_ACK_KEY, version()); } catch { /* ignore */ }
   }
@@ -44,10 +46,9 @@ export async function recordCommunityAck(): Promise<void> {
   await supabase.from("consent_events").insert({
     user_id: user.user.id,
     event_type: "community_guidelines_ack",
-    document_slug: "community-guidelines",
-    document_version: version(),
     consent_text: "I have read and agree to the Community Guidelines.",
     user_agent: typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 500) : null,
+    metadata: { slug: "community-guidelines", version: version() },
   } as never);
   if (typeof window !== "undefined") {
     try { localStorage.setItem(LOCAL_ACK_KEY, version()); } catch { /* ignore */ }
