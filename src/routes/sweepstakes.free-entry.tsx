@@ -1,151 +1,63 @@
-import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { z } from "zod";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
-import { supabase } from "@/integrations/supabase/client";
-import { submitLead } from "@/lib/leads.functions";
-
-const schema = z.object({
-  name: z.string().trim().min(1, "Name required").max(200),
-  email: z.string().trim().email("Valid email required").max(320),
-});
-
-function isoWeekKey(d: Date = new Date()): string {
-  const date = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
-  const dayNum = date.getUTCDay() || 7;
-  date.setUTCDate(date.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
-  const weekNum = Math.ceil((((date.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-  return `${date.getUTCFullYear()}-W${String(weekNum).padStart(2, "0")}`;
-}
+import { OG_DEFAULT_IMAGE, OG_DEFAULT_ALT, OG_DEFAULT_WIDTH, OG_DEFAULT_HEIGHT, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/sweepstakes/free-entry")({
   head: () => ({
     meta: [
-      { title: "Free sweepstakes entry — Real World Comics" },
+      { title: "Weekly Sweepstakes — Free Entry · Real World Comics" },
       {
         name: "description",
         content:
-          "Submit a free, no-purchase-necessary entry into the Real World Comics weekly sweepstakes. One entry per email, per week.",
+          "The Weekly Sweepstakes is not currently open. When it opens, free entry (AMOE) will be available here on equal-odds terms.",
       },
-      { property: "og:title", content: "Free sweepstakes entry — Real World Comics" },
-      { property: "og:description", content: "No purchase necessary. One free entry per email, per week." },
+      { property: "og:title", content: "Weekly Sweepstakes — Free Entry" },
+      { property: "og:description", content: "Not currently open. Free entry (AMOE) will be available here when the promotion begins." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://astralnautstudios.com/sweepstakes/free-entry" },
-      { property: "og:image", content: "https://astralnautstudios.com/__l5e/assets-v1/aad8fea5-618d-49b0-9d8d-e8d2cac107db/og-default.jpg" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { property: "og:image:alt", content: "Real World Comics — Astralnaut Studios" },
+      { property: "og:url", content: `${SITE_URL}/sweepstakes/free-entry` },
+      { property: "og:image", content: OG_DEFAULT_IMAGE },
+      { property: "og:image:width", content: OG_DEFAULT_WIDTH },
+      { property: "og:image:height", content: OG_DEFAULT_HEIGHT },
+      { property: "og:image:alt", content: OG_DEFAULT_ALT },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://astralnautstudios.com/__l5e/assets-v1/aad8fea5-618d-49b0-9d8d-e8d2cac107db/og-default.jpg" },
-      { name: "twitter:image:alt", content: "Real World Comics — Astralnaut Studios" },
+      { name: "twitter:image", content: OG_DEFAULT_IMAGE },
+      { name: "twitter:image:alt", content: OG_DEFAULT_ALT },
+      { name: "robots", content: "noindex" },
     ],
-    links: [{ rel: "canonical", href: "https://astralnautstudios.com/sweepstakes/free-entry" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/sweepstakes/free-entry` }],
   }),
   component: FreeEntryPage,
 });
 
 function FreeEntryPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<{ kind: "idle" | "loading" | "ok" | "err"; msg?: string }>({ kind: "idle" });
-  const captureLead = useServerFn(submitLead);
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus({ kind: "loading" });
-    const parsed = schema.safeParse({ name, email });
-    if (!parsed.success) {
-      setStatus({ kind: "err", msg: parsed.error.issues[0]?.message ?? "Invalid input" });
-      return;
-    }
-    const week = isoWeekKey();
-    const lowered = parsed.data.email.toLowerCase();
-    const { error } = await supabase.from("raffle_entries").insert({
-      name: parsed.data.name,
-      email: lowered,
-      week_key: week,
-      source: "amoe",
-    });
-    if (error) {
-      if (error.code === "23505") {
-        setStatus({ kind: "err", msg: "This email has already entered this week. Come back next week!" });
-      } else {
-        setStatus({ kind: "err", msg: "Could not submit entry. Please try again." });
-      }
-      return;
-    }
-    // Also capture as a lead so the free sweepstakes grows the same re-engagement
-    // list as the reader interstitial. Best-effort — does not block success.
-    try {
-      await captureLead({ data: { email: lowered, source: "free_raffle" } });
-    } catch (e) {
-      console.warn("lead capture failed", e);
-    }
-    setStatus({ kind: "ok", msg: `Entry received for week ${week}. Check your inbox to confirm drop alerts. Good luck!` });
-    setName("");
-    setEmail("");
-  };
-
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-2xl px-6 py-16">
-        <div className="eyebrow">No purchase necessary</div>
-        <h1 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">Free weekly sweepstakes entry</h1>
-        <p className="mt-4 text-[var(--ink2)]">
-          You do not need to subscribe to enter the Real World Comics weekly sweepstakes. Submit one free entry per week using
-          the form below. Subscribers receive additional automatic entries as a perk of their tier.
-        </p>
+      <main className="mx-auto max-w-2xl px-6 py-24">
+        <div className="eyebrow">Weekly Sweepstakes</div>
+        <h1 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">Free entry</h1>
 
-        <form onSubmit={submit} className="card-rwc mt-8 space-y-4 p-6">
-          <Field label="Your name">
-            <input
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              maxLength={200}
-              className="w-full rounded-md border border-[var(--border-line)] bg-transparent px-3 py-2 text-sm text-[var(--ink)] focus:border-[var(--neon)] focus:outline-none"
-            />
-          </Field>
-          <Field label="Email">
-            <input
-              required
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              maxLength={320}
-              className="w-full rounded-md border border-[var(--border-line)] bg-transparent px-3 py-2 text-sm text-[var(--ink)] focus:border-[var(--neon)] focus:outline-none"
-            />
-          </Field>
-          <button type="submit" disabled={status.kind === "loading"} className="btn-cta w-full justify-center">
-            {status.kind === "loading" ? "Submitting…" : "Submit free entry"}
-          </button>
-          {status.kind === "ok" && (
-            <p className="text-sm text-[var(--neon)]">{status.msg}</p>
-          )}
-          {status.kind === "err" && (
-            <p className="text-sm text-[var(--plasma)]">{status.msg}</p>
-          )}
-        </form>
+        <div className="mt-8 rounded-lg border border-[var(--border-line)] bg-black/30 p-6 text-[var(--ink2)]">
+          <p className="text-lg font-semibold text-[var(--ink)]">
+            The Weekly Sweepstakes is not currently open.
+          </p>
+          <p className="mt-3 text-sm">
+            Free entry (AMOE) will be available here on equal-odds terms when the promotion
+            begins. See the{" "}
+            <Link to="/sweepstakes/rules" className="underline hover:text-[var(--neon)]">
+              Official Rules
+            </Link>{" "}
+            page for updates.
+          </p>
+        </div>
 
-        <p className="mt-6 text-xs text-[var(--mute)]">
-          By entering, you agree to the{" "}
-          <Link to="/sweepstakes/rules" className="underline hover:text-[var(--neon)]">official rules</Link>.
-          One free entry per email per calendar week. Open only where permitted by law.
+        <p className="mt-8 text-xs text-[var(--mute)]">
+          NO PURCHASE NECESSARY. A PURCHASE WILL NOT INCREASE YOUR CHANCES OF WINNING. Open to legal
+          residents of the 50 United States and District of Columbia who are 18 or older. Void where
+          prohibited. See Official Rules.
         </p>
       </main>
       <SiteFooter />
     </>
-  );
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block">
-      <span className="text-[10px] font-bold uppercase tracking-[2px] text-[var(--mute)]">{label}</span>
-      <div className="mt-1">{children}</div>
-    </label>
   );
 }
