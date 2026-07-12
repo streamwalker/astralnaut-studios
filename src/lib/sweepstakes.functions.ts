@@ -548,7 +548,7 @@ export const advanceToAlternate = createServerFn({ method: "POST" })
         winner_status: "pending",
         winner_notified_at: null,
         winner_response_deadline: deadline,
-        audit_record: audit,
+        audit_record: audit as unknown as Record<string, unknown>,
       })
       .eq("id", drawing.id)
       .select()
