@@ -168,8 +168,12 @@ export const closeMilestonePeriod = createServerFn({ method: "POST" })
       );
     }
 
+    const prevSnapshot =
+      row.activation_snapshot && typeof row.activation_snapshot === "object" && !Array.isArray(row.activation_snapshot)
+        ? (row.activation_snapshot as Record<string, unknown>)
+        : {};
     const snapshot = {
-      ...(row.activation_snapshot ?? {}),
+      ...prevSnapshot,
       closed_by: context.userId,
       observed_subscriber_count: data.observedSubscriberCount,
       closed_at_utc: new Date().toISOString(),
