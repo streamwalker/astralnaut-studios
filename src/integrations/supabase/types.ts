@@ -510,6 +510,60 @@ export type Database = {
         }
         Relationships: []
       }
+      dsar_requests: {
+        Row: {
+          authorized_agent: boolean
+          created_at: string
+          details: string | null
+          id: string
+          ip: unknown
+          reference_id: string
+          region: string | null
+          request_type: string
+          requester_email: string
+          response_notes: string | null
+          status: string
+          updated_at: string
+          user_agent: string | null
+          user_id: string | null
+          verification_status: string
+        }
+        Insert: {
+          authorized_agent?: boolean
+          created_at?: string
+          details?: string | null
+          id?: string
+          ip?: unknown
+          reference_id?: string
+          region?: string | null
+          request_type: string
+          requester_email: string
+          response_notes?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string | null
+          verification_status?: string
+        }
+        Update: {
+          authorized_agent?: boolean
+          created_at?: string
+          details?: string | null
+          id?: string
+          ip?: unknown
+          reference_id?: string
+          region?: string | null
+          request_type?: string
+          requester_email?: string
+          response_notes?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string | null
+          verification_status?: string
+        }
+        Relationships: []
+      }
       factions: {
         Row: {
           acro: string | null
