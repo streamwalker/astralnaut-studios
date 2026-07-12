@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { RightsNotice } from "@/components/rights-notice";
+import { Indicia } from "@/components/indicia";
 import { getIssueBundle } from "@/lib/public.functions";
 import { logStorageAccess } from "@/lib/storage-access.functions";
 import { supabase } from "@/integrations/supabase/client";
