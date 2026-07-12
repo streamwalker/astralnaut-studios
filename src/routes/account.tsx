@@ -378,7 +378,7 @@ function AccountPage() {
             <Perk title="Motion + sound" body="Pages with parallax, ambient score, and SFX. Optional — read silently any time." />
             <Perk title="Tier-staggered drops" body="Your tier decides when you get the next page. Patron first." />
             <Perk title="Canon voting" body="Readers vote on branching beats. Outcomes show up in print." />
-            <Perk title="Sweepstakes + cameos" body={`${tier ? tier.entries : 1} sweepstakes entries per active week. Patron tier = cameo eligibility.`} />
+            <Perk title="Sweepstakes + cameos" body="Every 10,000-subscriber milestone triggers a 14-day sweepstakes window. Every paid tier is eligible; free (AMOE) entrants can match. Patron tier = cameo eligibility." />
           </div>
         </section>
 
@@ -391,8 +391,9 @@ function AccountPage() {
               <div className="text-[10px] font-bold uppercase tracking-[3px]" style={{ color: "var(--gold)" }}>Marquee prize</div>
               <h2 className="mt-2 text-3xl font-black md:text-4xl">PlayStation 5 unlocks at 1,000 subscribers.</h2>
               <p className="mt-3 text-[var(--ink2)]">
-                Every active subscription week earns sweepstakes entries — {tier?.entries ?? 1} per week at your tier.
-                No subscription? You can still enter for free, once per cycle.
+                Sweepstakes windows open each time the platform crosses a 10,000-subscriber milestone
+                and run for 14 days. Every eligible person — subscriber or free (AMOE) — can enter up
+                to the same maximum. No purchase necessary.
               </p>
             </div>
             <div className="flex flex-col gap-3">
