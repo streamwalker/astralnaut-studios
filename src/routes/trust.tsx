@@ -1,78 +1,57 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { SiteHeader, SiteFooter } from "@/components/site-header";
-import { LEGAL } from "@/lib/legal-meta";
+import { LegalPage, metaFor } from "@/components/legal-page";
+import { LEGAL_CONFIG } from "@/config/legal";
 
 export const Route = createFileRoute("/trust")({
-  head: () => ({
-    meta: [
-      { title: "Trust & Security — Real World Comics" },
-      { name: "description", content: "How Streamwalkers Corporation protects your data: encryption, access controls, subprocessors, retention, and how to report a vulnerability." },
-      { property: "og:title", content: "Trust & Security — Real World Comics" },
-      { property: "og:description", content: "Security and privacy practices for astralnautstudios.com." },
-    ],
+  head: () => metaFor({
+    title: "Trust Center — Streamwalkers Corporation",
+    description: "Every legal, privacy, security, and compliance policy for AstralnautStudios.com, in one place.",
+    path: "/trust",
   }),
   component: TrustPage,
 });
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="mt-10">
-      <h2 className="text-xs font-bold uppercase tracking-[3px]" style={{ color: "var(--gold)" }}>{title}</h2>
-      <div className="mt-3 space-y-3 text-sm leading-relaxed text-[var(--mute)]">{children}</div>
-    </section>
-  );
-}
+const LINKS: Array<{ to: string; label: string; blurb: string }> = [
+  { to: "/terms",                    label: "Terms of Service",                blurb: "The contract that governs your access and use of the Service." },
+  { to: "/subscription-policy",      label: "Subscription & Billing Policy",   blurb: "How renewals, cancellation, refunds, and price changes work." },
+  { to: "/privacy",                  label: "Privacy Policy",                  blurb: "What personal information we collect and how it is used." },
+  { to: "/cookies",                  label: "Cookie Policy",                   blurb: "Necessary and optional cookies, and how to change your choices." },
+  { to: "/community-guidelines",     label: "Community Guidelines",            blurb: "Rules for participating in comments, letters, and Discord." },
+  { to: "/copyright-dmca",           label: "Copyright & DMCA Policy",         blurb: "How to report copyright infringement; DMCA agent contact." },
+  { to: "/sweepstakes/rules",        label: "Milestone Sweepstakes Rules",     blurb: "Standing template Official Rules — no promotion currently open." },
+  { to: "/canon-cameo-terms",        label: "Canon & Cameo Terms",             blurb: "How canon voting and cameo eligibility work; no rights transfer." },
+  { to: "/unsolicited-submissions",  label: "Unsolicited Submissions Policy",  blurb: "We do not accept unsolicited pitches, scripts, or artwork." },
+  { to: "/content-accessibility",    label: "Content & Accessibility Notice",  blurb: "Fiction notice, content advisories, accessibility commitments." },
+  { to: "/shipping-returns",         label: "Shipping & Returns",              blurb: "Delivery, taxes, and returns for physical merchandise." },
+  { to: "/subprocessors",            label: "Subprocessors",                   blurb: "Vendors that process data on our behalf." },
+  { to: "/corporate",                label: "Corporate Information",           blurb: "Legal entity, mailing address, and contact directory." },
+  { to: "/dsar",                     label: "Your Privacy Rights",             blurb: "Submit an access, correction, deletion, or opt-out request." },
+];
 
 function TrustPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
-      <main className="mx-auto max-w-3xl px-6 py-16">
-        <h1 className="text-3xl font-black text-[var(--ink)] md:text-5xl">Trust & Security</h1>
-        <p className="mt-4 text-sm text-[var(--mute)]">
-          This page is maintained by {LEGAL.entity} to answer common security and privacy questions about {LEGAL.site}. It describes practices that are live today. It is not an independent audit or certification.
-        </p>
+    <LegalPage
+      title="Trust Center"
+      eyebrow="Streamwalkers Corporation"
+      effective={LEGAL_CONFIG.documents.terms.effective}
+      canonical="/trust"
+    >
+      <p>Every legal, privacy, security, and compliance document for {LEGAL_CONFIG.site} in one place. This page is maintained by Streamwalkers Corporation to answer common security and privacy questions about the Astralnaut Studios and Real World Comics services. It is not an independent certification.</p>
 
-        <Section title="Access & Authentication">
-          <p>Reader accounts use email-and-password or Google sign-in via our authentication provider. Passwords are never stored in plaintext — they are hashed by the provider.</p>
-          <p>Admin access to publishing tools is gated by a role table checked on every privileged request, with all admin actions traceable to a signed-in user.</p>
-        </Section>
+      <h2>Security contact</h2>
+      <p>Report a vulnerability or security concern to <a href={`mailto:${LEGAL_CONFIG.contacts.security}`} className="underline">{LEGAL_CONFIG.contacts.security}</a>. Please provide enough detail to reproduce the issue. Do not perform testing that would degrade service or expose other users’ data.</p>
+      <p>See also: <a href="/.well-known/security.txt" className="underline">security.txt</a>.</p>
 
-        <Section title="Hosting & Encryption">
-          <p>The site is delivered over HTTPS (TLS 1.2+) by Cloudflare. Application data is stored in a managed Postgres database with encryption at rest provided by our cloud provider. Payment card data is tokenized by Stripe and never reaches our servers.</p>
-        </Section>
-
-        <Section title="What we collect">
-          <p>Account email, optional display name, subscription/order history, comments and votes you submit, and basic analytics (pages viewed, anonymized visit metadata) to operate and improve the service. See the <Link to="/privacy" className="underline">Privacy Policy</Link> for a full list.</p>
-        </Section>
-
-        <Section title="Subprocessors">
-          <p>We use a small set of vendors to run the service. See the <Link to="/subprocessors" className="underline">Subprocessors list</Link> for current providers, what they do, and where they process data.</p>
-        </Section>
-
-        <Section title="Cookies & analytics">
-          <p>Essential cookies keep you signed in and remember your cart. Optional analytics cookies are off until you accept them, and we automatically honor the Global Privacy Control (GPC) signal as an opt-out. Details in the <Link to="/cookies" className="underline">Cookie Policy</Link>.</p>
-        </Section>
-
-        <Section title="Retention & deletion">
-          <p>We keep account and order data for as long as your account is active, plus a limited window afterward to meet tax and dispute obligations. Visitor analytics are kept on a short rolling window. You can request access, correction, or deletion at any time via our <Link to="/dsar" className="underline">privacy request form</Link>.</p>
-        </Section>
-
-        <Section title="Privacy & data rights">
-          <p>If you live in the EU, UK, California, or another jurisdiction with a comprehensive privacy law, you have rights of access, correction, deletion, portability, and opt-out of "sale" or "sharing." Use the <Link to="/dsar" className="underline">privacy request form</Link> to exercise them. Read the <Link to="/privacy" className="underline">Privacy Policy</Link> for the full notice.</p>
-        </Section>
-
-        <Section title="Report a vulnerability">
-          <p>We welcome coordinated disclosure from security researchers. Email <a className="underline" href={`mailto:${LEGAL.securityEmail}`}>{LEGAL.securityEmail}</a> with reproduction steps. Please give us a reasonable window to remediate before public disclosure. Our machine-readable contact lives at <a className="underline" href="/.well-known/security.txt">/.well-known/security.txt</a>.</p>
-        </Section>
-
-        <Section title="Compliance posture">
-          <p>{LEGAL.entity} is a direct-to-consumer digital comics publisher. We are <strong>not</strong> currently audited under SOC 2, ISO 27001, HIPAA, PCI DSS Level 1, FedRAMP, HITRUST, CMMC, TISAX, NIS 2, or DORA, and we make no such claims. We process card payments through Stripe under SAQ-A scope. We will publish updates here if our certification status changes.</p>
-        </Section>
-
-        <p className="mt-12 text-xs text-[var(--fg-muted)]">Last updated {LEGAL.effectiveDate}. Questions: <a className="underline" href={`mailto:${LEGAL.privacyEmail}`}>{LEGAL.privacyEmail}</a>.</p>
-      </main>
-      <SiteFooter />
-    </div>
+      <h2>Policies</h2>
+      <ul>
+        {LINKS.map((l) => (
+          <li key={l.to}>
+            <Link to={l.to} className="text-[var(--ink)] underline">{l.label}</Link>
+            {" — "}
+            <span>{l.blurb}</span>
+          </li>
+        ))}
+      </ul>
+    </LegalPage>
   );
 }

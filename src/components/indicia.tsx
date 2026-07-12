@@ -33,6 +33,9 @@ export function Indicia({
       <p>© {publicationYear} Streamwalkers Corporation. All rights reserved.</p>
       <p>Available exclusively through the Astralnaut Studios subscription service.</p>
       <p>ISSN (Online): {issnDisplay}</p>
+      <p className="mt-2 max-w-[70ch] mx-auto italic">
+        The stories, characters, organizations, technologies, and events presented by Astralnaut Studios and Real World Comics are fictional or used fictitiously. Any resemblance to actual persons, organizations, or events is coincidental unless expressly identified as historical commentary.
+      </p>
     </section>
   );
 }
