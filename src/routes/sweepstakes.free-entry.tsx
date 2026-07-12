@@ -5,13 +5,13 @@ import { OG_DEFAULT_IMAGE, OG_DEFAULT_ALT, OG_DEFAULT_WIDTH, OG_DEFAULT_HEIGHT, 
 export const Route = createFileRoute("/sweepstakes/free-entry")({
   head: () => ({
     meta: [
-      { title: "Weekly Sweepstakes — Free Entry · Real World Comics" },
+      { title: "Milestone Sweepstakes — Free Entry · Real World Comics" },
       {
         name: "description",
         content:
-          "The Weekly Sweepstakes is not currently open. When it opens, free entry (AMOE) will be available here on equal-odds terms.",
+          "The Milestone Sweepstakes is not currently open. When it opens, free entry (AMOE) will be available here on equal-odds terms.",
       },
-      { property: "og:title", content: "Weekly Sweepstakes — Free Entry" },
+      { property: "og:title", content: "Milestone Sweepstakes — Free Entry" },
       { property: "og:description", content: "Not currently open. Free entry (AMOE) will be available here when the promotion begins." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${SITE_URL}/sweepstakes/free-entry` },
@@ -34,12 +34,12 @@ function FreeEntryPage() {
     <>
       <SiteHeader />
       <main className="mx-auto max-w-2xl px-6 py-24">
-        <div className="eyebrow">Weekly Sweepstakes</div>
+        <div className="eyebrow">Milestone Sweepstakes</div>
         <h1 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">Free entry</h1>
 
         <div className="mt-8 rounded-lg border border-[var(--border-line)] bg-black/30 p-6 text-[var(--ink2)]">
           <p className="text-lg font-semibold text-[var(--ink)]">
-            The Weekly Sweepstakes is not currently open.
+            The Milestone Sweepstakes is not currently open.
           </p>
           <p className="mt-3 text-sm">
             Free entry (AMOE) will be available here on equal-odds terms when the promotion

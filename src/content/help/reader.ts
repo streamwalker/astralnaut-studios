@@ -103,9 +103,9 @@ From the library, pick a series, then click an issue cover. Or use the **Start r
       summary: "Reader, Initiate, and Patron — what's included and how to pick.",
       body: `## The three tiers
 
-- **Reader — $4.99/mo or $49.90/yr.** Forum access, canon voting, 1 sweepstakes entry per week.
-- **Initiate — $9.99/mo or $99.90/yr.** 3 sweepstakes entries per week, numbered digital variant covers.
-- **Patron — $24.99/mo or $249.90/yr.** 10 sweepstakes entries per week, cameo eligibility, quarterly signed physical print, and direct creator Discord access.
+- **Reader — $4.99/mo or $49.90/yr.** Forum access, canon voting, Eligible for milestone sweepstakes.
+- **Initiate — $9.99/mo or $99.90/yr.** Eligible for milestone sweepstakes, numbered digital variant covers.
+- **Patron — $24.99/mo or $249.90/yr.** Eligible for milestone sweepstakes, cameo eligibility, quarterly signed physical print, and direct creator Discord access.
 
 ## Monthly vs annual
 
