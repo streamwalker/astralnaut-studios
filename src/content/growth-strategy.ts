@@ -822,7 +822,7 @@ export const STRATEGY: Block[] = [
   },
   {
     "k": "p",
-    "t": "End of month: monthly sweepstakes drawing (PlayStation, original art, signed prints, walk-on cameos). Tier-weighted entries."
+    "t": "End of month: monthly sweepstakes drawing (PlayStation, original art, signed prints, walk-on cameos). One entry per entrant per period; tier does not affect odds. Free AMOE entry available."
   },
   {
     "k": "h2",

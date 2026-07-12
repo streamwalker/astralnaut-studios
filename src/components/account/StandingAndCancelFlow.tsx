@@ -42,12 +42,12 @@ export function StandingAndCancelFlow({ hasActiveSub, onManage, portalLoading }:
             Your standing
           </div>
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <StandingStat label="Sweepstakes entries" value={entries.toLocaleString()} accent="var(--neon)" />
             <StandingStat label="Weeks active" value={weeks.toLocaleString()} />
             <StandingStat label="Campaign" value={campaign} />
+            <StandingStat label="Sweepstakes entry" value={entries > 0 ? "1 / period" : "—"} accent="var(--neon)" />
           </div>
           <p className="mt-3 text-xs text-[var(--ink2)]">
-            Every active week earns more entries toward the marquee prize. Cancel and they're forfeited.
+            Every entrant — paid or free — gets exactly one entry per sweepstakes period. Tier does not affect odds.
           </p>
         </div>
       )}

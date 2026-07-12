@@ -71,6 +71,7 @@ import { Route as AuthenticatedAdminSecurityRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminLettersRouteImport } from './routes/_authenticated/admin.letters'
 import { Route as AuthenticatedAdminLearnRouteImport } from './routes/_authenticated/admin.learn'
 import { Route as AuthenticatedAdminHelpRouteImport } from './routes/_authenticated/admin.help'
+import { Route as AuthenticatedAdminComplianceChangelogRouteImport } from './routes/_authenticated/admin.compliance-changelog'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicLeadsUnsubscribeRouteImport } from './routes/api/public/leads/unsubscribe'
 import { Route as ApiPublicLeadsConfirmRouteImport } from './routes/api/public/leads/confirm'
@@ -396,6 +397,12 @@ const AuthenticatedAdminHelpRoute = AuthenticatedAdminHelpRouteImport.update({
   path: '/admin/help',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAdminComplianceChangelogRoute =
+  AuthenticatedAdminComplianceChangelogRouteImport.update({
+    id: '/admin/compliance-changelog',
+    path: '/admin/compliance-changelog',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -492,6 +499,7 @@ export interface FileRoutesByFullPath {
   '/raffle/rules': typeof RaffleRulesRoute
   '/sweepstakes/free-entry': typeof SweepstakesFreeEntryRoute
   '/sweepstakes/rules': typeof SweepstakesRulesRoute
+  '/admin/compliance-changelog': typeof AuthenticatedAdminComplianceChangelogRoute
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/admin/letters': typeof AuthenticatedAdminLettersRoute
@@ -563,6 +571,7 @@ export interface FileRoutesByTo {
   '/raffle/rules': typeof RaffleRulesRoute
   '/sweepstakes/free-entry': typeof SweepstakesFreeEntryRoute
   '/sweepstakes/rules': typeof SweepstakesRulesRoute
+  '/admin/compliance-changelog': typeof AuthenticatedAdminComplianceChangelogRoute
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/admin/letters': typeof AuthenticatedAdminLettersRoute
@@ -636,6 +645,7 @@ export interface FileRoutesById {
   '/raffle/rules': typeof RaffleRulesRoute
   '/sweepstakes/free-entry': typeof SweepstakesFreeEntryRoute
   '/sweepstakes/rules': typeof SweepstakesRulesRoute
+  '/_authenticated/admin/compliance-changelog': typeof AuthenticatedAdminComplianceChangelogRoute
   '/_authenticated/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/_authenticated/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/_authenticated/admin/letters': typeof AuthenticatedAdminLettersRoute
@@ -709,6 +719,7 @@ export interface FileRouteTypes {
     | '/raffle/rules'
     | '/sweepstakes/free-entry'
     | '/sweepstakes/rules'
+    | '/admin/compliance-changelog'
     | '/admin/help'
     | '/admin/learn'
     | '/admin/letters'
@@ -780,6 +791,7 @@ export interface FileRouteTypes {
     | '/raffle/rules'
     | '/sweepstakes/free-entry'
     | '/sweepstakes/rules'
+    | '/admin/compliance-changelog'
     | '/admin/help'
     | '/admin/learn'
     | '/admin/letters'
@@ -852,6 +864,7 @@ export interface FileRouteTypes {
     | '/raffle/rules'
     | '/sweepstakes/free-entry'
     | '/sweepstakes/rules'
+    | '/_authenticated/admin/compliance-changelog'
     | '/_authenticated/admin/help'
     | '/_authenticated/admin/learn'
     | '/_authenticated/admin/letters'
@@ -1357,6 +1370,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminHelpRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin/compliance-changelog': {
+      id: '/_authenticated/admin/compliance-changelog'
+      path: '/admin/compliance-changelog'
+      fullPath: '/admin/compliance-changelog'
+      preLoaderRoute: typeof AuthenticatedAdminComplianceChangelogRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -1447,6 +1467,7 @@ const AuthenticatedAdminLearnRouteWithChildren =
 interface AuthenticatedRouteChildren {
   AuthenticatedGrowthRoute: typeof AuthenticatedGrowthRoute
   AuthenticatedGrowthPackageRoute: typeof AuthenticatedGrowthPackageRoute
+  AuthenticatedAdminComplianceChangelogRoute: typeof AuthenticatedAdminComplianceChangelogRoute
   AuthenticatedAdminHelpRoute: typeof AuthenticatedAdminHelpRouteWithChildren
   AuthenticatedAdminLearnRoute: typeof AuthenticatedAdminLearnRouteWithChildren
   AuthenticatedAdminLettersRoute: typeof AuthenticatedAdminLettersRoute
@@ -1463,6 +1484,8 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedGrowthRoute: AuthenticatedGrowthRoute,
   AuthenticatedGrowthPackageRoute: AuthenticatedGrowthPackageRoute,
+  AuthenticatedAdminComplianceChangelogRoute:
+    AuthenticatedAdminComplianceChangelogRoute,
   AuthenticatedAdminHelpRoute: AuthenticatedAdminHelpRouteWithChildren,
   AuthenticatedAdminLearnRoute: AuthenticatedAdminLearnRouteWithChildren,
   AuthenticatedAdminLettersRoute: AuthenticatedAdminLettersRoute,
