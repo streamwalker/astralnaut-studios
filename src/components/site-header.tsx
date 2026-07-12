@@ -186,23 +186,30 @@ export function SiteFooter() {
           { to: "/perks", label: "Your perks" },
           { to: "/account", label: "Your account" },
           { to: "/login", label: "Sign in" },
-          { to: "/sweepstakes/free-entry", label: "Free sweepstakes entry" },
-          { to: "/sweepstakes/rules", label: "Sweepstakes rules" },
-        ]} />
-        <FooterCol title="Learn" links={[
           { to: "/help", label: "Help Center" },
           { to: "/learn", label: "Training course" },
           { to: "/industry", label: "Adaptation rights" },
         ]} />
+        <FooterCol title="Legal" links={[
+          { to: "/terms", label: "Terms of Service" },
+          { to: "/subscription-policy", label: "Subscription & Billing" },
+          { to: "/privacy", label: "Privacy Policy" },
+          { to: "/cookies", label: "Cookie Policy" },
+          { to: "/community-guidelines", label: "Community Guidelines" },
+          { to: "/copyright-dmca", label: "Copyright / DMCA" },
+          { to: "/sweepstakes/rules", label: "Sweepstakes Rules" },
+          { to: "/canon-cameo-terms", label: "Canon & Cameo Terms" },
+          { to: "/unsolicited-submissions", label: "Unsolicited Submissions" },
+          { to: "/content-accessibility", label: "Content & Accessibility" },
+          { to: "/shipping-returns", label: "Shipping & Returns" },
+          { to: "/subprocessors", label: "Subprocessors" },
+          { to: "/corporate", label: "Corporate" },
+          { to: "/dsar", label: "Your Privacy Rights" },
+          { to: "/trust", label: "Trust Center" },
+        ]} />
       </div>
       <div className="mx-auto mt-10 max-w-7xl px-6">
         <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-[var(--mute)]">
-          <Link to="/trust" className="hover:text-[var(--neon)]">Trust & Security</Link>
-          <Link to="/privacy" className="hover:text-[var(--neon)]">Privacy</Link>
-          <Link to="/terms" className="hover:text-[var(--neon)]">Terms</Link>
-          <Link to="/cookies" className="hover:text-[var(--neon)]">Cookies</Link>
-          <Link to="/subprocessors" className="hover:text-[var(--neon)]">Subprocessors</Link>
-          <Link to="/dsar" className="hover:text-[var(--neon)]">Privacy request</Link>
           <a href="/.well-known/security.txt" className="hover:text-[var(--neon)]">security.txt</a>
         </div>
         <div className="mt-4 text-xs leading-relaxed text-[var(--fg-muted)]">
@@ -212,6 +219,7 @@ export function SiteFooter() {
     </footer>
   );
 }
+
 
 function FooterCol({ title, links }: { title: string; links: { to: string; label: string }[] }) {
   return (
