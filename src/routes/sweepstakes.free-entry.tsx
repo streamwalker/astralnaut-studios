@@ -20,7 +20,7 @@ function isoWeekKey(d: Date = new Date()): string {
   return `${date.getUTCFullYear()}-W${String(weekNum).padStart(2, "0")}`;
 }
 
-export const Route = createFileRoute("/raffle/free-entry")({
+export const Route = createFileRoute("/sweepstakes/free-entry")({
   head: () => ({
     meta: [
       { title: "Free sweepstakes entry — Real World Comics" },
