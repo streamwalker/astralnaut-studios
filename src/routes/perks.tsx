@@ -128,9 +128,9 @@ function PerksPage() {
 
         {tier !== "none" && hasFeature(tier, "cameo_eligibility") && (
           <div className="mt-6 rounded-xl border border-[var(--plasma)] bg-black/30 p-5">
-            <div className="text-sm font-bold text-[var(--ink)]">Cameo submission</div>
+            <div className="text-sm font-bold text-[var(--ink)]">Cameo submission — editorial consideration</div>
             <p className="mt-1 text-xs text-[var(--ink2)]">
-              Adults 18+ only. Submit your age attestation and likeness release to enter the cameo pool for upcoming issues.
+              Patron cameo access is eligibility for editorial consideration only, never a guaranteed appearance and never randomly awarded. Adults 18+ only. A signed and verified appearance release is required before any accepted cameo can enter production.
             </p>
             <Link to="/cameo/submit" className="btn-cta mt-3 inline-flex">
               Submit a cameo
