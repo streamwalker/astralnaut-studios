@@ -54,6 +54,7 @@ import { Route as ReaderSeriesIssueRouteImport } from './routes/reader.$series.$
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as ApiPublicGameEventsRouteImport } from './routes/api/public/game-events'
 import { Route as AuthenticatedCommunityJoinRouteImport } from './routes/_authenticated/community.join'
+import { Route as AuthenticatedCameoSubmitRouteImport } from './routes/_authenticated/cameo.submit'
 import { Route as AuthenticatedAdminVisitorsRouteImport } from './routes/_authenticated/admin.visitors'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminSubscriptionTestRouteImport } from './routes/_authenticated/admin.subscription-test'
@@ -294,6 +295,12 @@ const AuthenticatedCommunityJoinRoute =
     path: '/community/join',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedCameoSubmitRoute =
+  AuthenticatedCameoSubmitRouteImport.update({
+    id: '/cameo/submit',
+    path: '/cameo/submit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAdminVisitorsRoute =
   AuthenticatedAdminVisitorsRouteImport.update({
     id: '/admin/visitors',
@@ -416,6 +423,7 @@ export interface FileRoutesByFullPath {
   '/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
+  '/cameo/submit': typeof AuthenticatedCameoSubmitRoute
   '/community/join': typeof AuthenticatedCommunityJoinRoute
   '/api/public/game-events': typeof ApiPublicGameEventsRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -475,6 +483,7 @@ export interface FileRoutesByTo {
   '/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
+  '/cameo/submit': typeof AuthenticatedCameoSubmitRoute
   '/community/join': typeof AuthenticatedCommunityJoinRoute
   '/api/public/game-events': typeof ApiPublicGameEventsRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -536,6 +545,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
+  '/_authenticated/cameo/submit': typeof AuthenticatedCameoSubmitRoute
   '/_authenticated/community/join': typeof AuthenticatedCommunityJoinRoute
   '/api/public/game-events': typeof ApiPublicGameEventsRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -597,6 +607,7 @@ export interface FileRouteTypes {
     | '/admin/subscription-test'
     | '/admin/users'
     | '/admin/visitors'
+    | '/cameo/submit'
     | '/community/join'
     | '/api/public/game-events'
     | '/api/public/track'
@@ -656,6 +667,7 @@ export interface FileRouteTypes {
     | '/admin/subscription-test'
     | '/admin/users'
     | '/admin/visitors'
+    | '/cameo/submit'
     | '/community/join'
     | '/api/public/game-events'
     | '/api/public/track'
@@ -716,6 +728,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/subscription-test'
     | '/_authenticated/admin/users'
     | '/_authenticated/admin/visitors'
+    | '/_authenticated/cameo/submit'
     | '/_authenticated/community/join'
     | '/api/public/game-events'
     | '/api/public/track'
@@ -1082,6 +1095,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCommunityJoinRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/cameo/submit': {
+      id: '/_authenticated/cameo/submit'
+      path: '/cameo/submit'
+      fullPath: '/cameo/submit'
+      preLoaderRoute: typeof AuthenticatedCameoSubmitRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/admin/visitors': {
       id: '/_authenticated/admin/visitors'
       path: '/admin/visitors'
@@ -1214,6 +1234,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAdminSubscriptionTestRoute: typeof AuthenticatedAdminSubscriptionTestRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminVisitorsRoute: typeof AuthenticatedAdminVisitorsRoute
+  AuthenticatedCameoSubmitRoute: typeof AuthenticatedCameoSubmitRoute
   AuthenticatedCommunityJoinRoute: typeof AuthenticatedCommunityJoinRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedReaderSeriesIssueLettersRoute: typeof AuthenticatedReaderSeriesIssueLettersRoute
@@ -1230,6 +1251,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedAdminSubscriptionTestRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminVisitorsRoute: AuthenticatedAdminVisitorsRoute,
+  AuthenticatedCameoSubmitRoute: AuthenticatedCameoSubmitRoute,
   AuthenticatedCommunityJoinRoute: AuthenticatedCommunityJoinRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedReaderSeriesIssueLettersRoute:
