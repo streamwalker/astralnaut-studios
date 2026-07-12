@@ -511,10 +511,17 @@ export const advanceToAlternate = createServerFn({ method: "POST" })
     const nextWinner = alts[0];
     const remaining = alts.slice(1);
 
+    const prevAudit =
+      drawing.audit_record && typeof drawing.audit_record === "object" && !Array.isArray(drawing.audit_record)
+        ? (drawing.audit_record as Record<string, unknown>)
+        : {};
+    const prevAdvances = Array.isArray((prevAudit as { alternate_advances?: unknown[] }).alternate_advances)
+      ? ((prevAudit as { alternate_advances?: unknown[] }).alternate_advances as unknown[])
+      : [];
     const audit = {
-      ...(drawing.audit_record ?? {}),
+      ...prevAudit,
       alternate_advances: [
-        ...((drawing.audit_record as { alternate_advances?: unknown[] })?.alternate_advances ?? []),
+        ...prevAdvances,
         {
           at: new Date().toISOString(),
           by: context.userId,
