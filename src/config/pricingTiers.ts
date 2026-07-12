@@ -81,7 +81,7 @@ export const pricingTiers: PricingTier[] = [
       "Pages drop 48 hours early",
       "Cameo eligibility — be drawn into an issue",
       "Quarterly signed physical print run (shipped)",
-      "Direct creator Discord access",
+      "Direct creator Discord access (18+ attestation required)",
       "Eligible for the Milestone Sweepstakes (opens every 10K subscribers; 14-day window)",
     ],
     accent: "var(--plasma)",
