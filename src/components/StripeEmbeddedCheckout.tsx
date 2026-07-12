@@ -7,9 +7,10 @@ interface Props {
   customerEmail?: string;
   userId?: string;
   returnUrl?: string;
+  consentToken: string;
 }
 
-export function StripeEmbeddedCheckout({ priceId, customerEmail, userId, returnUrl }: Props) {
+export function StripeEmbeddedCheckout({ priceId, customerEmail, userId, returnUrl, consentToken }: Props) {
   const fetchClientSecret = async (): Promise<string> => {
     const secret = await createCheckoutSession({
       data: {
@@ -18,6 +19,7 @@ export function StripeEmbeddedCheckout({ priceId, customerEmail, userId, returnU
         userId,
         returnUrl: returnUrl || `${window.location.origin}/account?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
         environment: getStripeEnvironment(),
+        consentToken,
       },
     });
     if (!secret) throw new Error("Failed to create checkout session");
