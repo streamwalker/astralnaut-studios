@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { RightsNotice } from "@/components/rights-notice";
+import { Indicia } from "@/components/indicia";
 import { getIssueBundle } from "@/lib/public.functions";
 import { logStorageAccess } from "@/lib/storage-access.functions";
 import { supabase } from "@/integrations/supabase/client";
@@ -227,6 +228,13 @@ function Reader() {
           </Link>
         </div>
         <RightsNotice variant="reader" title={issue.series.name} issueNumber={issue.issue_number} />
+        <Indicia
+          seriesName={issue.series.name}
+          volume={Number((issue as { volume?: number }).volume ?? 1)}
+          issueNumber={issue.issue_number}
+          publicationYear={Number((issue as { publication_year?: number }).publication_year ?? 2026)}
+          issn={(issue.series as { issn?: string | null }).issn ?? null}
+        />
       </div>
     </>
   );

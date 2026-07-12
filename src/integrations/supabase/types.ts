@@ -590,10 +590,12 @@ export type Database = {
           drop_cadence: string | null
           free_pages: number
           id: string
+          internal_identifier: string | null
           issue_number: number
           paid_pages: number
           paid_release_end: string | null
           paid_release_start: string | null
+          publication_year: number
           release_status: string | null
           series_id: string
           slug: string
@@ -602,6 +604,7 @@ export type Database = {
           total_pages: number
           updated_at: string
           variant_cover_paths: string[] | null
+          volume: number
         }
         Insert: {
           cover_path?: string | null
@@ -609,10 +612,12 @@ export type Database = {
           drop_cadence?: string | null
           free_pages?: number
           id?: string
+          internal_identifier?: string | null
           issue_number: number
           paid_pages?: number
           paid_release_end?: string | null
           paid_release_start?: string | null
+          publication_year?: number
           release_status?: string | null
           series_id: string
           slug: string
@@ -621,6 +626,7 @@ export type Database = {
           total_pages?: number
           updated_at?: string
           variant_cover_paths?: string[] | null
+          volume?: number
         }
         Update: {
           cover_path?: string | null
@@ -628,10 +634,12 @@ export type Database = {
           drop_cadence?: string | null
           free_pages?: number
           id?: string
+          internal_identifier?: string | null
           issue_number?: number
           paid_pages?: number
           paid_release_end?: string | null
           paid_release_start?: string | null
+          publication_year?: number
           release_status?: string | null
           series_id?: string
           slug?: string
@@ -640,6 +648,7 @@ export type Database = {
           total_pages?: number
           updated_at?: string
           variant_cover_paths?: string[] | null
+          volume?: number
         }
         Relationships: [
           {
@@ -908,6 +917,7 @@ export type Database = {
           created_at: string
           genre: string | null
           id: string
+          issn: string | null
           launch_label: string | null
           logline: string | null
           logo_path: string | null
@@ -924,6 +934,7 @@ export type Database = {
           created_at?: string
           genre?: string | null
           id?: string
+          issn?: string | null
           launch_label?: string | null
           logline?: string | null
           logo_path?: string | null
@@ -940,6 +951,7 @@ export type Database = {
           created_at?: string
           genre?: string | null
           id?: string
+          issn?: string | null
           launch_label?: string | null
           logline?: string | null
           logo_path?: string | null
