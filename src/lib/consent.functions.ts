@@ -3,17 +3,17 @@
 // stays locked down: users can read only their own rows.
 
 import { createServerFn } from "@tanstack/react-start";
-import { getRequestHeaders, getRequestIP } from "@tanstack/react-start/server";
+import { getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { LEGAL_CONFIG } from "@/config/legal";
 
 function reqMeta() {
-  const headers = getRequestHeaders();
-  const ua = headers["user-agent"] ?? null;
+  const ua = getRequestHeader("user-agent") ?? null;
   const ip = getRequestIP({ xForwardedFor: true }) ?? null;
   return { ua, ip };
 }
+
 
 // ---------------- SIGNUP CLICKWRAP ----------------
 export const recordSignupConsent = createServerFn({ method: "POST" })
