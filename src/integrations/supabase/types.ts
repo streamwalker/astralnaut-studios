@@ -235,6 +235,60 @@ export type Database = {
         }
         Relationships: []
       }
+      cameo_submissions: {
+        Row: {
+          admin_notes: string | null
+          attested_18_plus: boolean
+          created_at: string
+          date_of_birth: string
+          display_name: string
+          full_legal_name: string
+          id: string
+          ip: string | null
+          likeness_notes: string | null
+          reference_url: string | null
+          release_signed: boolean
+          status: string
+          updated_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          attested_18_plus?: boolean
+          created_at?: string
+          date_of_birth: string
+          display_name: string
+          full_legal_name: string
+          id?: string
+          ip?: string | null
+          likeness_notes?: string | null
+          reference_url?: string | null
+          release_signed?: boolean
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          attested_18_plus?: boolean
+          created_at?: string
+          date_of_birth?: string
+          display_name?: string
+          full_legal_name?: string
+          id?: string
+          ip?: string | null
+          likeness_notes?: string | null
+          reference_url?: string | null
+          release_signed?: boolean
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       chapters: {
         Row: {
           created_at: string
