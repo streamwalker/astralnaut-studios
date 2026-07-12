@@ -244,6 +244,28 @@ function Pricing() {
           <Link to="/sweepstakes/free-entry" className="underline hover:text-[var(--neon)]">Free entry (AMOE)</Link>.
         </p>
 
+        {pendingCheckout && (
+          <div
+            className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="checkout-consent-title"
+            onClick={(e) => { if (e.target === e.currentTarget) setPendingCheckout(null); }}
+          >
+            <div className="my-8 w-full max-w-2xl rounded-lg border border-[var(--border-line)] bg-[var(--bg)] p-4 shadow-2xl">
+              <h2 id="checkout-consent-title" className="sr-only">Confirm your subscription</h2>
+              <CheckoutConsentPanel
+                planName={pendingCheckout.tier.name}
+                displayedPrice={priceForInterval(pendingCheckout.tier, pendingCheckout.intv)}
+                currency="USD"
+                billingInterval={pendingCheckout.intv}
+                onCancel={() => setPendingCheckout(null)}
+                onAccept={handleConsentAccepted}
+              />
+            </div>
+          </div>
+        )}
+
         {isOpen && (
           <div
             className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/80 p-4 backdrop-blur-sm"
@@ -260,6 +282,7 @@ function Pricing() {
               {checkoutElement}
             </div>
           </div>
+
         )}
       </main>
       <SiteFooter />
