@@ -79,15 +79,6 @@ function RulesPage() {
       <h2>12. Winner list and questions</h2>
       <p>For winner information or questions, contact {LEGAL_CONFIG.contacts.promotions} within [TIME PERIOD].</p>
 
-      <h2>Operational restrictions</h2>
-      <ul>
-        <li>Do not use tier-weighted entries.</li>
-        <li>Do not say “raffle.”</li>
-        <li>Do not require a subscription, purchase, extensive survey, social sharing, or referral as the only entry method.</li>
-        <li>Do not combine prize chance, consideration, and random selection.</li>
-        <li>Review registration and bonding requirements before any promotion with total prize value above $5,000 or before materially expanding outside the United States.</li>
-        <li>Publish promotion-specific start time, trigger milestone, prize value, eligibility, drawing date, and winner process before entries open.</li>
-      </ul>
     </LegalPage>
   );
 }
