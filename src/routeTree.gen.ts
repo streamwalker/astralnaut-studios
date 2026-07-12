@@ -53,6 +53,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as ReaderSeriesIssueRouteImport } from './routes/reader.$series.$issue'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as ApiPublicGameEventsRouteImport } from './routes/api/public/game-events'
+import { Route as AuthenticatedCommunityJoinRouteImport } from './routes/_authenticated/community.join'
 import { Route as AuthenticatedAdminVisitorsRouteImport } from './routes/_authenticated/admin.visitors'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminSubscriptionTestRouteImport } from './routes/_authenticated/admin.subscription-test'
@@ -287,6 +288,12 @@ const ApiPublicGameEventsRoute = ApiPublicGameEventsRouteImport.update({
   path: '/api/public/game-events',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCommunityJoinRoute =
+  AuthenticatedCommunityJoinRouteImport.update({
+    id: '/community/join',
+    path: '/community/join',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAdminVisitorsRoute =
   AuthenticatedAdminVisitorsRouteImport.update({
     id: '/admin/visitors',
@@ -409,6 +416,7 @@ export interface FileRoutesByFullPath {
   '/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
+  '/community/join': typeof AuthenticatedCommunityJoinRoute
   '/api/public/game-events': typeof ApiPublicGameEventsRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
@@ -467,6 +475,7 @@ export interface FileRoutesByTo {
   '/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
+  '/community/join': typeof AuthenticatedCommunityJoinRoute
   '/api/public/game-events': typeof ApiPublicGameEventsRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
@@ -527,6 +536,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
+  '/_authenticated/community/join': typeof AuthenticatedCommunityJoinRoute
   '/api/public/game-events': typeof ApiPublicGameEventsRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/reader/$series/$issue': typeof ReaderSeriesIssueRoute
@@ -587,6 +597,7 @@ export interface FileRouteTypes {
     | '/admin/subscription-test'
     | '/admin/users'
     | '/admin/visitors'
+    | '/community/join'
     | '/api/public/game-events'
     | '/api/public/track'
     | '/reader/$series/$issue'
@@ -645,6 +656,7 @@ export interface FileRouteTypes {
     | '/admin/subscription-test'
     | '/admin/users'
     | '/admin/visitors'
+    | '/community/join'
     | '/api/public/game-events'
     | '/api/public/track'
     | '/reader/$series/$issue'
@@ -704,6 +716,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/subscription-test'
     | '/_authenticated/admin/users'
     | '/_authenticated/admin/visitors'
+    | '/_authenticated/community/join'
     | '/api/public/game-events'
     | '/api/public/track'
     | '/reader/$series/$issue'
@@ -1062,6 +1075,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicGameEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/community/join': {
+      id: '/_authenticated/community/join'
+      path: '/community/join'
+      fullPath: '/community/join'
+      preLoaderRoute: typeof AuthenticatedCommunityJoinRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/admin/visitors': {
       id: '/_authenticated/admin/visitors'
       path: '/admin/visitors'
@@ -1194,6 +1214,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAdminSubscriptionTestRoute: typeof AuthenticatedAdminSubscriptionTestRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminVisitorsRoute: typeof AuthenticatedAdminVisitorsRoute
+  AuthenticatedCommunityJoinRoute: typeof AuthenticatedCommunityJoinRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedReaderSeriesIssueLettersRoute: typeof AuthenticatedReaderSeriesIssueLettersRoute
 }
@@ -1209,6 +1230,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedAdminSubscriptionTestRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminVisitorsRoute: AuthenticatedAdminVisitorsRoute,
+  AuthenticatedCommunityJoinRoute: AuthenticatedCommunityJoinRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedReaderSeriesIssueLettersRoute:
     AuthenticatedReaderSeriesIssueLettersRoute,
