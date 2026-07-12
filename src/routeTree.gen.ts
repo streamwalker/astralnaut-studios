@@ -46,6 +46,7 @@ import { Route as RaffleFreeEntryRouteImport } from './routes/raffle.free-entry'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
 import { Route as LearnModuleIdRouteImport } from './routes/learn.$moduleId'
 import { Route as HelpSlugRouteImport } from './routes/help.$slug'
+import { Route as DsarVerifyRouteImport } from './routes/dsar.verify'
 import { Route as ArchiveWalletRouteImport } from './routes/archive.wallet'
 import { Route as ArchiveTimelineRouteImport } from './routes/archive.timeline'
 import { Route as ArchiveQuartermasterRouteImport } from './routes/archive.quartermaster'
@@ -73,6 +74,7 @@ import { Route as AuthenticatedAdminHelpRouteImport } from './routes/_authentica
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicLeadsUnsubscribeRouteImport } from './routes/api/public/leads/unsubscribe'
 import { Route as ApiPublicLeadsConfirmRouteImport } from './routes/api/public/leads/confirm'
+import { Route as ApiPublicCronRetentionRouteImport } from './routes/api/public/cron/retention'
 import { Route as ApiPublicCronRenewalRemindersRouteImport } from './routes/api/public/cron/renewal-reminders'
 import { Route as AuthenticatedAdminLearnModuleIdRouteImport } from './routes/_authenticated/admin.learn.$moduleId'
 import { Route as AuthenticatedAdminHelpSlugRouteImport } from './routes/_authenticated/admin.help.$slug'
@@ -262,6 +264,11 @@ const HelpSlugRoute = HelpSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => HelpRoute,
 } as any)
+const DsarVerifyRoute = DsarVerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => DsarRoute,
+} as any)
 const ArchiveWalletRoute = ArchiveWalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
@@ -406,6 +413,11 @@ const ApiPublicLeadsConfirmRoute = ApiPublicLeadsConfirmRouteImport.update({
   path: '/api/public/leads/confirm',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCronRetentionRoute = ApiPublicCronRetentionRouteImport.update({
+  id: '/api/public/cron/retention',
+  path: '/api/public/cron/retention',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicCronRenewalRemindersRoute =
   ApiPublicCronRenewalRemindersRouteImport.update({
     id: '/api/public/cron/renewal-reminders',
@@ -445,7 +457,7 @@ export interface FileRoutesByFullPath {
   '/copyright-dmca': typeof CopyrightDmcaRoute
   '/corporate': typeof CorporateRoute
   '/darker-ages': typeof DarkerAgesRoute
-  '/dsar': typeof DsarRoute
+  '/dsar': typeof DsarRouteWithChildren
   '/help': typeof HelpRouteWithChildren
   '/industry': typeof IndustryRoute
   '/learn': typeof LearnRouteWithChildren
@@ -472,6 +484,7 @@ export interface FileRoutesByFullPath {
   '/archive/quartermaster': typeof ArchiveQuartermasterRoute
   '/archive/timeline': typeof ArchiveTimelineRoute
   '/archive/wallet': typeof ArchiveWalletRoute
+  '/dsar/verify': typeof DsarVerifyRoute
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
   '/product/$handle': typeof ProductHandleRoute
@@ -495,6 +508,7 @@ export interface FileRoutesByFullPath {
   '/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
   '/api/public/cron/renewal-reminders': typeof ApiPublicCronRenewalRemindersRoute
+  '/api/public/cron/retention': typeof ApiPublicCronRetentionRoute
   '/api/public/leads/confirm': typeof ApiPublicLeadsConfirmRoute
   '/api/public/leads/unsubscribe': typeof ApiPublicLeadsUnsubscribeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -514,7 +528,7 @@ export interface FileRoutesByTo {
   '/copyright-dmca': typeof CopyrightDmcaRoute
   '/corporate': typeof CorporateRoute
   '/darker-ages': typeof DarkerAgesRoute
-  '/dsar': typeof DsarRoute
+  '/dsar': typeof DsarRouteWithChildren
   '/help': typeof HelpRouteWithChildren
   '/industry': typeof IndustryRoute
   '/learn': typeof LearnRouteWithChildren
@@ -541,6 +555,7 @@ export interface FileRoutesByTo {
   '/archive/quartermaster': typeof ArchiveQuartermasterRoute
   '/archive/timeline': typeof ArchiveTimelineRoute
   '/archive/wallet': typeof ArchiveWalletRoute
+  '/dsar/verify': typeof DsarVerifyRoute
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
   '/product/$handle': typeof ProductHandleRoute
@@ -564,6 +579,7 @@ export interface FileRoutesByTo {
   '/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
   '/api/public/cron/renewal-reminders': typeof ApiPublicCronRenewalRemindersRoute
+  '/api/public/cron/retention': typeof ApiPublicCronRetentionRoute
   '/api/public/leads/confirm': typeof ApiPublicLeadsConfirmRoute
   '/api/public/leads/unsubscribe': typeof ApiPublicLeadsUnsubscribeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -585,7 +601,7 @@ export interface FileRoutesById {
   '/copyright-dmca': typeof CopyrightDmcaRoute
   '/corporate': typeof CorporateRoute
   '/darker-ages': typeof DarkerAgesRoute
-  '/dsar': typeof DsarRoute
+  '/dsar': typeof DsarRouteWithChildren
   '/help': typeof HelpRouteWithChildren
   '/industry': typeof IndustryRoute
   '/learn': typeof LearnRouteWithChildren
@@ -612,6 +628,7 @@ export interface FileRoutesById {
   '/archive/quartermaster': typeof ArchiveQuartermasterRoute
   '/archive/timeline': typeof ArchiveTimelineRoute
   '/archive/wallet': typeof ArchiveWalletRoute
+  '/dsar/verify': typeof DsarVerifyRoute
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
   '/product/$handle': typeof ProductHandleRoute
@@ -635,6 +652,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/_authenticated/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
   '/api/public/cron/renewal-reminders': typeof ApiPublicCronRenewalRemindersRoute
+  '/api/public/cron/retention': typeof ApiPublicCronRetentionRoute
   '/api/public/leads/confirm': typeof ApiPublicLeadsConfirmRoute
   '/api/public/leads/unsubscribe': typeof ApiPublicLeadsUnsubscribeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -683,6 +701,7 @@ export interface FileRouteTypes {
     | '/archive/quartermaster'
     | '/archive/timeline'
     | '/archive/wallet'
+    | '/dsar/verify'
     | '/help/$slug'
     | '/learn/$moduleId'
     | '/product/$handle'
@@ -706,6 +725,7 @@ export interface FileRouteTypes {
     | '/admin/help/$slug'
     | '/admin/learn/$moduleId'
     | '/api/public/cron/renewal-reminders'
+    | '/api/public/cron/retention'
     | '/api/public/leads/confirm'
     | '/api/public/leads/unsubscribe'
     | '/api/public/payments/webhook'
@@ -752,6 +772,7 @@ export interface FileRouteTypes {
     | '/archive/quartermaster'
     | '/archive/timeline'
     | '/archive/wallet'
+    | '/dsar/verify'
     | '/help/$slug'
     | '/learn/$moduleId'
     | '/product/$handle'
@@ -775,6 +796,7 @@ export interface FileRouteTypes {
     | '/admin/help/$slug'
     | '/admin/learn/$moduleId'
     | '/api/public/cron/renewal-reminders'
+    | '/api/public/cron/retention'
     | '/api/public/leads/confirm'
     | '/api/public/leads/unsubscribe'
     | '/api/public/payments/webhook'
@@ -822,6 +844,7 @@ export interface FileRouteTypes {
     | '/archive/quartermaster'
     | '/archive/timeline'
     | '/archive/wallet'
+    | '/dsar/verify'
     | '/help/$slug'
     | '/learn/$moduleId'
     | '/product/$handle'
@@ -845,6 +868,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/help/$slug'
     | '/_authenticated/admin/learn/$moduleId'
     | '/api/public/cron/renewal-reminders'
+    | '/api/public/cron/retention'
     | '/api/public/leads/confirm'
     | '/api/public/leads/unsubscribe'
     | '/api/public/payments/webhook'
@@ -866,7 +890,7 @@ export interface RootRouteChildren {
   CopyrightDmcaRoute: typeof CopyrightDmcaRoute
   CorporateRoute: typeof CorporateRoute
   DarkerAgesRoute: typeof DarkerAgesRoute
-  DsarRoute: typeof DsarRoute
+  DsarRoute: typeof DsarRouteWithChildren
   HelpRoute: typeof HelpRouteWithChildren
   IndustryRoute: typeof IndustryRoute
   LearnRoute: typeof LearnRouteWithChildren
@@ -891,6 +915,7 @@ export interface RootRouteChildren {
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
   ReaderSeriesIssueRoute: typeof ReaderSeriesIssueRoute
   ApiPublicCronRenewalRemindersRoute: typeof ApiPublicCronRenewalRemindersRoute
+  ApiPublicCronRetentionRoute: typeof ApiPublicCronRetentionRoute
   ApiPublicLeadsConfirmRoute: typeof ApiPublicLeadsConfirmRoute
   ApiPublicLeadsUnsubscribeRoute: typeof ApiPublicLeadsUnsubscribeRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -1157,6 +1182,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HelpSlugRouteImport
       parentRoute: typeof HelpRoute
     }
+    '/dsar/verify': {
+      id: '/dsar/verify'
+      path: '/verify'
+      fullPath: '/dsar/verify'
+      preLoaderRoute: typeof DsarVerifyRouteImport
+      parentRoute: typeof DsarRoute
+    }
     '/archive/wallet': {
       id: '/archive/wallet'
       path: '/wallet'
@@ -1346,6 +1378,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicLeadsConfirmRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/retention': {
+      id: '/api/public/cron/retention'
+      path: '/api/public/cron/retention'
+      fullPath: '/api/public/cron/retention'
+      preLoaderRoute: typeof ApiPublicCronRetentionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cron/renewal-reminders': {
       id: '/api/public/cron/renewal-reminders'
       path: '/api/public/cron/renewal-reminders'
@@ -1470,6 +1509,16 @@ const ArchiveRouteChildren: ArchiveRouteChildren = {
 const ArchiveRouteWithChildren =
   ArchiveRoute._addFileChildren(ArchiveRouteChildren)
 
+interface DsarRouteChildren {
+  DsarVerifyRoute: typeof DsarVerifyRoute
+}
+
+const DsarRouteChildren: DsarRouteChildren = {
+  DsarVerifyRoute: DsarVerifyRoute,
+}
+
+const DsarRouteWithChildren = DsarRoute._addFileChildren(DsarRouteChildren)
+
 interface HelpRouteChildren {
   HelpSlugRoute: typeof HelpSlugRoute
 }
@@ -1505,7 +1554,7 @@ const rootRouteChildren: RootRouteChildren = {
   CopyrightDmcaRoute: CopyrightDmcaRoute,
   CorporateRoute: CorporateRoute,
   DarkerAgesRoute: DarkerAgesRoute,
-  DsarRoute: DsarRoute,
+  DsarRoute: DsarRouteWithChildren,
   HelpRoute: HelpRouteWithChildren,
   IndustryRoute: IndustryRoute,
   LearnRoute: LearnRouteWithChildren,
@@ -1530,6 +1579,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicTrackRoute: ApiPublicTrackRoute,
   ReaderSeriesIssueRoute: ReaderSeriesIssueRoute,
   ApiPublicCronRenewalRemindersRoute: ApiPublicCronRenewalRemindersRoute,
+  ApiPublicCronRetentionRoute: ApiPublicCronRetentionRoute,
   ApiPublicLeadsConfirmRoute: ApiPublicLeadsConfirmRoute,
   ApiPublicLeadsUnsubscribeRoute: ApiPublicLeadsUnsubscribeRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
