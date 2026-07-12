@@ -68,7 +68,21 @@ export const LEGAL_CONFIG = {
     entryCap: "One (1) entry per eligible person per milestone entry period, regardless of method or subscription tier.",
     amoeParity: "The free-entry (AMOE) cap equals the paid-subscriber cap: exactly one (1). A person who both holds a paid subscription and submits the free form is deduplicated to one total entry.",
   },
+  // Renewal disclosure text version stamped into consent_events at checkout time.
+  renewalDisclosureVersion: "2026.07.12",
+  // Consent line clickwrap texts (verbatim). $PRICE token is replaced at render.
+  clickwrap: {
+    signup:
+      "I am at least 18 years old. I agree to the Terms of Service and acknowledge the Privacy Policy.",
+    checkoutMonthly:
+      "I understand this is a recurring monthly subscription of $PRICE that will automatically renew each month until I cancel through my account. I have read and agree to the Terms of Service, Subscription and Billing Policy, and Privacy Policy.",
+    checkoutAnnual:
+      "I understand this is a recurring annual subscription of $PRICE that will automatically renew each year until I cancel through my account. I have read and agree to the Terms of Service, Subscription and Billing Policy, and Privacy Policy.",
+  },
+  // Annual-plan renewal reminder lead time. Fail-closed default is 30 days.
+  annualRenewalReminderLeadDays: "[NUMBER]" as string,
 } as const;
+
 
 export type ActiveSweepstakes = {
   promotionId: string;
@@ -101,4 +115,25 @@ export function isSweepstakesActivatable(promo: ActiveSweepstakes | null): promo
     promo.responseWindowDays, promo.drawingDaysAfterMilestone,
   ];
   return required.every((v) => v !== undefined && v !== null && !isPlaceholder(v));
+}
+
+/** Renders a checkout consent line with $PRICE substituted for the real price. */
+export function renderCheckoutConsentText(
+  interval: "monthly" | "yearly",
+  displayedPrice: string,
+): string {
+  const template =
+    interval === "yearly"
+      ? LEGAL_CONFIG.clickwrap.checkoutAnnual
+      : LEGAL_CONFIG.clickwrap.checkoutMonthly;
+  return template.replace("$PRICE", displayedPrice);
+}
+
+/** Effective days ahead of annual renewal to send the reminder email.
+ *  Fails closed at 30 days when the config value is still a bracketed placeholder. */
+export function annualRenewalReminderLeadDaysEffective(): number {
+  const raw = LEGAL_CONFIG.annualRenewalReminderLeadDays;
+  if (isPlaceholder(raw)) return 30;
+  const n = Number(raw);
+  return Number.isFinite(n) && n > 0 ? n : 30;
 }

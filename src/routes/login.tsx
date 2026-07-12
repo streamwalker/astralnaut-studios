@@ -7,7 +7,18 @@ import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LEGAL_CONFIG } from "@/config/legal";
+import { recordSignupConsent } from "@/lib/consent.functions";
 import logo from "@/assets/astralnaut-logo.png";
+
+// Persist the exact clickwrap text so the SIGNED_IN handler in __root can
+// record it against the newly-created account even for OAuth / email-confirm
+// flows where the session doesn't exist at button-press time.
+const PENDING_KEY = "pending_signup_consent_v1";
+function stashPendingConsent() {
+  try { localStorage.setItem(PENDING_KEY, LEGAL_CONFIG.clickwrap.signup); } catch {}
+}
+
 
 const searchSchema = z.object({
   next: z.string().optional().catch(undefined),
@@ -50,18 +61,26 @@ function LoginPage() {
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     if (mode === "signup" && !ageConfirmed) {
-      toast.error("You must confirm you are 18 or older to create an account.");
+      toast.error("Please review and accept the account terms to continue.");
       return;
     }
     setBusy(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        stashPendingConsent();
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: window.location.origin + successDestination() },
         });
         if (error) throw error;
+        // If confirmation is disabled the session exists immediately; record now.
+        if (data.session) {
+          try {
+            await recordSignupConsent({ data: { consentText: LEGAL_CONFIG.clickwrap.signup } });
+            localStorage.removeItem(PENDING_KEY);
+          } catch { /* Root SIGNED_IN handler will retry */ }
+        }
         toast.success("Check your email to confirm your account.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -78,9 +97,10 @@ function LoginPage() {
 
   const handleGoogle = async () => {
     if (mode === "signup" && !ageConfirmed) {
-      toast.error("You must confirm you are 18 or older to create an account.");
+      toast.error("Please review and accept the account terms to continue.");
       return;
     }
+    if (mode === "signup") stashPendingConsent();
     setBusy(true);
     try {
       const { error } = await lovable.auth.signInWithOAuth("google", {
@@ -92,6 +112,7 @@ function LoginPage() {
       setBusy(false);
     }
   };
+
 
   const planLabel = search.plan
     ? `${search.plan[0].toUpperCase()}${search.plan.slice(1)}`
@@ -145,21 +166,24 @@ function LoginPage() {
             <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
           {mode === "signup" && (
-            <label className="flex items-start gap-2 text-xs text-muted-foreground">
+            <label className="flex items-start gap-2 text-xs text-muted-foreground" htmlFor="signup-clickwrap">
               <input
+                id="signup-clickwrap"
                 type="checkbox"
                 checked={ageConfirmed}
                 onChange={(e) => setAgeConfirmed(e.target.checked)}
                 className="mt-0.5"
                 required
+                aria-required
               />
               <span>
-                I confirm I am 18 years of age or older. Accounts, subscriptions, store purchases,
-                Milestone Sweepstakes entry, community/Discord participation, and cameo submissions are
-                restricted to adults 18+.
+                {LEGAL_CONFIG.clickwrap.signup} (
+                <Link to="/terms" target="_blank" rel="noopener" className="underline">Terms</Link>,{" "}
+                <Link to="/privacy" target="_blank" rel="noopener" className="underline">Privacy</Link>)
               </span>
             </label>
           )}
+
           <Button type="submit" disabled={busy} className="w-full">
             {mode === "signin" ? "Sign in" : "Create account"}
           </Button>

@@ -5,6 +5,9 @@ import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { supabase } from "@/integrations/supabase/client";
 import { HelpTip } from "@/components/help/HelpTip";
+import { CheckoutConsentPanel } from "@/components/checkout-consent-panel";
+import { recordCheckoutConsent } from "@/lib/consent.functions";
+import { toast } from "sonner";
 import {
   pricingTiers,
   type PricingTier,
@@ -14,6 +17,7 @@ import {
 import { siteConfig } from "@/config/siteConfig";
 import { track } from "@/lib/analytics";
 import { OG_DEFAULT_IMAGE, OG_DEFAULT_ALT, OG_DEFAULT_WIDTH, OG_DEFAULT_HEIGHT, SITE_URL } from "@/lib/seo";
+
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -53,6 +57,10 @@ function Pricing() {
   const navigate = useNavigate();
   const { openCheckout, isOpen, checkoutElement, closeCheckout } = useStripeCheckout();
 
+  // Stage 3: consent panel gates checkout. When set, we show the disclosure
+  // + required checkbox instead of the Stripe modal.
+  const [pendingCheckout, setPendingCheckout] = useState<{ tier: PricingTier; intv: "monthly" | "yearly" } | null>(null);
+
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) setUser({ id: data.user.id, email: data.user.email ?? undefined });
@@ -63,43 +71,64 @@ function Pricing() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const startCheckout = (tier: PricingTier, intv: "monthly" | "yearly") => {
+  const beginCheckout = (tier: PricingTier, intv: "monthly" | "yearly") => {
     if (!user) return;
-    openCheckout({
-      priceId: intv === "monthly" ? tier.monthlyPriceId : tier.yearlyPriceId,
-      customerEmail: user.email,
-      userId: user.id,
-      returnUrl: `${window.location.origin}/account?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
-    });
+    setPendingCheckout({ tier, intv });
+  };
+
+  const handleConsentAccepted = async (consentText: string) => {
+    if (!pendingCheckout || !user) return;
+    const { tier, intv } = pendingCheckout;
+    const priceId = intv === "monthly" ? tier.monthlyPriceId : tier.yearlyPriceId;
+    const displayedPrice = priceForInterval(tier, intv);
+    try {
+      const { consentToken } = await recordCheckoutConsent({
+        data: {
+          planId: priceId,
+          planName: tier.name,
+          billingInterval: intv,
+          displayedPrice,
+          currency: "USD",
+          consentText,
+        },
+      });
+      setPendingCheckout(null);
+      openCheckout({
+        priceId,
+        customerEmail: user.email,
+        userId: user.id,
+        returnUrl: `${window.location.origin}/account?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+        consentToken,
+      });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not start checkout");
+    }
   };
 
   const handleSubscribe = (tier: PricingTier) => {
     const isLoggedIn = !!user;
     track("pricing_cta_click", { tier: tier.key, interval, logged_in: isLoggedIn });
     if (!isLoggedIn) {
-      // Take logged-out visitors to account creation pre-filled with their selection.
-      // The login page redirects back to /pricing with autocheckout=1 after sign-up
-      // so checkout opens automatically once the session exists.
       navigate({
         to: "/login",
         search: { next: "/pricing", plan: tier.key, interval } as never,
       });
       return;
     }
-    startCheckout(tier, interval);
+    beginCheckout(tier, interval);
   };
 
-  // Auto-open checkout when arriving from login with a plan param.
+  // Auto-open the consent panel when arriving from login with a plan param.
   useEffect(() => {
     if (!user || !search.autocheckout || !search.plan) return;
     const tier = pricingTiers.find((t) => t.key === search.plan);
     if (!tier) return;
     const intv = search.interval ?? interval;
-    startCheckout(tier, intv);
-    // Clear the params so a refresh doesn't re-open it.
+    beginCheckout(tier, intv);
     navigate({ to: "/pricing", search: {} as never, replace: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, search.autocheckout, search.plan]);
+
 
   return (
     <>
@@ -215,6 +244,28 @@ function Pricing() {
           <Link to="/sweepstakes/free-entry" className="underline hover:text-[var(--neon)]">Free entry (AMOE)</Link>.
         </p>
 
+        {pendingCheckout && (
+          <div
+            className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="checkout-consent-title"
+            onClick={(e) => { if (e.target === e.currentTarget) setPendingCheckout(null); }}
+          >
+            <div className="my-8 w-full max-w-2xl rounded-lg border border-[var(--border-line)] bg-[var(--bg)] p-4 shadow-2xl">
+              <h2 id="checkout-consent-title" className="sr-only">Confirm your subscription</h2>
+              <CheckoutConsentPanel
+                planName={pendingCheckout.tier.name}
+                displayedPrice={priceForInterval(pendingCheckout.tier, pendingCheckout.intv)}
+                currency="USD"
+                billingInterval={pendingCheckout.intv}
+                onCancel={() => setPendingCheckout(null)}
+                onAccept={handleConsentAccepted}
+              />
+            </div>
+          </div>
+        )}
+
         {isOpen && (
           <div
             className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/80 p-4 backdrop-blur-sm"
@@ -231,6 +282,7 @@ function Pricing() {
               {checkoutElement}
             </div>
           </div>
+
         )}
       </main>
       <SiteFooter />

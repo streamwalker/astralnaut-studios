@@ -138,6 +138,33 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useCartSync();
 
+  // Stage 3: flush pending signup clickwrap once the user actually has a session.
+  // Covers OAuth and email-confirmation paths that leave login.tsx before a session exists.
+  if (typeof window !== "undefined") {
+    (window as any).__pending_signup_flushed ??= false;
+    if (!(window as any).__pending_signup_flushed) {
+      (window as any).__pending_signup_flushed = true;
+      import("@/integrations/supabase/client").then(({ supabase }) => {
+        const KEY = "pending_signup_consent_v1";
+        const tryFlush = async () => {
+          const text = typeof localStorage !== "undefined" ? localStorage.getItem(KEY) : null;
+          if (!text) return;
+          const { data } = await supabase.auth.getSession();
+          if (!data.session) return;
+          try {
+            const { recordSignupConsent } = await import("@/lib/consent.functions");
+            await recordSignupConsent({ data: { consentText: text } });
+            localStorage.removeItem(KEY);
+          } catch (e) { console.warn("[consent] deferred signup record failed", e); }
+        };
+        void tryFlush();
+        supabase.auth.onAuthStateChange((event) => {
+          if (event === "SIGNED_IN") void tryFlush();
+        });
+      });
+    }
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider delayDuration={150}>
@@ -154,3 +181,4 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+

@@ -116,53 +116,78 @@ async function resolveOrCreateCustomer(
 
 
 
+import { requireSupabaseAuth as _reqAuth } from "@/integrations/supabase/auth-middleware";
+
+// Stage 3: checkout requires a fresh, server-verified consent token that
+// the caller obtained from recordCheckoutConsent. Fail-closed: without a
+// matching consent row, no Stripe session is created.
 export const createCheckoutSession = createServerFn({ method: "POST" })
+  .middleware([_reqAuth])
   .inputValidator((data: {
     priceId: string;
     customerEmail?: string;
     userId?: string;
     returnUrl: string;
     environment: StripeEnv;
+    consentToken: string;
   }) => {
     if (!/^[a-zA-Z0-9_-]+$/.test(data.priceId)) throw new Error("Invalid priceId");
     if (data.environment !== "sandbox" && data.environment !== "live") {
       throw new Error("Invalid environment");
     }
+    if (!data.consentToken || typeof data.consentToken !== "string" || data.consentToken.length > 200) {
+      throw new Error("Missing consent token");
+    }
     return data;
   })
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    // Consent gate — must be recent, belong to this caller, and reference this plan.
+    const { data: consent, error: consentErr } = await supabaseAdmin
+      .from("consent_events")
+      .select("id, user_id, event_type, plan_id, created_at")
+      .eq("id", data.consentToken)
+      .maybeSingle();
+    if (consentErr || !consent) throw new Error("Consent record not found");
+    if (consent.user_id !== context.userId) throw new Error("Consent does not belong to this user");
+    if (consent.event_type !== "subscription_checkout") throw new Error("Wrong consent type");
+    if (consent.plan_id !== data.priceId) throw new Error("Consent does not match selected plan");
+    const ageMs = Date.now() - new Date(consent.created_at).getTime();
+    if (ageMs > 30 * 60 * 1000) throw new Error("Consent has expired — please re-confirm");
+
     const stripe = createStripeClient(data.environment);
 
     const prices = await stripe.prices.list({ lookup_keys: [data.priceId] });
     if (!prices.data.length) throw new Error("Price not found");
     const stripePrice = prices.data[0];
 
-    const customerId = (data.customerEmail || data.userId)
-      ? await resolveOrCreateCustomer(stripe, {
-          email: data.customerEmail,
-          userId: data.userId,
-        })
-      : undefined;
+    const effectiveUserId = data.userId ?? context.userId;
+    const customerId = await resolveOrCreateCustomer(stripe, {
+      email: data.customerEmail,
+      userId: effectiveUserId,
+    });
 
-    // Full compliance handling: Stripe handles tax calculation/collection/filing,
-    // fraud protection, dispute handling, and customer support (+3.5% per txn).
-    // Incompatible with automatic_tax, customer_update, shipping_address_collection.
-    // Patron print shipping is collected post-checkout via the account page.
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: stripePrice.id, quantity: 1 }],
       mode: "subscription",
       ui_mode: "embedded_page",
       return_url: data.returnUrl,
       ...({ managed_payments: { enabled: true } } as any),
-      ...(customerId && { customer: customerId }),
-      ...(data.userId && {
-        metadata: { userId: data.userId, tier_price: data.priceId },
-        subscription_data: { metadata: { userId: data.userId, tier_price: data.priceId } },
-      }),
+      customer: customerId,
+      metadata: { userId: effectiveUserId, tier_price: data.priceId, consent_id: consent.id },
+      subscription_data: {
+        metadata: { userId: effectiveUserId, tier_price: data.priceId, consent_id: consent.id },
+      },
     });
+
+    // Link the session/subscription id back to the consent record for audit.
+    await supabaseAdmin
+      .from("consent_events")
+      .update({ stripe_subscription_id: session.id })
+      .eq("id", consent.id);
 
     return session.client_secret;
   });
+
 
 const TIER_LOOKUP_KEYS = [
   "reader_monthly", "reader_yearly",

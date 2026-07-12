@@ -73,6 +73,7 @@ import { Route as AuthenticatedAdminHelpRouteImport } from './routes/_authentica
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicLeadsUnsubscribeRouteImport } from './routes/api/public/leads/unsubscribe'
 import { Route as ApiPublicLeadsConfirmRouteImport } from './routes/api/public/leads/confirm'
+import { Route as ApiPublicCronRenewalRemindersRouteImport } from './routes/api/public/cron/renewal-reminders'
 import { Route as AuthenticatedAdminLearnModuleIdRouteImport } from './routes/_authenticated/admin.learn.$moduleId'
 import { Route as AuthenticatedAdminHelpSlugRouteImport } from './routes/_authenticated/admin.help.$slug'
 import { Route as AuthenticatedReaderSeriesIssueLettersRouteImport } from './routes/_authenticated/reader.$series.$issue.letters'
@@ -405,6 +406,12 @@ const ApiPublicLeadsConfirmRoute = ApiPublicLeadsConfirmRouteImport.update({
   path: '/api/public/leads/confirm',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCronRenewalRemindersRoute =
+  ApiPublicCronRenewalRemindersRouteImport.update({
+    id: '/api/public/cron/renewal-reminders',
+    path: '/api/public/cron/renewal-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedAdminLearnModuleIdRoute =
   AuthenticatedAdminLearnModuleIdRouteImport.update({
     id: '/$moduleId',
@@ -487,6 +494,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
+  '/api/public/cron/renewal-reminders': typeof ApiPublicCronRenewalRemindersRoute
   '/api/public/leads/confirm': typeof ApiPublicLeadsConfirmRoute
   '/api/public/leads/unsubscribe': typeof ApiPublicLeadsUnsubscribeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -555,6 +563,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
+  '/api/public/cron/renewal-reminders': typeof ApiPublicCronRenewalRemindersRoute
   '/api/public/leads/confirm': typeof ApiPublicLeadsConfirmRoute
   '/api/public/leads/unsubscribe': typeof ApiPublicLeadsUnsubscribeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -625,6 +634,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/help/$slug': typeof AuthenticatedAdminHelpSlugRoute
   '/_authenticated/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
+  '/api/public/cron/renewal-reminders': typeof ApiPublicCronRenewalRemindersRoute
   '/api/public/leads/confirm': typeof ApiPublicLeadsConfirmRoute
   '/api/public/leads/unsubscribe': typeof ApiPublicLeadsUnsubscribeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -695,6 +705,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/admin/help/$slug'
     | '/admin/learn/$moduleId'
+    | '/api/public/cron/renewal-reminders'
     | '/api/public/leads/confirm'
     | '/api/public/leads/unsubscribe'
     | '/api/public/payments/webhook'
@@ -763,6 +774,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/help/$slug'
     | '/admin/learn/$moduleId'
+    | '/api/public/cron/renewal-reminders'
     | '/api/public/leads/confirm'
     | '/api/public/leads/unsubscribe'
     | '/api/public/payments/webhook'
@@ -832,6 +844,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/admin/help/$slug'
     | '/_authenticated/admin/learn/$moduleId'
+    | '/api/public/cron/renewal-reminders'
     | '/api/public/leads/confirm'
     | '/api/public/leads/unsubscribe'
     | '/api/public/payments/webhook'
@@ -877,6 +890,7 @@ export interface RootRouteChildren {
   ApiPublicGameEventsRoute: typeof ApiPublicGameEventsRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
   ReaderSeriesIssueRoute: typeof ReaderSeriesIssueRoute
+  ApiPublicCronRenewalRemindersRoute: typeof ApiPublicCronRenewalRemindersRoute
   ApiPublicLeadsConfirmRoute: typeof ApiPublicLeadsConfirmRoute
   ApiPublicLeadsUnsubscribeRoute: typeof ApiPublicLeadsUnsubscribeRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -1332,6 +1346,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicLeadsConfirmRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/renewal-reminders': {
+      id: '/api/public/cron/renewal-reminders'
+      path: '/api/public/cron/renewal-reminders'
+      fullPath: '/api/public/cron/renewal-reminders'
+      preLoaderRoute: typeof ApiPublicCronRenewalRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/learn/$moduleId': {
       id: '/_authenticated/admin/learn/$moduleId'
       path: '/$moduleId'
@@ -1508,6 +1529,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicGameEventsRoute: ApiPublicGameEventsRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
   ReaderSeriesIssueRoute: ReaderSeriesIssueRoute,
+  ApiPublicCronRenewalRemindersRoute: ApiPublicCronRenewalRemindersRoute,
   ApiPublicLeadsConfirmRoute: ApiPublicLeadsConfirmRoute,
   ApiPublicLeadsUnsubscribeRoute: ApiPublicLeadsUnsubscribeRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
