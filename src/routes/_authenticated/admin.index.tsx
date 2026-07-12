@@ -296,6 +296,7 @@ function AdminPage() {
             </>
           )}
         </section>
+        <SerialMetadataPanel />
       </main>
     </div>
   );
