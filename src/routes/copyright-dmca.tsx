@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage, metaFor } from "@/components/legal-page";
 import { LEGAL_CONFIG } from "@/config/legal";
+import { DmcaForm } from "@/components/dmca-form";
 
 const D = LEGAL_CONFIG.documents.dmca;
 
@@ -47,6 +48,11 @@ function CopyrightDmcaPage() {
 
       <h2>Implementation status</h2>
       <p><strong>DMCA safe-harbor registration:</strong> registration in progress. We do not currently claim registered DMCA safe-harbor status. Streamwalkers is preparing the designation of a DMCA agent with the U.S. Copyright Office; matching contact information will be published on this page upon designation.</p>
+
+      <h2>Submit a notice or counter-notice</h2>
+      <p>Use the form below to submit a structured DMCA notice or counter-notice. You may also email <a className="underline" href={`mailto:${agent.email}`}>{agent.email}</a>.</p>
+      <DmcaForm />
     </LegalPage>
   );
 }
+
