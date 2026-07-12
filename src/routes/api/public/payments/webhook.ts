@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { type StripeEnv, verifyWebhook, createStripeClient, isoWeekKey } from "@/lib/stripe.server";
+import { type StripeEnv, verifyWebhook, createStripeClient } from "@/lib/stripe.server";
 
 function getSupabase() {
   return supabaseAdmin as any;
@@ -21,13 +21,19 @@ function tierFromPriceId(priceId: string): string | null {
   return null;
 }
 
-// FTC parity: purchase must not increase odds. Every paid tier gets the
-// SAME single automatic entry per week — matching the AMOE free-entry cap.
-const TIER_WEEKLY_ENTRIES: Record<string, number> = {
-  reader: 1,
-  initiate: 1,
-  patron: 1,
-};
+// Sweepstakes model — milestone-based, NOT weekly.
+//
+// A sweepstakes period opens each time the platform crosses a 10,000
+// subscriber milestone and runs for a fixed 14-day entry window. Within
+// that window:
+//   - Paid subscribers earn 1 entry per active subscriber-month elapsed
+//     during the window.
+//   - AMOE (free) entrants may submit up to the same maximum as the
+//     top paid entrant in that window (FTC parity).
+//
+// Entries are therefore granted at drawing time by a milestone job, NOT
+// on every invoice. This webhook no longer inserts sweepstakes entries.
+// See docs/sweepstakes.md (TODO) for the launch-time granter.
 
 async function handleSubscriptionUpsert(subscription: any, env: StripeEnv, shipping?: any) {
   const userId = subscription.metadata?.userId;
@@ -91,37 +97,12 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
 }
 
 async function handleInvoicePaid(invoice: any, env: StripeEnv) {
-  // Grant weekly sweepstakes entries when an invoice is paid (renewal or initial)
-  const userId = invoice.subscription_details?.metadata?.userId
-    || invoice.parent?.subscription_details?.metadata?.userId;
-  const subId = invoice.subscription || invoice.parent?.subscription_details?.subscription;
-  if (!subId) return;
-
-  const stripe = createStripeClient(env);
-  const sub = await stripe.subscriptions.retrieve(subId as string);
-  const realUserId = userId || sub.metadata?.userId;
-  if (!realUserId) return;
-
-  const item = sub.items?.data?.[0];
-  const priceId = resolvePriceId(item);
-  const tier = tierFromPriceId(priceId);
-  if (!tier) return;
-
-  const entriesCount = TIER_WEEKLY_ENTRIES[tier] || 0;
-  if (entriesCount === 0) return;
-
-  const email = invoice.customer_email || "";
-  const weekKey = isoWeekKey();
-
-  const rows = Array.from({ length: entriesCount }).map(() => ({
-    user_id: realUserId,
-    email,
-    week_key: weekKey,
-    source: "paid_tier" as const,
-    tier,
-  }));
-
-  await getSupabase().from("raffle_entries").insert(rows);
+  // Sweepstakes entries are no longer granted per invoice. See the
+  // milestone note above. This handler is intentionally a no-op today
+  // and left in place so future non-sweepstakes side-effects (e.g.
+  // receipts, ledger writes) can hook in here.
+  void invoice;
+  void env;
 }
 
 async function handleWebhook(req: Request, env: StripeEnv) {
