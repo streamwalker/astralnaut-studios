@@ -61,18 +61,26 @@ function LoginPage() {
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     if (mode === "signup" && !ageConfirmed) {
-      toast.error("You must confirm you are 18 or older to create an account.");
+      toast.error("Please review and accept the account terms to continue.");
       return;
     }
     setBusy(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        stashPendingConsent();
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: window.location.origin + successDestination() },
         });
         if (error) throw error;
+        // If confirmation is disabled the session exists immediately; record now.
+        if (data.session) {
+          try {
+            await recordSignupConsent({ data: { consentText: LEGAL_CONFIG.clickwrap.signup } });
+            localStorage.removeItem(PENDING_KEY);
+          } catch { /* Root SIGNED_IN handler will retry */ }
+        }
         toast.success("Check your email to confirm your account.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -89,9 +97,10 @@ function LoginPage() {
 
   const handleGoogle = async () => {
     if (mode === "signup" && !ageConfirmed) {
-      toast.error("You must confirm you are 18 or older to create an account.");
+      toast.error("Please review and accept the account terms to continue.");
       return;
     }
+    if (mode === "signup") stashPendingConsent();
     setBusy(true);
     try {
       const { error } = await lovable.auth.signInWithOAuth("google", {
@@ -103,6 +112,7 @@ function LoginPage() {
       setBusy(false);
     }
   };
+
 
   const planLabel = search.plan
     ? `${search.plan[0].toUpperCase()}${search.plan.slice(1)}`
