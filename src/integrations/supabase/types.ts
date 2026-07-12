@@ -56,6 +56,57 @@ export type Database = {
         }
         Relationships: []
       }
+      appearance_releases: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          person_email: string
+          person_full_legal_name: string
+          release_document_path: string | null
+          release_document_sha256: string | null
+          revocation_reason: string | null
+          signed_at: string | null
+          status: string
+          updated_at: string
+          user_id: string | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          person_email: string
+          person_full_legal_name: string
+          release_document_path?: string | null
+          release_document_sha256?: string | null
+          revocation_reason?: string | null
+          signed_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          person_email?: string
+          person_full_legal_name?: string
+          release_document_path?: string | null
+          release_document_sha256?: string | null
+          revocation_reason?: string | null
+          signed_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: []
+      }
       archive_redemption_catalog: {
         Row: {
           active: boolean
@@ -234,6 +285,63 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      cameo_candidates: {
+        Row: {
+          appearance_release_id: string | null
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          editorial_notes: string | null
+          id: string
+          person_email: string
+          person_full_legal_name: string
+          status: string
+          submission_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          appearance_release_id?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          editorial_notes?: string | null
+          id?: string
+          person_email: string
+          person_full_legal_name: string
+          status?: string
+          submission_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          appearance_release_id?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          editorial_notes?: string | null
+          id?: string
+          person_email?: string
+          person_full_legal_name?: string
+          status?: string
+          submission_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cameo_candidates_appearance_release_id_fkey"
+            columns: ["appearance_release_id"]
+            isOneToOne: false
+            referencedRelation: "appearance_releases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cameo_candidates_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "cameo_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cameo_submissions: {
         Row: {
@@ -1351,6 +1459,201 @@ export type Database = {
           stripe_subscription_id?: string
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      sweepstakes_drawings: {
+        Row: {
+          alternate_entry_ids: string[]
+          audit_record: Json
+          drawn_at: string
+          drawn_by: string | null
+          entrant_count: number
+          entry_set_commitment: string
+          final_winner_entry_id: string | null
+          id: string
+          method_description: string
+          promotion_id: string
+          selected_entry_id: string | null
+          selection_seed: string
+          winner_index: number
+          winner_notified_at: string | null
+          winner_response_deadline: string | null
+          winner_status: string
+        }
+        Insert: {
+          alternate_entry_ids?: string[]
+          audit_record?: Json
+          drawn_at?: string
+          drawn_by?: string | null
+          entrant_count: number
+          entry_set_commitment: string
+          final_winner_entry_id?: string | null
+          id?: string
+          method_description: string
+          promotion_id: string
+          selected_entry_id?: string | null
+          selection_seed: string
+          winner_index: number
+          winner_notified_at?: string | null
+          winner_response_deadline?: string | null
+          winner_status?: string
+        }
+        Update: {
+          alternate_entry_ids?: string[]
+          audit_record?: Json
+          drawn_at?: string
+          drawn_by?: string | null
+          entrant_count?: number
+          entry_set_commitment?: string
+          final_winner_entry_id?: string | null
+          id?: string
+          method_description?: string
+          promotion_id?: string
+          selected_entry_id?: string | null
+          selection_seed?: string
+          winner_index?: number
+          winner_notified_at?: string | null
+          winner_response_deadline?: string | null
+          winner_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sweepstakes_drawings_final_winner_entry_id_fkey"
+            columns: ["final_winner_entry_id"]
+            isOneToOne: false
+            referencedRelation: "sweepstakes_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sweepstakes_drawings_promotion_id_fkey"
+            columns: ["promotion_id"]
+            isOneToOne: false
+            referencedRelation: "sweepstakes_promotions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sweepstakes_drawings_selected_entry_id_fkey"
+            columns: ["selected_entry_id"]
+            isOneToOne: false
+            referencedRelation: "sweepstakes_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sweepstakes_entries: {
+        Row: {
+          attestation_text: string
+          created_at: string
+          dedup_key: string
+          eligibility_attested: boolean
+          entrant_email: string
+          entrant_full_name: string | null
+          entry_method: string
+          id: string
+          ip: string | null
+          promotion_id: string
+          rules_version: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          attestation_text: string
+          created_at?: string
+          dedup_key: string
+          eligibility_attested?: boolean
+          entrant_email: string
+          entrant_full_name?: string | null
+          entry_method: string
+          id?: string
+          ip?: string | null
+          promotion_id: string
+          rules_version: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          attestation_text?: string
+          created_at?: string
+          dedup_key?: string
+          eligibility_attested?: boolean
+          entrant_email?: string
+          entrant_full_name?: string | null
+          entry_method?: string
+          id?: string
+          ip?: string | null
+          promotion_id?: string
+          rules_version?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sweepstakes_entries_promotion_id_fkey"
+            columns: ["promotion_id"]
+            isOneToOne: false
+            referencedRelation: "sweepstakes_promotions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sweepstakes_promotions: {
+        Row: {
+          activation_snapshot: Json
+          arv: string
+          created_at: string
+          drawing_days_after_milestone: number
+          drawing_rule: string
+          id: string
+          milestone_number: number
+          name: string
+          period_closed_at: string | null
+          period_open_at: string | null
+          prize_description: string
+          promotion_code: string
+          response_window_days: number
+          rules_version: string
+          status: string
+          updated_at: string
+          winner_process: string
+        }
+        Insert: {
+          activation_snapshot?: Json
+          arv: string
+          created_at?: string
+          drawing_days_after_milestone: number
+          drawing_rule: string
+          id?: string
+          milestone_number: number
+          name: string
+          period_closed_at?: string | null
+          period_open_at?: string | null
+          prize_description: string
+          promotion_code: string
+          response_window_days: number
+          rules_version: string
+          status?: string
+          updated_at?: string
+          winner_process: string
+        }
+        Update: {
+          activation_snapshot?: Json
+          arv?: string
+          created_at?: string
+          drawing_days_after_milestone?: number
+          drawing_rule?: string
+          id?: string
+          milestone_number?: number
+          name?: string
+          period_closed_at?: string | null
+          period_open_at?: string | null
+          prize_description?: string
+          promotion_code?: string
+          response_window_days?: number
+          rules_version?: string
+          status?: string
+          updated_at?: string
+          winner_process?: string
         }
         Relationships: []
       }
