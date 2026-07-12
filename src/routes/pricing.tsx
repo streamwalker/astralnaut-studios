@@ -5,6 +5,9 @@ import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { supabase } from "@/integrations/supabase/client";
 import { HelpTip } from "@/components/help/HelpTip";
+import { CheckoutConsentPanel } from "@/components/checkout-consent-panel";
+import { recordCheckoutConsent } from "@/lib/consent.functions";
+import { toast } from "sonner";
 import {
   pricingTiers,
   type PricingTier,
@@ -14,6 +17,7 @@ import {
 import { siteConfig } from "@/config/siteConfig";
 import { track } from "@/lib/analytics";
 import { OG_DEFAULT_IMAGE, OG_DEFAULT_ALT, OG_DEFAULT_WIDTH, OG_DEFAULT_HEIGHT, SITE_URL } from "@/lib/seo";
+
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
