@@ -38,7 +38,7 @@ type PerkRow = {
 const PERKS: PerkRow[] = [
   { feature: "forum", title: "Forum access", description: "Post and reply in the community forum." },
   { feature: "canon_voting", title: "Canon voting", description: "Cast votes that shape canonical story decisions." },
-  { feature: "raffle_auto_entries", title: "Auto sweepstakes entries", description: "Weekly sweepstakes entries granted automatically based on tier." },
+  { feature: "raffle_auto_entries", title: "Automatic Weekly Sweepstakes entry", description: "Every paid tier receives the same single automatic entry per week — equal to the free (AMOE) entry. Purchase does not increase odds." },
   { feature: "motion_comic", title: "Motion-comic reader", description: "Animated panel-by-panel reading mode." },
   { feature: "early_access_24h", title: "24-hour early access", description: "Read new pages a full day before Reader tier." },
   { feature: "numbered_variants", title: "Numbered digital variants", description: "Collectible digital variant covers, numbered to you." },
