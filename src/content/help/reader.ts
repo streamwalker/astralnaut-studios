@@ -103,9 +103,9 @@ From the library, pick a series, then click an issue cover. Or use the **Start r
       summary: "Reader, Initiate, and Patron — what's included and how to pick.",
       body: `## The three tiers
 
-- **Reader — $4.99/mo or $49.90/yr.** Forum access, canon voting, Eligible for milestone sweepstakes.
-- **Initiate — $9.99/mo or $99.90/yr.** Eligible for milestone sweepstakes, numbered digital variant covers.
-- **Patron — $24.99/mo or $249.90/yr.** Eligible for milestone sweepstakes, cameo eligibility, quarterly signed physical print, and direct creator Discord access.
+- **Reader — $4.99/mo or $49.90/yr.** Forum access, canon voting, eligible for the Milestone Sweepstakes.
+- **Initiate — $9.99/mo or $99.90/yr.** Eligible for the Milestone Sweepstakes, numbered digital variant covers.
+- **Patron — $24.99/mo or $249.90/yr.** Eligible for the Milestone Sweepstakes, cameo eligibility, quarterly signed physical print, and direct creator Discord access.
 
 ## Monthly vs annual
 
@@ -144,16 +144,21 @@ Contact us through the support link in the portal. We handle refunds case-by-cas
     },
     {
       slug: "sweepstakes-entries",
-      title: "How sweepstakes work",
+      title: "How the Milestone Sweepstakes works",
       category: "Sweepstakes & Rewards",
-      summary: "Entry counts per tier, what you can win, and how winners are picked.",
-      body: `## Entries per tier
+      summary: "When windows open, how many entries you can earn, and how winners are picked.",
+      body: `## When windows open
 
-- **Reader:** 1 entry per week
-- **Initiate:** 3 entries per week
-- **Patron:** 10 entries per week
+Each time the platform crosses a **10,000-subscriber milestone**, a sweepstakes window opens for **14 days**. There is no fixed weekly cadence — windows are triggered by growth.
 
-Entries are granted automatically each billing cycle.
+## How entries are earned
+
+- **Paid subscribers:** 1 entry per active subscriber-month elapsed during the window.
+- **Free (AMOE) entrants:** may submit up to the same maximum as the top paid entrant in that window.
+
+Purchase does not increase your chances of winning — free entrants can always match the maximum.
+
+Entries are granted at drawing time based on the state of your subscription during the window.
 
 ## What you can win
 
