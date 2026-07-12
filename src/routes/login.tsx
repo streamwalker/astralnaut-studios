@@ -166,21 +166,24 @@ function LoginPage() {
             <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
           {mode === "signup" && (
-            <label className="flex items-start gap-2 text-xs text-muted-foreground">
+            <label className="flex items-start gap-2 text-xs text-muted-foreground" htmlFor="signup-clickwrap">
               <input
+                id="signup-clickwrap"
                 type="checkbox"
                 checked={ageConfirmed}
                 onChange={(e) => setAgeConfirmed(e.target.checked)}
                 className="mt-0.5"
                 required
+                aria-required
               />
               <span>
-                I confirm I am 18 years of age or older. Accounts, subscriptions, store purchases,
-                Milestone Sweepstakes entry, community/Discord participation, and cameo submissions are
-                restricted to adults 18+.
+                {LEGAL_CONFIG.clickwrap.signup} (
+                <Link to="/terms" target="_blank" rel="noopener" className="underline">Terms</Link>,{" "}
+                <Link to="/privacy" target="_blank" rel="noopener" className="underline">Privacy</Link>)
               </span>
             </label>
           )}
+
           <Button type="submit" disabled={busy} className="w-full">
             {mode === "signin" ? "Sign in" : "Create account"}
           </Button>
