@@ -6,7 +6,7 @@ export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
       { title: "Privacy Policy — Real World Comics" },
-      { name: "description", content: "How Real World Comics, LLC collects, uses, and protects personal data, and how to exercise your privacy rights under GDPR, CCPA, and other US state privacy laws." },
+      { name: "description", content: "How Streamwalkers Corporation collects, uses, and protects personal data, and how to exercise your privacy rights under GDPR, CCPA, and other US state privacy laws." },
       { property: "og:title", content: "Privacy Policy — Real World Comics" },
       { property: "og:description", content: "Our privacy notice covering GDPR, CCPA/CPRA, and US state privacy laws." },
     ],

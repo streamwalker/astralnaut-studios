@@ -1,6 +1,6 @@
 # Real World Comics — Astralnaut Studios
 
-> A digital comics subscription platform from Real World Comics, LLC (publishing under the Astralnaut Studios and Real World Comics imprints) — three serialized properties on a weekly tier-staggered cadence.
+> A digital comics subscription platform from Streamwalkers Corporation (publishing under the Astralnaut Studios and Real World Comics imprints) — three serialized properties on a weekly tier-staggered cadence.
 
 ## Properties
 - Battlefield Atlantis — hard sci-fi space opera
@@ -21,6 +21,6 @@
 - Tiers: Reader $4.99/mo, Initiate $9.99/mo, Patron $24.99/mo
 
 ## Rights
-All properties 100% owned by Real World Comics, LLC. Available for film, TV,
+All properties 100% owned by Streamwalkers Corporation. Available for film, TV,
 animation, streaming, video game, and audio drama adaptation under NDA.
 Contact: streamwalkersceo@gmail.com

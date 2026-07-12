@@ -18,7 +18,7 @@ export const STRATEGY: Block[] = [
   },
   {
     "k": "p",
-    "t": "Prepared for: Phil — Founder, Astralnaut Studios LLCProperties: Battlefield Atlantis · Children of Aquarius · Darker AgesPlatform: realworldcomics.comParent brand: astralnautstudios.comHorizon: 24 months · May 2026 → May 2028Document version: 1.0"
+    "t": "Prepared for: Phil — Founder, Streamwalkers CorporationProperties: Battlefield Atlantis · Children of Aquarius · Darker AgesPlatform: realworldcomics.comParent brand: astralnautstudios.comHorizon: 24 months · May 2026 → May 2028Document version: 1.0"
   },
   {
     "k": "h1",

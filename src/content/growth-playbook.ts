@@ -18,7 +18,7 @@ export const PLAYBOOK: Block[] = [
   },
   {
     "k": "p",
-    "t": "Companion to: 1M-Subscriber-Strategy.docxEach tactic is independently executable.Stack tactics by phase, channel, and cost ceiling.Version 1.0 · Astralnaut Studios LLC"
+    "t": "Companion to: 1M-Subscriber-Strategy.docxEach tactic is independently executable.Stack tactics by phase, channel, and cost ceiling.Version 1.0 · Streamwalkers Corporation"
   },
   {
     "k": "h1",

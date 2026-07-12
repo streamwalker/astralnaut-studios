@@ -17,7 +17,7 @@ export function RightsNotice({
   if (variant === "series") {
     body = (
       <>
-        <em>{t}</em>™ and all related characters, names, storylines, logos, and indicia are owned by Real World Comics, LLC.
+        <em>{t}</em>™ and all related characters, names, storylines, logos, and indicia are owned by Streamwalkers Corporation.
         Original text and the selection and arrangement of materials are protected by copyright. Unauthorized reproduction,
         distribution, adaptation, scraping, or AI-training use is prohibited.
       </>
@@ -25,33 +25,33 @@ export function RightsNotice({
   } else if (variant === "reader") {
     body = (
       <>
-        © 2026 Real World Comics, LLC. <em>{t}</em> Issue #{issueNumber}. For personal, non-commercial reading only. No
+        © 2026 Streamwalkers Corporation. <em>{t}</em> Issue #{issueNumber}. For personal, non-commercial reading only. No
         downloading, redistribution, or use for AI/dataset training.
       </>
     );
   } else if (variant === "preview") {
     body = (
       <>
-        <strong>Preview — free pages.</strong> © 2026 Real World Comics, LLC. Shared for preview only; not licensed for
+        <strong>Preview — free pages.</strong> © 2026 Streamwalkers Corporation. Shared for preview only; not licensed for
         redistribution or AI training.
       </>
     );
   } else if (variant === "shop") {
     body = (
       <>
-        © 2026 Real World Comics, LLC. Official Real World Comics merchandise. Designs, names, and logos are trademarks
-        of Real World Comics, LLC. Unauthorized reproduction prohibited.
+        © 2026 Streamwalkers Corporation. Official Real World Comics merchandise. Designs, names, and logos are trademarks
+        of Streamwalkers Corporation. Unauthorized reproduction prohibited.
       </>
     );
   } else if (variant === "product") {
     body = (
       <>
-        © 2026 Real World Comics, LLC. Official <em>{t}</em> merchandise. Designs, names, and logos are trademarks of
-        Real World Comics, LLC. Unauthorized reproduction prohibited.
+        © 2026 Streamwalkers Corporation. Official <em>{t}</em> merchandise. Designs, names, and logos are trademarks of
+        Streamwalkers Corporation. Unauthorized reproduction prohibited.
       </>
     );
   } else if (variant === "characters") {
-    body = <>Characters, names, and likenesses © / ™ 2026 Real World Comics, LLC.</>;
+    body = <>Characters, names, and likenesses © / ™ 2026 Streamwalkers Corporation.</>;
   }
 
   return (

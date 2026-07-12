@@ -206,7 +206,7 @@ export function SiteFooter() {
           <a href="/.well-known/security.txt" className="hover:text-[var(--neon)]">security.txt</a>
         </div>
         <div className="mt-4 text-xs leading-relaxed text-[var(--fg-muted)]">
-          © {new Date().getFullYear()} Real World Comics, LLC. All rights reserved. Astralnaut Studios and Real World Comics are imprints of Real World Comics, LLC.
+          © {new Date().getFullYear()} Streamwalkers Corporation. All rights reserved. Astralnaut Studios and Real World Comics are imprints of Streamwalkers Corporation.
         </div>
       </div>
     </footer>
