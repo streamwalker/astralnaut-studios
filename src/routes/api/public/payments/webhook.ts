@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { type StripeEnv, verifyWebhook, createStripeClient } from "@/lib/stripe.server";
+import {
+  sendSubscriptionConfirmationEmail,
+  sendCancellationConfirmationEmail,
+} from "@/lib/emails.server";
 
 function getSupabase() {
   return supabaseAdmin as any;
@@ -14,26 +18,32 @@ function resolvePriceId(item: any): string {
   );
 }
 
-function tierFromPriceId(priceId: string): string | null {
-  if (priceId.startsWith("reader")) return "reader";
-  if (priceId.startsWith("initiate")) return "initiate";
-  if (priceId.startsWith("patron")) return "patron";
-  return null;
+async function getUserEmail(userId: string): Promise<string | null> {
+  try {
+    const { data } = await (supabaseAdmin as any).auth.admin.getUserById(userId);
+    return data?.user?.email ?? null;
+  } catch (e) {
+    console.error("[webhook] getUserEmail failed", e);
+    return null;
+  }
 }
 
-// Sweepstakes model — milestone-based, NOT weekly.
-//
-// A sweepstakes period opens each time the platform crosses a 10,000
-// subscriber milestone and runs for a fixed 14-day entry window. Within
-// that window:
-//   - Paid subscribers earn 1 entry per active subscriber-month elapsed
-//     during the window.
-//   - AMOE (free) entrants may submit up to the same maximum as the
-//     top paid entrant in that window (FTC parity).
-//
-// Entries are therefore granted at drawing time by a milestone job, NOT
-// on every invoice. This webhook no longer inserts sweepstakes entries.
-// See docs/sweepstakes.md (TODO) for the launch-time granter.
+function planLabelFromPriceId(priceId: string): string {
+  const map: Record<string, string> = {
+    reader_monthly: "Reader (Monthly)",
+    reader_yearly: "Reader (Yearly)",
+    initiate_monthly: "Initiate (Monthly)",
+    initiate_yearly: "Initiate (Yearly)",
+    patron_monthly: "Patron (Monthly)",
+    patron_yearly: "Patron (Yearly)",
+  };
+  return map[priceId] ?? priceId;
+}
+
+function unitAmountFromItem(item: any): { amount: number; currency: string } {
+  const cents = item?.price?.unit_amount ?? 0;
+  return { amount: cents / 100, currency: (item?.price?.currency ?? "usd").toUpperCase() };
+}
 
 async function handleSubscriptionUpsert(subscription: any, env: StripeEnv, shipping?: any) {
   const userId = subscription.metadata?.userId;
@@ -47,6 +57,13 @@ async function handleSubscriptionUpsert(subscription: any, env: StripeEnv, shipp
   const productId = item?.price?.product;
   const periodStart = item?.current_period_start ?? subscription.current_period_start;
   const periodEnd = item?.current_period_end ?? subscription.current_period_end;
+
+  // Read prior state so we can detect a fresh cancellation transition.
+  const { data: prior } = await getSupabase()
+    .from("subscriptions")
+    .select("id, cancel_at_period_end, status")
+    .eq("stripe_subscription_id", subscription.id)
+    .maybeSingle();
 
   const row: Record<string, any> = {
     user_id: userId,
@@ -73,6 +90,38 @@ async function handleSubscriptionUpsert(subscription: any, env: StripeEnv, shipp
   }
 
   await getSupabase().from("subscriptions").upsert(row, { onConflict: "stripe_subscription_id" });
+
+  // Detect newly-scheduled cancellation and record + notify.
+  const becameCancelling =
+    subscription.cancel_at_period_end === true &&
+    (!prior || prior.cancel_at_period_end !== true);
+
+  if (becameCancelling) {
+    const endDate = row.current_period_end ? new Date(row.current_period_end) : null;
+    const email = await getUserEmail(userId);
+    const confirmationNumber = `RWC-CX-${subscription.id.slice(-8).toUpperCase()}`;
+
+    // Persist consent-of-record for the cancellation action itself.
+    await getSupabase().from("consent_events").insert({
+      user_id: userId,
+      event_type: "subscription_cancel",
+      subscription_policy_version: null,
+      plan_id: priceId,
+      plan_name: planLabelFromPriceId(priceId),
+      stripe_subscription_id: subscription.id,
+      effective_end_date: row.current_period_end,
+      consent_text: `Cancellation scheduled via Stripe customer portal. Confirmation ${confirmationNumber}. Access continues until effective end date.`,
+    });
+
+    if (email) {
+      await sendCancellationConfirmationEmail({
+        to: email,
+        planName: planLabelFromPriceId(priceId),
+        effectiveEndDate: endDate,
+        confirmationNumber,
+      });
+    }
+  }
 }
 
 async function handleSubscriptionDeleted(subscription: any, env: StripeEnv) {
@@ -89,18 +138,36 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
 
   const stripe = createStripeClient(env);
   const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
-  // Ensure userId metadata is on subscription
   if (!subscription.metadata?.userId) {
     (subscription as any).metadata = { ...subscription.metadata, userId };
   }
   await handleSubscriptionUpsert(subscription, env, session.shipping_details);
+
+  // Send subscription confirmation email (Stage 3: onscreen + email receipt).
+  const item = (subscription as any).items?.data?.[0];
+  const priceId = resolvePriceId(item);
+  const { amount, currency } = unitAmountFromItem(item);
+  const periodEnd = item?.current_period_end ?? (subscription as any).current_period_end;
+  const endDate = periodEnd ? new Date(periodEnd * 1000) : null;
+  const email =
+    session.customer_details?.email ||
+    session.customer_email ||
+    (await getUserEmail(userId));
+  if (email) {
+    const origin = process.env.SITE_URL || "https://astralnautstudios.com";
+    await sendSubscriptionConfirmationEmail({
+      to: email,
+      planName: planLabelFromPriceId(priceId),
+      displayedPrice: amount,
+      currency,
+      billingInterval: priceId.endsWith("_yearly") ? "yearly" : "monthly",
+      nextChargeDate: endDate,
+      cancelUrl: `${origin}/account`,
+    });
+  }
 }
 
 async function handleInvoicePaid(invoice: any, env: StripeEnv) {
-  // Sweepstakes entries are no longer granted per invoice. See the
-  // milestone note above. This handler is intentionally a no-op today
-  // and left in place so future non-sweepstakes side-effects (e.g.
-  // receipts, ledger writes) can hook in here.
   void invoice;
   void env;
 }
