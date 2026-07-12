@@ -483,6 +483,72 @@ export type Database = {
         }
         Relationships: []
       }
+      consent_events: {
+        Row: {
+          billing_interval: string | null
+          consent_text: string
+          created_at: string
+          currency: string | null
+          displayed_price: number | null
+          effective_end_date: string | null
+          event_type: string
+          id: string
+          ip: string | null
+          metadata: Json
+          plan_id: string | null
+          plan_name: string | null
+          privacy_version: string | null
+          renewal_disclosure_version: string | null
+          stripe_subscription_id: string | null
+          subscription_policy_version: string | null
+          terms_version: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          billing_interval?: string | null
+          consent_text: string
+          created_at?: string
+          currency?: string | null
+          displayed_price?: number | null
+          effective_end_date?: string | null
+          event_type: string
+          id?: string
+          ip?: string | null
+          metadata?: Json
+          plan_id?: string | null
+          plan_name?: string | null
+          privacy_version?: string | null
+          renewal_disclosure_version?: string | null
+          stripe_subscription_id?: string | null
+          subscription_policy_version?: string | null
+          terms_version?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          billing_interval?: string | null
+          consent_text?: string
+          created_at?: string
+          currency?: string | null
+          displayed_price?: number | null
+          effective_end_date?: string | null
+          event_type?: string
+          id?: string
+          ip?: string | null
+          metadata?: Json
+          plan_id?: string | null
+          plan_name?: string | null
+          privacy_version?: string | null
+          renewal_disclosure_version?: string | null
+          stripe_subscription_id?: string | null
+          subscription_policy_version?: string | null
+          terms_version?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string
