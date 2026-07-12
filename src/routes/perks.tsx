@@ -126,6 +126,19 @@ function PerksPage() {
           </div>
         )}
 
+        {tier !== "none" && hasFeature(tier, "cameo_eligibility") && (
+          <div className="mt-6 rounded-xl border border-[var(--plasma)] bg-black/30 p-5">
+            <div className="text-sm font-bold text-[var(--ink)]">Cameo submission</div>
+            <p className="mt-1 text-xs text-[var(--ink2)]">
+              Adults 18+ only. Submit your age attestation and likeness release to enter the cameo pool for upcoming issues.
+            </p>
+            <Link to="/cameo/submit" className="btn-cta mt-3 inline-flex">
+              Submit a cameo
+            </Link>
+          </div>
+        )}
+
+
         {locked.length > 0 && (
           <section className="mt-12">
             <h2 className="text-xs font-bold uppercase tracking-[3px] text-[var(--gold)]">
