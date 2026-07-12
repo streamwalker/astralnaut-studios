@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { hasConsent, CONSENT_CHANGED_EVENT } from "@/lib/cookies-client";
 
 const SESSION_KEY = "as_analytics_sid";
 const SESSION_START_KEY = "as_analytics_sstart";
@@ -93,8 +94,16 @@ export function AnalyticsTracker() {
   const currentPath = useRef<string>(typeof window !== "undefined" ? window.location.pathname : "/");
   const pageEnter = useRef<number>(Date.now());
   const userId = useRef<string | null>(null);
+  const [consented, setConsented] = useState<boolean>(() => hasConsent("analytics"));
 
   useEffect(() => {
+    const onChange = () => setConsented(hasConsent("analytics"));
+    window.addEventListener(CONSENT_CHANGED_EVENT, onChange);
+    return () => window.removeEventListener(CONSENT_CHANGED_EVENT, onChange);
+  }, []);
+
+  useEffect(() => {
+    if (!consented) return;
     supabase.auth.getUser().then(({ data }) => {
       userId.current = data.user?.id ?? null;
     });

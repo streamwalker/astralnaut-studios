@@ -19,6 +19,7 @@ import { VisitorTracker } from "@/components/visitor-tracker";
 import { Toaster } from "@/components/ui/sonner";
 import { useCartSync } from "@/hooks/useCartSync";
 import { CookieConsent } from "@/components/cookie-consent";
+import { useMotionRootAttr } from "@/hooks/useMotionPref";
 
 
 function NotFoundComponent() {
@@ -137,6 +138,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useCartSync();
+  useMotionRootAttr();
 
   // Stage 3: flush pending signup clickwrap once the user actually has a session.
   // Covers OAuth and email-confirmation paths that leave login.tsx before a session exists.
@@ -168,17 +170,24 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider delayDuration={150}>
+        <a
+          href="#main-content"
+          className="sr-only-focusable fixed left-4 top-4 z-[200] rounded bg-[var(--gold,#ffcc00)] px-3 py-2 text-sm font-semibold text-black"
+        >
+          Skip to main content
+        </a>
         <PaymentTestModeBanner />
-        <Outlet />
+        <div id="main-content" tabIndex={-1}>
+          <Outlet />
+        </div>
         <TourOverlay />
-          <AnalyticsTracker />
-          <VisitorTracker />
-          <CookieConsent />
-          <Toaster position="top-right" />
-
-
+        <AnalyticsTracker />
+        <VisitorTracker />
+        <CookieConsent />
+        <Toaster position="top-right" />
       </TooltipProvider>
     </QueryClientProvider>
   );
 }
+
 
