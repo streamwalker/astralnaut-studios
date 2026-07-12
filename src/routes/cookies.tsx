@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage, metaFor } from "@/components/legal-page";
 import { LEGAL_CONFIG } from "@/config/legal";
-import { COOKIE_INVENTORY, INVENTORY_COMPLETE } from "@/config/cookies";
+import { COOKIE_INVENTORY, COOKIE_INVENTORY_VERIFIED_AT } from "@/config/cookies";
+import { openCookiePreferences } from "@/lib/cookies-client";
 
 const D = LEGAL_CONFIG.documents.cookies;
 
@@ -14,12 +15,12 @@ export const Route = createFileRoute("/cookies")({
   component: CookiesPage,
 });
 
-function clearConsent() {
-  try {
-    localStorage.removeItem("rwc-cookie-consent-v1");
-    location.reload();
-  } catch { /* ignore */ }
-}
+const CATEGORY_LABEL: Record<string, string> = {
+  necessary: "Necessary",
+  functional: "Functional",
+  analytics: "Analytics",
+  marketing: "Marketing",
+};
 
 function CookiesPage() {
   return (
@@ -31,44 +32,48 @@ function CookiesPage() {
       version={D.version}
       canonical="/cookies"
     >
-      <p>AstralnautStudios.com uses cookies, local storage, pixels, SDKs, and similar technologies. Necessary technologies support sign-in, security, carts, checkout, load balancing, consent choices, and account features. Optional analytics measure use and performance. Optional marketing technologies, if introduced, may measure campaigns or personalize advertising.</p>
-      <p>The production Cookie Policy must include an automatically maintained table containing the exact technology name, provider, purpose, category, first- or third-party status, and duration. Do not publish a generic table as if it were a verified scan.</p>
+      <p>AstralnautStudios.com uses cookies, local storage, session storage, and similar technologies. Necessary technologies support sign-in, security, carts, checkout, load balancing, consent choices, and account features. Functional technologies remember non-essential preferences such as your language and whether you disabled non-essential animations. Analytics technologies (first-party only) measure use and performance and load only after you consent. Marketing technologies would enable advertising or cross-site tracking — none are currently deployed; the category exists so any future addition must pass the same consent gate before it can run.</p>
 
-      <h2>Verified technologies currently in use</h2>
-      {!INVENTORY_COMPLETE ? (
-        <p><em>The table below lists only the necessary and first-party technologies that have been verified in production so far. It is updated as the production inventory is verified. Optional third-party technologies are not listed until an entry has been verified for this environment.</em></p>
-      ) : null}
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Provider</th>
-            <th>Purpose</th>
-            <th>Category</th>
-            <th>Party</th>
-            <th>Duration</th>
-          </tr>
-        </thead>
-        <tbody>
-          {COOKIE_INVENTORY.map((c) => (
-            <tr key={c.name + c.provider}>
-              <td>{c.name}</td>
-              <td>{c.provider}</td>
-              <td>{c.purpose}</td>
-              <td>{c.category}</td>
-              <td>{c.party}</td>
-              <td>{c.duration}</td>
+      <h2>Technologies verified in use</h2>
+      <p><em>Inventory verified on {COOKIE_INVENTORY_VERIFIED_AT}. This table lists what the site is actually observed to set, not a generic template.</em></p>
+      <div className="overflow-x-auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Provider</th>
+              <th>Purpose</th>
+              <th>Category</th>
+              <th>Party</th>
+              <th>Storage</th>
+              <th>Duration</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {COOKIE_INVENTORY.map((c) => (
+              <tr key={c.name + c.provider}>
+                <td>{c.name}</td>
+                <td>{c.provider}</td>
+                <td>{c.purpose}</td>
+                <td>{CATEGORY_LABEL[c.category]}</td>
+                <td>{c.party}</td>
+                <td>{c.storage}</td>
+                <td>{c.duration}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <h2>Your controls</h2>
-      <p>Users must have access to a persistent “Cookie Preferences” link. In jurisdictions requiring prior consent, Reject All must be as easy to select as Accept All, optional technologies must remain inactive until consent, and withdrawal must be as easy as consent. Record the consent version and timestamp. Honor Global Privacy Control where required.</p>
-      <p>Essential technology cannot be disabled through the preference center because the Service cannot function without it, but users may block it through browser controls and accept the resulting loss of functionality.</p>
+      <p>Necessary technologies cannot be disabled through the preference center because the Service cannot function without them. Functional, analytics, and marketing categories are opt-in and can be changed or withdrawn at any time. Withdrawal takes effect immediately: category cookies are removed where feasible and the associated scripts are unloaded. We honor the Global Privacy Control (Sec-GPC) browser signal — when present we automatically treat analytics and marketing as opted out and record that the choice was derived from GPC.</p>
       <p>
-        <button onClick={clearConsent} className="mt-2 rounded border border-[var(--border-line)] px-3 py-2 text-xs uppercase tracking-widest text-[var(--ink)] hover:bg-white/5">
-          Reset my cookie preferences
+        <button
+          type="button"
+          onClick={() => openCookiePreferences()}
+          className="mt-2 rounded border border-[var(--border-line)] px-3 py-2 text-xs uppercase tracking-widest text-[var(--ink)] hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--neon)]"
+        >
+          Manage cookie preferences
         </button>
       </p>
 

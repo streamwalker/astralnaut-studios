@@ -684,6 +684,126 @@ export type Database = {
         }
         Relationships: []
       }
+      cookie_consents: {
+        Row: {
+          analytics: boolean
+          created_at: string
+          functional: boolean
+          gpc_derived: boolean
+          id: string
+          ip: unknown
+          marketing: boolean
+          necessary: boolean
+          policy_version: string
+          session_id: string | null
+          source: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          analytics?: boolean
+          created_at?: string
+          functional?: boolean
+          gpc_derived?: boolean
+          id?: string
+          ip?: unknown
+          marketing?: boolean
+          necessary?: boolean
+          policy_version: string
+          session_id?: string | null
+          source: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          analytics?: boolean
+          created_at?: string
+          functional?: boolean
+          gpc_derived?: boolean
+          id?: string
+          ip?: unknown
+          marketing?: boolean
+          necessary?: boolean
+          policy_version?: string
+          session_id?: string | null
+          source?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      dmca_notices: {
+        Row: {
+          accuracy_statement: boolean
+          acting_on_behalf_of: string | null
+          complainant_address: string | null
+          complainant_email: string
+          complainant_name: string
+          complainant_phone: string | null
+          consent_to_jurisdiction: boolean | null
+          created_at: string
+          good_faith_statement: boolean
+          id: string
+          infringing_url: string
+          ip: unknown
+          kind: string
+          original_notice_ref: string | null
+          reference_id: string
+          reviewer_notes: string | null
+          signature_text: string
+          status: string
+          updated_at: string
+          user_agent: string | null
+          work_identified: string
+        }
+        Insert: {
+          accuracy_statement: boolean
+          acting_on_behalf_of?: string | null
+          complainant_address?: string | null
+          complainant_email: string
+          complainant_name: string
+          complainant_phone?: string | null
+          consent_to_jurisdiction?: boolean | null
+          created_at?: string
+          good_faith_statement: boolean
+          id?: string
+          infringing_url: string
+          ip?: unknown
+          kind: string
+          original_notice_ref?: string | null
+          reference_id?: string
+          reviewer_notes?: string | null
+          signature_text: string
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          work_identified: string
+        }
+        Update: {
+          accuracy_statement?: boolean
+          acting_on_behalf_of?: string | null
+          complainant_address?: string | null
+          complainant_email?: string
+          complainant_name?: string
+          complainant_phone?: string | null
+          consent_to_jurisdiction?: boolean | null
+          created_at?: string
+          good_faith_statement?: boolean
+          id?: string
+          infringing_url?: string
+          ip?: unknown
+          kind?: string
+          original_notice_ref?: string | null
+          reference_id?: string
+          reviewer_notes?: string | null
+          signature_text?: string
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          work_identified?: string
+        }
+        Relationships: []
+      }
       dsar_requests: {
         Row: {
           authorized_agent: boolean
@@ -737,6 +857,41 @@ export type Database = {
           verification_status?: string
         }
         Relationships: []
+      }
+      dsar_verification_tokens: {
+        Row: {
+          consumed_at: string | null
+          created_at: string
+          dsar_request_id: string
+          expires_at: string
+          id: string
+          token_hash: string
+        }
+        Insert: {
+          consumed_at?: string | null
+          created_at?: string
+          dsar_request_id: string
+          expires_at: string
+          id?: string
+          token_hash: string
+        }
+        Update: {
+          consumed_at?: string | null
+          created_at?: string
+          dsar_request_id?: string
+          expires_at?: string
+          id?: string
+          token_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dsar_verification_tokens_dsar_request_id_fkey"
+            columns: ["dsar_request_id"]
+            isOneToOne: false
+            referencedRelation: "dsar_requests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       factions: {
         Row: {
@@ -903,6 +1058,7 @@ export type Database = {
           cover_path: string | null
           created_at: string
           drop_cadence: string | null
+          flashing_notes: string | null
           free_pages: number
           id: string
           internal_identifier: string | null
@@ -910,6 +1066,7 @@ export type Database = {
           paid_pages: number
           paid_release_end: string | null
           paid_release_start: string | null
+          photosensitivity_warning: boolean
           publication_year: number
           release_status: string | null
           series_id: string
@@ -925,6 +1082,7 @@ export type Database = {
           cover_path?: string | null
           created_at?: string
           drop_cadence?: string | null
+          flashing_notes?: string | null
           free_pages?: number
           id?: string
           internal_identifier?: string | null
@@ -932,6 +1090,7 @@ export type Database = {
           paid_pages?: number
           paid_release_end?: string | null
           paid_release_start?: string | null
+          photosensitivity_warning?: boolean
           publication_year?: number
           release_status?: string | null
           series_id: string
@@ -947,6 +1106,7 @@ export type Database = {
           cover_path?: string | null
           created_at?: string
           drop_cadence?: string | null
+          flashing_notes?: string | null
           free_pages?: number
           id?: string
           internal_identifier?: string | null
@@ -954,6 +1114,7 @@ export type Database = {
           paid_pages?: number
           paid_release_end?: string | null
           paid_release_start?: string | null
+          photosensitivity_warning?: boolean
           publication_year?: number
           release_status?: string | null
           series_id?: string
@@ -1153,6 +1314,57 @@ export type Database = {
           slug?: string
           target_count?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      moderation_reports: {
+        Row: {
+          content_kind: string
+          content_ref: string
+          created_at: string
+          details: string | null
+          id: string
+          ip: unknown
+          reason: string
+          reporter_email: string | null
+          reporter_user_id: string | null
+          reviewer_notes: string | null
+          reviewer_user_id: string | null
+          status: string
+          updated_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          content_kind: string
+          content_ref: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          ip?: unknown
+          reason: string
+          reporter_email?: string | null
+          reporter_user_id?: string | null
+          reviewer_notes?: string | null
+          reviewer_user_id?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          content_kind?: string
+          content_ref?: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          ip?: unknown
+          reason?: string
+          reporter_email?: string | null
+          reporter_user_id?: string | null
+          reviewer_notes?: string | null
+          reviewer_user_id?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
         }
         Relationships: []
       }
@@ -1678,6 +1890,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_suspensions: {
+        Row: {
+          created_at: string
+          ends_at: string | null
+          id: string
+          lifted_at: string | null
+          moderator_user_id: string | null
+          reason: string
+          starts_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          lifted_at?: string | null
+          moderator_user_id?: string | null
+          reason: string
+          starts_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          lifted_at?: string | null
+          moderator_user_id?: string | null
+          reason?: string
+          starts_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       visitor_hits: {
         Row: {
           country: string | null
@@ -1763,6 +2011,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_user_suspended: { Args: { _user_id: string }; Returns: boolean }
       issue_is_concluded: { Args: { p_issue: string }; Returns: boolean }
     }
     Enums: {
