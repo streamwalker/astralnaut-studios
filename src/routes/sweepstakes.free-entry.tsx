@@ -9,10 +9,10 @@ export const Route = createFileRoute("/sweepstakes/free-entry")({
       {
         name: "description",
         content:
-          "The Milestone Sweepstakes is not currently open. When it opens, free entry (AMOE) will be available here on equal-odds terms.",
+          "The Milestone Sweepstakes is not currently open. When a 10,000-subscriber milestone triggers a window, free entry (AMOE) will be available here on equal-odds terms.",
       },
       { property: "og:title", content: "Milestone Sweepstakes — Free Entry" },
-      { property: "og:description", content: "Not currently open. Free entry (AMOE) will be available here when the promotion begins." },
+      { property: "og:description", content: "Not currently open. Free entry (AMOE) will be available here when a milestone window opens." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${SITE_URL}/sweepstakes/free-entry` },
       { property: "og:image", content: OG_DEFAULT_IMAGE },
@@ -42,8 +42,10 @@ function FreeEntryPage() {
             The Milestone Sweepstakes is not currently open.
           </p>
           <p className="mt-3 text-sm">
-            Free entry (AMOE) will be available here on equal-odds terms when the promotion
-            begins. See the{" "}
+            Sweepstakes windows open each time the platform crosses a 10,000-subscriber
+            milestone and run for 14 days. When a window is open, free entry (AMOE) will
+            be available here — you may submit up to the same maximum number of entries as
+            the top paid entrant in that window. See the{" "}
             <Link to="/sweepstakes/rules" className="underline hover:text-[var(--neon)]">
               Official Rules
             </Link>{" "}
