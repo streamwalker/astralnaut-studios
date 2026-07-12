@@ -6,7 +6,9 @@ interface CheckoutOptions {
   customerEmail?: string;
   userId?: string;
   returnUrl?: string;
+  consentToken: string;
 }
+
 
 export function useStripeCheckout() {
   const [isOpen, setIsOpen] = useState(false);
