@@ -396,6 +396,39 @@ export type Database = {
           },
         ]
       }
+      community_attestations: {
+        Row: {
+          attested_18_plus: boolean
+          created_at: string
+          date_of_birth: string
+          id: string
+          ip: string | null
+          updated_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          attested_18_plus: boolean
+          created_at?: string
+          date_of_birth: string
+          id?: string
+          ip?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          attested_18_plus?: boolean
+          created_at?: string
+          date_of_birth?: string
+          id?: string
+          ip?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string

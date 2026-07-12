@@ -45,7 +45,7 @@ const PERKS: PerkRow[] = [
   { feature: "early_access_48h", title: "48-hour early access", description: "Read new pages two full days before Reader tier." },
   { feature: "cameo_eligibility", title: "Cameo eligibility", description: "Be drawn into a future issue as a background or named character." },
   { feature: "signed_print_run", title: "Quarterly signed print", description: "A signed, physical print run shipped each quarter." },
-  { feature: "creator_discord", title: "Creator Discord", description: "Direct access to the creators' private Discord channels." },
+  { feature: "creator_discord", title: "Creator Discord", description: "Direct access to the creators' private Discord channels. Adults 18+ only — visit /community/join to attest your age before an invite is issued." },
 ];
 
 function PerksPage() {
@@ -112,6 +112,18 @@ function PerksPage() {
               ))}
             </ul>
           </section>
+        )}
+
+        {tier !== "none" && hasFeature(tier, "creator_discord") && (
+          <div className="mt-8 rounded-xl border border-[var(--neon)] bg-black/30 p-5">
+            <div className="text-sm font-bold text-[var(--ink)]">Community / Discord access</div>
+            <p className="mt-1 text-xs text-[var(--ink2)]">
+              Adults 18+ only. Verify your age to receive your Discord invite.
+            </p>
+            <Link to="/community/join" className="btn-cta mt-3 inline-flex">
+              Verify age & join
+            </Link>
+          </div>
         )}
 
         {locked.length > 0 && (
