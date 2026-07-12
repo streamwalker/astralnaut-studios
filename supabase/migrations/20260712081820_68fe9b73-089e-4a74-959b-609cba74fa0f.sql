@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.enforce_cameo_release_gate() FROM PUBLIC, anon, authenticated;
