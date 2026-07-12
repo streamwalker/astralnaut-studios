@@ -59,7 +59,7 @@ export const getIssueBundle = createServerFn({ method: "GET" })
   .inputValidator((input: { slug: string }) => z.object({ slug: z.string().min(1).max(160) }).parse(input))
   .handler(async ({ data }) => {
     const { data: issue, error } = await supabaseAdmin
-      .from("issues").select("*, series:series(slug,name,logo_path)").eq("slug", data.slug).maybeSingle();
+      .from("issues").select("*, series:series(slug,name,logo_path,issn)").eq("slug", data.slug).maybeSingle();
     if (error) throw new Error(error.message);
     if (!issue) return null;
     const [{ data: pages }, { data: drops }] = await Promise.all([
