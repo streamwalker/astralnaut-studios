@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { OG_DEFAULT_IMAGE, OG_DEFAULT_ALT, OG_DEFAULT_WIDTH, OG_DEFAULT_HEIGHT, SITE_URL } from "@/lib/seo";
 
-export const Route = createFileRoute("/sweepstakes/rules")({
+export const Route = createFileRoute("/raffle/rules")({
   head: () => ({
     meta: [
       { title: "Official sweepstakes rules — Real World Comics" },

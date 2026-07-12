@@ -31,8 +31,8 @@ import { Route as ArchiveRouteImport } from './routes/archive'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as RaffleRulesRouteImport } from './routes/sweepstakes.rules'
-import { Route as RaffleFreeEntryRouteImport } from './routes/sweepstakes.free-entry'
+import { Route as RaffleRulesRouteImport } from './routes/raffle.rules'
+import { Route as RaffleFreeEntryRouteImport } from './routes/raffle.free-entry'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
 import { Route as LearnModuleIdRouteImport } from './routes/learn.$moduleId'
 import { Route as HelpSlugRouteImport } from './routes/help.$slug'
@@ -175,13 +175,13 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const RaffleRulesRoute = RaffleRulesRouteImport.update({
-  id: '/sweepstakes/rules',
-  path: '/sweepstakes/rules',
+  id: '/raffle/rules',
+  path: '/raffle/rules',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RaffleFreeEntryRoute = RaffleFreeEntryRouteImport.update({
-  id: '/sweepstakes/free-entry',
-  path: '/sweepstakes/free-entry',
+  id: '/raffle/free-entry',
+  path: '/raffle/free-entry',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProductHandleRoute = ProductHandleRouteImport.update({
@@ -386,8 +386,8 @@ export interface FileRoutesByFullPath {
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
   '/product/$handle': typeof ProductHandleRoute
-  '/sweepstakes/free-entry': typeof RaffleFreeEntryRoute
-  '/sweepstakes/rules': typeof RaffleRulesRoute
+  '/raffle/free-entry': typeof RaffleFreeEntryRoute
+  '/raffle/rules': typeof RaffleRulesRoute
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/admin/letters': typeof AuthenticatedAdminLettersRoute
@@ -442,8 +442,8 @@ export interface FileRoutesByTo {
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
   '/product/$handle': typeof ProductHandleRoute
-  '/sweepstakes/free-entry': typeof RaffleFreeEntryRoute
-  '/sweepstakes/rules': typeof RaffleRulesRoute
+  '/raffle/free-entry': typeof RaffleFreeEntryRoute
+  '/raffle/rules': typeof RaffleRulesRoute
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/admin/letters': typeof AuthenticatedAdminLettersRoute
@@ -500,8 +500,8 @@ export interface FileRoutesById {
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
   '/product/$handle': typeof ProductHandleRoute
-  '/sweepstakes/free-entry': typeof RaffleFreeEntryRoute
-  '/sweepstakes/rules': typeof RaffleRulesRoute
+  '/raffle/free-entry': typeof RaffleFreeEntryRoute
+  '/raffle/rules': typeof RaffleRulesRoute
   '/_authenticated/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/_authenticated/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/_authenticated/admin/letters': typeof AuthenticatedAdminLettersRoute
@@ -558,8 +558,8 @@ export interface FileRouteTypes {
     | '/help/$slug'
     | '/learn/$moduleId'
     | '/product/$handle'
-    | '/sweepstakes/free-entry'
-    | '/sweepstakes/rules'
+    | '/raffle/free-entry'
+    | '/raffle/rules'
     | '/admin/help'
     | '/admin/learn'
     | '/admin/letters'
@@ -614,8 +614,8 @@ export interface FileRouteTypes {
     | '/help/$slug'
     | '/learn/$moduleId'
     | '/product/$handle'
-    | '/sweepstakes/free-entry'
-    | '/sweepstakes/rules'
+    | '/raffle/free-entry'
+    | '/raffle/rules'
     | '/admin/help'
     | '/admin/learn'
     | '/admin/letters'
@@ -671,8 +671,8 @@ export interface FileRouteTypes {
     | '/help/$slug'
     | '/learn/$moduleId'
     | '/product/$handle'
-    | '/sweepstakes/free-entry'
-    | '/sweepstakes/rules'
+    | '/raffle/free-entry'
+    | '/raffle/rules'
     | '/_authenticated/admin/help'
     | '/_authenticated/admin/learn'
     | '/_authenticated/admin/letters'
@@ -882,17 +882,17 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sweepstakes/rules': {
-      id: '/sweepstakes/rules'
-      path: '/sweepstakes/rules'
-      fullPath: '/sweepstakes/rules'
+    '/raffle/rules': {
+      id: '/raffle/rules'
+      path: '/raffle/rules'
+      fullPath: '/raffle/rules'
       preLoaderRoute: typeof RaffleRulesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sweepstakes/free-entry': {
-      id: '/sweepstakes/free-entry'
-      path: '/sweepstakes/free-entry'
-      fullPath: '/sweepstakes/free-entry'
+    '/raffle/free-entry': {
+      id: '/raffle/free-entry'
+      path: '/raffle/free-entry'
+      fullPath: '/raffle/free-entry'
       preLoaderRoute: typeof RaffleFreeEntryRouteImport
       parentRoute: typeof rootRouteImport
     }
