@@ -114,6 +114,18 @@ function PerksPage() {
           </section>
         )}
 
+        {tier !== "none" && hasFeature(tier, "creator_discord") && (
+          <div className="mt-8 rounded-xl border border-[var(--neon)] bg-black/30 p-5">
+            <div className="text-sm font-bold text-[var(--ink)]">Community / Discord access</div>
+            <p className="mt-1 text-xs text-[var(--ink2)]">
+              Adults 18+ only. Verify your age to receive your Discord invite.
+            </p>
+            <Link to="/community/join" className="btn-cta mt-3 inline-flex">
+              Verify age & join
+            </Link>
+          </div>
+        )}
+
         {locked.length > 0 && (
           <section className="mt-12">
             <h2 className="text-xs font-bold uppercase tracking-[3px] text-[var(--gold)]">
