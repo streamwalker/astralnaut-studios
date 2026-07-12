@@ -119,19 +119,35 @@ function SubscriptionTestPage() {
     setChecks((prev) => ({ ...prev, [tierKey]: new Array(CHECKLIST_ITEMS.length).fill(false) }));
   };
 
-  const handleTest = (lookupKey: string) => {
+  const handleTest = async (lookupKey: string) => {
     if (!userData) {
       toast.error("You must be signed in to test checkout.");
       return;
     }
     setActivePriceId(lookupKey);
+    // Admin test path: record a real checkout-consent event so createCheckoutSession
+    // still passes the Stage 3 gate.
+    const { recordCheckoutConsent } = await import("@/lib/consent.functions");
+    const isYearly = lookupKey.endsWith("_yearly");
+    const { consentToken } = await recordCheckoutConsent({
+      data: {
+        planId: lookupKey,
+        planName: `Admin test — ${lookupKey}`,
+        billingInterval: isYearly ? "yearly" : "monthly",
+        displayedPrice: 0.01,
+        currency: "USD",
+        consentText: `Admin test checkout for ${lookupKey}.`,
+      },
+    });
     openCheckout({
       priceId: lookupKey,
       customerEmail: userData.email ?? undefined,
       userId: userData.id,
       returnUrl: `${window.location.origin}/account?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+      consentToken,
     });
   };
+
 
   if (roleLoading) {
     return <div className="flex min-h-screen items-center justify-center text-muted-foreground">Checking access…</div>;
