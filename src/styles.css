@@ -326,3 +326,53 @@
 .newsprint h3 {
   font-family: inherit;
 }
+
+/* ==========================================================================
+   Stage 5 accessibility & motion
+   ========================================================================== */
+
+/* Skip link: visible only on keyboard focus. */
+.sr-only-focusable {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:focus-visible {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  width: auto;
+  height: auto;
+  overflow: visible;
+}
+
+/* Global focus ring on interactive elements — respects theme accent. */
+:where(a, button, [role="button"], input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--neon, #7dd3fc);
+  outline-offset: 2px;
+}
+
+/* Reduce motion when either the OS or the in-app toggle asks for it.
+   The root <html data-motion="off"> attr is set by useMotionRootAttr(). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+html[data-motion="off"] *,
+html[data-motion="off"] *::before,
+html[data-motion="off"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
