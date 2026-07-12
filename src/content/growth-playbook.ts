@@ -414,8 +414,8 @@ export const PLAYBOOK: Block[] = [
         "PlayStation Drop Mechanic"
       ],
       [
-        "Phase3ChannelLoyaltyCost$500/console + $500/monthCadenceMonthlyOwnerCommunity Mgr",
-        "WhyHigh-perceived-value prizes generate disproportionate referral activity. PlayStation 5 specifically over-indexes for the comics demographic. HowMonthly sweepstakes: 1 PS5 winner. Entries earned by reading new pages (1 entry per tier-eligible week), referrals (5 entries per confirmed conversion), and Discord activity (1 entry per week active). KPI / proof pointReferral lift > 18% during sweepstakes months"
+        "Phase3ChannelLoyaltyCost$500/console + $500/milestoneCadenceEvery 10K subscribersOwnerCommunity Mgr",
+        "WhyHigh-perceived-value prizes generate disproportionate referral activity. PlayStation 5 specifically over-indexes for the comics demographic. HowMilestone Sweepstakes: 1 PS5 winner per 10,000-subscriber milestone (14-day entry window). Paid subscribers earn 1 entry per active subscriber-month elapsed during the window; free (AMOE) entrants may match the top paid entrant. Purchase does not increase odds. KPI / proof pointReferral lift > 18% during sweepstakes windows"
       ]
     ]
   },

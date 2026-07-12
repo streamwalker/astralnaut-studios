@@ -62,10 +62,16 @@ export function hasFeature(tier: Tier, feature: Feature): boolean {
 }
 
 /**
- * Weekly sweepstakes entries auto-granted by tier.
+ * Sweepstakes entries a tier is eligible to earn per milestone period.
  *
- * FTC parity: purchase must not increase odds. Every paid tier and every
- * free (AMOE) entrant is capped at exactly ONE entry per weekly period.
+ * The sweepstakes is milestone-based (triggered every 10,000 subscribers)
+ * with a 14-day entry window. Paid tiers earn 1 entry per active
+ * subscriber-month elapsed during that window; AMOE (free) entrants may
+ * match the top paid entrant's total (FTC parity).
+ *
+ * This helper only reports whether the tier is *eligible* for automatic
+ * entries; the actual per-period count is computed at drawing time by the
+ * milestone job, not here.
  */
 export function raffleEntriesFor(tier: Tier): number {
   return tier === "none" ? 0 : 1;

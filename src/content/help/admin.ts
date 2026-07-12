@@ -78,7 +78,7 @@ Subscription state is mirrored from Stripe into the **subscriptions** table by t
 
 - **Active by tier** — Reader / Initiate / Patron split.
 - **Cancellations this period** — flag if it spikes.
-- **Sweepstakes entries granted** — should match active subs × weekly entries.`,
+- **Sweepstakes entries granted** — reviewed at each 10K-milestone drawing; totals should reconcile with active subscriber-months during the 14-day window plus AMOE submissions.`,
       related: ["stripe-modes", "webhook-troubleshooting"],
     },
     {

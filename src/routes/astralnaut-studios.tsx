@@ -59,7 +59,7 @@ const TIERS = [
       "Quarterly signed physical print",
       "Cameo eligibility",
       "Direct creator Discord channel",
-      "Automatic Weekly Sweepstakes entry (same single entry as every other eligible entrant)",
+      "Eligible for the Milestone Sweepstakes (opens every 10K subscribers; 14-day window)",
     ],
   },
   {
@@ -68,7 +68,7 @@ const TIERS = [
       "Pages 24 hours before Reader tier",
       "Numbered digital variant covers",
       "Behind-the-scenes process content",
-      "Automatic Weekly Sweepstakes entry (same single entry as every other eligible entrant)",
+      "Eligible for the Milestone Sweepstakes (opens every 10K subscribers; 14-day window)",
     ],
   },
   {
@@ -77,7 +77,7 @@ const TIERS = [
       "All series, all 20 pages of every issue",
       "Community forum + voting",
       "Motion-reader edition",
-      "Automatic Weekly Sweepstakes entry (same single entry as every other eligible entrant)",
+      "Eligible for the Milestone Sweepstakes (opens every 10K subscribers; 14-day window)",
     ],
   },
 ];

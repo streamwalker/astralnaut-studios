@@ -207,7 +207,10 @@ function Pricing() {
           Tier-staggered drops: Patron Tuesday · Initiate Wednesday · Reader Thursday. Cancel anytime from your account.
         </p>
         <p className="mt-3 text-center text-xs text-[var(--mute)]">
-          NO PURCHASE NECESSARY. A PURCHASE WILL NOT INCREASE YOUR CHANCES OF WINNING. Open to legal residents of the 50 United States and District of Columbia who are 18 or older. Void where prohibited. See{" "}
+          Milestone Sweepstakes windows open every 10,000-subscriber milestone and run for 14 days.
+          NO PURCHASE NECESSARY. A PURCHASE WILL NOT INCREASE YOUR CHANCES OF WINNING. Open to legal
+          residents of the 50 United States and District of Columbia who are 18 or older. Void where
+          prohibited. See{" "}
           <Link to="/sweepstakes/rules" className="underline hover:text-[var(--neon)]">Official Rules</Link>.{" "}
           <Link to="/sweepstakes/free-entry" className="underline hover:text-[var(--neon)]">Free entry (AMOE)</Link>.
         </p>

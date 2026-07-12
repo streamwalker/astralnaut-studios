@@ -155,7 +155,7 @@ function LoginPage() {
               />
               <span>
                 I confirm I am 18 years of age or older. Accounts, subscriptions, store purchases,
-                Weekly Sweepstakes entry, community/Discord participation, and cameo submissions are
+                Milestone Sweepstakes entry, community/Discord participation, and cameo submissions are
                 restricted to adults 18+.
               </span>
             </label>

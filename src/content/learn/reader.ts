@@ -80,8 +80,8 @@ Pricing page → toggle billing cycle → pick a tier → checkout.`,
           answerIndex: 2,
         },
         {
-          q: "How many sweepstakes entries per week does Initiate get?",
-          options: ["1", "3", "10"],
+          q: "When does a sweepstakes window open on the platform?",
+          options: ["Every Monday", "Every 10,000-subscriber milestone", "Once a year"],
           answerIndex: 1,
         },
         {
@@ -130,19 +130,18 @@ Library → series → issue cover, or hit **Start reading** in the header for t
     },
     {
       id: "04-sweepstakes",
-      title: "Sweepstakes, rewards & free entry",
-      summary: "Get the most out of weekly entries and the AMOE path.",
-      body: `## Entries per tier
+      title: "Milestone Sweepstakes, rewards & free entry",
+      summary: "How milestone-triggered windows work and the AMOE path.",
+      body: `## How windows open
 
-- Reader: 1/week
-- Initiate: 3/week
-- Patron: 10/week
+Each time the platform crosses a **10,000-subscriber milestone**, a sweepstakes window opens for **14 days**. There is no weekly cadence.
 
-Entries are granted automatically each billing cycle.
+## How to earn entries
 
-## Free path (AMOE)
+- **Paid subscribers:** 1 entry per active subscriber-month elapsed during the window.
+- **Free (AMOE) path:** submit at **/sweepstakes/free-entry** — you may match the top paid entrant's total in that window. No purchase necessary.
 
-No purchase necessary. Go to **/sweepstakes/free-entry** and submit your details. Limits apply per the rules.
+Purchase does not increase your chances of winning.
 
 ## What you can win
 
@@ -163,9 +162,9 @@ The binding text lives at **/sweepstakes/rules**.`,
           answerIndex: 1,
         },
         {
-          q: "Patrons get how many entries per week?",
-          options: ["3", "5", "10"],
-          answerIndex: 2,
+          q: "When does a sweepstakes window open?",
+          options: ["Every week", "Every 10,000-subscriber milestone", "Every month"],
+          answerIndex: 1,
         },
       ],
     },
