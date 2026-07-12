@@ -6,7 +6,7 @@ export const Route = createFileRoute("/subprocessors")({
   head: () => ({
     meta: [
       { title: "Subprocessors — Real World Comics" },
-      { name: "description", content: "The vendors Real World Comics, LLC uses to operate astralnautstudios.com, what they do, and where they process data." },
+      { name: "description", content: "The vendors Streamwalkers Corporation uses to operate astralnautstudios.com, what they do, and where they process data." },
       { property: "og:title", content: "Subprocessors — Real World Comics" },
       { property: "og:description", content: "Our current list of data subprocessors and their roles." },
     ],

@@ -19,7 +19,7 @@ export const Route = createFileRoute("/perks")({
       {
         name: "description",
         content:
-          "See exactly which features your subscription tier unlocks — forum, canon voting, raffles, early access, Patron print and Discord.",
+          "See exactly which features your subscription tier unlocks — forum, canon voting, sweepstakes, early access, Patron print and Discord.",
       },
       { property: "og:title", content: "Your subscriber perks" },
       { property: "og:description", content: "Tier-by-tier feature access." },
@@ -38,7 +38,7 @@ type PerkRow = {
 const PERKS: PerkRow[] = [
   { feature: "forum", title: "Forum access", description: "Post and reply in the community forum." },
   { feature: "canon_voting", title: "Canon voting", description: "Cast votes that shape canonical story decisions." },
-  { feature: "raffle_auto_entries", title: "Auto raffle entries", description: "Weekly raffle entries granted automatically based on tier." },
+  { feature: "raffle_auto_entries", title: "Automatic Weekly Sweepstakes entry", description: "Every paid tier receives the same single automatic entry per week — equal to the free (AMOE) entry. Purchase does not increase odds." },
   { feature: "motion_comic", title: "Motion-comic reader", description: "Animated panel-by-panel reading mode." },
   { feature: "early_access_24h", title: "24-hour early access", description: "Read new pages a full day before Reader tier." },
   { feature: "numbered_variants", title: "Numbered digital variants", description: "Collectible digital variant covers, numbered to you." },
@@ -68,7 +68,7 @@ function PerksPage() {
         </h1>
         <p className="mt-3 max-w-2xl text-[var(--ink2)]">
           {tier === "none"
-            ? "Subscribe to unlock the forum, canon voting, weekly raffle entries, and early access to every issue."
+            ? "Subscribe to unlock the forum, canon voting, weekly sweepstakes entries, and early access to every issue."
             : `Here's what your ${TIER_LABEL[tier]} plan includes right now${
                 sub.inGracePeriod && sub.currentPeriodEnd
                   ? ` — access until ${new Date(sub.currentPeriodEnd).toLocaleDateString()}.`
@@ -78,7 +78,7 @@ function PerksPage() {
 
         {tier !== "none" && (
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
-            <Stat label="Weekly raffle entries" value={String(raffleEntriesFor(tier))} />
+            <Stat label="Weekly sweepstakes entries" value={String(raffleEntriesFor(tier))} />
             <Stat
               label="Early access"
               value={earlyAccessHours(tier) > 0 ? `${earlyAccessHours(tier)}h ahead` : "On release"}

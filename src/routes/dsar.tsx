@@ -9,7 +9,7 @@ export const Route = createFileRoute("/dsar")({
       { title: "Privacy Request — Real World Comics" },
       { name: "description", content: "Submit a privacy request: access, deletion, correction, portability, or opt-out of sale or sharing under GDPR, CCPA, and other US state privacy laws." },
       { property: "og:title", content: "Privacy Request — Real World Comics" },
-      { property: "og:description", content: "Exercise your privacy rights with Real World Comics, LLC." },
+      { property: "og:description", content: "Exercise your privacy rights with Streamwalkers Corporation." },
     ],
   }),
   component: DsarPage,

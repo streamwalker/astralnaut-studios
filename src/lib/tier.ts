@@ -61,9 +61,14 @@ export function hasFeature(tier: Tier, feature: Feature): boolean {
   return TIER_RANK[tier] >= TIER_RANK[FEATURE_MIN_TIER[feature]];
 }
 
-/** Weekly raffle entries auto-granted by tier (0 = none, AMOE entry is separate). */
+/**
+ * Weekly sweepstakes entries auto-granted by tier.
+ *
+ * FTC parity: purchase must not increase odds. Every paid tier and every
+ * free (AMOE) entrant is capped at exactly ONE entry per weekly period.
+ */
 export function raffleEntriesFor(tier: Tier): number {
-  return tier === "patron" ? 10 : tier === "initiate" ? 3 : tier === "reader" ? 1 : 0;
+  return tier === "none" ? 0 : 1;
 }
 
 /** Drop-window offset in hours (how many hours early this tier reads). */

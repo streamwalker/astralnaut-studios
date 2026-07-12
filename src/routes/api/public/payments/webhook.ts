@@ -21,10 +21,12 @@ function tierFromPriceId(priceId: string): string | null {
   return null;
 }
 
+// FTC parity: purchase must not increase odds. Every paid tier gets the
+// SAME single automatic entry per week — matching the AMOE free-entry cap.
 const TIER_WEEKLY_ENTRIES: Record<string, number> = {
   reader: 1,
-  initiate: 3,
-  patron: 10,
+  initiate: 1,
+  patron: 1,
 };
 
 async function handleSubscriptionUpsert(subscription: any, env: StripeEnv, shipping?: any) {
@@ -89,7 +91,7 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
 }
 
 async function handleInvoicePaid(invoice: any, env: StripeEnv) {
-  // Grant weekly raffle entries when an invoice is paid (renewal or initial)
+  // Grant weekly sweepstakes entries when an invoice is paid (renewal or initial)
   const userId = invoice.subscription_details?.metadata?.userId
     || invoice.parent?.subscription_details?.metadata?.userId;
   const subId = invoice.subscription || invoice.parent?.subscription_details?.subscription;

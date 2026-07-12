@@ -97,7 +97,7 @@ Optimize covers and heroes (<500KB). Use the existing aspect ratios; the layout 
       summary: "Use the playbook on a real cadence.",
       body: `## Cadence
 
-- **Weekly:** subscriptions delta, raffle entries, forum activity.
+- **Weekly:** subscriptions delta, sweepstakes entries, forum activity.
 - **Monthly:** tier conversion + one playbook promotion.
 - **Quarterly:** tentpole event (variant drop, cameo reveal).
 

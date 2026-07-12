@@ -31,6 +31,8 @@ import { Route as ArchiveRouteImport } from './routes/archive'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SweepstakesRulesRouteImport } from './routes/sweepstakes.rules'
+import { Route as SweepstakesFreeEntryRouteImport } from './routes/sweepstakes.free-entry'
 import { Route as RaffleRulesRouteImport } from './routes/raffle.rules'
 import { Route as RaffleFreeEntryRouteImport } from './routes/raffle.free-entry'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
@@ -172,6 +174,16 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SweepstakesRulesRoute = SweepstakesRulesRouteImport.update({
+  id: '/sweepstakes/rules',
+  path: '/sweepstakes/rules',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SweepstakesFreeEntryRoute = SweepstakesFreeEntryRouteImport.update({
+  id: '/sweepstakes/free-entry',
+  path: '/sweepstakes/free-entry',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RaffleRulesRoute = RaffleRulesRouteImport.update({
@@ -388,6 +400,8 @@ export interface FileRoutesByFullPath {
   '/product/$handle': typeof ProductHandleRoute
   '/raffle/free-entry': typeof RaffleFreeEntryRoute
   '/raffle/rules': typeof RaffleRulesRoute
+  '/sweepstakes/free-entry': typeof SweepstakesFreeEntryRoute
+  '/sweepstakes/rules': typeof SweepstakesRulesRoute
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/admin/letters': typeof AuthenticatedAdminLettersRoute
@@ -444,6 +458,8 @@ export interface FileRoutesByTo {
   '/product/$handle': typeof ProductHandleRoute
   '/raffle/free-entry': typeof RaffleFreeEntryRoute
   '/raffle/rules': typeof RaffleRulesRoute
+  '/sweepstakes/free-entry': typeof SweepstakesFreeEntryRoute
+  '/sweepstakes/rules': typeof SweepstakesRulesRoute
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/admin/letters': typeof AuthenticatedAdminLettersRoute
@@ -502,6 +518,8 @@ export interface FileRoutesById {
   '/product/$handle': typeof ProductHandleRoute
   '/raffle/free-entry': typeof RaffleFreeEntryRoute
   '/raffle/rules': typeof RaffleRulesRoute
+  '/sweepstakes/free-entry': typeof SweepstakesFreeEntryRoute
+  '/sweepstakes/rules': typeof SweepstakesRulesRoute
   '/_authenticated/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/_authenticated/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/_authenticated/admin/letters': typeof AuthenticatedAdminLettersRoute
@@ -560,6 +578,8 @@ export interface FileRouteTypes {
     | '/product/$handle'
     | '/raffle/free-entry'
     | '/raffle/rules'
+    | '/sweepstakes/free-entry'
+    | '/sweepstakes/rules'
     | '/admin/help'
     | '/admin/learn'
     | '/admin/letters'
@@ -616,6 +636,8 @@ export interface FileRouteTypes {
     | '/product/$handle'
     | '/raffle/free-entry'
     | '/raffle/rules'
+    | '/sweepstakes/free-entry'
+    | '/sweepstakes/rules'
     | '/admin/help'
     | '/admin/learn'
     | '/admin/letters'
@@ -673,6 +695,8 @@ export interface FileRouteTypes {
     | '/product/$handle'
     | '/raffle/free-entry'
     | '/raffle/rules'
+    | '/sweepstakes/free-entry'
+    | '/sweepstakes/rules'
     | '/_authenticated/admin/help'
     | '/_authenticated/admin/learn'
     | '/_authenticated/admin/letters'
@@ -718,6 +742,8 @@ export interface RootRouteChildren {
   ProductHandleRoute: typeof ProductHandleRoute
   RaffleFreeEntryRoute: typeof RaffleFreeEntryRoute
   RaffleRulesRoute: typeof RaffleRulesRoute
+  SweepstakesFreeEntryRoute: typeof SweepstakesFreeEntryRoute
+  SweepstakesRulesRoute: typeof SweepstakesRulesRoute
   ApiPublicGameEventsRoute: typeof ApiPublicGameEventsRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
   ReaderSeriesIssueRoute: typeof ReaderSeriesIssueRoute
@@ -880,6 +906,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sweepstakes/rules': {
+      id: '/sweepstakes/rules'
+      path: '/sweepstakes/rules'
+      fullPath: '/sweepstakes/rules'
+      preLoaderRoute: typeof SweepstakesRulesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sweepstakes/free-entry': {
+      id: '/sweepstakes/free-entry'
+      path: '/sweepstakes/free-entry'
+      fullPath: '/sweepstakes/free-entry'
+      preLoaderRoute: typeof SweepstakesFreeEntryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/raffle/rules': {
@@ -1251,6 +1291,8 @@ const rootRouteChildren: RootRouteChildren = {
   ProductHandleRoute: ProductHandleRoute,
   RaffleFreeEntryRoute: RaffleFreeEntryRoute,
   RaffleRulesRoute: RaffleRulesRoute,
+  SweepstakesFreeEntryRoute: SweepstakesFreeEntryRoute,
+  SweepstakesRulesRoute: SweepstakesRulesRoute,
   ApiPublicGameEventsRoute: ApiPublicGameEventsRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
   ReaderSeriesIssueRoute: ReaderSeriesIssueRoute,

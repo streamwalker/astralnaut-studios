@@ -10,7 +10,7 @@ interface Props {
 }
 
 /**
- * "Your standing" widget. Shows accumulated raffle entries + weeks active,
+ * "Your standing" widget. Shows accumulated sweepstakes entries + weeks active,
  * and replaces the bare "Manage subscription" button with a flow that
  * honestly states what will be lost on cancellation BEFORE handing off to
  * the Stripe billing portal.
@@ -42,7 +42,7 @@ export function StandingAndCancelFlow({ hasActiveSub, onManage, portalLoading }:
             Your standing
           </div>
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <StandingStat label="Raffle entries" value={entries.toLocaleString()} accent="var(--neon)" />
+            <StandingStat label="Sweepstakes entries" value={entries.toLocaleString()} accent="var(--neon)" />
             <StandingStat label="Weeks active" value={weeks.toLocaleString()} />
             <StandingStat label="Campaign" value={campaign} />
           </div>
@@ -78,7 +78,7 @@ export function StandingAndCancelFlow({ hasActiveSub, onManage, portalLoading }:
           <div className="card-rwc w-full max-w-lg p-6 md:p-8">
             <div className="eyebrow" style={{ color: "var(--gold)" }}>Before you go</div>
             <h3 id="cancel-loss-headline" className="mt-2 text-2xl font-black">
-              Cancelling forfeits {entries.toLocaleString()} raffle entries.
+              Cancelling forfeits {entries.toLocaleString()} sweepstakes entries.
             </h3>
             <p className="mt-3 text-sm text-[var(--ink2)]">
               You've accumulated <span className="font-bold text-[var(--neon)]">{entries.toLocaleString()}</span> entries

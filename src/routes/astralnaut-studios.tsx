@@ -31,12 +31,12 @@ export const Route = createFileRoute("/astralnaut-studios")({
           "@context": "https://schema.org",
           "@type": "Organization",
           name: "Astralnaut Studios",
-          alternateName: "Astralnaut Studios (imprint of Real World Comics, LLC)",
+          alternateName: "Astralnaut Studios (imprint of Streamwalkers Corporation)",
           url: "https://astralnautstudios.com",
           sameAs: ["https://realworldcomics.com"],
           parentOrganization: {
             "@type": "Organization",
-            name: "Real World Comics, LLC",
+            name: "Streamwalkers Corporation",
           },
         }),
       },
@@ -59,7 +59,7 @@ const TIERS = [
       "Quarterly signed physical print",
       "Cameo eligibility",
       "Direct creator Discord channel",
-      "10 raffle entries per week",
+      "Automatic Weekly Sweepstakes entry (same single entry as every other eligible entrant)",
     ],
   },
   {
@@ -68,7 +68,7 @@ const TIERS = [
       "Pages 24 hours before Reader tier",
       "Numbered digital variant covers",
       "Behind-the-scenes process content",
-      "3 raffle entries per week",
+      "Automatic Weekly Sweepstakes entry (same single entry as every other eligible entrant)",
     ],
   },
   {
@@ -77,7 +77,7 @@ const TIERS = [
       "All series, all 20 pages of every issue",
       "Community forum + voting",
       "Motion-reader edition",
-      "1 raffle entry per active reading week",
+      "Automatic Weekly Sweepstakes entry (same single entry as every other eligible entrant)",
     ],
   },
 ];

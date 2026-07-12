@@ -9,7 +9,7 @@ export interface UserStanding {
 }
 
 /**
- * Returns the signed-in user's retention metrics: total accumulated raffle
+ * Returns the signed-in user's retention metrics: total accumulated sweepstakes
  * entries this campaign, weeks of active subscription, and current tier.
  * Used by the account "Your standing" widget and the cancel-flow loss notice.
  */

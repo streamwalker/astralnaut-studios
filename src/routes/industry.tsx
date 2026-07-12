@@ -6,7 +6,7 @@ export const Route = createFileRoute("/industry")({
   head: () => ({
     meta: [
       { title: "Adaptation Rights — Astralnaut Studios" },
-      { name: "description", content: "Three independently-owned IP properties available for film, TV, and game adaptation. Sole rights holder: Real World Comics, LLC. NDA-ready." },
+      { name: "description", content: "Three independently-owned IP properties available for film, TV, and game adaptation. Sole rights holder: Streamwalkers Corporation. NDA-ready." },
       { property: "og:title", content: "Astralnaut Studios — Adaptation Rights" },
       { property: "og:description", content: "Three-property slate. UAP disclosure-era narratives. 100% owned. NDA-ready." },
       { property: "og:type", content: "website" },
@@ -38,7 +38,7 @@ export default function Industry() {
         <div className="eyebrow">Adaptation rights · NDA-ready</div>
         <h1 className="mt-4 text-5xl font-black tracking-tight md:text-6xl">Three properties.<br />One disclosure-era slate.</h1>
         <p className="mt-6 max-w-3xl text-lg text-[var(--ink2)]">
-          Real World Comics, LLC holds 100% of the rights to three serialized IP properties developed before — and now positioned alongside — the post-2023 UAP disclosure cultural moment. The work was built to anticipate the moment, not exploit it.
+          Streamwalkers Corporation holds 100% of the rights to three serialized IP properties developed before — and now positioned alongside — the post-2023 UAP disclosure cultural moment. The work was built to anticipate the moment, not exploit it.
         </p>
 
         <section className="mt-16">
@@ -64,7 +64,7 @@ export default function Industry() {
         <section className="mt-16 panel p-8">
           <div className="eyebrow">IP rights statement</div>
           <h2 className="mt-3 text-2xl font-black">Sole rights holder. Open to option / acquisition.</h2>
-          <p className="mt-3 text-[var(--ink2)]">All three properties — Battlefield Atlantis, Children of Aquarius, Darker Ages — are 100% owned by Real World Comics, LLC. Trademarks pending. Available for film, television, animation, streaming, video game, and audio drama adaptation. Discussions welcome under NDA.</p>
+          <p className="mt-3 text-[var(--ink2)]">All three properties — Battlefield Atlantis, Children of Aquarius, Darker Ages — are 100% owned by Streamwalkers Corporation. Trademarks pending. Available for film, television, animation, streaming, video game, and audio drama adaptation. Discussions welcome under NDA.</p>
           <div className="mt-6 flex flex-wrap gap-3">
             <a href="mailto:streamwalkersceo@gmail.com?subject=%5BINDUSTRY%20%C2%B7%20ASTRALNAUT%5D%20Adaptation%20inquiry" className="btn-cta">Contact for option/acquisition</a>
             <Link to="/" className="btn-ghost">View consumer platform</Link>

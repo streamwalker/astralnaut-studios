@@ -1,5 +1,5 @@
 export const LEGAL = {
-  entity: "Real World Comics, LLC",
+  entity: "Streamwalkers Corporation",
   imprints: "Astralnaut Studios and Real World Comics",
   site: "astralnautstudios.com",
   privacyEmail: "privacy@astralnautstudios.com",

@@ -6,7 +6,7 @@ export const Route = createFileRoute("/trust")({
   head: () => ({
     meta: [
       { title: "Trust & Security — Real World Comics" },
-      { name: "description", content: "How Real World Comics, LLC protects your data: encryption, access controls, subprocessors, retention, and how to report a vulnerability." },
+      { name: "description", content: "How Streamwalkers Corporation protects your data: encryption, access controls, subprocessors, retention, and how to report a vulnerability." },
       { property: "og:title", content: "Trust & Security — Real World Comics" },
       { property: "og:description", content: "Security and privacy practices for astralnautstudios.com." },
     ],

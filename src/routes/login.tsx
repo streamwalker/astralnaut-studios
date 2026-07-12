@@ -29,6 +29,7 @@ function LoginPage() {
   const [mode, setMode] = useState<"signin" | "signup">(search.plan ? "signup" : "signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [busy, setBusy] = useState(false);
 
   // Where to send the user after successful auth.
@@ -48,6 +49,10 @@ function LoginPage() {
 
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (mode === "signup" && !ageConfirmed) {
+      toast.error("You must confirm you are 18 or older to create an account.");
+      return;
+    }
     setBusy(true);
     try {
       if (mode === "signup") {
@@ -72,6 +77,10 @@ function LoginPage() {
   };
 
   const handleGoogle = async () => {
+    if (mode === "signup" && !ageConfirmed) {
+      toast.error("You must confirm you are 18 or older to create an account.");
+      return;
+    }
     setBusy(true);
     try {
       const { error } = await lovable.auth.signInWithOAuth("google", {
@@ -135,6 +144,22 @@ function LoginPage() {
             <Label htmlFor="password">Password</Label>
             <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
+          {mode === "signup" && (
+            <label className="flex items-start gap-2 text-xs text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={ageConfirmed}
+                onChange={(e) => setAgeConfirmed(e.target.checked)}
+                className="mt-0.5"
+                required
+              />
+              <span>
+                I confirm I am 18 years of age or older. Accounts, subscriptions, store purchases,
+                Weekly Sweepstakes entry, community/Discord participation, and cameo submissions are
+                restricted to adults 18+.
+              </span>
+            </label>
+          )}
           <Button type="submit" disabled={busy} className="w-full">
             {mode === "signin" ? "Sign in" : "Create account"}
           </Button>
