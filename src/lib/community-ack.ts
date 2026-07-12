@@ -11,7 +11,7 @@ import { LEGAL_CONFIG } from "@/config/legal";
 const LOCAL_ACK_KEY = "rwc-community-ack-v1";
 
 function version(): string {
-  return LEGAL_CONFIG.documents.communityGuidelines?.version ?? "v1";
+  return LEGAL_CONFIG.documents.community?.version ?? "v1";
 }
 
 export async function hasCommunityAck(): Promise<boolean> {
