@@ -228,6 +228,13 @@ function Reader() {
           </Link>
         </div>
         <RightsNotice variant="reader" title={issue.series.name} issueNumber={issue.issue_number} />
+        <Indicia
+          seriesName={issue.series.name}
+          volume={Number((issue as { volume?: number }).volume ?? 1)}
+          issueNumber={issue.issue_number}
+          publicationYear={Number((issue as { publication_year?: number }).publication_year ?? 2026)}
+          issn={(issue.series as { issn?: string | null }).issn ?? null}
+        />
       </div>
     </>
   );
