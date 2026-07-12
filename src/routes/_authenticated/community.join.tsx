@@ -9,16 +9,20 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { seo } from "@/lib/seo";
+
 
 export const Route = createFileRoute("/_authenticated/community/join")({
-  head: () =>
-    seo({
-      title: "Join the community — 18+ | Astralnaut Studios",
-      description:
-        "Age-gated attestation required to join the Astralnaut Studios community and Discord. Adults 18+ only.",
-      noindex: true,
-    }),
+  head: () => ({
+    meta: [
+      { title: "Join the community — 18+ | Astralnaut Studios" },
+      {
+        name: "description",
+        content:
+          "Age-gated attestation required to join the Astralnaut Studios community and Discord. Adults 18+ only.",
+      },
+      { name: "robots", content: "noindex,nofollow" },
+    ],
+  }),
   component: CommunityJoinPage,
   errorComponent: ({ error }) => (
     <div className="mx-auto max-w-lg p-6 text-sm text-destructive">
