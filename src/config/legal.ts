@@ -116,3 +116,24 @@ export function isSweepstakesActivatable(promo: ActiveSweepstakes | null): promo
   ];
   return required.every((v) => v !== undefined && v !== null && !isPlaceholder(v));
 }
+
+/** Renders a checkout consent line with $PRICE substituted for the real price. */
+export function renderCheckoutConsentText(
+  interval: "monthly" | "yearly",
+  displayedPrice: string,
+): string {
+  const template =
+    interval === "yearly"
+      ? LEGAL_CONFIG.clickwrap.checkoutAnnual
+      : LEGAL_CONFIG.clickwrap.checkoutMonthly;
+  return template.replace("$PRICE", displayedPrice);
+}
+
+/** Effective days ahead of annual renewal to send the reminder email.
+ *  Fails closed at 30 days when the config value is still a bracketed placeholder. */
+export function annualRenewalReminderLeadDaysEffective(): number {
+  const raw = LEGAL_CONFIG.annualRenewalReminderLeadDays;
+  if (isPlaceholder(raw)) return 30;
+  const n = Number(raw);
+  return Number.isFinite(n) && n > 0 ? n : 30;
+}
