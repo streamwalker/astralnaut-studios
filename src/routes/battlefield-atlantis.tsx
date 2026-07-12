@@ -232,7 +232,7 @@ function BAPage() {
         <section className="mt-20 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
           <div>
             <h2 className="text-4xl font-black md:text-5xl">Issue #1 — <span className="italic">"Only One Will Rule"</span></h2>
-            <p className="mt-3 max-w-xl text-[var(--ink2)]">The cold open. The council. The ultimatum. The team that should not exist.</p>
+            <p className="mt-3 max-w-xl text-[var(--ink2)]">The catastrophe. The council. The ultimatum. The three Ascended humans standing between restraint and annihilation.</p>
 
             {/* Green callout */}
             <div className="mt-8 rounded-md border-l-4 border-emerald-400 bg-emerald-500/5 p-5">
@@ -240,34 +240,38 @@ function BAPage() {
                 <span>📺</span> Structured like TV · 9.5 free pages
               </div>
               <p className="mt-2 text-sm leading-relaxed text-[var(--ink2)]">
-                Pages 1–9 are the full first act — free for everyone. Page 9.5 is the title page — also free.
-                Pages 10–20 are the episode body, releasing four per week to subscribers.
+                Pages 1–9 comprise the complete first act and are free for everyone. Page 9.5 is the title page and is also free.
+                Pages 10–20 continue the episode for subscribers, with four new pages released each week.
               </p>
             </div>
 
             <div className="mt-8 space-y-5 text-sm leading-relaxed text-[var(--ink2)]">
               <p>
                 <span className="font-black uppercase tracking-wider text-emerald-400">First Act · Pages 1–9.</span>{" "}
-                The story opens on <strong className="text-[var(--gold)]">Saantris Station</strong> in Mars orbit, 25,000 years before the present day, an instant before the bomb.
-                The shockwave reaches Vrenoa City — population 3.8 million — in seconds. By page two, that number is zero.
-                At <strong className="text-[var(--gold)]">Tri-Planetary Coalition headquarters</strong> twenty-four hours later, Poseidon, King of Alympia,
-                attends an emergency council by hologram and demands deployment of the <strong className="text-[var(--gold)]">Lumenax</strong> —
-                the most destructive weapon in the galaxy — against the Vaegan homeworld. He delivers his ultimatum to Zeus: deploy it in twenty-four hours,
-                or he will come to Alympia and deploy it himself. Zeus, refusing both Poseidon's revenge and the council's paralysis,
-                begins to form the <strong className="text-[var(--gold)]">Alympian Guard</strong>. Prometheus walks. By the close of the first act:{" "}
-                <em>"He has made his choice. We have made ours. When Poseidon comes this time, we end it."</em>
+                Twenty-five thousand years ago, <strong className="text-[var(--gold)]">Santee Station</strong> suddenly explodes in high orbit over Mars.
+                Debris from the orbital station rains down upon <strong className="text-[var(--gold)]">Renoa City</strong>, devastating the Martian surface and killing millions.
+                In the aftermath, the <strong className="text-[var(--gold)]">Tri-Planetary Coalition</strong> convenes an emergency council and urges restraint
+                while investigators work to determine who destroyed the station. But <strong className="text-[var(--gold)]">Poseidon, ruler of Neptuna</strong>, has already reached his verdict.
+                Convinced the catastrophe was an act of war, he demands the annihilation of those he holds responsible and threatens to unleash the most destructive weapon in the known galaxy.
+                Standing between diplomacy and total war are <strong className="text-[var(--gold)]">the Allies</strong> — three Ascended humans sworn to protect the citizens of
+                Earth, Mars, and Ares, as well as the greater <strong className="text-[var(--gold)]">Nerrian Galaxy</strong>. As accusations spread and military forces mobilize,
+                the Allies must uncover the truth before Poseidon turns one catastrophe into the beginning of an interplanetary war.
               </p>
               <p>
                 <span className="font-black uppercase tracking-wider text-[var(--gold)]">Title Page · Page 9.5.</span>{" "}
-                The story breaks for its title beat — Battlefield Atlantis · Issue One · Only One Will Rule. The natural act-break before the paywall.
+                The first act gives way to the title reveal — <em>Battlefield Atlantis · Issue #1 — "Only One Will Rule"</em>.
+                This moment serves as the episode's natural act break before the subscriber-exclusive continuation.
               </p>
               <p>
                 <span className="font-black uppercase tracking-wider text-cyan-400">Episode Body · Pages 10–20.</span>{" "}
-                The eleven subscriber-gated pages develop the consequences of the act-one decisions.
-                The Alympian Guard is sanctioned. Captain Rhea is recalled. Forces preposition for the inevitable confrontation.
-                The issue closes on a hook designed to convert subscribers into the next issue.
+                The subscriber-exclusive pages explore the political and military consequences of the destruction of Santee Station and Renoa City 25,000 years in our past.
+                The Tri-Planetary Coalition struggles to contain the crisis. Poseidon prepares Neptuna for retaliation.
+                The Allies are drawn into a rapidly escalating confrontation while evidence begins to suggest that the truth may be far more dangerous than anyone realizes.
+                With the three worlds moving closer to war, the Allies must determine who caused the catastrophe — and why — before Poseidon carries out his threat.
+                The issue ends with a major revelation that drives directly into the next chapter.
               </p>
             </div>
+
           </div>
 
           {/* Issue details card */}
