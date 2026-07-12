@@ -43,7 +43,7 @@ const PERKS: PerkRow[] = [
   { feature: "numbered_variants", title: "Numbered digital variants", description: "Collectible digital variant covers, numbered to you." },
   { feature: "bts_process", title: "Behind-the-scenes process", description: "Script pages, layouts, ink stages, and creator commentary." },
   { feature: "early_access_48h", title: "48-hour early access", description: "Read new pages two full days before Reader tier." },
-  { feature: "cameo_eligibility", title: "Cameo eligibility", description: "Be drawn into a future issue as a background or named character. Adults 18+ only — submit at /cameo/submit with age attestation and likeness release." },
+  { feature: "cameo_eligibility", title: "Cameo — editorial consideration", description: "Eligibility for editorial consideration only. Patron cameo access is not a guaranteed appearance and is never randomly awarded. Every accepted cameo requires a signed and verified appearance release before it can enter production. Adults 18+ only — submit at /cameo/submit." },
   { feature: "signed_print_run", title: "Quarterly signed print", description: "A signed, physical print run shipped each quarter." },
   { feature: "creator_discord", title: "Creator Discord", description: "Direct access to the creators' private Discord channels. Adults 18+ only — visit /community/join to attest your age before an invite is issued." },
 ];
