@@ -1,67 +1,66 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteHeader, SiteFooter } from "@/components/site-header";
-import { LEGAL } from "@/lib/legal-meta";
+import { LegalPage, metaFor } from "@/components/legal-page";
+import { LEGAL_CONFIG } from "@/config/legal";
+
+const D = LEGAL_CONFIG.documents.subprocessors;
+
+// Only vendors actually used in the production stack. Do not add rows that
+// have not been verified in production, and do not claim executed DPAs/SCCs.
+const ROWS: Array<{
+  name: string; service: string; data: string; location: string; url: string;
+}> = [
+  { name: "Supabase (Lovable Cloud)", service: "Application database, authentication, file storage, edge functions", data: "Account email, hashed password, profile, subscription state, letters/comments, order metadata, visitor analytics, DSAR records", location: "United States", url: "https://supabase.com/privacy" },
+  { name: "Cloudflare, Inc.", service: "CDN, DNS, TLS termination, edge runtime hosting", data: "IP address, request metadata", location: "Global edge; US-headquartered", url: "https://www.cloudflare.com/privacypolicy/" },
+  { name: "Stripe, Inc.", service: "Payment processing for subscriptions", data: "Name, billing address, tokenized card data (not stored by us), transaction history", location: "United States / Ireland", url: "https://stripe.com/privacy" },
+  { name: "Shopify Inc.", service: "Merchandise store and checkout", data: "Name, shipping address, order history, email", location: "Canada / United States", url: "https://www.shopify.com/legal/privacy" },
+  { name: "Resend, Inc.", service: "Transactional email (subscriber alerts, confirmations, DSAR acknowledgements)", data: "Email address, message content, delivery metadata", location: "United States", url: "https://resend.com/legal/privacy-policy" },
+  { name: "Google LLC", service: "Optional Google sign-in", data: "Email, OAuth identifier", location: "United States", url: "https://policies.google.com/privacy" },
+  { name: "Discord Inc.", service: "External community for verified 18+ members (opt-in)", data: "Discord user handle when member opts to join", location: "United States", url: "https://discord.com/privacy" },
+];
 
 export const Route = createFileRoute("/subprocessors")({
-  head: () => ({
-    meta: [
-      { title: "Subprocessors — Real World Comics" },
-      { name: "description", content: "The vendors Streamwalkers Corporation uses to operate astralnautstudios.com, what they do, and where they process data." },
-      { property: "og:title", content: "Subprocessors — Real World Comics" },
-      { property: "og:description", content: "Our current list of data subprocessors and their roles." },
-    ],
+  head: () => metaFor({
+    title: "Subprocessors — Streamwalkers Corporation",
+    description: "Vendors that process personal information on behalf of Streamwalkers Corporation to operate AstralnautStudios.com.",
+    path: "/subprocessors",
   }),
   component: SubprocessorsPage,
 });
 
-const ROWS: { name: string; purpose: string; data: string; region: string; site: string }[] = [
-  { name: "Lovable Cloud (Supabase)", purpose: "Application database, authentication, file storage", data: "Account email, hashed password, profile, subscription state, letters/comments, order metadata, visitor analytics", region: "United States", site: "https://supabase.com/privacy" },
-  { name: "Cloudflare", purpose: "CDN, DNS, TLS termination, edge runtime (Workers)", data: "IP address, request metadata", region: "Global edge; US-headquartered", site: "https://www.cloudflare.com/privacypolicy/" },
-  { name: "Stripe", purpose: "Payment processing for subscriptions", data: "Name, billing address, card data (tokenized; not stored by us), transaction history", region: "United States / Ireland", site: "https://stripe.com/privacy" },
-  { name: "Shopify", purpose: "Merchandise store and checkout", data: "Name, shipping address, order history, email", region: "Canada / United States", site: "https://www.shopify.com/legal/privacy" },
-  { name: "Resend", purpose: "Transactional email (drop alerts, confirmations, account email)", data: "Email address, message content, delivery metadata", region: "United States", site: "https://resend.com/legal/privacy-policy" },
-  { name: "Google (Sign-In)", purpose: "Optional OAuth sign-in", data: "Email, OAuth identifier", region: "United States", site: "https://policies.google.com/privacy" },
-];
-
 function SubprocessorsPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
-      <main className="mx-auto max-w-4xl px-6 py-16">
-        <h1 className="text-3xl font-black text-[var(--ink)] md:text-5xl">Subprocessors</h1>
-        <p className="mt-3 text-xs text-[var(--fg-muted)]">Last updated {LEGAL.effectiveDate}</p>
-        <p className="mt-4 text-sm leading-relaxed text-[var(--mute)]">
-          {LEGAL.entity} uses the following vendors to operate {LEGAL.site}. Each is bound by a written data processing agreement. International transfers of EU/UK personal data rely on Standard Contractual Clauses where applicable. We will update this page when we add or remove a vendor.
-        </p>
-
-        <div className="mt-8 overflow-x-auto rounded border border-[var(--border-line)]">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-white/5 text-xs uppercase tracking-wider text-[var(--ink)]">
-              <tr>
-                <th className="p-3">Vendor</th>
-                <th className="p-3">Purpose</th>
-                <th className="p-3">Categories of data</th>
-                <th className="p-3">Processing region</th>
-              </tr>
-            </thead>
-            <tbody className="text-[var(--mute)]">
-              {ROWS.map((r) => (
-                <tr key={r.name} className="border-t border-[var(--border-line)] align-top">
-                  <td className="p-3 font-semibold text-[var(--ink)]">
-                    <a href={r.site} target="_blank" rel="noopener noreferrer" className="underline">{r.name}</a>
-                  </td>
-                  <td className="p-3">{r.purpose}</td>
-                  <td className="p-3">{r.data}</td>
-                  <td className="p-3">{r.region}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <p className="mt-8 text-xs text-[var(--fg-muted)]">Questions: <a className="underline" href={`mailto:${LEGAL.privacyEmail}`}>{LEGAL.privacyEmail}</a>.</p>
-      </main>
-      <SiteFooter />
-    </div>
+    <LegalPage
+      title="Subprocessor Notice"
+      eyebrow="Streamwalkers Corporation"
+      effective={D.effective}
+      updated={D.updated}
+      version={D.version}
+      canonical="/subprocessors"
+    >
+      <p>Publish only vendors actually used in production. For each provider we list the legal vendor name, service, categories of data, processing location, and link to its privacy or security information. Streamwalkers does not currently claim that a Data Processing Addendum, Standard Contractual Clauses, or a UK transfer addendum has been executed with every vendor listed; contracts are being verified.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Vendor</th>
+            <th>Service</th>
+            <th>Data categories</th>
+            <th>Processing location</th>
+            <th>Privacy page</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ROWS.map((r) => (
+            <tr key={r.name}>
+              <td>{r.name}</td>
+              <td>{r.service}</td>
+              <td>{r.data}</td>
+              <td>{r.location}</td>
+              <td><a className="underline" href={r.url} target="_blank" rel="noopener noreferrer">Link</a></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p>Additional providers requiring verification before publication include additional analytics or error monitoring, customer support tooling, shipping and fulfillment services, and any AI service that may receive personal information. These will be listed only after being verified in the production environment.</p>
+    </LegalPage>
   );
 }
