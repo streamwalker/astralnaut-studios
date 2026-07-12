@@ -47,7 +47,7 @@ function DsarVerifyPage() {
   }, [ref, token, verify]);
 
   return (
-    <LegalPage title="Verify Privacy Request" eyebrow="Streamwalkers Corporation" canonical="/dsar/verify">
+    <LegalPage title="Verify Privacy Request" eyebrow="Streamwalkers Corporation" canonical="/dsar/verify" effective="—" updated="—" version="v1">
       {state.kind === "checking" && <p>Verifying…</p>}
       {state.kind === "verified" && (
         <div className="rounded-lg border border-[var(--border-line)] bg-black/30 p-5">
