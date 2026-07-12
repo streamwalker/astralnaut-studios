@@ -7,7 +7,18 @@ import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LEGAL_CONFIG } from "@/config/legal";
+import { recordSignupConsent } from "@/lib/consent.functions";
 import logo from "@/assets/astralnaut-logo.png";
+
+// Persist the exact clickwrap text so the SIGNED_IN handler in __root can
+// record it against the newly-created account even for OAuth / email-confirm
+// flows where the session doesn't exist at button-press time.
+const PENDING_KEY = "pending_signup_consent_v1";
+function stashPendingConsent() {
+  try { localStorage.setItem(PENDING_KEY, LEGAL_CONFIG.clickwrap.signup); } catch {}
+}
+
 
 const searchSchema = z.object({
   next: z.string().optional().catch(undefined),
