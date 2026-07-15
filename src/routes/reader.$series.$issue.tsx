@@ -90,6 +90,69 @@ function Reader() {
     if (viewerRef.current) viewerRef.current.scrollTo({ top: 0, left: 0 });
   }, [page]);
 
+  // Pinch-to-zoom + two-finger pan (mobile). Attached with passive:false so we
+  // can preventDefault on multi-touch moves; single touch keeps native scroll.
+  const pinchRef = useRef<{
+    startDist: number;
+    startZoom: number;
+    contentX: number;
+    contentY: number;
+    rectLeft: number;
+    rectTop: number;
+  } | null>(null);
+  useEffect(() => {
+    const el = viewerRef.current;
+    if (!el) return;
+    const clamp = (v: number) => Math.max(0.5, Math.min(4, v));
+    const onStart = (e: TouchEvent) => {
+      if (e.touches.length !== 2) return;
+      const [t1, t2] = [e.touches[0], e.touches[1]];
+      const rect = el.getBoundingClientRect();
+      const midX = (t1.clientX + t2.clientX) / 2;
+      const midY = (t1.clientY + t2.clientY) / 2;
+      const startZoom = zoom === FIT ? 1 : zoom;
+      pinchRef.current = {
+        startDist: Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY),
+        startZoom,
+        contentX: (el.scrollLeft + (midX - rect.left)) / startZoom,
+        contentY: (el.scrollTop + (midY - rect.top)) / startZoom,
+        rectLeft: rect.left,
+        rectTop: rect.top,
+      };
+      if (zoom === FIT) setZoom(1);
+      e.preventDefault();
+    };
+    const onMove = (e: TouchEvent) => {
+      const p = pinchRef.current;
+      if (!p || e.touches.length !== 2) return;
+      e.preventDefault();
+      const [t1, t2] = [e.touches[0], e.touches[1]];
+      const midX = (t1.clientX + t2.clientX) / 2;
+      const midY = (t1.clientY + t2.clientY) / 2;
+      const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+      const newZoom = clamp(p.startZoom * (dist / p.startDist));
+      setZoom(newZoom);
+      requestAnimationFrame(() => {
+        if (!viewerRef.current) return;
+        viewerRef.current.scrollLeft = p.contentX * newZoom - (midX - p.rectLeft);
+        viewerRef.current.scrollTop = p.contentY * newZoom - (midY - p.rectTop);
+      });
+    };
+    const onEnd = (e: TouchEvent) => {
+      if (e.touches.length < 2) pinchRef.current = null;
+    };
+    el.addEventListener("touchstart", onStart, { passive: false });
+    el.addEventListener("touchmove", onMove, { passive: false });
+    el.addEventListener("touchend", onEnd);
+    el.addEventListener("touchcancel", onEnd);
+    return () => {
+      el.removeEventListener("touchstart", onStart);
+      el.removeEventListener("touchmove", onMove);
+      el.removeEventListener("touchend", onEnd);
+      el.removeEventListener("touchcancel", onEnd);
+    };
+  }, [zoom]);
+
   const zoomIn = useCallback(() => {
     setZoom((z) => {
       const cur = z === FIT ? 1 : z;
@@ -200,7 +263,7 @@ function Reader() {
                   height: "min(85vh, 1200px)",
                   overflow: "auto",
                   overscrollBehavior: "contain",
-                  touchAction: "pinch-zoom",
+                  touchAction: "pan-x pan-y",
                   background: "rgba(0,0,0,0.35)",
                 }}
               >
