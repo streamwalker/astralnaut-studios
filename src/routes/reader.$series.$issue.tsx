@@ -345,31 +345,87 @@ function Reader() {
         <div className="mt-4 panel relative overflow-hidden">
           {isFree && img ? (
             <div ref={stageRef} className={isFullscreen ? "flex h-full w-full flex-col bg-black" : "contents"}>
-              <div className="flex items-center justify-between gap-2 border-b border-white/5 px-2 py-1.5 text-[10px] font-mono uppercase tracking-[2px] text-[var(--mute)]">
-                <span>Scroll & zoom</span>
+              <div
+                role="toolbar"
+                aria-label="Page viewer controls"
+                aria-controls="comic-page-viewer"
+                className="flex items-center justify-between gap-2 border-b border-white/5 px-2 py-1.5 text-[10px] font-mono uppercase tracking-[2px] text-[var(--mute)]"
+              >
+                <span id="viewer-toolbar-hint">Scroll & zoom</span>
                 <div className="flex items-center gap-1">
-                  <button type="button" onClick={zoomOut} aria-label="Zoom out" className="btn-ghost px-2 py-1">−</button>
-                  <button type="button" onClick={zoomReset} aria-label="Reset zoom" className="btn-ghost px-2 py-1">Fit</button>
-                  <button type="button" onClick={zoomIn} aria-label="Zoom in" className="btn-ghost px-2 py-1">+</button>
-                  <button type="button" onClick={toggleActual} aria-label="Toggle actual size" className="btn-ghost px-2 py-1">
-                    {zoom === FIT ? "1:1" : "Fit"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={toggleFullscreen}
-                    aria-label={isFullscreen ? "Exit full screen" : "Enter full screen"}
-                    aria-pressed={isFullscreen}
-                    className="btn-ghost px-2 py-1"
-                  >
-                    {isFullscreen ? "⤢ Exit" : "⤢ Full"}
-                  </button>
-                  <span className="ml-2 tabular-nums text-[var(--ink)]">{zoom === FIT ? "FIT" : `${Math.round(zoom * 100)}%`}</span>
+                  {(() => {
+                    const ctrlCls =
+                      "btn-ghost inline-flex min-h-11 min-w-11 items-center justify-center px-2 py-1 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--neon)] focus-visible:ring-offset-2 focus-visible:ring-offset-black";
+                    return (
+                      <>
+                        <button
+                          type="button"
+                          onClick={zoomOut}
+                          aria-label="Zoom out"
+                          aria-keyshortcuts="-"
+                          disabled={zoom !== FIT && zoom <= ZOOM_STEPS[0]}
+                          className={ctrlCls}
+                        >
+                          <span aria-hidden="true">−</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={zoomReset}
+                          aria-label="Fit page to width"
+                          aria-pressed={zoom === FIT}
+                          aria-keyshortcuts="0"
+                          className={ctrlCls}
+                        >
+                          Fit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={zoomIn}
+                          aria-label="Zoom in"
+                          aria-keyshortcuts="+ ="
+                          disabled={zoom !== FIT && zoom >= ZOOM_STEPS[ZOOM_STEPS.length - 1]}
+                          className={ctrlCls}
+                        >
+                          <span aria-hidden="true">+</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={toggleActual}
+                          aria-label={zoom === FIT ? "Show at actual size (100%)" : "Fit page to width"}
+                          aria-pressed={zoom !== FIT && zoom === 1}
+                          className={ctrlCls}
+                        >
+                          {zoom === FIT ? "1:1" : "Fit"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={toggleFullscreen}
+                          aria-label={isFullscreen ? "Exit full screen" : "Enter full screen"}
+                          aria-pressed={isFullscreen}
+                          aria-keyshortcuts="F"
+                          className={ctrlCls}
+                        >
+                          <span aria-hidden="true">⤢ </span>{isFullscreen ? "Exit" : "Full"}
+                        </button>
+                        <span
+                          aria-live="polite"
+                          aria-atomic="true"
+                          className="ml-2 tabular-nums text-[var(--ink)]"
+                        >
+                          <span className="sr-only">Zoom level: </span>
+                          {zoom === FIT ? "FIT" : `${Math.round(zoom * 100)}%`}
+                        </span>
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
               <div
                 ref={viewerRef}
+                id="comic-page-viewer"
                 role="region"
-                aria-label="Comic page viewer"
+                aria-label={`Comic page ${page} of ${total} — scroll to pan, plus and minus to zoom, F for full screen`}
+                aria-describedby="viewer-toolbar-hint"
                 tabIndex={0}
                 onWheel={(e) => {
                   if (e.ctrlKey || e.metaKey) {
@@ -377,7 +433,7 @@ function Reader() {
                     if (e.deltaY < 0) zoomIn(); else zoomOut();
                   }
                 }}
-                className="relative w-full outline-none"
+                className="relative w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--neon)] focus-visible:ring-inset"
                 style={{
                   height: isFullscreen ? "100%" : "min(85vh, 1200px)",
                   flex: isFullscreen ? "1 1 auto" : undefined,
