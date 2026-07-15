@@ -364,6 +364,10 @@ function Reader() {
           <Link to={`/${issue.series.slug}` as "/battlefield-atlantis"} className="text-xs text-[var(--mute)] hover:text-[var(--neon)]">← {issue.series.name}</Link>
           <div className="font-mono text-sm text-[var(--mute)]">PAGE <span className="text-[var(--ink)]">{page}</span> / {total} · {isFree ? <span className="text-[var(--neon)]">FREE</span> : <span className="text-[var(--gold)]">LOCKED</span>}</div>
         </div>
+        <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+          Page {page} of {total}{isFree ? ", free preview" : ", locked"}
+        </div>
+
 
         <div className="mt-4 panel relative overflow-hidden">
           {isFree && img ? (
