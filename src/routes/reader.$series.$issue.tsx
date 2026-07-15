@@ -171,21 +171,62 @@ function Reader() {
 
         <div className="mt-4 panel relative overflow-hidden">
           {isFree && img ? (
-            <div className="relative">
-              <img
-                src={img}
-                alt={current?.alt_text ?? `Page ${page}`}
-                onClick={() => setZoom(!zoom)}
-                onLoad={() => {
-                  if (!prefersReducedMotion) setFlashKey((k) => k + 1);
+            <>
+              <div className="flex items-center justify-between gap-2 border-b border-white/5 px-2 py-1.5 text-[10px] font-mono uppercase tracking-[2px] text-[var(--mute)]">
+                <span>Scroll & zoom</span>
+                <div className="flex items-center gap-1">
+                  <button type="button" onClick={zoomOut} aria-label="Zoom out" className="btn-ghost px-2 py-1">−</button>
+                  <button type="button" onClick={zoomReset} aria-label="Reset zoom" className="btn-ghost px-2 py-1">Fit</button>
+                  <button type="button" onClick={zoomIn} aria-label="Zoom in" className="btn-ghost px-2 py-1">+</button>
+                  <button type="button" onClick={toggleActual} aria-label="Toggle actual size" className="btn-ghost px-2 py-1">
+                    {zoom === FIT ? "1:1" : "Fit"}
+                  </button>
+                  <span className="ml-2 tabular-nums text-[var(--ink)]">{zoom === FIT ? "FIT" : `${Math.round(zoom * 100)}%`}</span>
+                </div>
+              </div>
+              <div
+                ref={viewerRef}
+                role="region"
+                aria-label="Comic page viewer"
+                tabIndex={0}
+                onWheel={(e) => {
+                  if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    if (e.deltaY < 0) zoomIn(); else zoomOut();
+                  }
                 }}
-                className={`mx-auto h-auto w-full cursor-zoom-${zoom ? "out" : "in"} ${zoom ? "scale-150" : ""}`}
-                style={{ transition: "transform .3s ease", maxHeight: "85vh", objectFit: "contain" }}
-              />
-              {flashVariant && flashKey > 0 && (
-                <div key={`${page}-${flashKey}`} className={`page-flash page-flash--${flashVariant}`} aria-hidden="true" />
-              )}
-            </div>
+                className="relative w-full outline-none"
+                style={{
+                  height: "min(85vh, 1200px)",
+                  overflow: "auto",
+                  overscrollBehavior: "contain",
+                  touchAction: "pinch-zoom",
+                  background: "rgba(0,0,0,0.35)",
+                }}
+              >
+                <div
+                  style={{
+                    width: zoom === FIT ? "100%" : `${zoom * 100}%`,
+                    margin: "0 auto",
+                  }}
+                >
+                  <img
+                    src={img}
+                    alt={current?.alt_text ?? `Page ${page}`}
+                    onClick={onImageClick}
+                    onLoad={() => {
+                      if (!prefersReducedMotion) setFlashKey((k) => k + 1);
+                    }}
+                    draggable={false}
+                    className={`block h-auto w-full select-none ${zoom === FIT ? "cursor-zoom-in" : "cursor-zoom-out"}`}
+                    style={{ transition: prefersReducedMotion ? "none" : "width .2s ease" }}
+                  />
+                </div>
+                {flashVariant && flashKey > 0 && (
+                  <div key={`${page}-${flashKey}`} className={`page-flash page-flash--${flashVariant} pointer-events-none absolute inset-0`} aria-hidden="true" />
+                )}
+              </div>
+            </>
           ) : isFree && !img ? (
             <div className="aspect-[1054/1491] flex items-center justify-center p-10 text-center text-[var(--mute)]">Page art forthcoming</div>
           ) : (
