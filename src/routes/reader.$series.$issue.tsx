@@ -361,6 +361,10 @@ function Reader() {
         <div className="mt-4 panel relative overflow-hidden">
           {isFree && img ? (
             <div ref={stageRef} className={isFullscreen ? "flex h-full w-full flex-col bg-black" : "contents"}>
+              <div role="status" aria-live="assertive" aria-atomic="true" className="sr-only">
+                {fsAnnouncement}
+              </div>
+
               <div
                 role="toolbar"
                 aria-label="Page viewer controls"
