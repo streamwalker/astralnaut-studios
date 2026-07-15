@@ -71,7 +71,11 @@ function Reader() {
   const current = pages.find((p: typeof pages[number]) => p.page_number === page);
   const isFree = page <= freeMax;
   const img = pageUrl(current?.image_path);
-  const [zoom, setZoom] = useState(false);
+  const ZOOM_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2, 3] as const;
+  const FIT = 0 as const; // 0 = fit-width mode
+  const [zoom, setZoom] = useState<number>(FIT);
+  const [lastZoomIn, setLastZoomIn] = useState<number>(1.5);
+  const viewerRef = useRef<HTMLDivElement>(null);
   const [flashKey, setFlashKey] = useState(0);
   const [debugOpen, setDebugOpen] = useState(false);
   const [debugVariant, setDebugVariant] = useState<FlashVariant | "reduced" | null>(null);
@@ -79,6 +83,33 @@ function Reader() {
   const rawVariant = flashVariantFor(issue.series.slug, issue.issue_number, page);
   const mappedVariant: FlashVariant | "reduced" | null = prefersReducedMotion ? (rawVariant ? "reduced" : null) : rawVariant;
   const flashVariant = debugVariant ?? mappedVariant;
+
+  // Reset zoom on page change
+  useEffect(() => {
+    setZoom(FIT);
+    if (viewerRef.current) viewerRef.current.scrollTo({ top: 0, left: 0 });
+  }, [page]);
+
+  const zoomIn = useCallback(() => {
+    setZoom((z) => {
+      const cur = z === FIT ? 1 : z;
+      const next = ZOOM_STEPS.find((s) => s > cur) ?? ZOOM_STEPS[ZOOM_STEPS.length - 1];
+      setLastZoomIn(next);
+      return next;
+    });
+  }, []);
+  const zoomOut = useCallback(() => {
+    setZoom((z) => {
+      if (z === FIT) return FIT;
+      const lower = [...ZOOM_STEPS].reverse().find((s) => s < z);
+      return lower ?? FIT;
+    });
+  }, []);
+  const zoomReset = useCallback(() => setZoom(FIT), []);
+  const toggleActual = useCallback(() => setZoom((z) => (z === FIT ? 1 : FIT)), []);
+  const onImageClick = useCallback(() => {
+    setZoom((z) => (z === FIT ? lastZoomIn : FIT));
+  }, [lastZoomIn]);
 
   function playFlash(v: FlashVariant | "reduced" | null) {
     setDebugVariant(v);
