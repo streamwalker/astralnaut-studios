@@ -75,6 +75,31 @@ function Reader() {
   const FIT = 0 as const; // 0 = fit-width mode
   const [zoom, setZoom] = useState<number>(FIT);
   const [lastZoomIn, setLastZoomIn] = useState<number>(1.5);
+  // Reader UI/text scaling — persisted across pages & issues (localStorage).
+  const UI_SCALE_STEPS = [0.85, 1, 1.15, 1.3, 1.5, 1.75] as const;
+  const UI_SCALE_KEY = "reader:ui-scale:v1";
+  const [uiScale, setUiScale] = useState<number>(1);
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(UI_SCALE_KEY);
+      const n = raw ? Number(raw) : NaN;
+      if (Number.isFinite(n) && n >= UI_SCALE_STEPS[0] && n <= UI_SCALE_STEPS[UI_SCALE_STEPS.length - 1]) {
+        setUiScale(n);
+      }
+    } catch { /* ignore */ }
+  }, []);
+  useEffect(() => {
+    try { localStorage.setItem(UI_SCALE_KEY, String(uiScale)); } catch { /* ignore */ }
+  }, [uiScale]);
+  const uiScaleUp = useCallback(() => {
+    setUiScale((s) => UI_SCALE_STEPS.find((x) => x > s) ?? UI_SCALE_STEPS[UI_SCALE_STEPS.length - 1]);
+  }, []);
+  const uiScaleDown = useCallback(() => {
+    setUiScale((s) => [...UI_SCALE_STEPS].reverse().find((x) => x < s) ?? UI_SCALE_STEPS[0]);
+  }, []);
+  const uiScaleReset = useCallback(() => setUiScale(1), []);
+  const atMinUi = uiScale <= UI_SCALE_STEPS[0];
+  const atMaxUi = uiScale >= UI_SCALE_STEPS[UI_SCALE_STEPS.length - 1];
   const viewerRef = useRef<HTMLDivElement>(null);
   const [flashKey, setFlashKey] = useState(0);
   const [debugOpen, setDebugOpen] = useState(false);
