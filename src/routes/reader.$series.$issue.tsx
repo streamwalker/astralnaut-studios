@@ -225,16 +225,33 @@ function Reader() {
     navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: next } });
   }
 
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const toggleFullscreen = useCallback(async () => {
+    const el = stageRef.current;
+    if (!el) return;
+    try {
+      if (!document.fullscreenElement) await el.requestFullscreen();
+      else await document.exitFullscreen();
+    } catch { /* user gesture / unsupported */ }
+  }, []);
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(document.fullscreenElement === stageRef.current);
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
+
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       const tag = (e.target as HTMLElement | null)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
       if (e.key === "ArrowRight") go(1);
       else if (e.key === "ArrowLeft") go(-1);
-      else if (e.key === "Escape") navigate({ to: `/${issue.series.slug}` as "/battlefield-atlantis" | "/children-of-aquarius" });
+      else if (e.key === "Escape" && !document.fullscreenElement) navigate({ to: `/${issue.series.slug}` as "/battlefield-atlantis" | "/children-of-aquarius" });
       else if (e.key === "+" || e.key === "=") { e.preventDefault(); zoomIn(); }
       else if (e.key === "-" || e.key === "_") { e.preventDefault(); zoomOut(); }
       else if (e.key === "0") { e.preventDefault(); zoomReset(); }
+      else if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFullscreen(); }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
