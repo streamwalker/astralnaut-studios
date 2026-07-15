@@ -207,7 +207,7 @@ function SecurityPage() {
           <p className="mt-1 text-xs text-muted-foreground">
             Best-effort log of in-app paid-page requests. Direct CDN hits bypass this.
           </p>
-          <div className="mt-4 overflow-x-auto">
+          <div className="table-scroll mt-4 -mx-4 px-4 sm:mx-0 sm:px-0">
             <table className="w-full text-left text-xs">
               <thead className="text-muted-foreground">
                 <tr>

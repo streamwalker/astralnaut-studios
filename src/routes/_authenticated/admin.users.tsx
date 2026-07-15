@@ -185,7 +185,7 @@ function UserDirectory({ onOpen, currentUserId }: { onOpen: (id: string) => void
         </p>
       )}
 
-      <div className="mt-6 overflow-x-auto rounded-2xl border border-border bg-card">
+      <div className="table-scroll mt-6 -mx-4 rounded-2xl border border-border bg-card px-4 sm:mx-0 sm:px-0">
         <table className="w-full text-sm">
           <thead className="border-b border-border/60 text-left text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground">
             <tr>

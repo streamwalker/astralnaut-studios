@@ -93,7 +93,7 @@ function VisitorsPage() {
         )}
       </div>
 
-      <div className="overflow-x-auto rounded-md border">
+      <div className="table-scroll -mx-4 rounded-md border px-4 sm:mx-0 sm:px-0">
         <table className="w-full text-sm">
           <thead className="bg-muted/50 text-left">
             <tr>

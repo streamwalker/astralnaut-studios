@@ -36,7 +36,7 @@ function CookiesPage() {
 
       <h2>Technologies verified in use</h2>
       <p><em>Inventory verified on {COOKIE_INVENTORY_VERIFIED_AT}. This table lists what the site is actually observed to set, not a generic template.</em></p>
-      <div className="overflow-x-auto">
+      <div className="table-scroll -mx-4 px-4 sm:mx-0 sm:px-0">
         <table>
           <thead>
             <tr>
