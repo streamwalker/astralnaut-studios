@@ -710,8 +710,8 @@ function Paywall({ page, freeMax, dropAt }: { page: number; freeMax: number; dro
   return (
     <div className="mx-auto max-w-xl p-10 text-center" style={{ background: "var(--gradient-panel)" }}>
       <div className="eyebrow">Subscriber unlock</div>
-      <h2 className="mt-3 text-3xl font-black">Page {page} drops to subscribers.</h2>
-      <p className="mt-3 text-[var(--ink2)]">You're reading the free first act (pages 1–{freeMax}). The rest of this issue releases on the tier-staggered weekly cadence.</p>
+      <h2 className="text-fluid-h2 mt-3 font-black">Page {page} drops to subscribers.</h2>
+      <p className="text-fluid-body measure mx-auto mt-3 text-[var(--ink2)]">You're reading the free first act (pages 1–{freeMax}). The rest of this issue releases on the tier-staggered weekly cadence.</p>
       {dropAt && <p className="mt-2 font-mono text-sm text-[var(--gold)]">Reader drop · {new Date(dropAt).toLocaleDateString()}</p>}
       <div className="mt-6 grid grid-cols-3 gap-3 text-center">
         <Stat label="Reader" price="$4.99" />
