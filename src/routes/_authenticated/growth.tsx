@@ -276,7 +276,7 @@ function GrowthDashboard() {
         {/* MILESTONES */}
         <section>
           <h2 className="mb-4 text-lg font-bold">Subscriber Milestones</h2>
-          <div className="card-rwc overflow-hidden">
+          <div className="card-rwc table-scroll overflow-hidden">
             <table className="w-full text-sm">
               <thead className="bg-white/5 text-left text-xs uppercase tracking-[0.14em] text-[var(--mute)]">
                 <tr><th className="px-4 py-3">Milestone</th><th className="px-4 py-3">Target</th><th className="px-4 py-3">Status</th></tr>
@@ -309,7 +309,7 @@ function GrowthDashboard() {
             <span><Pill tone="amber">Amber</Pill> Within 25%</span>
             <span><Pill tone="red">Red</Pill> &gt;25% behind</span>
           </div>
-          <div className="card-rwc overflow-x-auto">
+          <div className="card-rwc table-scroll">
             <table className="w-full text-sm">
               <thead className="bg-white/5 text-left text-xs uppercase tracking-[0.14em] text-[var(--mute)]">
                 <tr>
@@ -349,7 +349,7 @@ function GrowthDashboard() {
         {/* SPRINT CALENDAR */}
         <section>
           <h2 className="mb-4 text-lg font-bold">90-Day Sprint Calendar</h2>
-          <div className="card-rwc overflow-hidden">
+          <div className="card-rwc table-scroll overflow-hidden">
             <table className="w-full text-sm">
               <thead className="bg-white/5 text-left text-xs uppercase tracking-[0.14em] text-[var(--mute)]">
                 <tr>

@@ -103,7 +103,7 @@ export function MarkdownLite({ source }: { source: string }) {
         i++;
       }
       out.push(
-        <div key={k++} className="my-4 overflow-x-auto">
+        <div key={k++} className="table-scroll my-4 -mx-4 px-4 sm:mx-0 sm:px-0">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[var(--border-line)] text-left text-[var(--ink2)]">

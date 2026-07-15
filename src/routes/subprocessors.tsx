@@ -38,7 +38,8 @@ function SubprocessorsPage() {
       canonical="/subprocessors"
     >
       <p>Publish only vendors actually used in production. For each provider we list the legal vendor name, service, categories of data, processing location, and link to its privacy or security information. Streamwalkers does not currently claim that a Data Processing Addendum, Standard Contractual Clauses, or a UK transfer addendum has been executed with every vendor listed; contracts are being verified.</p>
-      <table>
+      <div className="table-scroll -mx-4 px-4 sm:mx-0 sm:px-0">
+        <table>
         <thead>
           <tr>
             <th>Vendor</th>
@@ -59,7 +60,8 @@ function SubprocessorsPage() {
             </tr>
           ))}
         </tbody>
-      </table>
+        </table>
+      </div>
       <p>Additional providers requiring verification before publication include additional analytics or error monitoring, customer support tooling, shipping and fulfillment services, and any AI service that may receive personal information. These will be listed only after being verified in the production environment.</p>
     </LegalPage>
   );

@@ -185,7 +185,7 @@ function UserDirectory({ onOpen, currentUserId }: { onOpen: (id: string) => void
         </p>
       )}
 
-      <div className="mt-6 overflow-x-auto rounded-2xl border border-border bg-card">
+      <div className="table-scroll mt-6 -mx-4 rounded-2xl border border-border bg-card px-4 sm:mx-0 sm:px-0">
         <table className="w-full text-sm">
           <thead className="border-b border-border/60 text-left text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground">
             <tr>
@@ -470,7 +470,8 @@ function UserDetail({ userId, onBack, currentUserId }: { userId: string; onBack:
         <section className="rounded-2xl border border-border bg-card p-6">
           <h2 className="text-sm font-bold uppercase tracking-[2px] text-muted-foreground">What they lingered on</h2>
           {data.top_pages.length === 0 ? <p className="mt-4 text-sm text-muted-foreground">No data.</p> : (
-            <table className="mt-4 w-full text-sm">
+            <div className="table-scroll mt-4 -mx-4 px-4 sm:mx-0 sm:px-0">
+            <table className="w-full text-sm">
               <thead><tr className="text-left text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground">
                 <th className="pb-2">Path</th><th className="pb-2 text-right">Views</th><th className="pb-2 text-right">Avg</th><th className="pb-2 text-right">Total</th>
               </tr></thead>
@@ -485,6 +486,7 @@ function UserDetail({ userId, onBack, currentUserId }: { userId: string; onBack:
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </section>
 
@@ -506,7 +508,8 @@ function UserDetail({ userId, onBack, currentUserId }: { userId: string; onBack:
       <section className="rounded-2xl border border-border bg-card p-6">
         <h2 className="text-sm font-bold uppercase tracking-[2px] text-muted-foreground">Sessions</h2>
         {data.sessions.length === 0 ? <p className="mt-4 text-sm text-muted-foreground">No sessions.</p> : (
-          <table className="mt-4 w-full text-sm">
+          <div className="table-scroll mt-4 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <table className="w-full text-sm">
             <thead><tr className="text-left text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground">
               <th className="pb-2">Session</th><th className="pb-2">Start</th><th className="pb-2">End</th><th className="pb-2 text-right">Events</th><th className="pb-2 text-right">Time</th>
             </tr></thead>
@@ -522,8 +525,10 @@ function UserDetail({ userId, onBack, currentUserId }: { userId: string; onBack:
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </section>
+
 
       <section className="rounded-2xl border border-border bg-card p-6">
         <h2 className="text-sm font-bold uppercase tracking-[2px] text-muted-foreground">Recent activity</h2>

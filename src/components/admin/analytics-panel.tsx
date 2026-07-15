@@ -229,25 +229,27 @@ function PageTable({
 }) {
   if (!rows.length) return <Empty>{emptyText}</Empty>;
   return (
-    <table className="w-full text-sm">
-      <thead>
-        <tr className="text-left text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground">
-          <th className="pb-2 pr-3">Path</th>
-          <th className="pb-2 pr-3 text-right">Views</th>
-          <th className="pb-2 pr-3 text-right">Avg time</th>
-          <th className="pb-2 text-right">Total</th>
-        </tr>
-      </thead>
-      <tbody className="divide-y divide-border/40">
-        {rows.map((r) => (
-          <tr key={r.path}>
-            <td className="py-2 pr-3 truncate max-w-[220px]" title={r.path}>{r.path}</td>
-            <td className="py-2 pr-3 text-right font-mono text-xs">{r.views}</td>
-            <td className="py-2 pr-3 text-right font-mono text-xs">{fmtDuration(r.avgMs)}</td>
-            <td className="py-2 text-right font-mono text-xs text-muted-foreground">{fmtDuration(r.totalMs)}</td>
+    <div className="table-scroll -mx-4 px-4 sm:mx-0 sm:px-0">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="text-left text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground">
+            <th className="pb-2 pr-3">Path</th>
+            <th className="pb-2 pr-3 text-right">Views</th>
+            <th className="pb-2 pr-3 text-right">Avg time</th>
+            <th className="pb-2 text-right">Total</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody className="divide-y divide-border/40">
+          {rows.map((r) => (
+            <tr key={r.path}>
+              <td className="py-2 pr-3 truncate max-w-[220px]" title={r.path}>{r.path}</td>
+              <td className="py-2 pr-3 text-right font-mono text-xs">{r.views}</td>
+              <td className="py-2 pr-3 text-right font-mono text-xs">{fmtDuration(r.avgMs)}</td>
+              <td className="py-2 text-right font-mono text-xs text-muted-foreground">{fmtDuration(r.totalMs)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

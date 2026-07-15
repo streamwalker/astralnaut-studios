@@ -40,6 +40,38 @@
   letter-spacing: -0.015em;
 }
 
+/* Touch-friendly horizontal scroll wrapper for wide data tables.
+   Wrap any <table> with <div class="table-scroll">…</div> so it becomes
+   swipeable on phones instead of overflowing or squishing. */
+@utility table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+}
+@utility table-scroll-inner {
+  min-width: max-content;
+}
+
+/* Coarse-pointer (touch) tables: taller rows, larger tap targets, no wrap. */
+@media (pointer: coarse) {
+  .table-scroll table { font-size: 0.9375rem; }
+  .table-scroll th,
+  .table-scroll td {
+    padding-block: 0.75rem !important;
+    white-space: nowrap;
+  }
+  .table-scroll a,
+  .table-scroll button {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

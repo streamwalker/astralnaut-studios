@@ -172,7 +172,7 @@ function renderBlock(b: Block, i: number) {
     );
   if (b.k === "table")
     return (
-      <div key={i} className="my-4 overflow-x-auto rounded-md border border-white/10">
+      <div key={i} className="table-scroll my-4 -mx-4 rounded-md border border-white/10 px-4 sm:mx-0 sm:px-0">
         <table className="w-full border-collapse text-sm">
           <tbody>
             {b.rows.map((row, ri) => (
