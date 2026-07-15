@@ -25,6 +25,49 @@
   .bottom-safe-nav { bottom: env(safe-area-inset-bottom); }
 }
 
+/* Modal/dialog/sheet safe-area guards.
+   Keep floating surfaces clear of notches, the sticky header, and the mobile bottom nav (56px, <lg). */
+@utility safe-modal {
+  max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 2rem);
+  margin-top: env(safe-area-inset-top);
+  margin-bottom: env(safe-area-inset-bottom);
+  overflow-y: auto;
+}
+@utility safe-sheet-bottom {
+  padding-left: max(1.5rem, env(safe-area-inset-left));
+  padding-right: max(1.5rem, env(safe-area-inset-right));
+  padding-bottom: calc(env(safe-area-inset-bottom) + 4.5rem);
+  max-height: calc(100dvh - env(safe-area-inset-top) - 4.5rem);
+  overflow-y: auto;
+}
+@media (min-width: 1024px) {
+  .safe-sheet-bottom {
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+    max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  }
+}
+@utility safe-sheet-top {
+  padding-left: max(1.5rem, env(safe-area-inset-left));
+  padding-right: max(1.5rem, env(safe-area-inset-right));
+  padding-top: calc(env(safe-area-inset-top) + 1.5rem);
+  max-height: calc(100dvh - env(safe-area-inset-bottom) - 4.5rem);
+  overflow-y: auto;
+}
+@media (min-width: 1024px) {
+  .safe-sheet-top {
+    max-height: calc(100dvh - env(safe-area-inset-bottom));
+  }
+}
+@utility safe-sheet-side {
+  padding-top: max(1.5rem, env(safe-area-inset-top));
+  padding-bottom: calc(env(safe-area-inset-bottom) + 4.5rem);
+  overflow-y: auto;
+}
+@media (min-width: 1024px) {
+  .safe-sheet-side {
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+}
 /* Fluid page container — mobile-first, capped for readability on ultrawide. */
 @utility container-page {
   margin-inline: auto;
