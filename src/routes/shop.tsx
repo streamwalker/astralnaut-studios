@@ -153,7 +153,7 @@ function ProductCard({ product }: { product: ShopifyProduct }) {
       </Link>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <Link to="/product/$handle" params={{ handle: product.node.handle }}>
-          <h3 className="text-lg font-bold leading-tight hover:text-[var(--neon)]">
+          <h3 className="measure text-lg font-bold leading-snug hover:text-[var(--neon)]">
             {product.node.title}
           </h3>
         </Link>
