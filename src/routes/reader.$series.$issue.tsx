@@ -225,16 +225,33 @@ function Reader() {
     navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: next } });
   }
 
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const toggleFullscreen = useCallback(async () => {
+    const el = stageRef.current;
+    if (!el) return;
+    try {
+      if (!document.fullscreenElement) await el.requestFullscreen();
+      else await document.exitFullscreen();
+    } catch { /* user gesture / unsupported */ }
+  }, []);
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(document.fullscreenElement === stageRef.current);
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
+
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       const tag = (e.target as HTMLElement | null)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
       if (e.key === "ArrowRight") go(1);
       else if (e.key === "ArrowLeft") go(-1);
-      else if (e.key === "Escape") navigate({ to: `/${issue.series.slug}` as "/battlefield-atlantis" | "/children-of-aquarius" });
+      else if (e.key === "Escape" && !document.fullscreenElement) navigate({ to: `/${issue.series.slug}` as "/battlefield-atlantis" | "/children-of-aquarius" });
       else if (e.key === "+" || e.key === "=") { e.preventDefault(); zoomIn(); }
       else if (e.key === "-" || e.key === "_") { e.preventDefault(); zoomOut(); }
       else if (e.key === "0") { e.preventDefault(); zoomReset(); }
+      else if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFullscreen(); }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -273,7 +290,7 @@ function Reader() {
 
         <div className="mt-4 panel relative overflow-hidden">
           {isFree && img ? (
-            <>
+            <div ref={stageRef} className={isFullscreen ? "flex h-full w-full flex-col bg-black" : "contents"}>
               <div className="flex items-center justify-between gap-2 border-b border-white/5 px-2 py-1.5 text-[10px] font-mono uppercase tracking-[2px] text-[var(--mute)]">
                 <span>Scroll & zoom</span>
                 <div className="flex items-center gap-1">
@@ -282,6 +299,15 @@ function Reader() {
                   <button type="button" onClick={zoomIn} aria-label="Zoom in" className="btn-ghost px-2 py-1">+</button>
                   <button type="button" onClick={toggleActual} aria-label="Toggle actual size" className="btn-ghost px-2 py-1">
                     {zoom === FIT ? "1:1" : "Fit"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={toggleFullscreen}
+                    aria-label={isFullscreen ? "Exit full screen" : "Enter full screen"}
+                    aria-pressed={isFullscreen}
+                    className="btn-ghost px-2 py-1"
+                  >
+                    {isFullscreen ? "⤢ Exit" : "⤢ Full"}
                   </button>
                   <span className="ml-2 tabular-nums text-[var(--ink)]">{zoom === FIT ? "FIT" : `${Math.round(zoom * 100)}%`}</span>
                 </div>
@@ -299,7 +325,8 @@ function Reader() {
                 }}
                 className="relative w-full outline-none"
                 style={{
-                  height: "min(85vh, 1200px)",
+                  height: isFullscreen ? "100%" : "min(85vh, 1200px)",
+                  flex: isFullscreen ? "1 1 auto" : undefined,
                   overflow: "auto",
                   overscrollBehavior: "contain",
                   touchAction: "pan-x pan-y",
@@ -328,7 +355,7 @@ function Reader() {
                   <div key={`${page}-${flashKey}`} className={`page-flash page-flash--${flashVariant} pointer-events-none absolute inset-0`} aria-hidden="true" />
                 )}
               </div>
-            </>
+            </div>
           ) : isFree && !img ? (
             <div className="aspect-[1054/1491] flex items-center justify-center p-10 text-center text-[var(--mute)]">Page art forthcoming</div>
           ) : (
