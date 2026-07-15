@@ -477,6 +477,43 @@ function Reader() {
                           <span className="sr-only">Zoom level: </span>
                           {zoom === FIT ? "FIT" : `${Math.round(zoom * 100)}%`}
                         </span>
+
+                        <span aria-hidden="true" className="mx-1 opacity-30">|</span>
+                        <button
+                          type="button"
+                          onClick={uiScaleDown}
+                          aria-label="Decrease reader interface text size"
+                          disabled={atMinUi}
+                          className={ctrlCls}
+                        >
+                          <span aria-hidden="true">A−</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={uiScaleReset}
+                          aria-label="Reset reader interface text size to default"
+                          aria-pressed={uiScale === 1}
+                          className={ctrlCls}
+                        >
+                          A
+                        </button>
+                        <button
+                          type="button"
+                          onClick={uiScaleUp}
+                          aria-label="Increase reader interface text size"
+                          disabled={atMaxUi}
+                          className={ctrlCls}
+                        >
+                          <span aria-hidden="true">A+</span>
+                        </button>
+                        <span
+                          aria-live="polite"
+                          aria-atomic="true"
+                          className="ml-1 tabular-nums text-[var(--ink)]"
+                        >
+                          <span className="sr-only">Interface text size: </span>
+                          UI {Math.round(uiScale * 100)}%
+                        </span>
                       </>
                     );
                   })()}
