@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { RightsNotice } from "@/components/rights-notice";
 import { Indicia } from "@/components/indicia";

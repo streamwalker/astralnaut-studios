@@ -1,32 +1,35 @@
-## Battlefield Atlantis page — copy update
 
-Rewrite the visible narrative copy on `src/routes/battlefield-atlantis.tsx` to match the new text you provided. Structural layout, cover plate, stickers, stats, CTAs, and drop schedule are unchanged.
+## Goal
 
-### Sections replaced
+In the reader (`/reader/$series/$issue`), let the user scroll vertically within a page and zoom the page in/out without affecting the rest of the site layout.
 
-1. **Issue #1 subtitle** (under the "Only One Will Rule" heading)
-   → "The catastrophe. The council. The ultimatum. The three Ascended humans standing between restraint and annihilation."
+## Current behavior
 
-2. **Green "Structured like TV" callout body**
-   → "Pages 1–9 comprise the complete first act and are free for everyone. Page 9.5 is the title page and is also free. Pages 10–20 continue the episode for subscribers, with four new pages released each week."
+`src/routes/reader.$series.$issue.tsx` renders the page image inside a `.panel` with `overflow-hidden`, capped at `max-height: 85vh` with `object-fit: contain`. Click toggles a single `scale-150` zoom on the `<img>` itself. There is no internal scrolling, no pan, and no zoom controls — tall pages get letterboxed and detail is unreachable.
 
-3. **First Act · Pages 1–9 paragraph** — full rewrite using the new terminology:
-   - Santee Station (was "Saantris Station")
-   - Renoa City (was "Vrenoa City")
-   - Poseidon rules **Neptuna** (was "King of Alympia")
-   - The three Ascended humans are called **the Allies** (was "Alympian Guard")
-   - Worlds referenced: Earth, Mars, Ares, and the greater **Nerrian Galaxy**
-   - Removes named beats (Lumenax, Prometheus, Zeus quote) in favor of the new synopsis.
+## Changes (reader route only)
 
-4. **Title Page · Page 9.5 paragraph** — reworded to the "act break before the subscriber-exclusive continuation" phrasing.
+1. **Contained, scrollable viewer**
+   - Replace the current wrapper with a fixed-height viewport (`~85vh` desktop, `~75vh` mobile) that has `overflow: auto` so the page image scrolls vertically (and horizontally when zoomed) *inside* the viewer. Page-level scroll of the site is unaffected.
+   - Image renders at natural width up to the viewer width; when zoomed beyond viewer bounds, scrollbars appear inside the viewer.
 
-5. **Episode Body · Pages 10–20 paragraph** — replaced with the political/military-consequences summary ending on "a major revelation that drives directly into the next chapter."
+2. **Zoom controls**
+   - Add a small control cluster above/overlaying the viewer: `−`, `Reset`, `+`, and a "Fit width / Actual size" toggle. Keyboard shortcuts: `+`, `-`, `0` (reset).
+   - Zoom levels stepped (e.g., 0.5×, 0.75×, 1×, 1.25×, 1.5×, 2×, 3×). Click on image continues to toggle between fit-width and last zoom-in level for quick access.
+   - Ctrl/Cmd + wheel zooms; plain wheel/touch scroll pans as normal.
+   - Zoom transform applied to the image only, inside the scroll container — no impact on header, nav, paywall, or surrounding layout.
 
-### Explicitly NOT changed in this pass
+3. **Preserve existing features**
+   - Keep flash overlay, arrow-key page nav, paywall path, letters link, indicia, and access logging untouched.
+   - Preserve `prefers-reduced-motion` handling (no zoom transition when reduced).
 
-- Hero column copy (the italic "Only one will rule." pull-quote and the paragraph mentioning Saantris/Vrenoa/Zeus/Poseidon King of Alympia).
-- `head()` meta description (still references Saantris Station).
-- Homepage `HeroRotator`, DB `series.logline` / `site_copy`, other series pages, reader flash-map comments.
-- Issue Details sidecard, drop schedule, stats, stickers, CTAs.
+## Technical details
 
-The new terms (Santee/Renoa/Neptuna/Allies/Nerrian/Ares) conflict with existing terminology used elsewhere on the site and in the database. If you want those propagated (hero paragraph on this same page, home page, `series.logline`, meta tags, other series references), say so and I'll do a follow-up sweep — otherwise this change is scoped to just the sections you quoted.
+- Wrap the `<img>` in a `<div ref role="region" aria-label="Page viewer" tabIndex={0}>` with `overflow-auto`, fixed height via inline style, `overscroll-behavior: contain` so scroll doesn't chain to the page.
+- Replace `scale-150`/click logic with a `zoom` numeric state; image style: `transform: scale(zoom); transform-origin: top left; width: 100%` (or `width: auto` at actual size). Wrap image in an inner sizer div whose `width`/`height` reflects `naturalSize * zoom` so the scrollbars track correctly.
+- Reset zoom to fit-width whenever `page` changes.
+- Applies to all issues via this shared route (Battlefield Atlantis included); no per-series branching.
+
+## Out of scope
+
+Pinch-zoom gestures on touch (native browser pinch still works on the image via CSS `touch-action: pinch-zoom` inside the viewer — I'll enable that), thumbnail navigator, and full-screen mode.
