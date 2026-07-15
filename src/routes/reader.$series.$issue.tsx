@@ -280,7 +280,9 @@ function Reader() {
   }
 
   const stageRef = useRef<HTMLDivElement>(null);
+  const fsButtonRef = useRef<HTMLButtonElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [fsAnnouncement, setFsAnnouncement] = useState("");
   const toggleFullscreen = useCallback(async () => {
     const el = stageRef.current;
     if (!el) return;
@@ -290,7 +292,20 @@ function Reader() {
     } catch { /* user gesture / unsupported */ }
   }, []);
   useEffect(() => {
-    const onChange = () => setIsFullscreen(document.fullscreenElement === stageRef.current);
+    const onChange = () => {
+      const nowFs = document.fullscreenElement === stageRef.current;
+      setIsFullscreen(nowFs);
+      if (nowFs) {
+        setFsAnnouncement("Entered full screen. Press Escape or F to exit.");
+        // Move focus into the viewer so keyboard nav (arrows, +/-, Esc) works
+        // immediately and screen readers land on the page region.
+        requestAnimationFrame(() => viewerRef.current?.focus());
+      } else {
+        setFsAnnouncement("Exited full screen.");
+        // Return focus to the control that opened fullscreen.
+        requestAnimationFrame(() => fsButtonRef.current?.focus());
+      }
+    };
     document.addEventListener("fullscreenchange", onChange);
     return () => document.removeEventListener("fullscreenchange", onChange);
   }, []);
@@ -310,6 +325,7 @@ function Reader() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   });
+
 
   // Best-effort access logging for paid-content auditing & burst detection.
   // Only logs when signed in — the server fn requires auth and derives the
@@ -345,6 +361,10 @@ function Reader() {
         <div className="mt-4 panel relative overflow-hidden">
           {isFree && img ? (
             <div ref={stageRef} className={isFullscreen ? "flex h-full w-full flex-col bg-black" : "contents"}>
+              <div role="status" aria-live="assertive" aria-atomic="true" className="sr-only">
+                {fsAnnouncement}
+              </div>
+
               <div
                 role="toolbar"
                 aria-label="Page viewer controls"
@@ -398,6 +418,7 @@ function Reader() {
                           {zoom === FIT ? "1:1" : "Fit"}
                         </button>
                         <button
+                          ref={fsButtonRef}
                           type="button"
                           onClick={toggleFullscreen}
                           aria-label={isFullscreen ? "Exit full screen" : "Enter full screen"}
@@ -407,6 +428,7 @@ function Reader() {
                         >
                           <span aria-hidden="true">⤢ </span>{isFullscreen ? "Exit" : "Full"}
                         </button>
+
                         <span
                           aria-live="polite"
                           aria-atomic="true"
