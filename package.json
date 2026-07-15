@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite dev",
     "check:banned-terms": "node scripts/check-banned-terms.mjs",
+    "check:safe-area": "node scripts/safe-area-visual-check.mjs",
     "prebuild": "node scripts/check-banned-terms.mjs",
     "prebuild:dev": "node scripts/check-banned-terms.mjs",
     "build": "vite build",
