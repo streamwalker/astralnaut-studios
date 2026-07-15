@@ -180,7 +180,7 @@ export function HeroRotator() {
       ))}
 
       {/* Content rendered over the active background. */}
-      <div className="pointer-events-none relative z-20 mx-auto flex min-h-[480px] max-w-7xl items-center px-4 pb-16 pt-6 sm:min-h-[560px] sm:px-6 sm:pb-20 sm:pt-10 md:min-h-[640px] md:pb-24 md:pt-16">
+      <div className="container-wide pointer-events-none relative z-20 flex min-h-[480px] items-center pb-16 pt-6 sm:min-h-[560px] sm:pb-20 sm:pt-10 md:min-h-[640px] md:pb-24 md:pt-16">
         <div className="pointer-events-auto max-w-2xl">
           <SlotContent slot={HERO_SLOTS[active]!} />
         </div>
