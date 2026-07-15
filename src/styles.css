@@ -12,6 +12,18 @@
 @utility safe-bottom  { padding-bottom: env(safe-area-inset-bottom); }
 /* Reserves space for the mobile bottom-nav (56px) + iOS home-indicator. */
 @utility pb-safe-nav  { padding-bottom: calc(env(safe-area-inset-bottom) + 4.5rem); }
+/* Safe horizontal padding — landscape notch/rounded corners on iOS. */
+@utility px-safe {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+/* Lifts a bottom-fixed element above the mobile bottom nav on <lg screens. */
+@utility bottom-safe-nav {
+  bottom: calc(env(safe-area-inset-bottom) + 4.5rem);
+}
+@media (min-width: 1024px) {
+  .bottom-safe-nav { bottom: env(safe-area-inset-bottom); }
+}
 
 /* Fluid page container — mobile-first, capped for readability on ultrawide. */
 @utility container-page {
@@ -165,7 +177,7 @@
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    scroll-padding-top: 5rem;   /* clears the sticky site header on hash-scroll */
+    scroll-padding-top: calc(5rem + env(safe-area-inset-top));   /* clears sticky header + iOS notch */
     overflow-x: clip;           /* hard stop on horizontal scroll platform-wide */
   }
   html, body {
@@ -432,8 +444,8 @@
 .sr-only-focusable:focus,
 .sr-only-focusable:focus-visible {
   position: fixed;
-  left: 1rem;
-  top: 1rem;
+  left: max(1rem, env(safe-area-inset-left));
+  top: max(1rem, env(safe-area-inset-top));
   width: auto;
   height: auto;
   overflow: visible;

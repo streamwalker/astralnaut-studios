@@ -129,7 +129,11 @@ export function CookieConsent() {
       role="dialog"
       aria-modal={mode === "customize" ? true : undefined}
       aria-labelledby="cookie-consent-title"
-      className="fixed inset-x-0 bottom-0 z-[100] border-t border-[var(--border-line)] bg-[var(--bg-deep,#0a0a0a)]/95 text-[var(--ink,#fff)] backdrop-blur"
+      className="fixed inset-x-0 bottom-safe-nav z-[100] border-t border-[var(--border-line)] bg-[var(--bg-deep,#0a0a0a)]/95 text-[var(--ink,#fff)] backdrop-blur"
+      style={{
+        paddingLeft: "env(safe-area-inset-left)",
+        paddingRight: "env(safe-area-inset-right)",
+      }}
     >
       <div className="mx-auto max-w-6xl px-4 py-4">
         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
