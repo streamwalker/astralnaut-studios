@@ -383,11 +383,14 @@ function Reader() {
   return (
     <>
       <SiteHeader />
-      <div className="mx-auto max-w-5xl px-4 py-6">
+      <div
+        className="mx-auto max-w-5xl px-4 py-6"
+        style={{ ["--reader-ui-scale" as string]: String(uiScale) }}
+      >
         <h1 className="sr-only">{issue.series.name} Issue {issue.issue_number} — Page {page}</h1>
-        <div className="flex items-center justify-between">
-          <Link to={`/${issue.series.slug}` as "/battlefield-atlantis"} className="text-xs text-[var(--mute)] hover:text-[var(--neon)]">← {issue.series.name}</Link>
-          <div className="font-mono text-sm text-[var(--mute)]">PAGE <span className="text-[var(--ink)]">{page}</span> / {total} · {isFree ? <span className="text-[var(--neon)]">FREE</span> : <span className="text-[var(--gold)]">LOCKED</span>}</div>
+        <div className="flex items-center justify-between" style={{ fontSize: `calc(0.875rem * ${uiScale})` }}>
+          <Link to={`/${issue.series.slug}` as "/battlefield-atlantis"} className="text-[var(--mute)] hover:text-[var(--neon)]">← {issue.series.name}</Link>
+          <div className="font-mono text-[var(--mute)]">PAGE <span className="text-[var(--ink)]">{page}</span> / {total} · {isFree ? <span className="text-[var(--neon)]">FREE</span> : <span className="text-[var(--gold)]">LOCKED</span>}</div>
         </div>
         <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
           Page {page} of {total}{isFree ? ", free preview" : ", locked"}
