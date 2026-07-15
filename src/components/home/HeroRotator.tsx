@@ -339,7 +339,7 @@ function SlotContent({ slot }: { slot: HeroSlot }) {
           onError={() => setImgFailed(true)}
         />
       ) : (
-        <h1 className="pointer-events-none select-none mt-5 text-4xl font-black leading-[1.02] tracking-tight text-white md:text-6xl drop-shadow-[0_4px_18px_rgba(0,0,0,0.7)]">
+        <h1 className="pointer-events-none select-none mt-5 text-fluid-h1 font-black tracking-tight text-white drop-shadow-[0_4px_18px_rgba(0,0,0,0.7)]">
           {fallbackTitle}
         </h1>
       )}

@@ -55,7 +55,7 @@ function DarkerAges() {
         <div className="mt-12 eyebrow">October 2026 · Issue 1</div>
         <img src={daLogo} alt="Darker Ages" className="mx-auto mt-6 max-h-48 w-auto" />
         <h1 className="sr-only">Darker Ages</h1>
-        <p className="mx-auto mt-6 max-w-2xl text-xl text-[var(--ink2)]">After the protective magic of the old age has died, what was held back is loose.</p>
+        <p className="mx-auto mt-6 max-w-2xl text-fluid-h2 font-medium text-[var(--ink2)]">After the protective magic of the old age has died, what was held back is loose.</p>
         <figure className="mx-auto mt-12 max-w-[420px]">
           <img
             src={daCoverAsset.url}

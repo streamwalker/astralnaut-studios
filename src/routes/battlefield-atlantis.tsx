@@ -231,7 +231,7 @@ function BAPage() {
         {/* ============ ISSUE #1 DETAILS ============ */}
         <section className="mt-20 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
           <div>
-            <h2 className="text-4xl font-black md:text-5xl">Issue #1 — <span className="italic">"Only One Will Rule"</span></h2>
+            <h2 className="text-fluid-h2 font-black">Issue #1 — <span className="italic">"Only One Will Rule"</span></h2>
             <p className="mt-3 max-w-xl text-[var(--ink2)]">The catastrophe. The council. The ultimatum. The three Ascended humans standing between restraint and annihilation.</p>
 
             {/* Green callout */}
