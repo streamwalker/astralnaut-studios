@@ -125,12 +125,12 @@ function ProductPage() {
 
         <div className="grid gap-10 md:grid-cols-2">
           <div>
-            <div className="aspect-square overflow-hidden rounded-2xl border border-[var(--border-line)] bg-black">
+            <div className="mx-auto aspect-square w-full max-w-[720px] overflow-hidden rounded-2xl border border-[var(--border-line)] bg-black p-4">
               {mainImg ? (
                 <img
                   src={mainImg.url}
                   alt={mainImg.altText ?? product.title}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain"
                 />
               ) : null}
             </div>
