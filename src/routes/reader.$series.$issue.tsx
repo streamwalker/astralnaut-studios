@@ -352,6 +352,8 @@ function Reader() {
       else if (e.key === "-" || e.key === "_") { e.preventDefault(); zoomOut(); }
       else if (e.key === "0") { e.preventDefault(); zoomReset(); }
       else if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFullscreen(); }
+      else if (e.shiftKey && (e.key === "+" || e.key === "=")) { e.preventDefault(); uiScaleUp(); }
+      else if (e.shiftKey && (e.key === "-" || e.key === "_")) { e.preventDefault(); uiScaleDown(); }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
