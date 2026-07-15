@@ -72,8 +72,8 @@ function ShopPage() {
             <div className="text-[10px] font-bold uppercase tracking-[3px]" style={{ color: "var(--gold)" }}>
               Astralnaut Studios · Merch
             </div>
-            <h1 className="mt-2 text-4xl font-black tracking-tight md:text-6xl">Shop the drop</h1>
-            <p className="mt-4 max-w-xl text-[var(--ink2)]">
+            <h1 className="text-fluid-h1 mt-2 font-black tracking-tight">Shop the drop</h1>
+            <p className="text-fluid-body measure mt-4 text-[var(--ink2)]">
               Wear the story. Officially licensed tees from <em>Children of Aquarius</em> and the
               Release the X-Files line. Fulfilled and shipped via our Shopify and TikTok stores.
             </p>
