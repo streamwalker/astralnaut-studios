@@ -263,7 +263,7 @@ function Reader() {
                   height: "min(85vh, 1200px)",
                   overflow: "auto",
                   overscrollBehavior: "contain",
-                  touchAction: "pinch-zoom",
+                  touchAction: "pan-x pan-y",
                   background: "rgba(0,0,0,0.35)",
                 }}
               >
