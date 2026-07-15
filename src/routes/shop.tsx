@@ -138,13 +138,13 @@ function ProductCard({ product }: { product: ShopifyProduct }) {
       <Link
         to="/product/$handle"
         params={{ handle: product.node.handle }}
-        className="relative block aspect-square overflow-hidden bg-black"
+        className="relative block aspect-square overflow-hidden bg-black p-3"
       >
         {image ? (
           <img
             src={image.url}
             alt={image.altText ?? product.node.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
             loading="lazy"
           />
         ) : (
