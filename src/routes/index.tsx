@@ -164,7 +164,7 @@ function Home() {
             borderBottom: "1px solid var(--border-line)",
           }}
         >
-          <div className="mx-auto max-w-7xl px-6 py-16">
+          <div className="container-wide py-16">
             <div className="flex items-baseline justify-between">
               <h2 className="text-3xl font-black md:text-4xl">The slate</h2>
               <div className="eyebrow">Three properties · One disclosure-era universe</div>

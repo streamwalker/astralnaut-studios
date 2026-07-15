@@ -67,7 +67,7 @@ function ShopPage() {
 
       {/* Hero */}
       <section className="border-b border-[var(--border-line)] bg-gradient-to-b from-black/40 to-transparent">
-        <div className="mx-auto flex max-w-7xl flex-col items-start gap-6 px-6 py-16 md:flex-row md:items-end md:justify-between">
+        <div className="container-wide flex flex-col items-start gap-6 py-16 md:flex-row md:items-end md:justify-between">
           <div>
             <div className="text-[10px] font-bold uppercase tracking-[3px]" style={{ color: "var(--gold)" }}>
               Astralnaut Studios · Merch
@@ -90,7 +90,7 @@ function ShopPage() {
       </section>
 
       {/* Grid */}
-      <section className="mx-auto max-w-7xl px-6 py-12">
+      <section className="container-wide py-12">
         {products.length === 0 ? (
           <div className="rounded-xl border border-[var(--border-line)] py-24 text-center">
             <ShoppingBag className="mx-auto h-10 w-10 text-[var(--mute)]" />
@@ -105,7 +105,7 @@ function ShopPage() {
         )}
       </section>
 
-      <div className="mx-auto max-w-7xl px-6 pb-8">
+      <div className="container-wide pb-8">
         <RightsNotice variant="shop" />
       </div>
 

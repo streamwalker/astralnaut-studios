@@ -384,7 +384,7 @@ function Reader() {
     <>
       <SiteHeader />
       <div
-        className="mx-auto max-w-5xl px-4 py-6"
+        className="container-wide py-6"
         style={{ ["--reader-ui-scale" as string]: String(uiScale) }}
       >
         <h1 className="sr-only">{issue.series.name} Issue {issue.issue_number} — Page {page}</h1>
