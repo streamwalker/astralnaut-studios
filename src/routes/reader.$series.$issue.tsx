@@ -414,6 +414,7 @@ function Reader() {
                           {zoom === FIT ? "1:1" : "Fit"}
                         </button>
                         <button
+                          ref={fsButtonRef}
                           type="button"
                           onClick={toggleFullscreen}
                           aria-label={isFullscreen ? "Exit full screen" : "Enter full screen"}
@@ -423,6 +424,7 @@ function Reader() {
                         >
                           <span aria-hidden="true">⤢ </span>{isFullscreen ? "Exit" : "Full"}
                         </button>
+
                         <span
                           aria-live="polite"
                           aria-atomic="true"
