@@ -274,10 +274,14 @@ function Reader() {
 
 
 
-  function go(delta: number) {
-    const next = Math.min(total, Math.max(1, page + delta));
+  function goTo(target: number) {
+    const next = Math.min(total, Math.max(1, target));
     navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: next } });
   }
+  function go(delta: number) {
+    goTo(page + delta);
+  }
+
 
   const stageRef = useRef<HTMLDivElement>(null);
   const fsButtonRef = useRef<HTMLButtonElement>(null);
@@ -314,8 +318,10 @@ function Reader() {
     function onKey(e: KeyboardEvent) {
       const tag = (e.target as HTMLElement | null)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
-      if (e.key === "ArrowRight") go(1);
-      else if (e.key === "ArrowLeft") go(-1);
+      if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === "n" || e.key === "N") { e.preventDefault(); go(1); }
+      else if (e.key === "ArrowLeft" || e.key === "PageUp" || e.key === "p" || e.key === "P") { e.preventDefault(); go(-1); }
+      else if (e.key === "Home") { e.preventDefault(); goTo(1); }
+      else if (e.key === "End") { e.preventDefault(); goTo(total); }
       else if (e.key === "Escape" && !document.fullscreenElement) navigate({ to: `/${issue.series.slug}` as "/battlefield-atlantis" | "/children-of-aquarius" });
       else if (e.key === "+" || e.key === "=") { e.preventDefault(); zoomIn(); }
       else if (e.key === "-" || e.key === "_") { e.preventDefault(); zoomOut(); }
@@ -325,6 +331,7 @@ function Reader() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   });
+
 
 
   // Best-effort access logging for paid-content auditing & burst detection.
@@ -357,6 +364,10 @@ function Reader() {
           <Link to={`/${issue.series.slug}` as "/battlefield-atlantis"} className="text-xs text-[var(--mute)] hover:text-[var(--neon)]">← {issue.series.name}</Link>
           <div className="font-mono text-sm text-[var(--mute)]">PAGE <span className="text-[var(--ink)]">{page}</span> / {total} · {isFree ? <span className="text-[var(--neon)]">FREE</span> : <span className="text-[var(--gold)]">LOCKED</span>}</div>
         </div>
+        <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+          Page {page} of {total}{isFree ? ", free preview" : ", locked"}
+        </div>
+
 
         <div className="mt-4 panel relative overflow-hidden">
           {isFree && img ? (
