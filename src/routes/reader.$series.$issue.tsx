@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { RightsNotice } from "@/components/rights-notice";
 import { Indicia } from "@/components/indicia";
@@ -71,7 +71,11 @@ function Reader() {
   const current = pages.find((p: typeof pages[number]) => p.page_number === page);
   const isFree = page <= freeMax;
   const img = pageUrl(current?.image_path);
-  const [zoom, setZoom] = useState(false);
+  const ZOOM_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2, 3] as const;
+  const FIT = 0 as const; // 0 = fit-width mode
+  const [zoom, setZoom] = useState<number>(FIT);
+  const [lastZoomIn, setLastZoomIn] = useState<number>(1.5);
+  const viewerRef = useRef<HTMLDivElement>(null);
   const [flashKey, setFlashKey] = useState(0);
   const [debugOpen, setDebugOpen] = useState(false);
   const [debugVariant, setDebugVariant] = useState<FlashVariant | "reduced" | null>(null);
@@ -79,6 +83,33 @@ function Reader() {
   const rawVariant = flashVariantFor(issue.series.slug, issue.issue_number, page);
   const mappedVariant: FlashVariant | "reduced" | null = prefersReducedMotion ? (rawVariant ? "reduced" : null) : rawVariant;
   const flashVariant = debugVariant ?? mappedVariant;
+
+  // Reset zoom on page change
+  useEffect(() => {
+    setZoom(FIT);
+    if (viewerRef.current) viewerRef.current.scrollTo({ top: 0, left: 0 });
+  }, [page]);
+
+  const zoomIn = useCallback(() => {
+    setZoom((z) => {
+      const cur = z === FIT ? 1 : z;
+      const next = ZOOM_STEPS.find((s) => s > cur) ?? ZOOM_STEPS[ZOOM_STEPS.length - 1];
+      setLastZoomIn(next);
+      return next;
+    });
+  }, []);
+  const zoomOut = useCallback(() => {
+    setZoom((z) => {
+      if (z === FIT) return FIT;
+      const lower = [...ZOOM_STEPS].reverse().find((s) => s < z);
+      return lower ?? FIT;
+    });
+  }, []);
+  const zoomReset = useCallback(() => setZoom(FIT), []);
+  const toggleActual = useCallback(() => setZoom((z) => (z === FIT ? 1 : FIT)), []);
+  const onImageClick = useCallback(() => {
+    setZoom((z) => (z === FIT ? lastZoomIn : FIT));
+  }, [lastZoomIn]);
 
   function playFlash(v: FlashVariant | "reduced" | null) {
     setDebugVariant(v);
@@ -94,9 +125,14 @@ function Reader() {
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
       if (e.key === "ArrowRight") go(1);
-      if (e.key === "ArrowLeft") go(-1);
-      if (e.key === "Escape") navigate({ to: `/${issue.series.slug}` as "/battlefield-atlantis" | "/children-of-aquarius" });
+      else if (e.key === "ArrowLeft") go(-1);
+      else if (e.key === "Escape") navigate({ to: `/${issue.series.slug}` as "/battlefield-atlantis" | "/children-of-aquarius" });
+      else if (e.key === "+" || e.key === "=") { e.preventDefault(); zoomIn(); }
+      else if (e.key === "-" || e.key === "_") { e.preventDefault(); zoomOut(); }
+      else if (e.key === "0") { e.preventDefault(); zoomReset(); }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -135,21 +171,62 @@ function Reader() {
 
         <div className="mt-4 panel relative overflow-hidden">
           {isFree && img ? (
-            <div className="relative">
-              <img
-                src={img}
-                alt={current?.alt_text ?? `Page ${page}`}
-                onClick={() => setZoom(!zoom)}
-                onLoad={() => {
-                  if (!prefersReducedMotion) setFlashKey((k) => k + 1);
+            <>
+              <div className="flex items-center justify-between gap-2 border-b border-white/5 px-2 py-1.5 text-[10px] font-mono uppercase tracking-[2px] text-[var(--mute)]">
+                <span>Scroll & zoom</span>
+                <div className="flex items-center gap-1">
+                  <button type="button" onClick={zoomOut} aria-label="Zoom out" className="btn-ghost px-2 py-1">−</button>
+                  <button type="button" onClick={zoomReset} aria-label="Reset zoom" className="btn-ghost px-2 py-1">Fit</button>
+                  <button type="button" onClick={zoomIn} aria-label="Zoom in" className="btn-ghost px-2 py-1">+</button>
+                  <button type="button" onClick={toggleActual} aria-label="Toggle actual size" className="btn-ghost px-2 py-1">
+                    {zoom === FIT ? "1:1" : "Fit"}
+                  </button>
+                  <span className="ml-2 tabular-nums text-[var(--ink)]">{zoom === FIT ? "FIT" : `${Math.round(zoom * 100)}%`}</span>
+                </div>
+              </div>
+              <div
+                ref={viewerRef}
+                role="region"
+                aria-label="Comic page viewer"
+                tabIndex={0}
+                onWheel={(e) => {
+                  if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    if (e.deltaY < 0) zoomIn(); else zoomOut();
+                  }
                 }}
-                className={`mx-auto h-auto w-full cursor-zoom-${zoom ? "out" : "in"} ${zoom ? "scale-150" : ""}`}
-                style={{ transition: "transform .3s ease", maxHeight: "85vh", objectFit: "contain" }}
-              />
-              {flashVariant && flashKey > 0 && (
-                <div key={`${page}-${flashKey}`} className={`page-flash page-flash--${flashVariant}`} aria-hidden="true" />
-              )}
-            </div>
+                className="relative w-full outline-none"
+                style={{
+                  height: "min(85vh, 1200px)",
+                  overflow: "auto",
+                  overscrollBehavior: "contain",
+                  touchAction: "pinch-zoom",
+                  background: "rgba(0,0,0,0.35)",
+                }}
+              >
+                <div
+                  style={{
+                    width: zoom === FIT ? "100%" : `${zoom * 100}%`,
+                    margin: "0 auto",
+                  }}
+                >
+                  <img
+                    src={img}
+                    alt={current?.alt_text ?? `Page ${page}`}
+                    onClick={onImageClick}
+                    onLoad={() => {
+                      if (!prefersReducedMotion) setFlashKey((k) => k + 1);
+                    }}
+                    draggable={false}
+                    className={`block h-auto w-full select-none ${zoom === FIT ? "cursor-zoom-in" : "cursor-zoom-out"}`}
+                    style={{ transition: prefersReducedMotion ? "none" : "width .2s ease" }}
+                  />
+                </div>
+                {flashVariant && flashKey > 0 && (
+                  <div key={`${page}-${flashKey}`} className={`page-flash page-flash--${flashVariant} pointer-events-none absolute inset-0`} aria-hidden="true" />
+                )}
+              </div>
+            </>
           ) : isFree && !img ? (
             <div className="aspect-[1054/1491] flex items-center justify-center p-10 text-center text-[var(--mute)]">Page art forthcoming</div>
           ) : (
