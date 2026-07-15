@@ -408,10 +408,11 @@ function Reader() {
                 role="toolbar"
                 aria-label="Page viewer controls"
                 aria-controls="comic-page-viewer"
-                className="flex items-center justify-between gap-2 border-b border-white/5 px-2 py-1.5 text-[10px] font-mono uppercase tracking-[2px] text-[var(--mute)]"
+                className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 px-2 py-1.5 font-mono uppercase tracking-[2px] text-[var(--mute)]"
+                style={{ fontSize: `calc(10px * ${uiScale})` }}
               >
                 <span id="viewer-toolbar-hint">Scroll & zoom</span>
-                <div className="flex items-center gap-1">
+                <div className="flex flex-wrap items-center gap-1">
                   {(() => {
                     const ctrlCls =
                       "btn-ghost inline-flex min-h-11 min-w-11 items-center justify-center px-2 py-1 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--neon)] focus-visible:ring-offset-2 focus-visible:ring-offset-black";
