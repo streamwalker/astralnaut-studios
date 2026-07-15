@@ -81,7 +81,7 @@ function Home() {
                 <span aria-hidden>⚡</span>
                 {copy["home.hero.eyebrow"] ?? "New episodes every week · Netflix for comics"}
               </div>
-              <h2 className="mt-5 text-4xl font-black leading-[1.05] tracking-tight md:text-5xl">
+              <h2 className="mt-5 text-fluid-h1 font-black tracking-tight">
                 {copy["home.hero.title"] ?? "The next page only drops here."}
               </h2>
               <p className="mt-5 max-w-xl text-lg text-[var(--ink2)]">
