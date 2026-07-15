@@ -95,6 +95,22 @@
   letter-spacing: -0.015em;
 }
 
+/* Fluid body copy — scales gently between mobile and ultrawide. */
+@utility text-fluid-body {
+  font-size: clamp(0.95rem, 0.35vw + 0.85rem, 1.125rem);
+  line-height: 1.65;
+}
+
+/* Constrain long-form copy to a comfortable measure (~65ch) so lines
+   don't run edge-to-edge on ultrawide monitors. */
+@utility measure {
+  max-width: 65ch;
+}
+@utility measure-wide {
+  max-width: 75ch;
+}
+
+
 /* Touch-friendly horizontal scroll wrapper for wide data tables.
    Wrap any <table> with <div class="table-scroll">…</div> so it becomes
    swipeable on phones instead of overflowing or squishing. */
