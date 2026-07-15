@@ -141,12 +141,51 @@ function Reader() {
     const onEnd = (e: TouchEvent) => {
       if (e.touches.length < 2) pinchRef.current = null;
     };
+    // Double-tap to toggle zoom (mobile). Ignored when a pinch is in progress.
+    let lastTapAt = 0;
+    let lastTapX = 0;
+    let lastTapY = 0;
+    const DOUBLE_TAP_MS = 300;
+    const DOUBLE_TAP_DIST = 40;
+    const onTapStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1 || pinchRef.current) { lastTapAt = 0; return; }
+      const t = e.touches[0];
+      const now = Date.now();
+      if (
+        now - lastTapAt < DOUBLE_TAP_MS &&
+        Math.hypot(t.clientX - lastTapX, t.clientY - lastTapY) < DOUBLE_TAP_DIST
+      ) {
+        e.preventDefault();
+        const rect = el.getBoundingClientRect();
+        const targetZoom = zoom === FIT || zoom < 1.5 ? 2 : FIT;
+        if (targetZoom === FIT) {
+          setZoom(FIT);
+        } else {
+          const startZoom = zoom === FIT ? 1 : zoom;
+          const contentX = (el.scrollLeft + (t.clientX - rect.left)) / startZoom;
+          const contentY = (el.scrollTop + (t.clientY - rect.top)) / startZoom;
+          setZoom(targetZoom);
+          requestAnimationFrame(() => {
+            if (!viewerRef.current) return;
+            viewerRef.current.scrollLeft = contentX * targetZoom - (t.clientX - rect.left);
+            viewerRef.current.scrollTop = contentY * targetZoom - (t.clientY - rect.top);
+          });
+        }
+        lastTapAt = 0;
+      } else {
+        lastTapAt = now;
+        lastTapX = t.clientX;
+        lastTapY = t.clientY;
+      }
+    };
     el.addEventListener("touchstart", onStart, { passive: false });
+    el.addEventListener("touchstart", onTapStart, { passive: false });
     el.addEventListener("touchmove", onMove, { passive: false });
     el.addEventListener("touchend", onEnd);
     el.addEventListener("touchcancel", onEnd);
     return () => {
       el.removeEventListener("touchstart", onStart);
+      el.removeEventListener("touchstart", onTapStart);
       el.removeEventListener("touchmove", onMove);
       el.removeEventListener("touchend", onEnd);
       el.removeEventListener("touchcancel", onEnd);
