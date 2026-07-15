@@ -85,7 +85,7 @@ export function MobileBottomNav() {
       >
         <ul className="mx-auto grid max-w-3xl grid-cols-5">
           {tabs.map((t) => {
-            const active = t.exact ? pathname === t.to : pathname.startsWith(t.to.split("/$")[0]);
+            const active = "exact" in t && t.exact ? pathname === t.to : pathname.startsWith(t.to.split("/$")[0]);
             const Icon = t.icon;
             const linkProps = "params" in t
               ? { to: t.to, params: t.params as { series: string; issue: string } }
