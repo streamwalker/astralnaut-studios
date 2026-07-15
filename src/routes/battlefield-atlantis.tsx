@@ -441,7 +441,7 @@ function BAPage() {
                       <button type="button" aria-label={`View ${c.name} details`} className="group block w-full overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b from-slate-700/40 to-slate-900/60 text-left transition hover:ring-2 hover:ring-[var(--neon)] focus:outline-none focus:ring-2 focus:ring-[var(--neon)] cursor-pointer">
                         <div className="relative aspect-[3/4] overflow-hidden bg-gradient-to-b from-slate-300/10 to-slate-900/30">
                           {portrait ? (
-                            <img src={portrait} alt={c.name} className="h-full w-full object-cover transition group-hover:scale-105" />
+                            <img src={portrait} alt={c.name} className="h-full w-full object-cover object-top transition group-hover:scale-105" />
                           ) : (
                             <div className="flex h-full items-center justify-center text-xs text-[var(--mute)]">Portrait forthcoming</div>
                           )}
