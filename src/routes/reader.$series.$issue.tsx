@@ -75,6 +75,31 @@ function Reader() {
   const FIT = 0 as const; // 0 = fit-width mode
   const [zoom, setZoom] = useState<number>(FIT);
   const [lastZoomIn, setLastZoomIn] = useState<number>(1.5);
+  // Reader UI/text scaling — persisted across pages & issues (localStorage).
+  const UI_SCALE_STEPS = [0.85, 1, 1.15, 1.3, 1.5, 1.75] as const;
+  const UI_SCALE_KEY = "reader:ui-scale:v1";
+  const [uiScale, setUiScale] = useState<number>(1);
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(UI_SCALE_KEY);
+      const n = raw ? Number(raw) : NaN;
+      if (Number.isFinite(n) && n >= UI_SCALE_STEPS[0] && n <= UI_SCALE_STEPS[UI_SCALE_STEPS.length - 1]) {
+        setUiScale(n);
+      }
+    } catch { /* ignore */ }
+  }, []);
+  useEffect(() => {
+    try { localStorage.setItem(UI_SCALE_KEY, String(uiScale)); } catch { /* ignore */ }
+  }, [uiScale]);
+  const uiScaleUp = useCallback(() => {
+    setUiScale((s) => UI_SCALE_STEPS.find((x) => x > s) ?? UI_SCALE_STEPS[UI_SCALE_STEPS.length - 1]);
+  }, []);
+  const uiScaleDown = useCallback(() => {
+    setUiScale((s) => [...UI_SCALE_STEPS].reverse().find((x) => x < s) ?? UI_SCALE_STEPS[0]);
+  }, []);
+  const uiScaleReset = useCallback(() => setUiScale(1), []);
+  const atMinUi = uiScale <= UI_SCALE_STEPS[0];
+  const atMaxUi = uiScale >= UI_SCALE_STEPS[UI_SCALE_STEPS.length - 1];
   const viewerRef = useRef<HTMLDivElement>(null);
   const [flashKey, setFlashKey] = useState(0);
   const [debugOpen, setDebugOpen] = useState(false);
@@ -358,11 +383,14 @@ function Reader() {
   return (
     <>
       <SiteHeader />
-      <div className="mx-auto max-w-5xl px-4 py-6">
+      <div
+        className="mx-auto max-w-5xl px-4 py-6"
+        style={{ ["--reader-ui-scale" as string]: String(uiScale) }}
+      >
         <h1 className="sr-only">{issue.series.name} Issue {issue.issue_number} — Page {page}</h1>
-        <div className="flex items-center justify-between">
-          <Link to={`/${issue.series.slug}` as "/battlefield-atlantis"} className="text-xs text-[var(--mute)] hover:text-[var(--neon)]">← {issue.series.name}</Link>
-          <div className="font-mono text-sm text-[var(--mute)]">PAGE <span className="text-[var(--ink)]">{page}</span> / {total} · {isFree ? <span className="text-[var(--neon)]">FREE</span> : <span className="text-[var(--gold)]">LOCKED</span>}</div>
+        <div className="flex items-center justify-between" style={{ fontSize: `calc(0.875rem * ${uiScale})` }}>
+          <Link to={`/${issue.series.slug}` as "/battlefield-atlantis"} className="text-[var(--mute)] hover:text-[var(--neon)]">← {issue.series.name}</Link>
+          <div className="font-mono text-[var(--mute)]">PAGE <span className="text-[var(--ink)]">{page}</span> / {total} · {isFree ? <span className="text-[var(--neon)]">FREE</span> : <span className="text-[var(--gold)]">LOCKED</span>}</div>
         </div>
         <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
           Page {page} of {total}{isFree ? ", free preview" : ", locked"}
@@ -380,10 +408,11 @@ function Reader() {
                 role="toolbar"
                 aria-label="Page viewer controls"
                 aria-controls="comic-page-viewer"
-                className="flex items-center justify-between gap-2 border-b border-white/5 px-2 py-1.5 text-[10px] font-mono uppercase tracking-[2px] text-[var(--mute)]"
+                className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 px-2 py-1.5 font-mono uppercase tracking-[2px] text-[var(--mute)]"
+                style={{ fontSize: `calc(10px * ${uiScale})` }}
               >
                 <span id="viewer-toolbar-hint">Scroll & zoom</span>
-                <div className="flex items-center gap-1">
+                <div className="flex flex-wrap items-center gap-1">
                   {(() => {
                     const ctrlCls =
                       "btn-ghost inline-flex min-h-11 min-w-11 items-center justify-center px-2 py-1 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--neon)] focus-visible:ring-offset-2 focus-visible:ring-offset-black";
@@ -447,6 +476,43 @@ function Reader() {
                         >
                           <span className="sr-only">Zoom level: </span>
                           {zoom === FIT ? "FIT" : `${Math.round(zoom * 100)}%`}
+                        </span>
+
+                        <span aria-hidden="true" className="mx-1 opacity-30">|</span>
+                        <button
+                          type="button"
+                          onClick={uiScaleDown}
+                          aria-label="Decrease reader interface text size"
+                          disabled={atMinUi}
+                          className={ctrlCls}
+                        >
+                          <span aria-hidden="true">A−</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={uiScaleReset}
+                          aria-label="Reset reader interface text size to default"
+                          aria-pressed={uiScale === 1}
+                          className={ctrlCls}
+                        >
+                          A
+                        </button>
+                        <button
+                          type="button"
+                          onClick={uiScaleUp}
+                          aria-label="Increase reader interface text size"
+                          disabled={atMaxUi}
+                          className={ctrlCls}
+                        >
+                          <span aria-hidden="true">A+</span>
+                        </button>
+                        <span
+                          aria-live="polite"
+                          aria-atomic="true"
+                          className="ml-1 tabular-nums text-[var(--ink)]"
+                        >
+                          <span className="sr-only">Interface text size: </span>
+                          UI {Math.round(uiScale * 100)}%
                         </span>
                       </>
                     );
