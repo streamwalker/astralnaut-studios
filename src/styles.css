@@ -4,6 +4,42 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ==========================================================================
+   Responsive utilities — device-adaptive layout primitives
+   Used platform-wide. Mobile-first; safe-area aware.
+   ========================================================================== */
+@utility safe-top     { padding-top: env(safe-area-inset-top); }
+@utility safe-bottom  { padding-bottom: env(safe-area-inset-bottom); }
+/* Reserves space for the mobile bottom-nav (56px) + iOS home-indicator. */
+@utility pb-safe-nav  { padding-bottom: calc(env(safe-area-inset-bottom) + 4.5rem); }
+
+/* Fluid page container — mobile-first, capped for readability on ultrawide. */
+@utility container-page {
+  margin-inline: auto;
+  width: 100%;
+  padding-inline: 1rem;
+  max-width: 80rem; /* 1280px */
+}
+/* Wider surface for library/reader/gallery on ultrawide. */
+@utility container-wide {
+  margin-inline: auto;
+  width: 100%;
+  padding-inline: 1rem;
+  max-width: 1600px;
+}
+
+/* Fluid H1/H2 that scale between mobile and desktop without breakpoints. */
+@utility text-fluid-h1 {
+  font-size: clamp(2rem, 4.5vw + 0.5rem, 4rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+@utility text-fluid-h2 {
+  font-size: clamp(1.5rem, 2.5vw + 0.5rem, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -94,6 +130,12 @@
 
 @layer base {
   * { border-color: var(--border-line); }
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-padding-top: 5rem;   /* clears the sticky site header on hash-scroll */
+    overflow-x: clip;           /* hard stop on horizontal scroll platform-wide */
+  }
   html, body {
     background:
       radial-gradient(ellipse at 75% 0%, rgba(160,64,255,0.18), transparent 55%),
@@ -102,8 +144,23 @@
     color: var(--ink);
     font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-feature-settings: "cv11", "ss01", "ss03";
-    min-height: 100vh;
+    min-height: 100dvh;
     -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+  body { overscroll-behavior-y: none; }
+  /* Media assets never blow out their container. */
+  img, video, canvas, svg { max-width: 100%; height: auto; }
+  img, video { display: block; }
+  /* Touch devices: enforce WCAG 2.2 AA 44x44 minimum tap target. */
+  @media (pointer: coarse) {
+    button, [role="button"], a.btn-cta, a.btn-ghost, a.btn-marvel, a.btn-hero-ghost {
+      min-height: 44px;
+    }
+  }
+  /* Ultrawide-only widening for opted-in surfaces. */
+  @media (min-width: 1920px) {
+    .container-wide { max-width: 1760px; }
   }
   h1,h2,h3 { color: var(--ink); letter-spacing: -0.02em; font-weight: 900; }
   .eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 6px; text-transform: uppercase; color: var(--neon); }

@@ -20,6 +20,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { useCartSync } from "@/hooks/useCartSync";
 import { CookieConsent } from "@/components/cookie-consent";
 import { useMotionRootAttr } from "@/hooks/useMotionPref";
+import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 
 
 function NotFoundComponent() {
@@ -83,7 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" },
       { title: "Real World Comics — The next page only drops here" },
       { name: "description", content: "Five new pages a week. Motion-enhanced art. Subscriber-only votes that change the canon. Read the first act free." },
       { name: "author", content: "Phil Russell — Streamwalkers Corporation (Astralnaut Studios)" },
@@ -177,9 +178,10 @@ function RootComponent() {
           Skip to main content
         </a>
         <PaymentTestModeBanner />
-        <div id="main-content" tabIndex={-1}>
+        <div id="main-content" tabIndex={-1} className="pb-safe-nav lg:pb-0">
           <Outlet />
         </div>
+        <MobileBottomNav />
         <TourOverlay />
         <AnalyticsTracker />
         <VisitorTracker />
