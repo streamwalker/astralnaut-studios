@@ -81,6 +81,8 @@ export function MobileBottomNav() {
           background: "rgba(2,0,12,0.92)",
           borderColor: "var(--border-line)",
           paddingBottom: "env(safe-area-inset-bottom)",
+          paddingLeft: "env(safe-area-inset-left)",
+          paddingRight: "env(safe-area-inset-right)",
         }}
       >
         <ul className="mx-auto grid max-w-3xl grid-cols-5">
