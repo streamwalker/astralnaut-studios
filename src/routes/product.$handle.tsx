@@ -144,7 +144,7 @@ function ProductPage() {
                       i === imgIdx ? "border-[var(--neon)]" : "border-[var(--border-line)]"
                     }`}
                   >
-                    <img src={e.node.url} alt="" className="h-full w-full object-cover" />
+                    <img src={e.node.url} alt="" className="h-full w-full object-contain p-1" />
                   </button>
                 ))}
               </div>
