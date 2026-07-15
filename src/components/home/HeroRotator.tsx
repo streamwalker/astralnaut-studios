@@ -193,7 +193,7 @@ export function HeroRotator() {
         className="absolute inset-x-0 bottom-0 z-30 border-t border-white/10 backdrop-blur-md"
         style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.75))" }}
       >
-        <div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-2 py-1.5 sm:gap-2 sm:px-6 sm:py-3">
+        <div className="container-wide flex gap-1 overflow-x-auto py-1.5 sm:gap-2 sm:py-3">
           {HERO_SLOTS.map((slot, i) => {
             const isActive = i === active;
             return (
