@@ -274,10 +274,14 @@ function Reader() {
 
 
 
-  function go(delta: number) {
-    const next = Math.min(total, Math.max(1, page + delta));
+  function goTo(target: number) {
+    const next = Math.min(total, Math.max(1, target));
     navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: next } });
   }
+  function go(delta: number) {
+    goTo(page + delta);
+  }
+
 
   const stageRef = useRef<HTMLDivElement>(null);
   const fsButtonRef = useRef<HTMLButtonElement>(null);
