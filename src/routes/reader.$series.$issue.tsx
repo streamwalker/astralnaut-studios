@@ -314,8 +314,10 @@ function Reader() {
     function onKey(e: KeyboardEvent) {
       const tag = (e.target as HTMLElement | null)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
-      if (e.key === "ArrowRight") go(1);
-      else if (e.key === "ArrowLeft") go(-1);
+      if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === "n" || e.key === "N") { e.preventDefault(); go(1); }
+      else if (e.key === "ArrowLeft" || e.key === "PageUp" || e.key === "p" || e.key === "P") { e.preventDefault(); go(-1); }
+      else if (e.key === "Home") { e.preventDefault(); goTo(1); }
+      else if (e.key === "End") { e.preventDefault(); goTo(total); }
       else if (e.key === "Escape" && !document.fullscreenElement) navigate({ to: `/${issue.series.slug}` as "/battlefield-atlantis" | "/children-of-aquarius" });
       else if (e.key === "+" || e.key === "=") { e.preventDefault(); zoomIn(); }
       else if (e.key === "-" || e.key === "_") { e.preventDefault(); zoomOut(); }
@@ -325,6 +327,7 @@ function Reader() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   });
+
 
 
   // Best-effort access logging for paid-content auditing & burst detection.
