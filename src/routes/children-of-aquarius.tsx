@@ -429,7 +429,7 @@ function COAPage() {
                 <DialogTrigger asChild>
                   <button type="button" aria-label={`View ${c.name} details`} className="group block w-full overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b from-slate-700/40 to-slate-900/60 text-left transition hover:ring-2 hover:ring-[var(--neon)] focus:outline-none focus:ring-2 focus:ring-[var(--neon)] cursor-pointer">
                     <div className="relative aspect-[3/4] overflow-hidden bg-gradient-to-b from-slate-300/10 to-slate-900/30">
-                      <img src={c.img} alt={c.name} loading="lazy" className="h-full w-full object-cover transition group-hover:scale-105" />
+                      <img src={c.img} alt={c.name} loading="lazy" className="h-full w-full object-cover object-top transition group-hover:scale-105" />
                       <div className="absolute inset-x-0 top-0 bg-gradient-to-b from-black/60 to-transparent px-3 py-2 text-center font-mono text-[10px] font-black uppercase tracking-[3px] text-white/90">
                         {c.name}
                       </div>
