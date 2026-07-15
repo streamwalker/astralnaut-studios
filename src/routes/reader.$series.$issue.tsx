@@ -84,11 +84,65 @@ function Reader() {
   const mappedVariant: FlashVariant | "reduced" | null = prefersReducedMotion ? (rawVariant ? "reduced" : null) : rawVariant;
   const flashVariant = debugVariant ?? mappedVariant;
 
-  // Reset zoom on page change
+  // Per-page persistence of zoom + scroll position (session-scoped).
+  const stateKey = `reader:${issue.series.slug}:${issue.issue_number}:${page}:v1`;
+  const restoredRef = useRef(false);
+  // Restore on page change
   useEffect(() => {
-    setZoom(FIT);
-    if (viewerRef.current) viewerRef.current.scrollTo({ top: 0, left: 0 });
-  }, [page]);
+    restoredRef.current = false;
+    let restoredZoom: number = FIT;
+    let restoredScroll: { top: number; left: number } | null = null;
+    try {
+      const raw = sessionStorage.getItem(stateKey);
+      if (raw) {
+        const parsed = JSON.parse(raw) as { zoom?: number; top?: number; left?: number };
+        if (typeof parsed.zoom === "number") restoredZoom = parsed.zoom;
+        if (typeof parsed.top === "number" && typeof parsed.left === "number") {
+          restoredScroll = { top: parsed.top, left: parsed.left };
+        }
+      }
+    } catch { /* ignore */ }
+    setZoom(restoredZoom);
+    // Wait for layout with new zoom before restoring scroll
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (viewerRef.current) {
+          viewerRef.current.scrollTo({
+            top: restoredScroll?.top ?? 0,
+            left: restoredScroll?.left ?? 0,
+          });
+        }
+        restoredRef.current = true;
+      });
+    });
+  }, [stateKey]);
+
+  // Save zoom + scroll (throttled via rAF) after restore completes.
+  useEffect(() => {
+    const el = viewerRef.current;
+    if (!el) return;
+    let raf = 0;
+    const save = () => {
+      if (!restoredRef.current) return;
+      try {
+        sessionStorage.setItem(
+          stateKey,
+          JSON.stringify({ zoom, top: el.scrollTop, left: el.scrollLeft }),
+        );
+      } catch { /* quota / disabled */ }
+    };
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => { raf = 0; save(); });
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    // Save current zoom immediately (covers zoom changes without scroll)
+    save();
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [stateKey, zoom]);
 
   // Pinch-to-zoom + two-finger pan (mobile). Attached with passive:false so we
   // can preventDefault on multi-touch moves; single touch keeps native scroll.
