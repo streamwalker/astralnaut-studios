@@ -6,33 +6,7 @@ import { pageUrl } from "@/lib/storage";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Lock } from "lucide-react";
 import coaLogo from "@/assets/children-of-aquarius-logo.png";
-import castMichael from "@/assets/coa-cast/michael.png";
-import castLila from "@/assets/coa-cast/lila.png";
-import castJon from "@/assets/coa-cast/jon-monarch.png";
-import castBlaire from "@/assets/coa-cast/father-blaire.png";
-import castBurke from "@/assets/coa-cast/edmund-burke.png";
-import castSimon from "@/assets/coa-cast/simon-olatunji.png";
-import castStacey from "@/assets/coa-cast/stacey.png";
-import castAnnie from "@/assets/coa-cast/annie.png";
-import castGil from "@/assets/coa-cast/gil.png";
-import castJeff from "@/assets/coa-cast/jeff.png";
-import castRyokoPhaseOne from "@/assets/coa-cast/ryoko-phase-one.png";
-import castRyokoTactical from "@/assets/coa-cast/ryoko-tactical-ops.png";
 
-const CAST = [
-  { img: castMichael, name: "Michael", role: "Heart of Christ", faction: "The Trinity", blurb: "A thoughtful Brooklyn 15-year-old, fiercely loyal and driven by justice.", bio: "Michael is the Heart of the Trinity — compassion, conscience, and the moral center of the Christ Child's three-fold expression in the Aquarian Age." },
-  { img: castLila, name: "Lila", role: "Michael's Friend", faction: "Brooklyn Circle", blurb: "Sharp-witted voice of reason. Skeptical, ambitious, three steps ahead.", bio: "Lila reads people the way other kids read screens. She is the first to see the pattern, and the last to admit she is afraid of it." },
-  { img: castJon, name: "Jon Monarch", role: "Cybernetic Operative", faction: "Operatives", blurb: "Resurrected after 25,000 years. Shifts timelines and realities at will.", bio: "Jon Monarch returned to a world that buried him long ago. He moves between timelines with the casual cruelty of a man who has already paid every price." },
-  { img: castBlaire, name: "Father Alistaire Blaire", role: "Protector of the Trinity", faction: "Excommunicated Clergy", blurb: "Excommunicated immortal priest guarding the Christ Child across centuries.", bio: "Excommunicated by Rome, sustained by something older. Blaire has guarded the Trinity for longer than any church has existed." },
-  { img: castBurke, name: "Edmund Burke", role: "Strategic Operative", faction: "Operatives", blurb: "Tactical, composed, and lethal in a bespoke three-piece suit.", bio: "Where Jon improvises, Burke plans. He arrives early, leaves late, and never raises his voice." },
-  { img: castSimon, name: "Simon Olatunji", role: "The Hand of Christ", faction: "The Trinity", blurb: "A rescued herald-protector whose faith, strength, and purpose make him a living shield.", bio: "The Hand acts. Simon's strength is faith made physical — the Trinity's shield in the field." },
-  { img: castStacey, name: "Stacey", role: "Michael's Friend", faction: "Brooklyn Circle", blurb: "Warm, upbeat, and brave under pressure—the glue that keeps the friend group together.", bio: "Stacey holds the circle. The first to crack a joke, the last to leave a friend behind." },
-  { img: castAnnie, name: "Annie", role: "Guide and Peacemaker", faction: "Brooklyn Circle", blurb: "Grounded, intuitive, and quietly magnetic, bringing empathy and wisdom wherever she goes.", bio: "Annie's gift is presence. People tell her things they have not told themselves." },
-  { img: castGil, name: "Gil", role: "Michael's Father Figure", faction: "Brooklyn Circle", blurb: "A retired fire chief with quiet strength, hidden history, and an instinct to protect.", bio: "A retired fire chief who walked into more burning buildings than anyone remembers. He is not finished walking in." },
-  { img: castJeff, name: "Jeff", role: "Troubled Teen", faction: "Brooklyn Circle", blurb: "Guarded, observant, and creative—a Brooklyn outsider carrying more anger than he shows.", bio: "Jeff sees what others miss because he has spent his life being missed. The anger is loud. The art is louder." },
-  { img: castRyokoPhaseOne, name: "Ryoko Tsurayaba", role: "The Head of Christ — Phase One", faction: "The Trinity", blurb: "Quietly intense 13-year-old psionic from Japan. Telekinesis, psychometry, and glimpses of past and future.", bio: "The Head perceives. Ryoko's mind reaches through time the way other minds reach through a room." },
-  { img: castRyokoTactical, name: "Ryoko Tsurayaba", role: "The Head of Christ — Tactical Ops", faction: "The Trinity", blurb: "Disciplined and calm under pressure. Precision force manipulation, levitation, and battlefield awareness.", bio: "Phase Two Ryoko has been trained. The same gift, weaponized — and held in check by the same quiet center." },
-];
 
 export const Route = createFileRoute("/children-of-aquarius")({
   loader: async () => {
@@ -107,8 +81,9 @@ function COAPage() {
     for (const p of d.pages ?? []) DROP_SCHEDULE[p] = label;
   }
 
-  // Up to 3 hero sticker thumbs from the local cast.
-  const heroThumbs = [castMichael, castRyokoPhaseOne, castSimon];
+  const characters = bundle.characters;
+  // Up to 3 hero sticker thumbs from the cast.
+  const heroThumbs = characters.slice(0, 3).map((c: typeof characters[number]) => pageUrl(c.portrait_path)).filter(Boolean) as string[];
 
   return (
     <>
@@ -424,41 +399,50 @@ function COAPage() {
           <p className="mt-2 max-w-xl text-[var(--ink2)]">The Children of Aquarius ensemble — the Trinity, their protectors, the operatives, and the Brooklyn circle that holds them together.</p>
 
           <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-            {CAST.map((c, i) => (
-              <Dialog key={c.name + i}>
-                <DialogTrigger asChild>
-                  <button type="button" aria-label={`View ${c.name} details`} className="group block w-full overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b from-slate-700/40 to-slate-900/60 text-left transition hover:ring-2 hover:ring-[var(--neon)] focus:outline-none focus:ring-2 focus:ring-[var(--neon)] cursor-pointer">
-                    <div className="relative aspect-[3/4] overflow-hidden bg-gradient-to-b from-slate-300/10 to-slate-900/30">
-                      <img src={c.img} alt={c.name} loading="lazy" className="h-full w-full object-cover object-top transition group-hover:scale-105" />
-                      <div className="absolute inset-x-0 top-0 bg-gradient-to-b from-black/60 to-transparent px-3 py-2 text-center font-mono text-[10px] font-black uppercase tracking-[3px] text-white/90">
-                        {c.name}
+            {characters.map((c: typeof characters[number]) => {
+              const portrait = pageUrl(c.portrait_path);
+              return (
+                <Dialog key={c.id}>
+                  <DialogTrigger asChild>
+                    <button type="button" aria-label={`View ${c.name} details`} className="group block w-full overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b from-slate-700/40 to-slate-900/60 text-left transition hover:ring-2 hover:ring-[var(--neon)] focus:outline-none focus:ring-2 focus:ring-[var(--neon)] cursor-pointer">
+                      <div className="relative aspect-[3/4] overflow-hidden bg-gradient-to-b from-slate-300/10 to-slate-900/30">
+                        {portrait ? (
+                          <img src={portrait} alt={c.name} loading="lazy" className="h-full w-full object-cover object-top transition group-hover:scale-105" />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-xs text-[var(--mute)]">Portrait forthcoming</div>
+                        )}
+                        <div className="absolute inset-x-0 top-0 bg-gradient-to-b from-black/60 to-transparent px-3 py-2 text-center font-mono text-[10px] font-black uppercase tracking-[3px] text-white/90">
+                          {c.name}
+                        </div>
+                      </div>
+                      <div className="space-y-1 p-4">
+                        <div className="font-mono text-[10px] font-black uppercase tracking-[2px] text-violet-300">
+                          {c.faction}{c.role ? ` · ${c.role}` : ""}
+                        </div>
+                        <div className="text-lg font-black">{c.name}</div>
+                        {c.short_description && (
+                          <div className="line-clamp-1 text-xs text-[var(--ink2)]">{c.short_description}</div>
+                        )}
+                      </div>
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-7xl overflow-hidden p-1">
+                    <div className="grid grid-cols-1 gap-0 md:grid-cols-[2fr_1fr]">
+                      <div className="flex items-center justify-center bg-[var(--bg2)] p-4">
+                        {portrait && <img src={portrait} alt={c.name} className="max-h-[50vh] w-full object-contain animate-in fade-in zoom-in-95 duration-500 md:max-h-[90vh]" />}
+                      </div>
+                      <div className="max-h-[50vh] overflow-y-auto p-6 md:max-h-[90vh] md:p-8">
+                        <div className="eyebrow" style={{ color: "var(--neon)" }}>{c.faction}</div>
+                        <DialogTitle className="mt-2 text-2xl font-black md:text-3xl">{c.name}</DialogTitle>
+                        <div className="mt-1 font-mono text-xs text-[var(--mute)]">{c.role}</div>
+                        {c.short_description && <DialogDescription className="mt-4 text-[var(--ink)]">{c.short_description}</DialogDescription>}
+                        {c.bio && <div className="mt-4 space-y-3 text-sm leading-relaxed text-[var(--ink2)]">{c.bio.split(/\n\n+/).map((p: string, i: number) => <p key={i}>{p}</p>)}</div>}
                       </div>
                     </div>
-                    <div className="space-y-1 p-4">
-                      <div className="font-mono text-[10px] font-black uppercase tracking-[2px] text-violet-300">
-                        {c.faction} · {c.role}
-                      </div>
-                      <div className="text-lg font-black">{c.name}</div>
-                      <div className="line-clamp-1 text-xs text-[var(--ink2)]">{c.blurb}</div>
-                    </div>
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="max-w-7xl overflow-hidden p-1">
-                  <div className="grid grid-cols-1 gap-0 md:grid-cols-[2fr_1fr]">
-                    <div className="flex items-center justify-center bg-[var(--bg2)] p-4">
-                      <img src={c.img} alt={c.name} className="max-h-[50vh] w-full object-contain animate-in fade-in zoom-in-95 duration-500 md:max-h-[90vh]" />
-                    </div>
-                    <div className="max-h-[50vh] overflow-y-auto p-6 md:max-h-[90vh] md:p-8">
-                      <div className="eyebrow" style={{ color: "var(--neon)" }}>{c.faction}</div>
-                      <DialogTitle className="mt-2 text-2xl font-black md:text-3xl">{c.name}</DialogTitle>
-                      <div className="mt-1 font-mono text-xs text-[var(--mute)]">{c.role}</div>
-                      <DialogDescription className="mt-4 text-[var(--ink)]">{c.blurb}</DialogDescription>
-                      <div className="mt-4 space-y-3 text-sm leading-relaxed text-[var(--ink2)]"><p>{c.bio}</p></div>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            ))}
+                  </DialogContent>
+                </Dialog>
+              );
+            })}
           </div>
         </section>
         <RightsNotice variant="characters" />

@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import coaCover from "@/assets/coa-issue-1-cover.png";
-import coaVariantA from "@/assets/coa-issue-1-variant-a.png";
-import baCover from "@/assets/ba-issue-1-variant.png";
-import baVariant2 from "@/assets/ba-issue-1-variant-2.png";
-import coaVariantB from "@/assets/coa-issue-1-variant-b.png";
-import baRyukenCrew from "@/assets/ba-issue-1-ryuken-crew.png";
-import daCoverAsset from "@/assets/darker-ages-issue-1-cover.png.asset.json";
+import { useQuery } from "@tanstack/react-query";
+import { listCarouselSlides } from "@/lib/media-admin.functions";
+import { pageUrl } from "@/lib/storage";
 
 type Slot = {
   x: string;
@@ -26,33 +22,35 @@ const slots: Slot[] = [
   { x: "-30%", y: "8%",  rotate: -4,  scale: 0.82, z: 10, width: "48%" },
 ];
 
-const covers = [
-  { src: baCover,            alt: "Battlefield Atlantis Issue 1" },
-  { src: baVariant2,         alt: "Battlefield Atlantis Issue 1 — Variant Cover" },
-  { src: baRyukenCrew,       alt: "Battlefield Atlantis Issue 1 — Ryuken Crew Cover" },
-  { src: daCoverAsset.url,   alt: "Darker Ages Issue 1 — The Astral Temptation" },
-  { src: coaCover,           alt: "Children of Aquarius Issue 1" },
-  { src: coaVariantA,        alt: "Children of Aquarius Issue 1 — Variant A" },
-  { src: coaVariantB,        alt: "Children of Aquarius Issue 1 — Variant B" },
-];
-
 export function CoverFan() {
+  const { data: slides = [] } = useQuery({
+    queryKey: ["carousel-slides"],
+    queryFn: () => listCarouselSlides(),
+    staleTime: 60_000,
+  });
+
+  const covers = slides
+    .map((s) => ({ src: pageUrl(s.image_path) ?? "", alt: s.alt || "Cover" }))
+    .filter((c) => !!c.src);
+
   const [active, setActive] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [tickKey, setTickKey] = useState(0);
   const pausedRef = useRef(false);
 
   const goNext = useCallback(() => {
+    if (covers.length === 0) return;
     setActive((i) => (i + 1) % covers.length);
     setTickKey((k) => k + 1);
-  }, []);
+  }, [covers.length]);
   const goPrev = useCallback(() => {
+    if (covers.length === 0) return;
     setActive((i) => (i - 1 + covers.length) % covers.length);
     setTickKey((k) => k + 1);
-  }, []);
+  }, [covers.length]);
 
-  // Auto-rotate (resets when tickKey changes)
   useEffect(() => {
+    if (covers.length === 0) return;
     if (typeof window !== "undefined") {
       const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
       if (mq.matches) return;
@@ -63,15 +61,11 @@ export function CoverFan() {
       }
     }, 4000);
     return () => window.clearInterval(id);
-  }, [tickKey, lightboxOpen]);
+  }, [tickKey, lightboxOpen, covers.length]);
 
-  // Keyboard nav
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (lightboxOpen && e.key === "Escape") {
-        setLightboxOpen(false);
-        return;
-      }
+      if (lightboxOpen && e.key === "Escape") { setLightboxOpen(false); return; }
       if (e.key === "ArrowRight") goNext();
       else if (e.key === "ArrowLeft") goPrev();
     };
@@ -80,13 +74,13 @@ export function CoverFan() {
   }, [lightboxOpen, goNext, goPrev]);
 
   const handleCoverClick = (i: number) => {
-    if (i === active) {
-      setLightboxOpen(true);
-    } else {
-      setActive(i);
-      setTickKey((k) => k + 1);
-    }
+    if (i === active) { setLightboxOpen(true); }
+    else { setActive(i); setTickKey((k) => k + 1); }
   };
+
+  if (covers.length === 0) {
+    return <div className="relative mx-auto aspect-[5/6] w-full max-w-[840px]" />;
+  }
 
   return (
     <>
@@ -100,7 +94,7 @@ export function CoverFan() {
           const isFront = i === active;
           return (
             <button
-              key={c.src}
+              key={c.src + i}
               type="button"
               onClick={() => handleCoverClick(i)}
               aria-label={isFront ? `Expand ${c.alt}` : `Bring ${c.alt} to front`}
@@ -130,7 +124,6 @@ export function CoverFan() {
           );
         })}
 
-        {/* Prev / Next controls */}
         <ArrowButton side="left" onClick={(e) => { e.stopPropagation(); goPrev(); }} label="Previous cover" />
         <ArrowButton side="right" onClick={(e) => { e.stopPropagation(); goNext(); }} label="Next cover" />
       </div>
@@ -150,22 +143,10 @@ export function CoverFan() {
             aria-label="Close"
             className="absolute right-5 top-5 flex h-11 w-11 items-center justify-center rounded-full text-2xl font-bold text-white hover:text-[var(--neon)]"
             style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)" }}
-          >
-            ×
-          </button>
+          >×</button>
 
-          <ArrowButton
-            side="left"
-            large
-            onClick={(e) => { e.stopPropagation(); goPrev(); }}
-            label="Previous cover"
-          />
-          <ArrowButton
-            side="right"
-            large
-            onClick={(e) => { e.stopPropagation(); goNext(); }}
-            label="Next cover"
-          />
+          <ArrowButton side="left" large onClick={(e) => { e.stopPropagation(); goPrev(); }} label="Previous cover" />
+          <ArrowButton side="right" large onClick={(e) => { e.stopPropagation(); goNext(); }} label="Next cover" />
 
           <img
             src={covers[active].src}

@@ -68,6 +68,7 @@ import { Route as AuthenticatedAdminVisitorsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminSubscriptionTestRouteImport } from './routes/_authenticated/admin.subscription-test'
 import { Route as AuthenticatedAdminSecurityRouteImport } from './routes/_authenticated/admin.security'
+import { Route as AuthenticatedAdminMediaRouteImport } from './routes/_authenticated/admin.media'
 import { Route as AuthenticatedAdminLettersRouteImport } from './routes/_authenticated/admin.letters'
 import { Route as AuthenticatedAdminLearnRouteImport } from './routes/_authenticated/admin.learn'
 import { Route as AuthenticatedAdminHelpRouteImport } from './routes/_authenticated/admin.help'
@@ -381,6 +382,11 @@ const AuthenticatedAdminSecurityRoute =
     path: '/admin/security',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAdminMediaRoute = AuthenticatedAdminMediaRouteImport.update({
+  id: '/admin/media',
+  path: '/admin/media',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAdminLettersRoute =
   AuthenticatedAdminLettersRouteImport.update({
     id: '/admin/letters',
@@ -503,6 +509,7 @@ export interface FileRoutesByFullPath {
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/admin/letters': typeof AuthenticatedAdminLettersRoute
+  '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -575,6 +582,7 @@ export interface FileRoutesByTo {
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/admin/letters': typeof AuthenticatedAdminLettersRoute
+  '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -649,6 +657,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/_authenticated/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/_authenticated/admin/letters': typeof AuthenticatedAdminLettersRoute
+  '/_authenticated/admin/media': typeof AuthenticatedAdminMediaRoute
   '/_authenticated/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/_authenticated/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -723,6 +732,7 @@ export interface FileRouteTypes {
     | '/admin/help'
     | '/admin/learn'
     | '/admin/letters'
+    | '/admin/media'
     | '/admin/security'
     | '/admin/subscription-test'
     | '/admin/users'
@@ -795,6 +805,7 @@ export interface FileRouteTypes {
     | '/admin/help'
     | '/admin/learn'
     | '/admin/letters'
+    | '/admin/media'
     | '/admin/security'
     | '/admin/subscription-test'
     | '/admin/users'
@@ -868,6 +879,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/help'
     | '/_authenticated/admin/learn'
     | '/_authenticated/admin/letters'
+    | '/_authenticated/admin/media'
     | '/_authenticated/admin/security'
     | '/_authenticated/admin/subscription-test'
     | '/_authenticated/admin/users'
@@ -1349,6 +1361,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSecurityRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin/media': {
+      id: '/_authenticated/admin/media'
+      path: '/admin/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AuthenticatedAdminMediaRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/admin/letters': {
       id: '/_authenticated/admin/letters'
       path: '/admin/letters'
@@ -1471,6 +1490,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAdminHelpRoute: typeof AuthenticatedAdminHelpRouteWithChildren
   AuthenticatedAdminLearnRoute: typeof AuthenticatedAdminLearnRouteWithChildren
   AuthenticatedAdminLettersRoute: typeof AuthenticatedAdminLettersRoute
+  AuthenticatedAdminMediaRoute: typeof AuthenticatedAdminMediaRoute
   AuthenticatedAdminSecurityRoute: typeof AuthenticatedAdminSecurityRoute
   AuthenticatedAdminSubscriptionTestRoute: typeof AuthenticatedAdminSubscriptionTestRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
@@ -1489,6 +1509,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminHelpRoute: AuthenticatedAdminHelpRouteWithChildren,
   AuthenticatedAdminLearnRoute: AuthenticatedAdminLearnRouteWithChildren,
   AuthenticatedAdminLettersRoute: AuthenticatedAdminLettersRoute,
+  AuthenticatedAdminMediaRoute: AuthenticatedAdminMediaRoute,
   AuthenticatedAdminSecurityRoute: AuthenticatedAdminSecurityRoute,
   AuthenticatedAdminSubscriptionTestRoute:
     AuthenticatedAdminSubscriptionTestRoute,
@@ -1610,13 +1631,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
