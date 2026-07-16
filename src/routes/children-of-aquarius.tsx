@@ -83,7 +83,7 @@ function COAPage() {
 
   const characters = bundle.characters;
   // Up to 3 hero sticker thumbs from the cast.
-  const heroThumbs = characters.slice(0, 3).map((c) => pageUrl(c.portrait_path)).filter(Boolean) as string[];
+  const heroThumbs = characters.slice(0, 3).map((c: typeof characters[number]) => pageUrl(c.portrait_path)).filter(Boolean) as string[];
 
   return (
     <>
