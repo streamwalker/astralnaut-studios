@@ -1,35 +1,49 @@
 
-## Goal
+## 1. Replace the Battlefield Atlantis Issue 1 main cover
 
-In the reader (`/reader/$series/$issue`), let the user scroll vertically within a page and zoom the page in/out without affecting the rest of the site layout.
+Upload the attached "Battlefield Atlantis Issue 1 Primary Cover A" to Supabase Storage in the `comic-pages` bucket at `battlefield-atlantis/issue-1/primary-cover-a.png`, then update `issues.cover_path` for BA #1 to that path. This is what the BA series page (`src/routes/battlefield-atlantis.tsx`) already reads via `getSeriesBundle` → `issue.cover_path`.
 
-## Current behavior
+Also refresh the two hard-coded references so previews/social match:
+- OG/Twitter/JSON-LD image URLs at the top of `src/routes/battlefield-atlantis.tsx` (currently pointing at `variant-cover-m.png`).
+- The landing-page carousel entry in `src/components/cover-fan.tsx` for BA #1 (currently imports `ba-issue-1-variant.png`) — replaced by the new asset (see §2 for how carousel becomes admin-managed).
 
-`src/routes/reader.$series.$issue.tsx` renders the page image inside a `.panel` with `overflow-hidden`, capped at `max-height: 85vh` with `object-fit: contain`. Click toggles a single `scale-150` zoom on the `<img>` itself. There is no internal scrolling, no pan, and no zoom controls — tall pages get letterboxed and detail is unreachable.
+## 2. Admin: Book Covers manager
 
-## Changes (reader route only)
+Add a "Covers" section under the existing Admin page (`/admin`) that lists all issues (series + issue number + current cover thumbnail) and lets the admin:
+- Upload a new cover image (drag-drop or file picker) → uploads into `comic-pages/<series-slug>/issue-<n>/cover-<timestamp>.<ext>` and updates `issues.cover_path`.
+- Or paste an existing storage path.
+- Preview + Save + Revert.
 
-1. **Contained, scrollable viewer**
-   - Replace the current wrapper with a fixed-height viewport (`~85vh` desktop, `~75vh` mobile) that has `overflow: auto` so the page image scrolls vertically (and horizontally when zoomed) *inside* the viewer. Page-level scroll of the site is unaffected.
-   - Image renders at natural width up to the viewer width; when zoomed beyond viewer bounds, scrollbars appear inside the viewer.
+Backed by a new authenticated server function `updateIssueCover` (admin-only via `has_role`) that writes to `issues` and invalidates the series bundle cache.
 
-2. **Zoom controls**
-   - Add a small control cluster above/overlaying the viewer: `−`, `Reset`, `+`, and a "Fit width / Actual size" toggle. Keyboard shortcuts: `+`, `-`, `0` (reset).
-   - Zoom levels stepped (e.g., 0.5×, 0.75×, 1×, 1.25×, 1.5×, 2×, 3×). Click on image continues to toggle between fit-width and last zoom-in level for quick access.
-   - Ctrl/Cmd + wheel zooms; plain wheel/touch scroll pans as normal.
-   - Zoom transform applied to the image only, inside the scroll container — no impact on header, nav, paywall, or surrounding layout.
+## 3. Admin: Landing carousel manager
 
-3. **Preserve existing features**
-   - Keep flash overlay, arrow-key page nav, paywall path, letters link, indicia, and access logging untouched.
-   - Preserve `prefers-reduced-motion` handling (no zoom transition when reduced).
+The landing-page "cover fan" is currently a hard-coded array in `src/components/cover-fan.tsx`. Move it to a new DB table `carousel_slides` (id, image_path, alt, sort_order, is_published) with RLS: public SELECT for published, admin write. Grants: `anon`/`authenticated` SELECT, `service_role` ALL.
 
-## Technical details
+- Seed the table with the current 7 covers so behavior is unchanged.
+- `cover-fan.tsx` fetches from the table via a new public server fn `listCarouselSlides` and falls back to the current static list if the fetch fails (safety during rollout).
+- Admin "Carousel" panel: list slides with thumbnails, reorder (up/down), toggle published, edit alt text, upload/replace image, delete. Uses same storage upload helper as §2.
 
-- Wrap the `<img>` in a `<div ref role="region" aria-label="Page viewer" tabIndex={0}>` with `overflow-auto`, fixed height via inline style, `overscroll-behavior: contain` so scroll doesn't chain to the page.
-- Replace `scale-150`/click logic with a `zoom` numeric state; image style: `transform: scale(zoom); transform-origin: top left; width: 100%` (or `width: auto` at actual size). Wrap image in an inner sizer div whose `width`/`height` reflects `naturalSize * zoom` so the scrollbars track correctly.
-- Reset zoom to fit-width whenever `page` changes.
-- Applies to all issues via this shared route (Battlefield Atlantis included); no per-series branching.
+## 4. Admin: Meet-the-Cast manager
 
-## Out of scope
+Two data sources today:
+- **Battlefield Atlantis** cast already lives in the `characters` table (`portrait_path`, `sort_order`, `is_published`).
+- **Children of Aquarius** cast is hard-coded in `src/routes/children-of-aquarius.tsx`.
 
-Pinch-zoom gestures on touch (native browser pinch still works on the image via CSS `touch-action: pinch-zoom` inside the viewer — I'll enable that), thumbnail navigator, and full-screen mode.
+Steps:
+- Seed the COA characters into the `characters` table (portrait_path pointing at existing `coa-cast/*` files uploaded to the `characters` bucket) and refactor `children-of-aquarius.tsx` to read from `getSeriesBundle` like BA does. Keeps current UI identical.
+- Add an admin "Cast" panel: pick a series → list characters → edit name/role/faction/blurb/bio, upload/replace portrait, toggle published, reorder, add/remove. Backed by `upsertCharacter` / `deleteCharacter` / `reorderCharacters` server functions (admin-only).
+
+## 5. Shared plumbing
+
+- New helper `src/lib/admin-media.functions.ts` for admin-gated image uploads to a given bucket + path, returning the stored path.
+- New reusable `<AdminImageUploader />` component (drag-drop, preview, replace) used by all three panels.
+- Invalidate `["series-bundle", slug]` and `["carousel-slides"]` React Query caches after any mutation.
+
+## Technical notes
+
+- Storage buckets used: `comic-pages` (issue covers, carousel), `characters` (portraits). Both already exist.
+- New migration: `carousel_slides` table + RLS + grants; seed rows for the 7 current covers; seed rows for COA characters.
+- No breaking changes to public routes — they keep rendering the same content, just sourced from DB.
+- Admin gating: every new server fn uses `requireSupabaseAuth` + `has_role(user, 'admin')` check.
+
