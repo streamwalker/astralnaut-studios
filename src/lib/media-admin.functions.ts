@@ -17,11 +17,11 @@ export const listCarouselSlides = createServerFn({ method: "GET" }).handler(asyn
 
 // ---------- Admin gate helper ----------
 
-async function assertAdmin(context: { supabase: ReturnType<typeof supabaseAdmin.from> extends unknown ? typeof supabaseAdmin : never; userId: string }) {
-  const { data, error } = await context.supabase
+async function assertAdmin(userId: string) {
+  const { data, error } = await supabaseAdmin
     .from("user_roles")
     .select("role")
-    .eq("user_id", context.userId)
+    .eq("user_id", userId)
     .eq("role", "admin")
     .maybeSingle();
   if (error) throw new Error(error.message);
