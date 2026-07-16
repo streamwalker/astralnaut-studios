@@ -399,41 +399,50 @@ function COAPage() {
           <p className="mt-2 max-w-xl text-[var(--ink2)]">The Children of Aquarius ensemble — the Trinity, their protectors, the operatives, and the Brooklyn circle that holds them together.</p>
 
           <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-            {CAST.map((c, i) => (
-              <Dialog key={c.name + i}>
-                <DialogTrigger asChild>
-                  <button type="button" aria-label={`View ${c.name} details`} className="group block w-full overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b from-slate-700/40 to-slate-900/60 text-left transition hover:ring-2 hover:ring-[var(--neon)] focus:outline-none focus:ring-2 focus:ring-[var(--neon)] cursor-pointer">
-                    <div className="relative aspect-[3/4] overflow-hidden bg-gradient-to-b from-slate-300/10 to-slate-900/30">
-                      <img src={c.img} alt={c.name} loading="lazy" className="h-full w-full object-cover object-top transition group-hover:scale-105" />
-                      <div className="absolute inset-x-0 top-0 bg-gradient-to-b from-black/60 to-transparent px-3 py-2 text-center font-mono text-[10px] font-black uppercase tracking-[3px] text-white/90">
-                        {c.name}
+            {characters.map((c: typeof characters[number]) => {
+              const portrait = pageUrl(c.portrait_path);
+              return (
+                <Dialog key={c.id}>
+                  <DialogTrigger asChild>
+                    <button type="button" aria-label={`View ${c.name} details`} className="group block w-full overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b from-slate-700/40 to-slate-900/60 text-left transition hover:ring-2 hover:ring-[var(--neon)] focus:outline-none focus:ring-2 focus:ring-[var(--neon)] cursor-pointer">
+                      <div className="relative aspect-[3/4] overflow-hidden bg-gradient-to-b from-slate-300/10 to-slate-900/30">
+                        {portrait ? (
+                          <img src={portrait} alt={c.name} loading="lazy" className="h-full w-full object-cover object-top transition group-hover:scale-105" />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-xs text-[var(--mute)]">Portrait forthcoming</div>
+                        )}
+                        <div className="absolute inset-x-0 top-0 bg-gradient-to-b from-black/60 to-transparent px-3 py-2 text-center font-mono text-[10px] font-black uppercase tracking-[3px] text-white/90">
+                          {c.name}
+                        </div>
+                      </div>
+                      <div className="space-y-1 p-4">
+                        <div className="font-mono text-[10px] font-black uppercase tracking-[2px] text-violet-300">
+                          {c.faction}{c.role ? ` · ${c.role}` : ""}
+                        </div>
+                        <div className="text-lg font-black">{c.name}</div>
+                        {c.short_description && (
+                          <div className="line-clamp-1 text-xs text-[var(--ink2)]">{c.short_description}</div>
+                        )}
+                      </div>
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-7xl overflow-hidden p-1">
+                    <div className="grid grid-cols-1 gap-0 md:grid-cols-[2fr_1fr]">
+                      <div className="flex items-center justify-center bg-[var(--bg2)] p-4">
+                        {portrait && <img src={portrait} alt={c.name} className="max-h-[50vh] w-full object-contain animate-in fade-in zoom-in-95 duration-500 md:max-h-[90vh]" />}
+                      </div>
+                      <div className="max-h-[50vh] overflow-y-auto p-6 md:max-h-[90vh] md:p-8">
+                        <div className="eyebrow" style={{ color: "var(--neon)" }}>{c.faction}</div>
+                        <DialogTitle className="mt-2 text-2xl font-black md:text-3xl">{c.name}</DialogTitle>
+                        <div className="mt-1 font-mono text-xs text-[var(--mute)]">{c.role}</div>
+                        {c.short_description && <DialogDescription className="mt-4 text-[var(--ink)]">{c.short_description}</DialogDescription>}
+                        {c.bio && <div className="mt-4 space-y-3 text-sm leading-relaxed text-[var(--ink2)]">{c.bio.split(/\n\n+/).map((p: string, i: number) => <p key={i}>{p}</p>)}</div>}
                       </div>
                     </div>
-                    <div className="space-y-1 p-4">
-                      <div className="font-mono text-[10px] font-black uppercase tracking-[2px] text-violet-300">
-                        {c.faction} · {c.role}
-                      </div>
-                      <div className="text-lg font-black">{c.name}</div>
-                      <div className="line-clamp-1 text-xs text-[var(--ink2)]">{c.blurb}</div>
-                    </div>
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="max-w-7xl overflow-hidden p-1">
-                  <div className="grid grid-cols-1 gap-0 md:grid-cols-[2fr_1fr]">
-                    <div className="flex items-center justify-center bg-[var(--bg2)] p-4">
-                      <img src={c.img} alt={c.name} className="max-h-[50vh] w-full object-contain animate-in fade-in zoom-in-95 duration-500 md:max-h-[90vh]" />
-                    </div>
-                    <div className="max-h-[50vh] overflow-y-auto p-6 md:max-h-[90vh] md:p-8">
-                      <div className="eyebrow" style={{ color: "var(--neon)" }}>{c.faction}</div>
-                      <DialogTitle className="mt-2 text-2xl font-black md:text-3xl">{c.name}</DialogTitle>
-                      <div className="mt-1 font-mono text-xs text-[var(--mute)]">{c.role}</div>
-                      <DialogDescription className="mt-4 text-[var(--ink)]">{c.blurb}</DialogDescription>
-                      <div className="mt-4 space-y-3 text-sm leading-relaxed text-[var(--ink2)]"><p>{c.bio}</p></div>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            ))}
+                  </DialogContent>
+                </Dialog>
+              );
+            })}
           </div>
         </section>
         <RightsNotice variant="characters" />
