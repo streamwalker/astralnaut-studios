@@ -81,8 +81,9 @@ function COAPage() {
     for (const p of d.pages ?? []) DROP_SCHEDULE[p] = label;
   }
 
-  // Up to 3 hero sticker thumbs from the local cast.
-  const heroThumbs = [castMichael, castRyokoPhaseOne, castSimon];
+  const characters = bundle.characters;
+  // Up to 3 hero sticker thumbs from the cast.
+  const heroThumbs = characters.slice(0, 3).map((c) => pageUrl(c.portrait_path)).filter(Boolean) as string[];
 
   return (
     <>
