@@ -397,6 +397,36 @@ export type Database = {
         }
         Relationships: []
       }
+      carousel_slides: {
+        Row: {
+          alt: string
+          created_at: string
+          id: string
+          image_path: string
+          is_published: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          alt?: string
+          created_at?: string
+          id?: string
+          image_path: string
+          is_published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          alt?: string
+          created_at?: string
+          id?: string
+          image_path?: string
+          is_published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       chapters: {
         Row: {
           created_at: string
