@@ -33,7 +33,7 @@ async function assertAdmin(userId: string) {
 export const adminListCarouselSlides = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin({ supabase: context.supabase as unknown as typeof supabaseAdmin, userId: context.userId });
+    await assertAdmin(context.userId);
     const { data, error } = await supabaseAdmin
       .from("carousel_slides")
       .select("*")
@@ -60,7 +60,7 @@ export const upsertCarouselSlide = createServerFn({ method: "POST" })
     }).parse(input),
   )
   .handler(async ({ data, context }) => {
-    await assertAdmin({ supabase: context.supabase as unknown as typeof supabaseAdmin, userId: context.userId });
+    await assertAdmin(context.userId);
     if (data.id) {
       const { error } = await supabaseAdmin.from("carousel_slides").update({
         image_path: data.image_path, alt: data.alt, sort_order: data.sort_order, is_published: data.is_published,
@@ -79,7 +79,7 @@ export const deleteCarouselSlide = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { id: string }) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
-    await assertAdmin({ supabase: context.supabase as unknown as typeof supabaseAdmin, userId: context.userId });
+    await assertAdmin(context.userId);
     const { error } = await supabaseAdmin.from("carousel_slides").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
@@ -90,7 +90,7 @@ export const deleteCarouselSlide = createServerFn({ method: "POST" })
 export const adminListIssues = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin({ supabase: context.supabase as unknown as typeof supabaseAdmin, userId: context.userId });
+    await assertAdmin(context.userId);
     const { data, error } = await supabaseAdmin
       .from("issues")
       .select("id, issue_number, title, slug, cover_path, series:series(slug, name)")
@@ -106,7 +106,7 @@ export const updateIssueCover = createServerFn({ method: "POST" })
     z.object({ id: z.string().uuid(), cover_path: z.string().min(1).max(600) }).parse(input),
   )
   .handler(async ({ data, context }) => {
-    await assertAdmin({ supabase: context.supabase as unknown as typeof supabaseAdmin, userId: context.userId });
+    await assertAdmin(context.userId);
     const { error } = await supabaseAdmin.from("issues").update({ cover_path: data.cover_path }).eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
@@ -117,7 +117,7 @@ export const updateIssueCover = createServerFn({ method: "POST" })
 export const adminListCharacters = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin({ supabase: context.supabase as unknown as typeof supabaseAdmin, userId: context.userId });
+    await assertAdmin(context.userId);
     const { data, error } = await supabaseAdmin
       .from("characters")
       .select("id, slug, name, role, faction, short_description, bio, portrait_path, sort_order, is_published, series_id, series:series(slug, name)")
@@ -133,7 +133,7 @@ export const updateCharacterPortrait = createServerFn({ method: "POST" })
     z.object({ id: z.string().uuid(), portrait_path: z.string().min(1).max(600) }).parse(input),
   )
   .handler(async ({ data, context }) => {
-    await assertAdmin({ supabase: context.supabase as unknown as typeof supabaseAdmin, userId: context.userId });
+    await assertAdmin(context.userId);
     const { error } = await supabaseAdmin.from("characters").update({ portrait_path: data.portrait_path }).eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
