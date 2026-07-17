@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -12,6 +12,7 @@ import {
   adminListCarouselSlides,
   upsertCarouselSlide,
   deleteCarouselSlide,
+  reorderCarouselSlides,
   adminListIssues,
   updateIssueCover,
   clearIssueCover,
@@ -27,6 +28,24 @@ import {
 } from "@/components/admin/upload-field";
 import { ConfirmButton } from "@/components/admin/confirm-button";
 import { HistoryButton } from "@/components/admin/history-button";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { GripVertical } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/media")({
   head: () => ({ meta: [{ title: "Media Manager — Admin" }] }),
@@ -254,16 +273,69 @@ function CarouselPanel() {
     qc.invalidateQueries({ queryKey: ["carousel-slides"] });
   };
 
+  const [localOrder, setLocalOrder] = useState<string[] | null>(null);
+  const [savingOrder, setSavingOrder] = useState(false);
+
+  // Sync local order with server data when it arrives / changes
+  useEffect(() => {
+    if (slides) setLocalOrder(slides.map((s) => s.id));
+  }, [slides]);
+
+  const orderedSlides = useMemo(() => {
+    if (!slides) return [];
+    if (!localOrder) return slides;
+    const byId = new Map(slides.map((s) => [s.id, s]));
+    return localOrder.map((id) => byId.get(id)).filter(Boolean) as typeof slides;
+  }, [slides, localOrder]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id || !localOrder) return;
+    const oldIdx = localOrder.indexOf(String(active.id));
+    const newIdx = localOrder.indexOf(String(over.id));
+    if (oldIdx < 0 || newIdx < 0) return;
+    const next = arrayMove(localOrder, oldIdx, newIdx);
+    setLocalOrder(next);
+    setSavingOrder(true);
+    try {
+      await reorderCarouselSlides({ data: { ids: next } });
+      toast.success("Slide order saved.");
+      invalidate();
+    } catch (e) {
+      toast.error((e as Error).message);
+      // Revert on failure
+      if (slides) setLocalOrder(slides.map((s) => s.id));
+    } finally {
+      setSavingOrder(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
-        Manage the landing-page cover carousel. Slides render on the homepage in the order shown.
+        Drag the handle on each slide to reorder. Changes save automatically.
+        {savingOrder ? <span className="ml-2 text-accent">Saving…</span> : null}
       </p>
-      <ul className="space-y-3">
-        {slides?.map((s) => (
-          <SlideRow key={s.id} slide={s} onChanged={invalidate} />
-        ))}
-      </ul>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={orderedSlides.map((s) => s.id)} strategy={verticalListSortingStrategy}>
+          <ul className="space-y-3">
+            {orderedSlides.map((s, i) => (
+              <SortableSlideRow
+                key={s.id}
+                slide={s}
+                position={i + 1}
+                total={orderedSlides.length}
+                onChanged={invalidate}
+              />
+            ))}
+          </ul>
+        </SortableContext>
+      </DndContext>
       <div className="rounded-2xl border border-dashed border-border p-5">
         <h4 className="text-sm font-bold uppercase tracking-[2px]">Add slide</h4>
         <NewSlideForm onCreated={invalidate} nextOrder={((slides?.length ?? 0) + 1) * 10} />
@@ -272,12 +344,60 @@ function CarouselPanel() {
   );
 }
 
-function SlideRow({
+function SortableSlideRow({
   slide,
+  position,
+  total,
   onChanged,
 }: {
   slide: { id: string; image_path: string; alt: string; sort_order: number; is_published: boolean };
+  position: number;
+  total: number;
   onChanged: () => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: slide.id });
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.6 : 1,
+    zIndex: isDragging ? 10 : undefined,
+  };
+  return (
+    <div ref={setNodeRef} style={style}>
+      <SlideRow
+        slide={slide}
+        position={position}
+        total={total}
+        dragHandle={
+          <button
+            type="button"
+            aria-label="Drag to reorder"
+            className="flex h-8 w-8 shrink-0 cursor-grab items-center justify-center rounded border border-border bg-muted/40 text-muted-foreground hover:bg-muted active:cursor-grabbing"
+            {...attributes}
+            {...listeners}
+          >
+            <GripVertical className="h-4 w-4" />
+          </button>
+        }
+        onChanged={onChanged}
+      />
+    </div>
+  );
+}
+
+
+function SlideRow({
+  slide,
+  onChanged,
+  position,
+  total,
+  dragHandle,
+}: {
+  slide: { id: string; image_path: string; alt: string; sort_order: number; is_published: boolean };
+  onChanged: () => void;
+  position?: number;
+  total?: number;
+  dragHandle?: React.ReactNode;
 }) {
   const [busy, setBusy] = useState(false);
   const [alt, setAlt] = useState(slide.alt);
@@ -318,9 +438,15 @@ function SlideRow({
   };
 
   return (
-    <li className="flex flex-wrap items-start gap-4 rounded-lg border border-border p-3">
+    <li className="flex flex-wrap items-start gap-4 rounded-lg border border-border bg-card/40 p-3">
+      {dragHandle}
       <ImagePreview path={imagePath} />
       <div className="min-w-0 flex-1 space-y-2">
+        {position && total ? (
+          <div className="text-[10px] font-semibold uppercase tracking-[2px] text-muted-foreground">
+            Position {position} of {total}
+          </div>
+        ) : null}
         <Input value={alt} onChange={(e) => setAlt(e.target.value)} placeholder="Alt text" className="h-8 text-xs" />
         <Input value={imagePath} onChange={(e) => setImagePath(e.target.value)} placeholder="bucket/path.png or /__l5e/..." className="h-8 font-mono text-xs" />
         <div className="flex flex-wrap items-center gap-3 text-xs">
