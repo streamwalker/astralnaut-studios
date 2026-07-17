@@ -81,10 +81,14 @@ export const upsertCarouselSlide = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
     if (data.id) {
+      const { data: prev } = await supabaseAdmin.from("carousel_slides").select("image_path").eq("id", data.id).maybeSingle();
       const { error } = await supabaseAdmin.from("carousel_slides").update({
         image_path: data.image_path, alt: data.alt, sort_order: data.sort_order, is_published: data.is_published,
       }).eq("id", data.id);
       if (error) throw new Error(error.message);
+      if (prev && prev.image_path !== data.image_path) {
+        await recordVersion("carousel_slide", data.id, prev.image_path ?? null, context.userId, "replaced");
+      }
       return { id: data.id };
     }
     const { data: row, error } = await supabaseAdmin.from("carousel_slides").insert({
@@ -93,6 +97,7 @@ export const upsertCarouselSlide = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { id: row.id };
   });
+
 
 export const deleteCarouselSlide = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
