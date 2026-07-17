@@ -104,10 +104,15 @@ export const deleteCarouselSlide = createServerFn({ method: "POST" })
   .inputValidator((input: { id: string }) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
+    const { data: prev } = await supabaseAdmin.from("carousel_slides").select("image_path").eq("id", data.id).maybeSingle();
     const { error } = await supabaseAdmin.from("carousel_slides").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
+    if (prev) {
+      await recordVersion("carousel_slide", data.id, prev.image_path ?? null, context.userId, "deleted");
+    }
     return { ok: true };
   });
+
 
 // ---------- Admin: issue covers ----------
 
