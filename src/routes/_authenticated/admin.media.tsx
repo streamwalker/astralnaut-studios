@@ -438,9 +438,15 @@ function SlideRow({
   };
 
   return (
-    <li className="flex flex-wrap items-start gap-4 rounded-lg border border-border p-3">
+    <li className="flex flex-wrap items-start gap-4 rounded-lg border border-border bg-card/40 p-3">
+      {dragHandle}
       <ImagePreview path={imagePath} />
       <div className="min-w-0 flex-1 space-y-2">
+        {position && total ? (
+          <div className="text-[10px] font-semibold uppercase tracking-[2px] text-muted-foreground">
+            Position {position} of {total}
+          </div>
+        ) : null}
         <Input value={alt} onChange={(e) => setAlt(e.target.value)} placeholder="Alt text" className="h-8 text-xs" />
         <Input value={imagePath} onChange={(e) => setImagePath(e.target.value)} placeholder="bucket/path.png or /__l5e/..." className="h-8 font-mono text-xs" />
         <div className="flex flex-wrap items-center gap-3 text-xs">
