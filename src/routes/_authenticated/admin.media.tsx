@@ -389,9 +389,15 @@ function SortableSlideRow({
 function SlideRow({
   slide,
   onChanged,
+  position,
+  total,
+  dragHandle,
 }: {
   slide: { id: string; image_path: string; alt: string; sort_order: number; is_published: boolean };
   onChanged: () => void;
+  position?: number;
+  total?: number;
+  dragHandle?: React.ReactNode;
 }) {
   const [busy, setBusy] = useState(false);
   const [alt, setAlt] = useState(slide.alt);
