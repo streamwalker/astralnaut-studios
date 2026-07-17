@@ -336,13 +336,14 @@ function NewSlideForm({ onCreated, nextOrder }: { onCreated: () => void; nextOrd
         Order
         <Input type="number" value={order} onChange={(e) => setOrder(parseInt(e.target.value) || 0)} className="h-8 w-20" />
       </label>
-      <Label htmlFor="new-slide-file" className="cursor-pointer">
-        <span className="inline-flex items-center rounded-md border border-border bg-primary px-3 py-1.5 text-xs font-bold uppercase tracking-[2px] text-primary-foreground">
-          {busy ? "Uploading…" : "Upload image"}
-        </span>
-      </Label>
-      <input id="new-slide-file" type="file" accept="image/*" className="sr-only" disabled={busy}
-        onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.currentTarget.value = ""; }} />
+      <UploadField
+        id="new-slide-file"
+        target={ASPECT_CAROUSEL}
+        busy={busy}
+        buttonLabel="Upload image"
+        variant="primary"
+        onUpload={handleFile}
+      />
     </div>
   );
 }
