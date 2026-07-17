@@ -255,16 +255,69 @@ function CarouselPanel() {
     qc.invalidateQueries({ queryKey: ["carousel-slides"] });
   };
 
+  const [localOrder, setLocalOrder] = useState<string[] | null>(null);
+  const [savingOrder, setSavingOrder] = useState(false);
+
+  // Sync local order with server data when it arrives / changes
+  useEffect(() => {
+    if (slides) setLocalOrder(slides.map((s) => s.id));
+  }, [slides]);
+
+  const orderedSlides = useMemo(() => {
+    if (!slides) return [];
+    if (!localOrder) return slides;
+    const byId = new Map(slides.map((s) => [s.id, s]));
+    return localOrder.map((id) => byId.get(id)).filter(Boolean) as typeof slides;
+  }, [slides, localOrder]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id || !localOrder) return;
+    const oldIdx = localOrder.indexOf(String(active.id));
+    const newIdx = localOrder.indexOf(String(over.id));
+    if (oldIdx < 0 || newIdx < 0) return;
+    const next = arrayMove(localOrder, oldIdx, newIdx);
+    setLocalOrder(next);
+    setSavingOrder(true);
+    try {
+      await reorderCarouselSlides({ data: { ids: next } });
+      toast.success("Slide order saved.");
+      invalidate();
+    } catch (e) {
+      toast.error((e as Error).message);
+      // Revert on failure
+      if (slides) setLocalOrder(slides.map((s) => s.id));
+    } finally {
+      setSavingOrder(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
-        Manage the landing-page cover carousel. Slides render on the homepage in the order shown.
+        Drag the handle on each slide to reorder. Changes save automatically.
+        {savingOrder ? <span className="ml-2 text-accent">Saving…</span> : null}
       </p>
-      <ul className="space-y-3">
-        {slides?.map((s) => (
-          <SlideRow key={s.id} slide={s} onChanged={invalidate} />
-        ))}
-      </ul>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={orderedSlides.map((s) => s.id)} strategy={verticalListSortingStrategy}>
+          <ul className="space-y-3">
+            {orderedSlides.map((s, i) => (
+              <SortableSlideRow
+                key={s.id}
+                slide={s}
+                position={i + 1}
+                total={orderedSlides.length}
+                onChanged={invalidate}
+              />
+            ))}
+          </ul>
+        </SortableContext>
+      </DndContext>
       <div className="rounded-2xl border border-dashed border-border p-5">
         <h4 className="text-sm font-bold uppercase tracking-[2px]">Add slide</h4>
         <NewSlideForm onCreated={invalidate} nextOrder={((slides?.length ?? 0) + 1) * 10} />
@@ -272,6 +325,48 @@ function CarouselPanel() {
     </div>
   );
 }
+
+function SortableSlideRow({
+  slide,
+  position,
+  total,
+  onChanged,
+}: {
+  slide: { id: string; image_path: string; alt: string; sort_order: number; is_published: boolean };
+  position: number;
+  total: number;
+  onChanged: () => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: slide.id });
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.6 : 1,
+    zIndex: isDragging ? 10 : undefined,
+  };
+  return (
+    <div ref={setNodeRef} style={style}>
+      <SlideRow
+        slide={slide}
+        position={position}
+        total={total}
+        dragHandle={
+          <button
+            type="button"
+            aria-label="Drag to reorder"
+            className="flex h-8 w-8 shrink-0 cursor-grab items-center justify-center rounded border border-border bg-muted/40 text-muted-foreground hover:bg-muted active:cursor-grabbing"
+            {...attributes}
+            {...listeners}
+          >
+            <GripVertical className="h-4 w-4" />
+          </button>
+        }
+        onChanged={onChanged}
+      />
+    </div>
+  );
+}
+
 
 function SlideRow({
   slide,
