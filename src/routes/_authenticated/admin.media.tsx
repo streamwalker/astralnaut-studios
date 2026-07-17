@@ -427,11 +427,12 @@ function CharacterRow({
         <div className="mt-2 flex flex-wrap items-center gap-2">
           <Input value={portrait} onChange={(e) => setPortrait(e.target.value)} className="h-7 min-w-[180px] flex-1 font-mono text-xs" placeholder="bucket/path.png" />
           <Button size="sm" variant="outline" onClick={savePath} disabled={busy}>Save</Button>
-          <Label htmlFor={`char-file-${character.id}`} className="cursor-pointer">
-            <span className="inline-flex items-center rounded-md border border-border bg-secondary px-2 py-1 text-[11px] font-bold uppercase tracking-[2px]">Upload</span>
-          </Label>
-          <input id={`char-file-${character.id}`} type="file" accept="image/*" className="sr-only" disabled={busy}
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.currentTarget.value = ""; }} />
+          <UploadField
+            id={`char-file-${character.id}`}
+            target={ASPECT_PORTRAIT}
+            busy={busy}
+            onUpload={handleFile}
+          />
         </div>
       </div>
     </li>
