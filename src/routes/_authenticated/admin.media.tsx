@@ -14,8 +14,10 @@ import {
   deleteCarouselSlide,
   adminListIssues,
   updateIssueCover,
+  clearIssueCover,
   adminListCharacters,
   updateCharacterPortrait,
+  clearCharacterPortrait,
 } from "@/lib/media-admin.functions";
 import {
   UploadField,
@@ -23,6 +25,7 @@ import {
   ASPECT_CAROUSEL,
   ASPECT_PORTRAIT,
 } from "@/components/admin/upload-field";
+import { ConfirmButton } from "@/components/admin/confirm-button";
 
 export const Route = createFileRoute("/_authenticated/admin/media")({
   head: () => ({ meta: [{ title: "Media Manager — Admin" }] }),
