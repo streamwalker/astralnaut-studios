@@ -475,8 +475,35 @@ function CharacterRow({
             id={`char-file-${character.id}`}
             target={ASPECT_PORTRAIT}
             busy={busy}
+            buttonLabel={character.portrait_path ? "Replace" : "Upload"}
             onUpload={handleFile}
           />
+          {(portrait || character.portrait_path) && (
+            <ConfirmButton
+              trigger={
+                <Button size="sm" variant="destructive" disabled={busy}>Delete</Button>
+              }
+              title="Delete this portrait?"
+              description={
+                <>
+                  This clears the portrait for <b>{character.name}</b>. The cast card will show a
+                  placeholder until a new portrait is uploaded.
+                </>
+              }
+              confirmLabel="Delete portrait"
+              destructive
+              onConfirm={async () => {
+                setBusy(true);
+                try {
+                  await clearCharacterPortrait({ data: { id: character.id } });
+                  setPortrait("");
+                  toast.success("Portrait cleared.");
+                  onSaved();
+                } catch (e) { toast.error((e as Error).message); }
+                finally { setBusy(false); }
+              }}
+            />
+          )}
         </div>
       </div>
     </li>
