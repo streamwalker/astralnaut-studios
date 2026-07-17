@@ -342,6 +342,11 @@ function SlideRow({
           buttonLabel="Replace"
           onUpload={handleFile}
         />
+        <HistoryButton
+          assetType="carousel_slide"
+          assetId={slide.id}
+          invalidateKeys={[["admin-carousel-slides"], ["carousel-slides"]]}
+        />
         <ConfirmButton
           trigger={
             <Button size="sm" variant="destructive" disabled={busy}>Delete</Button>
