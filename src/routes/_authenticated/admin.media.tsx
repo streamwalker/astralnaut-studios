@@ -12,6 +12,7 @@ import {
   adminListCarouselSlides,
   upsertCarouselSlide,
   deleteCarouselSlide,
+  reorderCarouselSlides,
   adminListIssues,
   updateIssueCover,
   clearIssueCover,
