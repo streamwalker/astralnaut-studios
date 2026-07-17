@@ -489,6 +489,11 @@ function CharacterRow({
             buttonLabel={character.portrait_path ? "Replace" : "Upload"}
             onUpload={handleFile}
           />
+          <HistoryButton
+            assetType="character_portrait"
+            assetId={character.id}
+            invalidateKeys={[["admin-media-characters"]]}
+          />
           {(portrait || character.portrait_path) && (
             <ConfirmButton
               trigger={
