@@ -1308,6 +1308,36 @@ export type Database = {
           },
         ]
       }
+      media_versions: {
+        Row: {
+          asset_id: string
+          asset_type: Database["public"]["Enums"]["media_asset_type"]
+          created_at: string
+          created_by: string | null
+          id: string
+          image_path: string | null
+          note: string | null
+        }
+        Insert: {
+          asset_id: string
+          asset_type: Database["public"]["Enums"]["media_asset_type"]
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_path?: string | null
+          note?: string | null
+        }
+        Update: {
+          asset_id?: string
+          asset_type?: Database["public"]["Enums"]["media_asset_type"]
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_path?: string | null
+          note?: string | null
+        }
+        Relationships: []
+      }
       milestones: {
         Row: {
           created_at: string
@@ -2046,6 +2076,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      media_asset_type: "issue_cover" | "carousel_slide" | "character_portrait"
       sub_tier: "reader" | "initiate" | "patron"
     }
     CompositeTypes: {
@@ -2175,6 +2206,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      media_asset_type: ["issue_cover", "carousel_slide", "character_portrait"],
       sub_tier: ["reader", "initiate", "patron"],
     },
   },
