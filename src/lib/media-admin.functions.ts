@@ -3,6 +3,25 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
+type AssetType = "issue_cover" | "carousel_slide" | "character_portrait";
+
+async function recordVersion(
+  assetType: AssetType,
+  assetId: string,
+  imagePath: string | null,
+  userId: string,
+  note?: string,
+) {
+  await supabaseAdmin.from("media_versions").insert({
+    asset_type: assetType,
+    asset_id: assetId,
+    image_path: imagePath,
+    created_by: userId,
+    note: note ?? null,
+  });
+}
+
+
 // ---------- Public: list carousel slides ----------
 
 export const listCarouselSlides = createServerFn({ method: "GET" }).handler(async () => {
@@ -62,10 +81,14 @@ export const upsertCarouselSlide = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
     if (data.id) {
+      const { data: prev } = await supabaseAdmin.from("carousel_slides").select("image_path").eq("id", data.id).maybeSingle();
       const { error } = await supabaseAdmin.from("carousel_slides").update({
         image_path: data.image_path, alt: data.alt, sort_order: data.sort_order, is_published: data.is_published,
       }).eq("id", data.id);
       if (error) throw new Error(error.message);
+      if (prev && prev.image_path !== data.image_path) {
+        await recordVersion("carousel_slide", data.id, prev.image_path ?? null, context.userId, "replaced");
+      }
       return { id: data.id };
     }
     const { data: row, error } = await supabaseAdmin.from("carousel_slides").insert({
@@ -75,15 +98,21 @@ export const upsertCarouselSlide = createServerFn({ method: "POST" })
     return { id: row.id };
   });
 
+
 export const deleteCarouselSlide = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { id: string }) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
+    const { data: prev } = await supabaseAdmin.from("carousel_slides").select("image_path").eq("id", data.id).maybeSingle();
     const { error } = await supabaseAdmin.from("carousel_slides").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
+    if (prev) {
+      await recordVersion("carousel_slide", data.id, prev.image_path ?? null, context.userId, "deleted");
+    }
     return { ok: true };
   });
+
 
 // ---------- Admin: issue covers ----------
 
@@ -107,8 +136,12 @@ export const updateIssueCover = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
+    const { data: prev } = await supabaseAdmin.from("issues").select("cover_path").eq("id", data.id).maybeSingle();
     const { error } = await supabaseAdmin.from("issues").update({ cover_path: data.cover_path }).eq("id", data.id);
     if (error) throw new Error(error.message);
+    if (prev && prev.cover_path !== data.cover_path) {
+      await recordVersion("issue_cover", data.id, prev.cover_path ?? null, context.userId, "replaced");
+    }
     return { ok: true };
   });
 
@@ -117,10 +150,15 @@ export const clearIssueCover = createServerFn({ method: "POST" })
   .inputValidator((input: { id: string }) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
+    const { data: prev } = await supabaseAdmin.from("issues").select("cover_path").eq("id", data.id).maybeSingle();
     const { error } = await supabaseAdmin.from("issues").update({ cover_path: null }).eq("id", data.id);
     if (error) throw new Error(error.message);
+    if (prev && prev.cover_path) {
+      await recordVersion("issue_cover", data.id, prev.cover_path, context.userId, "cleared");
+    }
     return { ok: true };
   });
+
 
 // ---------- Admin: characters ----------
 
@@ -144,8 +182,12 @@ export const updateCharacterPortrait = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
+    const { data: prev } = await supabaseAdmin.from("characters").select("portrait_path").eq("id", data.id).maybeSingle();
     const { error } = await supabaseAdmin.from("characters").update({ portrait_path: data.portrait_path }).eq("id", data.id);
     if (error) throw new Error(error.message);
+    if (prev && prev.portrait_path !== data.portrait_path) {
+      await recordVersion("character_portrait", data.id, prev.portrait_path ?? null, context.userId, "replaced");
+    }
     return { ok: true };
   });
 
@@ -154,7 +196,86 @@ export const clearCharacterPortrait = createServerFn({ method: "POST" })
   .inputValidator((input: { id: string }) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
+    const { data: prev } = await supabaseAdmin.from("characters").select("portrait_path").eq("id", data.id).maybeSingle();
     const { error } = await supabaseAdmin.from("characters").update({ portrait_path: null }).eq("id", data.id);
     if (error) throw new Error(error.message);
+    if (prev && prev.portrait_path) {
+      await recordVersion("character_portrait", data.id, prev.portrait_path, context.userId, "cleared");
+    }
+    return { ok: true };
+  });
+
+// ---------- Admin: media version history ----------
+
+const AssetTypeSchema = z.enum(["issue_cover", "carousel_slide", "character_portrait"]);
+
+export const listMediaVersions = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { asset_type: AssetType; asset_id: string }) =>
+    z.object({ asset_type: AssetTypeSchema, asset_id: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { data: rows, error } = await supabaseAdmin
+      .from("media_versions")
+      .select("id, image_path, note, created_at, created_by")
+      .eq("asset_type", data.asset_type)
+      .eq("asset_id", data.asset_id)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (error) throw new Error(error.message);
+    return rows ?? [];
+  });
+
+export const restoreMediaVersion = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { version_id: string }) =>
+    z.object({ version_id: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { data: v, error: vErr } = await supabaseAdmin
+      .from("media_versions")
+      .select("asset_type, asset_id, image_path")
+      .eq("id", data.version_id)
+      .maybeSingle();
+    if (vErr) throw new Error(vErr.message);
+    if (!v) throw new Error("Version not found");
+    if (!v.image_path) throw new Error("This version has no image to restore");
+
+    if (v.asset_type === "issue_cover") {
+      const { data: prev } = await supabaseAdmin.from("issues").select("cover_path").eq("id", v.asset_id).maybeSingle();
+      const { error } = await supabaseAdmin.from("issues").update({ cover_path: v.image_path }).eq("id", v.asset_id);
+      if (error) throw new Error(error.message);
+      if (prev && prev.cover_path !== v.image_path) {
+        await recordVersion("issue_cover", v.asset_id, prev.cover_path ?? null, context.userId, "restored-from-history");
+      }
+    } else if (v.asset_type === "character_portrait") {
+      const { data: prev } = await supabaseAdmin.from("characters").select("portrait_path").eq("id", v.asset_id).maybeSingle();
+      const { error } = await supabaseAdmin.from("characters").update({ portrait_path: v.image_path }).eq("id", v.asset_id);
+      if (error) throw new Error(error.message);
+      if (prev && prev.portrait_path !== v.image_path) {
+        await recordVersion("character_portrait", v.asset_id, prev.portrait_path ?? null, context.userId, "restored-from-history");
+      }
+    } else if (v.asset_type === "carousel_slide") {
+      const { data: prev } = await supabaseAdmin.from("carousel_slides").select("image_path").eq("id", v.asset_id).maybeSingle();
+      if (prev) {
+        const { error } = await supabaseAdmin.from("carousel_slides").update({ image_path: v.image_path }).eq("id", v.asset_id);
+        if (error) throw new Error(error.message);
+        if (prev.image_path !== v.image_path) {
+          await recordVersion("carousel_slide", v.asset_id, prev.image_path ?? null, context.userId, "restored-from-history");
+        }
+      } else {
+        const { error } = await supabaseAdmin.from("carousel_slides").insert({
+          id: v.asset_id,
+          image_path: v.image_path,
+          alt: "",
+          sort_order: 9999,
+          is_published: false,
+        });
+        if (error) throw new Error(error.message);
+        await recordVersion("carousel_slide", v.asset_id, null, context.userId, "recreated-from-history");
+      }
+    }
     return { ok: true };
   });

@@ -26,6 +26,7 @@ import {
   ASPECT_PORTRAIT,
 } from "@/components/admin/upload-field";
 import { ConfirmButton } from "@/components/admin/confirm-button";
+import { HistoryButton } from "@/components/admin/history-button";
 
 export const Route = createFileRoute("/_authenticated/admin/media")({
   head: () => ({ meta: [{ title: "Media Manager — Admin" }] }),
@@ -203,6 +204,11 @@ function IssueCoverRow({
           buttonLabel={issue.cover_path ? "Replace" : "Upload"}
           onUpload={handleFile}
         />
+        <HistoryButton
+          assetType="issue_cover"
+          assetId={issue.id}
+          invalidateKeys={[["admin-media-issues"]]}
+        />
         {(pathOverride || issue.cover_path) && (
           <ConfirmButton
             trigger={
@@ -335,6 +341,11 @@ function SlideRow({
           busy={busy}
           buttonLabel="Replace"
           onUpload={handleFile}
+        />
+        <HistoryButton
+          assetType="carousel_slide"
+          assetId={slide.id}
+          invalidateKeys={[["admin-carousel-slides"], ["carousel-slides"]]}
         />
         <ConfirmButton
           trigger={
@@ -477,6 +488,11 @@ function CharacterRow({
             busy={busy}
             buttonLabel={character.portrait_path ? "Replace" : "Upload"}
             onUpload={handleFile}
+          />
+          <HistoryButton
+            assetType="character_portrait"
+            assetId={character.id}
+            invalidateKeys={[["admin-media-characters"]]}
           />
           {(portrait || character.portrait_path) && (
             <ConfirmButton
