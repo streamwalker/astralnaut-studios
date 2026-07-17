@@ -148,3 +148,13 @@ export const updateCharacterPortrait = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+export const clearCharacterPortrait = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { id: string }) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { error } = await supabaseAdmin.from("characters").update({ portrait_path: null }).eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
