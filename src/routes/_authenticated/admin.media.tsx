@@ -302,7 +302,6 @@ function SlideRow({
   };
 
   const remove = async () => {
-    if (!confirm("Delete this slide?")) return;
     setBusy(true);
     try {
       await deleteCarouselSlide({ data: { id: slide.id } });
@@ -334,9 +333,24 @@ function SlideRow({
           id={`slide-file-${slide.id}`}
           target={ASPECT_CAROUSEL}
           busy={busy}
+          buttonLabel="Replace"
           onUpload={handleFile}
         />
-        <Button size="sm" variant="destructive" onClick={remove} disabled={busy}>Delete</Button>
+        <ConfirmButton
+          trigger={
+            <Button size="sm" variant="destructive" disabled={busy}>Delete</Button>
+          }
+          title="Delete this slide?"
+          description={
+            <>
+              This permanently removes the carousel slide{alt ? <> <b>“{alt}”</b></> : null} from the landing page.
+              This cannot be undone.
+            </>
+          }
+          confirmLabel="Delete slide"
+          destructive
+          onConfirm={remove}
+        />
       </div>
     </li>
   );
