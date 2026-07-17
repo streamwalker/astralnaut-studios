@@ -300,11 +300,12 @@ function SlideRow({
       </div>
       <div className="flex flex-col gap-2">
         <Button size="sm" onClick={save} disabled={busy}>Save</Button>
-        <Label htmlFor={`slide-file-${slide.id}`} className="cursor-pointer">
-          <span className="inline-flex items-center rounded-md border border-border bg-secondary px-3 py-1.5 text-xs font-bold uppercase tracking-[2px]">Upload</span>
-        </Label>
-        <input id={`slide-file-${slide.id}`} type="file" accept="image/*" className="sr-only" disabled={busy}
-          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.currentTarget.value = ""; }} />
+        <UploadField
+          id={`slide-file-${slide.id}`}
+          target={ASPECT_CAROUSEL}
+          busy={busy}
+          onUpload={handleFile}
+        />
         <Button size="sm" variant="destructive" onClick={remove} disabled={busy}>Delete</Button>
       </div>
     </li>
