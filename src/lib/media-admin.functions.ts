@@ -136,8 +136,12 @@ export const updateIssueCover = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
+    const { data: prev } = await supabaseAdmin.from("issues").select("cover_path").eq("id", data.id).maybeSingle();
     const { error } = await supabaseAdmin.from("issues").update({ cover_path: data.cover_path }).eq("id", data.id);
     if (error) throw new Error(error.message);
+    if (prev && prev.cover_path !== data.cover_path) {
+      await recordVersion("issue_cover", data.id, prev.cover_path ?? null, context.userId, "replaced");
+    }
     return { ok: true };
   });
 
@@ -146,10 +150,15 @@ export const clearIssueCover = createServerFn({ method: "POST" })
   .inputValidator((input: { id: string }) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
+    const { data: prev } = await supabaseAdmin.from("issues").select("cover_path").eq("id", data.id).maybeSingle();
     const { error } = await supabaseAdmin.from("issues").update({ cover_path: null }).eq("id", data.id);
     if (error) throw new Error(error.message);
+    if (prev && prev.cover_path) {
+      await recordVersion("issue_cover", data.id, prev.cover_path, context.userId, "cleared");
+    }
     return { ok: true };
   });
+
 
 // ---------- Admin: characters ----------
 
