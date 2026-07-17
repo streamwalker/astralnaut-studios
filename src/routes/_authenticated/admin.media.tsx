@@ -14,8 +14,10 @@ import {
   deleteCarouselSlide,
   adminListIssues,
   updateIssueCover,
+  clearIssueCover,
   adminListCharacters,
   updateCharacterPortrait,
+  clearCharacterPortrait,
 } from "@/lib/media-admin.functions";
 import {
   UploadField,
@@ -23,6 +25,7 @@ import {
   ASPECT_CAROUSEL,
   ASPECT_PORTRAIT,
 } from "@/components/admin/upload-field";
+import { ConfirmButton } from "@/components/admin/confirm-button";
 
 export const Route = createFileRoute("/_authenticated/admin/media")({
   head: () => ({ meta: [{ title: "Media Manager — Admin" }] }),
@@ -192,13 +195,40 @@ function IssueCoverRow({
           <Button size="sm" variant="outline" onClick={handleSavePath} disabled={busy}>Save path</Button>
         </div>
       </div>
-      <div>
+      <div className="flex flex-col gap-2">
         <UploadField
           id={`file-${issue.id}`}
           target={ASPECT_COVER}
           busy={busy}
+          buttonLabel={issue.cover_path ? "Replace" : "Upload"}
           onUpload={handleFile}
         />
+        {(pathOverride || issue.cover_path) && (
+          <ConfirmButton
+            trigger={
+              <Button size="sm" variant="destructive" disabled={busy}>Delete</Button>
+            }
+            title="Delete this cover?"
+            description={
+              <>
+                This clears the cover image for <b>#{issue.issue_number} — {issue.title}</b>.
+                The issue will show a placeholder until a new cover is uploaded.
+              </>
+            }
+            confirmLabel="Delete cover"
+            destructive
+            onConfirm={async () => {
+              setBusy(true);
+              try {
+                await clearIssueCover({ data: { id: issue.id } });
+                setPathOverride("");
+                toast.success("Cover cleared.");
+                onSaved();
+              } catch (e) { toast.error((e as Error).message); }
+              finally { setBusy(false); }
+            }}
+          />
+        )}
       </div>
     </li>
   );
@@ -272,7 +302,6 @@ function SlideRow({
   };
 
   const remove = async () => {
-    if (!confirm("Delete this slide?")) return;
     setBusy(true);
     try {
       await deleteCarouselSlide({ data: { id: slide.id } });
@@ -304,9 +333,24 @@ function SlideRow({
           id={`slide-file-${slide.id}`}
           target={ASPECT_CAROUSEL}
           busy={busy}
+          buttonLabel="Replace"
           onUpload={handleFile}
         />
-        <Button size="sm" variant="destructive" onClick={remove} disabled={busy}>Delete</Button>
+        <ConfirmButton
+          trigger={
+            <Button size="sm" variant="destructive" disabled={busy}>Delete</Button>
+          }
+          title="Delete this slide?"
+          description={
+            <>
+              This permanently removes the carousel slide{alt ? <> <b>“{alt}”</b></> : null} from the landing page.
+              This cannot be undone.
+            </>
+          }
+          confirmLabel="Delete slide"
+          destructive
+          onConfirm={remove}
+        />
       </div>
     </li>
   );
@@ -431,8 +475,35 @@ function CharacterRow({
             id={`char-file-${character.id}`}
             target={ASPECT_PORTRAIT}
             busy={busy}
+            buttonLabel={character.portrait_path ? "Replace" : "Upload"}
             onUpload={handleFile}
           />
+          {(portrait || character.portrait_path) && (
+            <ConfirmButton
+              trigger={
+                <Button size="sm" variant="destructive" disabled={busy}>Delete</Button>
+              }
+              title="Delete this portrait?"
+              description={
+                <>
+                  This clears the portrait for <b>{character.name}</b>. The cast card will show a
+                  placeholder until a new portrait is uploaded.
+                </>
+              }
+              confirmLabel="Delete portrait"
+              destructive
+              onConfirm={async () => {
+                setBusy(true);
+                try {
+                  await clearCharacterPortrait({ data: { id: character.id } });
+                  setPortrait("");
+                  toast.success("Portrait cleared.");
+                  onSaved();
+                } catch (e) { toast.error((e as Error).message); }
+                finally { setBusy(false); }
+              }}
+            />
+          )}
         </div>
       </div>
     </li>
