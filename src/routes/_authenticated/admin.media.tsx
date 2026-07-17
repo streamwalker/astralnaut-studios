@@ -193,18 +193,11 @@ function IssueCoverRow({
         </div>
       </div>
       <div>
-        <Label htmlFor={`file-${issue.id}`} className="cursor-pointer">
-          <span className="inline-flex items-center rounded-md border border-border bg-secondary px-3 py-1.5 text-xs font-bold uppercase tracking-[2px]">
-            {busy ? "Working…" : "Upload"}
-          </span>
-        </Label>
-        <input
+        <UploadField
           id={`file-${issue.id}`}
-          type="file"
-          accept="image/*"
-          className="sr-only"
-          disabled={busy}
-          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.currentTarget.value = ""; }}
+          target={ASPECT_COVER}
+          busy={busy}
+          onUpload={handleFile}
         />
       </div>
     </li>
