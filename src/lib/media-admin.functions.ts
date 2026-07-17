@@ -3,6 +3,25 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
+type AssetType = "issue_cover" | "carousel_slide" | "character_portrait";
+
+async function recordVersion(
+  assetType: AssetType,
+  assetId: string,
+  imagePath: string | null,
+  userId: string,
+  note?: string,
+) {
+  await supabaseAdmin.from("media_versions").insert({
+    asset_type: assetType,
+    asset_id: assetId,
+    image_path: imagePath,
+    created_by: userId,
+    note: note ?? null,
+  });
+}
+
+
 // ---------- Public: list carousel slides ----------
 
 export const listCarouselSlides = createServerFn({ method: "GET" }).handler(async () => {
