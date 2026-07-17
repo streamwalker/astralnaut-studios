@@ -113,6 +113,25 @@ export const deleteCarouselSlide = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const reorderCarouselSlides = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { ids: string[] }) =>
+    z.object({ ids: z.array(z.string().uuid()).min(1).max(200) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    for (let i = 0; i < data.ids.length; i++) {
+      const { error } = await supabaseAdmin
+        .from("carousel_slides")
+        .update({ sort_order: (i + 1) * 10 })
+        .eq("id", data.ids[i]);
+      if (error) throw new Error(error.message);
+    }
+    return { ok: true };
+  });
+
+
+
 
 // ---------- Admin: issue covers ----------
 
