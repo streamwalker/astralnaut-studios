@@ -204,6 +204,11 @@ function IssueCoverRow({
           buttonLabel={issue.cover_path ? "Replace" : "Upload"}
           onUpload={handleFile}
         />
+        <HistoryButton
+          assetType="issue_cover"
+          assetId={issue.id}
+          invalidateKeys={[["admin-media-issues"]]}
+        />
         {(pathOverride || issue.cover_path) && (
           <ConfirmButton
             trigger={
