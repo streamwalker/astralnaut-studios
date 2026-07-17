@@ -17,6 +17,12 @@ import {
   adminListCharacters,
   updateCharacterPortrait,
 } from "@/lib/media-admin.functions";
+import {
+  UploadField,
+  ASPECT_COVER,
+  ASPECT_CAROUSEL,
+  ASPECT_PORTRAIT,
+} from "@/components/admin/upload-field";
 
 export const Route = createFileRoute("/_authenticated/admin/media")({
   head: () => ({ meta: [{ title: "Media Manager — Admin" }] }),
