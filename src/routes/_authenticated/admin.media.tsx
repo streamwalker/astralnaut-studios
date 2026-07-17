@@ -26,6 +26,7 @@ import {
   ASPECT_PORTRAIT,
 } from "@/components/admin/upload-field";
 import { ConfirmButton } from "@/components/admin/confirm-button";
+import { HistoryButton } from "@/components/admin/history-button";
 
 export const Route = createFileRoute("/_authenticated/admin/media")({
   head: () => ({ meta: [{ title: "Media Manager — Admin" }] }),
