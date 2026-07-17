@@ -17,6 +17,12 @@ import {
   adminListCharacters,
   updateCharacterPortrait,
 } from "@/lib/media-admin.functions";
+import {
+  UploadField,
+  ASPECT_COVER,
+  ASPECT_CAROUSEL,
+  ASPECT_PORTRAIT,
+} from "@/components/admin/upload-field";
 
 export const Route = createFileRoute("/_authenticated/admin/media")({
   head: () => ({ meta: [{ title: "Media Manager — Admin" }] }),
@@ -187,18 +193,11 @@ function IssueCoverRow({
         </div>
       </div>
       <div>
-        <Label htmlFor={`file-${issue.id}`} className="cursor-pointer">
-          <span className="inline-flex items-center rounded-md border border-border bg-secondary px-3 py-1.5 text-xs font-bold uppercase tracking-[2px]">
-            {busy ? "Working…" : "Upload"}
-          </span>
-        </Label>
-        <input
+        <UploadField
           id={`file-${issue.id}`}
-          type="file"
-          accept="image/*"
-          className="sr-only"
-          disabled={busy}
-          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.currentTarget.value = ""; }}
+          target={ASPECT_COVER}
+          busy={busy}
+          onUpload={handleFile}
         />
       </div>
     </li>
@@ -301,11 +300,12 @@ function SlideRow({
       </div>
       <div className="flex flex-col gap-2">
         <Button size="sm" onClick={save} disabled={busy}>Save</Button>
-        <Label htmlFor={`slide-file-${slide.id}`} className="cursor-pointer">
-          <span className="inline-flex items-center rounded-md border border-border bg-secondary px-3 py-1.5 text-xs font-bold uppercase tracking-[2px]">Upload</span>
-        </Label>
-        <input id={`slide-file-${slide.id}`} type="file" accept="image/*" className="sr-only" disabled={busy}
-          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.currentTarget.value = ""; }} />
+        <UploadField
+          id={`slide-file-${slide.id}`}
+          target={ASPECT_CAROUSEL}
+          busy={busy}
+          onUpload={handleFile}
+        />
         <Button size="sm" variant="destructive" onClick={remove} disabled={busy}>Delete</Button>
       </div>
     </li>
@@ -336,13 +336,14 @@ function NewSlideForm({ onCreated, nextOrder }: { onCreated: () => void; nextOrd
         Order
         <Input type="number" value={order} onChange={(e) => setOrder(parseInt(e.target.value) || 0)} className="h-8 w-20" />
       </label>
-      <Label htmlFor="new-slide-file" className="cursor-pointer">
-        <span className="inline-flex items-center rounded-md border border-border bg-primary px-3 py-1.5 text-xs font-bold uppercase tracking-[2px] text-primary-foreground">
-          {busy ? "Uploading…" : "Upload image"}
-        </span>
-      </Label>
-      <input id="new-slide-file" type="file" accept="image/*" className="sr-only" disabled={busy}
-        onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.currentTarget.value = ""; }} />
+      <UploadField
+        id="new-slide-file"
+        target={ASPECT_CAROUSEL}
+        busy={busy}
+        buttonLabel="Upload image"
+        variant="primary"
+        onUpload={handleFile}
+      />
     </div>
   );
 }
@@ -426,11 +427,12 @@ function CharacterRow({
         <div className="mt-2 flex flex-wrap items-center gap-2">
           <Input value={portrait} onChange={(e) => setPortrait(e.target.value)} className="h-7 min-w-[180px] flex-1 font-mono text-xs" placeholder="bucket/path.png" />
           <Button size="sm" variant="outline" onClick={savePath} disabled={busy}>Save</Button>
-          <Label htmlFor={`char-file-${character.id}`} className="cursor-pointer">
-            <span className="inline-flex items-center rounded-md border border-border bg-secondary px-2 py-1 text-[11px] font-bold uppercase tracking-[2px]">Upload</span>
-          </Label>
-          <input id={`char-file-${character.id}`} type="file" accept="image/*" className="sr-only" disabled={busy}
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.currentTarget.value = ""; }} />
+          <UploadField
+            id={`char-file-${character.id}`}
+            target={ASPECT_PORTRAIT}
+            busy={busy}
+            onUpload={handleFile}
+          />
         </div>
       </div>
     </li>
