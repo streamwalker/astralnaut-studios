@@ -8,15 +8,9 @@
    Responsive utilities — device-adaptive layout primitives
    Used platform-wide. Mobile-first; safe-area aware.
    ========================================================================== */
-@utility safe-top     { padding-top: env(safe-area-inset-top); }
-@utility safe-bottom  { padding-bottom: env(safe-area-inset-bottom); }
 /* Reserves space for the mobile bottom-nav (56px) + iOS home-indicator. */
 @utility pb-safe-nav  { padding-bottom: calc(env(safe-area-inset-bottom) + 4.5rem); }
-/* Safe horizontal padding — landscape notch/rounded corners on iOS. */
-@utility px-safe {
-  padding-left: max(1rem, env(safe-area-inset-left));
-  padding-right: max(1rem, env(safe-area-inset-right));
-}
+
 /* Lifts a bottom-fixed element above the mobile bottom nav on <lg screens. */
 @utility bottom-safe-nav {
   bottom: calc(env(safe-area-inset-bottom) + 4.5rem);
@@ -101,11 +95,6 @@
   max-width: 65ch;
 }
 
-
-
-
-
-
 /* Touch-friendly horizontal scroll wrapper for wide data tables.
    Wrap any <table> with <div class="table-scroll">…</div> so it becomes
    swipeable on phones instead of overflowing or squishing. */
@@ -116,6 +105,7 @@
   scroll-snap-type: x proximity;
   scrollbar-width: thin;
 }
+
 
 
 /* Coarse-pointer (touch) tables: taller rows, larger tap targets, no wrap. */
@@ -309,9 +299,8 @@
   /* Reveal-on-scroll helper used by useInView. */
   .reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
   .reveal.is-visible { opacity: 1; transform: translateY(0); }
-  .badge-free { background: rgba(34,211,255,0.12); color: var(--neon); border: 1px solid rgba(34,211,255,0.3); padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
-  .badge-locked { background: rgba(255,255,255,0.04); color: var(--mute); border: 1px solid var(--border-line); padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
-  .badge-gold { background: rgba(244,201,93,0.12); color: var(--gold); border: 1px solid rgba(244,201,93,0.3); padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+
+
 }
 
 /* Reader page first-view flash overlays */
