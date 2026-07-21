@@ -68,13 +68,6 @@
     padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
   }
 }
-/* Fluid page container — mobile-first, capped for readability on ultrawide. */
-@utility container-page {
-  margin-inline: auto;
-  width: 100%;
-  padding-inline: 1rem;
-  max-width: 80rem; /* 1280px */
-}
 /* Wider surface for library/reader/gallery on ultrawide. */
 @utility container-wide {
   margin-inline: auto;
@@ -82,6 +75,7 @@
   padding-inline: 1rem;
   max-width: 1600px;
 }
+
 
 /* Fluid H1/H2 that scale between mobile and desktop without breakpoints. */
 @utility text-fluid-h1 {
@@ -106,9 +100,10 @@
 @utility measure {
   max-width: 65ch;
 }
-@utility measure-wide {
-  max-width: 75ch;
-}
+
+
+
+
 
 
 /* Touch-friendly horizontal scroll wrapper for wide data tables.
@@ -121,9 +116,7 @@
   scroll-snap-type: x proximity;
   scrollbar-width: thin;
 }
-@utility table-scroll-inner {
-  min-width: max-content;
-}
+
 
 /* Coarse-pointer (touch) tables: taller rows, larger tap targets, no wrap. */
 @media (pointer: coarse) {

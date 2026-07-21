@@ -1,49 +1,50 @@
+## Lean & Mean Audit — Findings
 
-## 1. Replace the Battlefield Atlantis Issue 1 main cover
+A full read-only audit ran across `src/`, `package.json`, and `src/styles.css`. Headline: this codebase is already unusually clean. No commented-out legacy blocks, no unused imports, no dead branches, no duplicated wrappers in hot files (`routes/index.tsx`, `__root.tsx`, `HeroRotator`, `site-header`, `reader.$series.$issue`, `admin.media`). Removals below are all high-confidence and evidence-backed (0 importers / 0 usages).
 
-Upload the attached "Battlefield Atlantis Issue 1 Primary Cover A" to Supabase Storage in the `comic-pages` bucket at `battlefield-atlantis/issue-1/primary-cover-a.png`, then update `issues.cover_path` for BA #1 to that path. This is what the BA series page (`src/routes/battlefield-atlantis.tsx`) already reads via `getSeriesBundle` → `issue.cover_path`.
+## What I'll remove
 
-Also refresh the two hard-coded references so previews/social match:
-- OG/Twitter/JSON-LD image URLs at the top of `src/routes/battlefield-atlantis.tsx` (currently pointing at `variant-cover-m.png`).
-- The landing-page carousel entry in `src/components/cover-fan.tsx` for BA #1 (currently imports `ba-issue-1-variant.png`) — replaced by the new asset (see §2 for how carousel becomes admin-managed).
+### Dependencies (2)
+- `react-hook-form` — 0 hits in `src/` (the one form, `dmca-form.tsx`, uses `useState`)
+- `@hookform/resolvers` — 0 hits, only exists to pair with the above
 
-## 2. Admin: Book Covers manager
+### Orphaned files (6)
+- `src/lib/canon.functions.ts` — no callers
+- `src/lib/community-ack.ts` — no callers
+- `src/lib/legal-meta.ts` — stale duplicate of `src/config/legal.ts` (which is the one actually used)
+- `src/hooks/use-mobile.tsx` — shadcn boilerplate, never wired
+- `src/components/report-button.tsx` — no importers
+- `src/components/home/HeroVideoBackground.tsx` — `HeroRotator` inlines its own video
 
-Add a "Covers" section under the existing Admin page (`/admin`) that lists all issues (series + issue number + current cover thumbnail) and lets the admin:
-- Upload a new cover image (drag-drop or file picker) → uploads into `comic-pages/<series-slug>/issue-<n>/cover-<timestamp>.<ext>` and updates `issues.cover_path`.
-- Or paste an existing storage path.
-- Preview + Save + Revert.
+### Style bloat in `src/styles.css` (3 utilities)
+- `@utility container-page` — 0 hits (only `container-wide` is used)
+- `@utility measure-wide` — 0 hits
+- `@utility table-scroll-inner` — 0 hits
 
-Backed by a new authenticated server function `updateIssueCover` (admin-only via `has_role`) that writes to `issues` and invalidates the series bundle cache.
+Estimated removal: ~350–450 LOC + 2 deps + ~20 CSS lines.
 
-## 3. Admin: Landing carousel manager
+## What I'm NOT touching (flagged, needs your call)
 
-The landing-page "cover fan" is currently a hard-coded array in `src/components/cover-fan.tsx`. Move it to a new DB table `carousel_slides` (id, image_path, alt, sort_order, is_published) with RLS: public SELECT for published, admin write. Grants: `anon`/`authenticated` SELECT, `service_role` ALL.
+1. **`src/components/reader/PhotosensitivityWarning.tsx`** — 0 imports, so technically dead. BUT `admin.compliance-changelog.tsx` claims this interstitial is active as a compliance feature. Deleting it silently would make that legal claim false. Options: (a) wire it into the reader for flagged issues, (b) delete it AND update the compliance changelog. Tell me which.
+2. **`.page-flash--*` CSS classes** — look unused via static grep, but `reader.$series.$issue.tsx:564` builds them dynamically (`` `page-flash--${flashVariant}` ``). Keeping.
+3. Build-infra deps (`@cloudflare/vite-plugin`, `@tailwindcss/vite`, `@tanstack/router-plugin`, `vite-tsconfig-paths`, `nitro`) — 0 hits in `src/` but consumed transitively by `@lovable.dev/vite-tanstack-config`. Keeping.
 
-- Seed the table with the current 7 covers so behavior is unchanged.
-- `cover-fan.tsx` fetches from the table via a new public server fn `listCarouselSlides` and falls back to the current static list if the fetch fails (safety during rollout).
-- Admin "Carousel" panel: list slides with thumbnails, reorder (up/down), toggle published, edit alt text, upload/replace image, delete. Uses same storage upload helper as §2.
+## Execution plan
 
-## 4. Admin: Meet-the-Cast manager
-
-Two data sources today:
-- **Battlefield Atlantis** cast already lives in the `characters` table (`portrait_path`, `sort_order`, `is_published`).
-- **Children of Aquarius** cast is hard-coded in `src/routes/children-of-aquarius.tsx`.
-
-Steps:
-- Seed the COA characters into the `characters` table (portrait_path pointing at existing `coa-cast/*` files uploaded to the `characters` bucket) and refactor `children-of-aquarius.tsx` to read from `getSeriesBundle` like BA does. Keeps current UI identical.
-- Add an admin "Cast" panel: pick a series → list characters → edit name/role/faction/blurb/bio, upload/replace portrait, toggle published, reorder, add/remove. Backed by `upsertCharacter` / `deleteCharacter` / `reorderCharacters` server functions (admin-only).
-
-## 5. Shared plumbing
-
-- New helper `src/lib/admin-media.functions.ts` for admin-gated image uploads to a given bucket + path, returning the stored path.
-- New reusable `<AdminImageUploader />` component (drag-drop, preview, replace) used by all three panels.
-- Invalidate `["series-bundle", slug]` and `["carousel-slides"]` React Query caches after any mutation.
+1. `bun remove react-hook-form @hookform/resolvers`
+2. `rm` the 6 orphaned files listed above
+3. Delete the 3 unused `@utility` blocks in `src/styles.css`
+4. Verify:
+   - Build + typecheck (harness runs automatically)
+   - Playwright smoke: `/`, `/archive`, `/battlefield-atlantis`, `/reader/battlefield-atlantis/1`, `/admin/media` (as authenticated admin). Screenshot each; confirm no visual/console regression.
 
 ## Technical notes
 
-- Storage buckets used: `comic-pages` (issue covers, carousel), `characters` (portraits). Both already exist.
-- New migration: `carousel_slides` table + RLS + grants; seed rows for the 7 current covers; seed rows for COA characters.
-- No breaking changes to public routes — they keep rendering the same content, just sourced from DB.
-- Admin gating: every new server fn uses `requireSupabaseAuth` + `has_role(user, 'admin')` check.
+- All 6 files are ES module leafs — no re-exports, no dynamic import strings referencing them (grepped).
+- `legal-meta.ts` vs `config/legal.ts`: confirmed distinct constants; only `config/legal.ts` has importers.
+- No route files touched (every `src/routes/*` file is a live route via file-based routing).
+- No server functions or migrations touched.
 
+## Answer needed before I proceed
+
+**PhotosensitivityWarning**: wire it in, or delete + update compliance doc?
