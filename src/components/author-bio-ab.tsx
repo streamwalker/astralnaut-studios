@@ -131,8 +131,10 @@ export function AuthorBioAB({ pagePath }: { pagePath: string }) {
       <div className="card-rwc border-l-4 border-violet-400 p-6 md:p-8">
         <div className="eyebrow" style={{ color: "var(--neon)" }}>{chosen.eyebrow}</div>
         {chosen.pull_quote && (
-          <blockquote className="mt-4 text-xl font-black leading-snug text-[var(--gold)] md:text-2xl">
-            “{chosen.pull_quote}”
+          <blockquote
+            className="mt-5 font-serif text-[1.35rem] font-bold italic leading-[1.2] tracking-tight text-[var(--gold)] sm:text-2xl md:mt-6 md:text-[1.75rem] lg:text-3xl"
+          >
+            <span aria-hidden="true">&ldquo;</span>{chosen.pull_quote}<span aria-hidden="true">&rdquo;</span>
           </blockquote>
         )}
         <div className="mt-5 max-w-3xl space-y-4 text-sm leading-relaxed text-[var(--ink2)]">
