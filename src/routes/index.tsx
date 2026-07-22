@@ -175,8 +175,10 @@ function Home() {
           </div>
         </section>
 
-        {/* Pricing strip */}
-        <HomePricingStrip interval="monthly" />
+        {/* Pricing strip — below the fold; skip layout+paint until scrolled into view. */}
+        <div style={{ contentVisibility: "auto", containIntrinsicSize: "1px 600px" }}>
+          <HomePricingStrip interval="monthly" />
+        </div>
 
         {/* Why subscribe — banded section. */}
         <section
@@ -185,6 +187,8 @@ function Home() {
             background:
               "radial-gradient(120% 80% at 100% 0%, rgba(244,201,93,0.08), transparent 55%), linear-gradient(180deg, transparent, rgba(0,0,0,0.25))",
             borderTop: "1px solid var(--border-line)",
+            contentVisibility: "auto",
+            containIntrinsicSize: "1px 500px",
           }}
         >
           <div className="mx-auto max-w-7xl px-6 py-16">
@@ -200,7 +204,9 @@ function Home() {
         </section>
 
         {/* Closing conversion band */}
-        <ClosingBand />
+        <div style={{ contentVisibility: "auto", containIntrinsicSize: "1px 400px" }}>
+          <ClosingBand />
+        </div>
       </main>
       <SiteFooter />
     </>
