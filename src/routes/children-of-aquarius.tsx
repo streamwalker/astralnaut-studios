@@ -393,30 +393,9 @@ function COAPage() {
           </section>
         )}
 
-        {/* ============ ABOUT THE AUTHOR ============ */}
-        <section className="mt-20">
-          <div className="card-rwc border-l-4 border-violet-400 p-6 md:p-8">
-            <div className="eyebrow" style={{ color: "var(--neon)" }}>About the author</div>
-            <blockquote className="mt-4 text-xl font-black leading-snug text-[var(--gold)] md:text-2xl">
-              “Fiction informed by more than three decades inside the United States Air Force intelligence environment.”
-            </blockquote>
-            <div className="mt-5 max-w-3xl space-y-4 text-sm leading-relaxed text-[var(--ink2)]">
-              <p>
-                Written by a former United States Air Force intelligence operator whose national-security career spanned more than three decades and included Top Secret/SCI access,{" "}
-                <em className="text-white not-italic">Children of Aquarius</em>{" "}
-                brings an uncommon understanding of secrecy, compartmentalization, and classified operations to the UAP mystery.
-              </p>
-              <p>
-                As for what the author may know — directly or indirectly — about alleged U.S. Air Force UAP crash-retrieval and recovery efforts,{" "}
-                <strong className="text-white">he can neither officially confirm nor deny.</strong>
-              </p>
-            </div>
-            <p className="mt-5 max-w-3xl border-t border-white/10 pt-4 text-xs leading-relaxed text-[var(--mute)]">
-              <strong className="text-[var(--ink2)]">Fiction disclaimer.</strong>{" "}
-              <em className="text-white not-italic">Children of Aquarius</em> is a work of fiction. The author’s background is presented for narrative atmosphere and credibility only; it does not confirm, deny, or imply access to any actual classified program, UAP crash-retrieval effort, or recovery operation.
-            </p>
-          </div>
-        </section>
+        {/* ============ ABOUT THE AUTHOR (A/B tested) ============ */}
+        <AuthorBioAB pagePath="/children-of-aquarius" />
+
 
         {/* ============ MEET THE CAST ============ */}
         <section className="mt-20">
