@@ -117,7 +117,7 @@ export function AuthorFaq() {
     staleTime: 5 * 60 * 1000,
   });
 
-  const items = data && data.length > 0 ? data : FALLBACK;
+  const items = data && data.length > 0 ? data : FAQ_FALLBACK;
 
   return (
     <section className="mt-10" aria-labelledby="author-faq-heading">
