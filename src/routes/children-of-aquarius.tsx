@@ -479,6 +479,44 @@ function DetailRow({ label, value }: { label: string; value: React.ReactNode }) 
   );
 }
 
+function AuthorFaq() {
+  const items = [
+    {
+      q: "How does the author’s background inform the story?",
+      a: "Phil Russell spent more than three decades in U.S. Air Force intelligence and special-access programs. That experience shaped the way characters handle classified information, compartmentalized operations, and the quiet discipline of people who live inside secrets. The rituals of security, the weight of need-to-know, and the moral tension between disclosure and protection all come from direct familiarity with that world.",
+    },
+    {
+      q: "Is Children of Aquarius based on real UAP crash-retrieval programs?",
+      a: "The novel is a work of fiction. It draws on the author’s knowledge of intelligence culture and security procedure, but any resemblance to specific government programs, recovered materials, or alleged crash-retrieval efforts is a narrative device. The author can neither confirm nor deny the existence of such programs.",
+    },
+    {
+      q: "Why the 'neither confirm nor deny' stance?",
+      a: "It is both a narrative boundary and a professional one. The story is meant to entertain, provoke questions, and honor the mindset of people who guard sensitive information — not to serve as a source document. That boundary protects both the fiction and the real-world obligations that inspired it.",
+    },
+    {
+      q: "Should readers treat the book as fact or speculation?",
+      a: "As fiction. The book blends esoteric symbolism, religious prophecy, and intelligence tradecraft into a thriller, but it is not reporting, testimony, or disclosure. Readers are invited to enjoy the mystery without mistaking it for evidence.",
+    },
+  ];
+
+  return (
+    <section className="mt-10">
+      <div className="card-rwc border-l-4 border-[var(--gold)] p-6 md:p-8">
+        <div className="eyebrow" style={{ color: "var(--gold)" }}>Frequently asked questions</div>
+        <h2 className="mt-3 text-2xl font-black md:text-3xl">About the author</h2>
+        <div className="mt-6 space-y-5">
+          {items.map((item, i) => (
+            <div key={i} className="rounded-lg border border-white/5 bg-black/20 p-4 md:p-5">
+              <h3 className="text-sm font-black uppercase tracking-wider text-white">{item.q}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ink2)]">{item.a}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function formatDropDate(iso: string): string {
   if (!iso) return "";
   const d = new Date(iso);
