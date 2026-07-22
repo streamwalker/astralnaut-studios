@@ -411,6 +411,10 @@ function COAPage() {
                 <strong className="text-white">he can neither officially confirm nor deny.</strong>
               </p>
             </div>
+            <p className="mt-5 max-w-3xl border-t border-white/10 pt-4 text-xs leading-relaxed text-[var(--mute)]">
+              <strong className="text-[var(--ink2)]">Fiction disclaimer.</strong>{" "}
+              <em className="text-white not-italic">Children of Aquarius</em> is a work of fiction. The author’s background is presented for narrative atmosphere and credibility only; it does not confirm, deny, or imply access to any actual classified program, UAP crash-retrieval effort, or recovery operation.
+            </p>
           </div>
         </section>
 
