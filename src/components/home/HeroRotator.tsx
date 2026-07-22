@@ -285,7 +285,8 @@ function SlotPanel({
           muted
           loop
           playsInline
-          preload="auto"
+          // metadata-only avoids pulling the full teaser on first paint; play() will stream on demand
+          preload="metadata"
           tabIndex={-1}
           aria-hidden
         />
