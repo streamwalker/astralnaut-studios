@@ -1,50 +1,41 @@
-## Lean & Mean Audit — Findings
+Plan: Add "About the Author" section to Children of Aquarius
 
-A full read-only audit ran across `src/`, `package.json`, and `src/styles.css`. Headline: this codebase is already unusually clean. No commented-out legacy blocks, no unused imports, no dead branches, no duplicated wrappers in hot files (`routes/index.tsx`, `__root.tsx`, `HeroRotator`, `site-header`, `reader.$series.$issue`, `admin.media`). Removals below are all high-confidence and evidence-backed (0 importers / 0 usages).
+Goal
+----
+Introduce a new "About the Author" band on `/children-of-aquarius` that uses the provided Air Force intelligence background to build mystery around the series, while keeping the framing legally safe and clearly separating documented career credentials from any suggested knowledge of classified UAP programs.
 
-## What I'll remove
+Where it goes
+-------------
+Insert a new section on `src/routes/children-of-aquarius.tsx` between the "Issue #1 Details" block and the "Meet the Cast" section, so it acts as a bridge from story setup to character exploration.
 
-### Dependencies (2)
-- `react-hook-form` — 0 hits in `src/` (the one form, `dmca-form.tsx`, uses `useState`)
-- `@hookform/resolvers` — 0 hits, only exists to pair with the above
+Copy strategy
+-------------
+Use the "Recommended core positioning" as the main body because it already contains the safest, most repeatable framing. Add one short advertising hook as a pull-quote for visual punch.
 
-### Orphaned files (6)
-- `src/lib/canon.functions.ts` — no callers
-- `src/lib/community-ack.ts` — no callers
-- `src/lib/legal-meta.ts` — stale duplicate of `src/config/legal.ts` (which is the one actually used)
-- `src/hooks/use-mobile.tsx` — shadcn boilerplate, never wired
-- `src/components/report-button.tsx` — no importers
-- `src/components/home/HeroVideoBackground.tsx` — `HeroRotator` inlines its own video
+Main body:
+- "Written by a former United States Air Force intelligence operator whose national-security career spanned more than three decades and included Top Secret/SCI access, Children of Aquarius brings an uncommon understanding of secrecy, compartmentalization, and classified operations to the UAP mystery."
+- "As for what the author may know—directly or indirectly—about alleged U.S. Air Force UAP crash-retrieval and recovery efforts, he can neither officially confirm nor deny."
 
-### Style bloat in `src/styles.css` (3 utilities)
-- `@utility container-page` — 0 hits (only `container-wide` is used)
-- `@utility measure-wide` — 0 hits
-- `@utility table-scroll-inner` — 0 hits
+Pull quote:
+- "Fiction informed by more than three decades inside the United States Air Force intelligence environment."
 
-Estimated removal: ~350–450 LOC + 2 deps + ~20 CSS lines.
+Implementation details
+----------------------
+1. Create a local `AuthorSection` component inside `src/routes/children-of-aquarius.tsx` (keeps the route self-contained and avoids adding a one-off shared component).
+2. Style it consistently with the existing page:
+   - `card-rwc` container with a left violet accent border (`border-l-4 border-violet-400`).
+   - Eyebrow label "About the author" in the existing uppercase tracking style.
+   - Body text uses the existing `text-[var(--ink2)]` color and comfortable line-height.
+   - Pull quote styled with `font-black` and `text-[var(--gold)]` to match other highlighted phrases on the page.
+3. Keep the section responsive: single column on mobile, no grid needed; max-width constrained with `max-w-3xl` or `measure` utility so long lines stay readable.
+4. Do not alter the page's existing JSON-LD `author` field (already "Phil Russell"); the new section is presentation-only and does not change structured data.
+5. Do not add i18n keys in this pass — the author positioning is English-first marketing copy and can be translated later if the i18n workflow is expanded.
 
-## What I'm NOT touching (flagged, needs your call)
+Verification
+------------
+- Run TypeScript build to confirm no errors.
+- Run a Playwright smoke test on `/children-of-aquarius` to verify the new section renders, contains the key phrases, and does not break layout or console.
 
-1. **`src/components/reader/PhotosensitivityWarning.tsx`** — 0 imports, so technically dead. BUT `admin.compliance-changelog.tsx` claims this interstitial is active as a compliance feature. Deleting it silently would make that legal claim false. Options: (a) wire it into the reader for flagged issues, (b) delete it AND update the compliance changelog. Tell me which.
-2. **`.page-flash--*` CSS classes** — look unused via static grep, but `reader.$series.$issue.tsx:564` builds them dynamically (`` `page-flash--${flashVariant}` ``). Keeping.
-3. Build-infra deps (`@cloudflare/vite-plugin`, `@tailwindcss/vite`, `@tanstack/router-plugin`, `vite-tsconfig-paths`, `nitro`) — 0 hits in `src/` but consumed transitively by `@lovable.dev/vite-tanstack-config`. Keeping.
-
-## Execution plan
-
-1. `bun remove react-hook-form @hookform/resolvers`
-2. `rm` the 6 orphaned files listed above
-3. Delete the 3 unused `@utility` blocks in `src/styles.css`
-4. Verify:
-   - Build + typecheck (harness runs automatically)
-   - Playwright smoke: `/`, `/archive`, `/battlefield-atlantis`, `/reader/battlefield-atlantis/1`, `/admin/media` (as authenticated admin). Screenshot each; confirm no visual/console regression.
-
-## Technical notes
-
-- All 6 files are ES module leafs — no re-exports, no dynamic import strings referencing them (grepped).
-- `legal-meta.ts` vs `config/legal.ts`: confirmed distinct constants; only `config/legal.ts` has importers.
-- No route files touched (every `src/routes/*` file is a live route via file-based routing).
-- No server functions or migrations touched.
-
-## Answer needed before I proceed
-
-**PhotosensitivityWarning**: wire it in, or delete + update compliance doc?
+Files changed
+-------------
+- `src/routes/children-of-aquarius.tsx`
