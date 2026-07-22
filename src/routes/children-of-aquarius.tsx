@@ -6,6 +6,8 @@ import { pageUrl } from "@/lib/storage";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Lock } from "lucide-react";
 import coaLogo from "@/assets/children-of-aquarius-logo.png";
+import { AuthorBioAB } from "@/components/author-bio-ab";
+
 
 
 export const Route = createFileRoute("/children-of-aquarius")({
