@@ -73,6 +73,7 @@ import { Route as AuthenticatedAdminLettersRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminLearnRouteImport } from './routes/_authenticated/admin.learn'
 import { Route as AuthenticatedAdminHelpRouteImport } from './routes/_authenticated/admin.help'
 import { Route as AuthenticatedAdminComplianceChangelogRouteImport } from './routes/_authenticated/admin.compliance-changelog'
+import { Route as AuthenticatedAdminAuthorFaqRouteImport } from './routes/_authenticated/admin.author-faq'
 import { Route as AuthenticatedAdminAuthorBioRouteImport } from './routes/_authenticated/admin.author-bio'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicLeadsUnsubscribeRouteImport } from './routes/api/public/leads/unsubscribe'
@@ -410,6 +411,12 @@ const AuthenticatedAdminComplianceChangelogRoute =
     path: '/admin/compliance-changelog',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAdminAuthorFaqRoute =
+  AuthenticatedAdminAuthorFaqRouteImport.update({
+    id: '/admin/author-faq',
+    path: '/admin/author-faq',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAdminAuthorBioRoute =
   AuthenticatedAdminAuthorBioRouteImport.update({
     id: '/admin/author-bio',
@@ -513,6 +520,7 @@ export interface FileRoutesByFullPath {
   '/sweepstakes/free-entry': typeof SweepstakesFreeEntryRoute
   '/sweepstakes/rules': typeof SweepstakesRulesRoute
   '/admin/author-bio': typeof AuthenticatedAdminAuthorBioRoute
+  '/admin/author-faq': typeof AuthenticatedAdminAuthorFaqRoute
   '/admin/compliance-changelog': typeof AuthenticatedAdminComplianceChangelogRoute
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
@@ -587,6 +595,7 @@ export interface FileRoutesByTo {
   '/sweepstakes/free-entry': typeof SweepstakesFreeEntryRoute
   '/sweepstakes/rules': typeof SweepstakesRulesRoute
   '/admin/author-bio': typeof AuthenticatedAdminAuthorBioRoute
+  '/admin/author-faq': typeof AuthenticatedAdminAuthorFaqRoute
   '/admin/compliance-changelog': typeof AuthenticatedAdminComplianceChangelogRoute
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
@@ -663,6 +672,7 @@ export interface FileRoutesById {
   '/sweepstakes/free-entry': typeof SweepstakesFreeEntryRoute
   '/sweepstakes/rules': typeof SweepstakesRulesRoute
   '/_authenticated/admin/author-bio': typeof AuthenticatedAdminAuthorBioRoute
+  '/_authenticated/admin/author-faq': typeof AuthenticatedAdminAuthorFaqRoute
   '/_authenticated/admin/compliance-changelog': typeof AuthenticatedAdminComplianceChangelogRoute
   '/_authenticated/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/_authenticated/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
@@ -739,6 +749,7 @@ export interface FileRouteTypes {
     | '/sweepstakes/free-entry'
     | '/sweepstakes/rules'
     | '/admin/author-bio'
+    | '/admin/author-faq'
     | '/admin/compliance-changelog'
     | '/admin/help'
     | '/admin/learn'
@@ -813,6 +824,7 @@ export interface FileRouteTypes {
     | '/sweepstakes/free-entry'
     | '/sweepstakes/rules'
     | '/admin/author-bio'
+    | '/admin/author-faq'
     | '/admin/compliance-changelog'
     | '/admin/help'
     | '/admin/learn'
@@ -888,6 +900,7 @@ export interface FileRouteTypes {
     | '/sweepstakes/free-entry'
     | '/sweepstakes/rules'
     | '/_authenticated/admin/author-bio'
+    | '/_authenticated/admin/author-faq'
     | '/_authenticated/admin/compliance-changelog'
     | '/_authenticated/admin/help'
     | '/_authenticated/admin/learn'
@@ -1409,6 +1422,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminComplianceChangelogRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin/author-faq': {
+      id: '/_authenticated/admin/author-faq'
+      path: '/admin/author-faq'
+      fullPath: '/admin/author-faq'
+      preLoaderRoute: typeof AuthenticatedAdminAuthorFaqRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/admin/author-bio': {
       id: '/_authenticated/admin/author-bio'
       path: '/admin/author-bio'
@@ -1507,6 +1527,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedGrowthRoute: typeof AuthenticatedGrowthRoute
   AuthenticatedGrowthPackageRoute: typeof AuthenticatedGrowthPackageRoute
   AuthenticatedAdminAuthorBioRoute: typeof AuthenticatedAdminAuthorBioRoute
+  AuthenticatedAdminAuthorFaqRoute: typeof AuthenticatedAdminAuthorFaqRoute
   AuthenticatedAdminComplianceChangelogRoute: typeof AuthenticatedAdminComplianceChangelogRoute
   AuthenticatedAdminHelpRoute: typeof AuthenticatedAdminHelpRouteWithChildren
   AuthenticatedAdminLearnRoute: typeof AuthenticatedAdminLearnRouteWithChildren
@@ -1526,6 +1547,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedGrowthRoute: AuthenticatedGrowthRoute,
   AuthenticatedGrowthPackageRoute: AuthenticatedGrowthPackageRoute,
   AuthenticatedAdminAuthorBioRoute: AuthenticatedAdminAuthorBioRoute,
+  AuthenticatedAdminAuthorFaqRoute: AuthenticatedAdminAuthorFaqRoute,
   AuthenticatedAdminComplianceChangelogRoute:
     AuthenticatedAdminComplianceChangelogRoute,
   AuthenticatedAdminHelpRoute: AuthenticatedAdminHelpRouteWithChildren,
