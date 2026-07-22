@@ -339,23 +339,29 @@ function Reader() {
     return () => document.removeEventListener("fullscreenchange", onChange);
   }, []);
 
+  // Keep latest nav/zoom callbacks in a ref so the keydown listener binds ONCE.
+  // Previously this effect had no dep array, so it re-added a window listener on every render
+  // (every scroll tick, every zoom step) — a real INP regression.
+  const kbRef = useRef({ go, goTo, zoomIn, zoomOut, zoomReset, toggleFullscreen, total, seriesSlug: issue.series.slug, navigate });
+  kbRef.current = { go, goTo, zoomIn, zoomOut, zoomReset, toggleFullscreen, total, seriesSlug: issue.series.slug, navigate };
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       const tag = (e.target as HTMLElement | null)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
-      if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === "n" || e.key === "N") { e.preventDefault(); go(1); }
-      else if (e.key === "ArrowLeft" || e.key === "PageUp" || e.key === "p" || e.key === "P") { e.preventDefault(); go(-1); }
-      else if (e.key === "Home") { e.preventDefault(); goTo(1); }
-      else if (e.key === "End") { e.preventDefault(); goTo(total); }
-      else if (e.key === "Escape" && !document.fullscreenElement) navigate({ to: `/${issue.series.slug}` as "/battlefield-atlantis" | "/children-of-aquarius" });
-      else if (e.key === "+" || e.key === "=") { e.preventDefault(); zoomIn(); }
-      else if (e.key === "-" || e.key === "_") { e.preventDefault(); zoomOut(); }
-      else if (e.key === "0") { e.preventDefault(); zoomReset(); }
-      else if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFullscreen(); }
+      const k = kbRef.current;
+      if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === "n" || e.key === "N") { e.preventDefault(); k.go(1); }
+      else if (e.key === "ArrowLeft" || e.key === "PageUp" || e.key === "p" || e.key === "P") { e.preventDefault(); k.go(-1); }
+      else if (e.key === "Home") { e.preventDefault(); k.goTo(1); }
+      else if (e.key === "End") { e.preventDefault(); k.goTo(k.total); }
+      else if (e.key === "Escape" && !document.fullscreenElement) k.navigate({ to: `/${k.seriesSlug}` as "/battlefield-atlantis" | "/children-of-aquarius" });
+      else if (e.key === "+" || e.key === "=") { e.preventDefault(); k.zoomIn(); }
+      else if (e.key === "-" || e.key === "_") { e.preventDefault(); k.zoomOut(); }
+      else if (e.key === "0") { e.preventDefault(); k.zoomReset(); }
+      else if (e.key === "f" || e.key === "F") { e.preventDefault(); k.toggleFullscreen(); }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  });
+  }, []);
 
 
 
