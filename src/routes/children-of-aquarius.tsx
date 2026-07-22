@@ -7,7 +7,8 @@ import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } 
 import { Lock } from "lucide-react";
 import coaLogo from "@/assets/children-of-aquarius-logo.png";
 import { AuthorBioAB } from "@/components/author-bio-ab";
-import { AuthorFaq } from "@/components/author-faq";
+import { AuthorFaq, FAQ_FALLBACK } from "@/components/author-faq";
+import { listActiveAuthorFaq } from "@/lib/author-faq.functions";
 
 
 
@@ -17,9 +18,11 @@ export const Route = createFileRoute("/children-of-aquarius")({
     if (!bundle) throw notFound();
     const firstIssue = bundle.issues[0];
     const issueBundle = firstIssue ? await getIssueBundle({ data: { slug: firstIssue.slug } }) : null;
-    return { bundle, issueBundle };
+    const faqRaw = await listActiveAuthorFaq().catch(() => [] as Array<{ question: string; answer: string }>);
+    const faq = faqRaw.length > 0 ? faqRaw : FAQ_FALLBACK;
+    return { bundle, issueBundle, faq };
   },
-  head: () => ({
+  head: ({ loaderData }) => ({
     meta: [
       { title: "Children of Aquarius — Issue 1 · Real World Comics" },
       { name: "description", content: "A priest gifts three young humans the powers of Christ to find and protect the Christ child of the Aquarian Age. First 9 pages free." },
@@ -37,27 +40,43 @@ export const Route = createFileRoute("/children-of-aquarius")({
       { name: "twitter:image:alt", content: "Children of Aquarius Issue 1 cover — Real World Comics" },
     ],
     links: [{ rel: "canonical", href: "https://astralnautstudios.com/children-of-aquarius" }],
-    scripts: [{
-      type: "application/ld+json",
-      children: JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "ComicIssue",
-        name: "Children of Aquarius — Issue #1: The Age Begins · The Child Awakens",
-        issueNumber: "1",
-        isPartOf: { "@type": "ComicSeries", name: "Children of Aquarius" },
-        author: { "@type": "Person", name: "Phil Russell" },
-        publisher: { "@type": "Organization", name: "Streamwalkers Corporation" },
-        copyrightHolder: { "@type": "Organization", name: "Streamwalkers Corporation" },
-        copyrightYear: 2026,
-        copyrightNotice: "© 2026 Streamwalkers Corporation. All rights reserved.",
-        genre: "Esoteric thriller",
-        inLanguage: "en",
-        isAccessibleForFree: true,
-        creativeWorkStatus: "Published",
-        image: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/children-of-aquarius/issue-1/page-0.png",
-        url: "https://astralnautstudios.com/children-of-aquarius",
-      }),
-    }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ComicIssue",
+          name: "Children of Aquarius — Issue #1: The Age Begins · The Child Awakens",
+          issueNumber: "1",
+          isPartOf: { "@type": "ComicSeries", name: "Children of Aquarius" },
+          author: { "@type": "Person", name: "Phil Russell" },
+          publisher: { "@type": "Organization", name: "Streamwalkers Corporation" },
+          copyrightHolder: { "@type": "Organization", name: "Streamwalkers Corporation" },
+          copyrightYear: 2026,
+          copyrightNotice: "© 2026 Streamwalkers Corporation. All rights reserved.",
+          genre: "Esoteric thriller",
+          inLanguage: "en",
+          isAccessibleForFree: true,
+          creativeWorkStatus: "Published",
+          image: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/children-of-aquarius/issue-1/page-0.png",
+          url: "https://astralnautstudios.com/children-of-aquarius",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "@id": "https://astralnautstudios.com/children-of-aquarius#author-faq",
+          about: { "@type": "Person", name: "Phil Russell" },
+          mainEntity: (loaderData?.faq ?? []).map((item: { question: string; answer: string }) => ({
+            "@type": "Question",
+            name: item.question,
+            acceptedAnswer: { "@type": "Answer", text: item.answer },
+          })),
+        }),
+      },
+    ],
   }),
   component: COAPage,
 });

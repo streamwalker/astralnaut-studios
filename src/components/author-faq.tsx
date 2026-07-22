@@ -6,7 +6,7 @@ import { listActiveAuthorFaq } from "@/lib/author-faq.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { hasConsent } from "@/lib/cookies-client";
 
-const FALLBACK = [
+export const FAQ_FALLBACK = [
   {
     id: "fallback-1",
     question: "How does the author’s background inform the story?",
@@ -117,7 +117,7 @@ export function AuthorFaq() {
     staleTime: 5 * 60 * 1000,
   });
 
-  const items = data && data.length > 0 ? data : FALLBACK;
+  const items = data && data.length > 0 ? data : FAQ_FALLBACK;
 
   return (
     <section className="mt-10" aria-labelledby="author-faq-heading">
@@ -125,7 +125,7 @@ export function AuthorFaq() {
         <div className="eyebrow" style={{ color: "var(--gold)" }}>Frequently asked questions</div>
         <h2 id="author-faq-heading" className="mt-3 text-2xl font-black md:text-3xl">About the author</h2>
         <div className="mt-6 space-y-3">
-          {items.map((item) => (
+          {items.map((item: { id: string; question: string; answer: string }) => (
             <FaqItem key={item.id} item={item} />
           ))}
         </div>
