@@ -398,6 +398,8 @@ function COAPage() {
         {/* ============ ABOUT THE AUTHOR (A/B tested) ============ */}
         <AuthorBioAB pagePath="/children-of-aquarius" />
 
+        {/* ============ ABOUT THE AUTHOR — FAQ ============ */}
+        <AuthorFaq />
 
         {/* ============ MEET THE CAST ============ */}
         <section className="mt-20">
