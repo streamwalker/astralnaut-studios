@@ -120,10 +120,10 @@ export function AuthorFaq() {
   const items = data && data.length > 0 ? data : FALLBACK;
 
   return (
-    <section className="mt-10">
+    <section className="mt-10" aria-labelledby="author-faq-heading">
       <div className="card-rwc border-l-4 border-[var(--gold)] p-6 md:p-8">
         <div className="eyebrow" style={{ color: "var(--gold)" }}>Frequently asked questions</div>
-        <h2 className="mt-3 text-2xl font-black md:text-3xl">About the author</h2>
+        <h2 id="author-faq-heading" className="mt-3 text-2xl font-black md:text-3xl">About the author</h2>
         <div className="mt-6 space-y-3">
           {items.map((item) => (
             <FaqItem key={item.id} item={item} />
