@@ -250,6 +250,92 @@ export type Database = {
         }
         Relationships: []
       }
+      author_bio_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          page_path: string | null
+          session_id: string | null
+          variant_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          page_path?: string | null
+          session_id?: string | null
+          variant_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          page_path?: string | null
+          session_id?: string | null
+          variant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "author_bio_events_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "author_bio_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      author_bio_variants: {
+        Row: {
+          body: string
+          created_at: string
+          cta_href: string | null
+          cta_label: string | null
+          disclaimer: string | null
+          eyebrow: string
+          id: string
+          is_active: boolean
+          label: string
+          pull_quote: string | null
+          slug: string
+          sort_order: number
+          updated_at: string
+          weight: number
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          cta_href?: string | null
+          cta_label?: string | null
+          disclaimer?: string | null
+          eyebrow?: string
+          id?: string
+          is_active?: boolean
+          label: string
+          pull_quote?: string | null
+          slug: string
+          sort_order?: number
+          updated_at?: string
+          weight?: number
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          cta_href?: string | null
+          cta_label?: string | null
+          disclaimer?: string | null
+          eyebrow?: string
+          id?: string
+          is_active?: boolean
+          label?: string
+          pull_quote?: string | null
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+          weight?: number
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           body_md: string
