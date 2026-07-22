@@ -7,7 +7,8 @@ import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } 
 import { Lock } from "lucide-react";
 import coaLogo from "@/assets/children-of-aquarius-logo.png";
 import { AuthorBioAB } from "@/components/author-bio-ab";
-import { AuthorFaq } from "@/components/author-faq";
+import { AuthorFaq, FAQ_FALLBACK } from "@/components/author-faq";
+import { listActiveAuthorFaq } from "@/lib/author-faq.functions";
 
 
 
@@ -17,9 +18,11 @@ export const Route = createFileRoute("/children-of-aquarius")({
     if (!bundle) throw notFound();
     const firstIssue = bundle.issues[0];
     const issueBundle = firstIssue ? await getIssueBundle({ data: { slug: firstIssue.slug } }) : null;
-    return { bundle, issueBundle };
+    const faqRaw = await listActiveAuthorFaq().catch(() => [] as Array<{ question: string; answer: string }>);
+    const faq = faqRaw.length > 0 ? faqRaw : FAQ_FALLBACK;
+    return { bundle, issueBundle, faq };
   },
-  head: () => ({
+  head: ({ loaderData }) => ({
     meta: [
       { title: "Children of Aquarius — Issue 1 · Real World Comics" },
       { name: "description", content: "A priest gifts three young humans the powers of Christ to find and protect the Christ child of the Aquarian Age. First 9 pages free." },
