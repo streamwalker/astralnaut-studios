@@ -6,7 +6,7 @@ import { listActiveAuthorFaq } from "@/lib/author-faq.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { hasConsent } from "@/lib/cookies-client";
 
-const FALLBACK = [
+export const FAQ_FALLBACK = [
   {
     id: "fallback-1",
     question: "How does the author’s background inform the story?",
