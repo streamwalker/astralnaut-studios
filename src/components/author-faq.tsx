@@ -77,26 +77,34 @@ function FaqItem({ item }: { item: { id: string; question: string; answer: strin
     });
   }, [item]);
   const panelId = `faq-panel-${item.id}`;
+  const buttonId = `faq-trigger-${item.id}`;
   return (
     <div className="rounded-lg border border-white/5 bg-black/20">
-      <button
-        type="button"
-        onClick={toggle}
-        aria-expanded={open}
-        aria-controls={panelId}
-        className="flex w-full items-center justify-between gap-4 p-4 text-left md:p-5"
+      <h3 className="m-0">
+        <button
+          id={buttonId}
+          type="button"
+          onClick={toggle}
+          aria-expanded={open}
+          aria-controls={panelId}
+          className="flex w-full items-center justify-between gap-4 p-4 text-left text-sm font-black uppercase tracking-wider text-white outline-none focus-visible:ring-2 focus-visible:ring-[var(--gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-black md:p-5"
+        >
+          <span>{item.question}</span>
+          <ChevronDown
+            className={`h-4 w-4 shrink-0 text-[var(--gold)] transition-transform ${open ? "rotate-180" : ""}`}
+            aria-hidden="true"
+          />
+        </button>
+      </h3>
+      <div
+        id={panelId}
+        role="region"
+        aria-labelledby={buttonId}
+        hidden={!open}
+        className="px-4 pb-4 md:px-5 md:pb-5"
       >
-        <h3 className="text-sm font-black uppercase tracking-wider text-white">{item.question}</h3>
-        <ChevronDown
-          className={`h-4 w-4 shrink-0 text-[var(--gold)] transition-transform ${open ? "rotate-180" : ""}`}
-          aria-hidden="true"
-        />
-      </button>
-      {open ? (
-        <div id={panelId} className="px-4 pb-4 md:px-5 md:pb-5">
-          <p className="whitespace-pre-line text-sm leading-relaxed text-[var(--ink2)]">{item.answer}</p>
-        </div>
-      ) : null}
+        <p className="whitespace-pre-line text-sm leading-relaxed text-[var(--ink2)]">{item.answer}</p>
+      </div>
     </div>
   );
 }
