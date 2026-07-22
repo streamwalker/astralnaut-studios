@@ -125,7 +125,7 @@ export function AuthorFaq() {
         <div className="eyebrow" style={{ color: "var(--gold)" }}>Frequently asked questions</div>
         <h2 id="author-faq-heading" className="mt-3 text-2xl font-black md:text-3xl">About the author</h2>
         <div className="mt-6 space-y-3">
-          {items.map((item) => (
+          {items.map((item: { id: string; question: string; answer: string }) => (
             <FaqItem key={item.id} item={item} />
           ))}
         </div>
