@@ -58,11 +58,13 @@ export function PageRow({ page, neighbors, invalidateKeys }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const invalidate = () => {
     for (const k of invalidateKeys) qc.invalidateQueries({ queryKey: k as unknown[] });
   };
+
 
   // ----- Replace image -----
   const onReplace = async (file: File) => {
