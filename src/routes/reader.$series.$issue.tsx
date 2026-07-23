@@ -67,6 +67,7 @@ function Reader() {
   const { page } = Route.useSearch();
   const navigate = useNavigate();
   const [accessOk, setAccessOk] = useState(false);
+  const [readerLocation, setReaderLocation] = useState<{ city: string; country: string } | null>(null);
   useEffect(() => {
     let cancelled = false;
     (async () => {
