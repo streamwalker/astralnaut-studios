@@ -395,11 +395,12 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
                   </Button>
                 </>
               )}
-              <DialogTitle className="truncate text-sm font-semibold text-white">
-                {previewPage.title}
-                <span className="ml-2 text-xs font-normal text-white/60">
-                  page {previewPage.page_number} · {previewPage.published_at ? "published" : "draft"}
+              <DialogTitle className="flex flex-col text-left text-sm font-semibold text-white">
+                <span className="truncate">{previewPage.title}</span>
+                <span className="text-xs font-normal text-white/60">
+                  /{previewPage.slug} · page {previewPage.page_number} · {previewPage.published_at ? "published" : "draft"}
                   {previewPage.is_free ? " · free" : ""}
+                  {previewPage.updated_at ? ` · updated ${new Date(previewPage.updated_at).toLocaleString()}` : ""}
                 </span>
               </DialogTitle>
             </div>
