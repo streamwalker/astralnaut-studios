@@ -173,10 +173,24 @@ function AdminOutreach() {
         </Link>
       </div>
 
-      <div className="mt-6 grid grid-cols-3 gap-4">
+      <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
         <Stat label="Prospects" value={stats.total} />
         <Stat label="Contacted+" value={stats.contacted} />
         <Stat label="Links acquired" value={stats.acquired} />
+        <Stat label="Broken" value={stats.broken} danger />
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <Button
+          size="sm"
+          onClick={() => check.mutate()}
+          disabled={check.isPending || stats.acquired === 0}
+        >
+          {check.isPending ? "Checking…" : "Check backlinks now"}
+        </Button>
+        <p className="text-xs text-muted-foreground">
+          Auto-checked daily. Runs HEAD/GET on each acquired URL and flags 4xx/5xx.
+        </p>
       </div>
 
       <div className="mt-6 flex flex-wrap gap-3">
