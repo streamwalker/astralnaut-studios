@@ -79,6 +79,7 @@ import { Route as AuthenticatedAdminAuthorBioRouteImport } from './routes/_authe
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicLeadsUnsubscribeRouteImport } from './routes/api/public/leads/unsubscribe'
 import { Route as ApiPublicLeadsConfirmRouteImport } from './routes/api/public/leads/confirm'
+import { Route as ApiPublicHooksCheckBacklinksRouteImport } from './routes/api/public/hooks/check-backlinks'
 import { Route as ApiPublicCronRetentionRouteImport } from './routes/api/public/cron/retention'
 import { Route as ApiPublicCronRenewalRemindersRouteImport } from './routes/api/public/cron/renewal-reminders'
 import { Route as AuthenticatedAdminLearnModuleIdRouteImport } from './routes/_authenticated/admin.learn.$moduleId'
@@ -447,6 +448,12 @@ const ApiPublicLeadsConfirmRoute = ApiPublicLeadsConfirmRouteImport.update({
   path: '/api/public/leads/confirm',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksCheckBacklinksRoute =
+  ApiPublicHooksCheckBacklinksRouteImport.update({
+    id: '/api/public/hooks/check-backlinks',
+    path: '/api/public/hooks/check-backlinks',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCronRetentionRoute = ApiPublicCronRetentionRouteImport.update({
   id: '/api/public/cron/retention',
   path: '/api/public/cron/retention',
@@ -548,6 +555,7 @@ export interface FileRoutesByFullPath {
   '/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
   '/api/public/cron/renewal-reminders': typeof ApiPublicCronRenewalRemindersRoute
   '/api/public/cron/retention': typeof ApiPublicCronRetentionRoute
+  '/api/public/hooks/check-backlinks': typeof ApiPublicHooksCheckBacklinksRoute
   '/api/public/leads/confirm': typeof ApiPublicLeadsConfirmRoute
   '/api/public/leads/unsubscribe': typeof ApiPublicLeadsUnsubscribeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -624,6 +632,7 @@ export interface FileRoutesByTo {
   '/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
   '/api/public/cron/renewal-reminders': typeof ApiPublicCronRenewalRemindersRoute
   '/api/public/cron/retention': typeof ApiPublicCronRetentionRoute
+  '/api/public/hooks/check-backlinks': typeof ApiPublicHooksCheckBacklinksRoute
   '/api/public/leads/confirm': typeof ApiPublicLeadsConfirmRoute
   '/api/public/leads/unsubscribe': typeof ApiPublicLeadsUnsubscribeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -702,6 +711,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/learn/$moduleId': typeof AuthenticatedAdminLearnModuleIdRoute
   '/api/public/cron/renewal-reminders': typeof ApiPublicCronRenewalRemindersRoute
   '/api/public/cron/retention': typeof ApiPublicCronRetentionRoute
+  '/api/public/hooks/check-backlinks': typeof ApiPublicHooksCheckBacklinksRoute
   '/api/public/leads/confirm': typeof ApiPublicLeadsConfirmRoute
   '/api/public/leads/unsubscribe': typeof ApiPublicLeadsUnsubscribeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -780,6 +790,7 @@ export interface FileRouteTypes {
     | '/admin/learn/$moduleId'
     | '/api/public/cron/renewal-reminders'
     | '/api/public/cron/retention'
+    | '/api/public/hooks/check-backlinks'
     | '/api/public/leads/confirm'
     | '/api/public/leads/unsubscribe'
     | '/api/public/payments/webhook'
@@ -856,6 +867,7 @@ export interface FileRouteTypes {
     | '/admin/learn/$moduleId'
     | '/api/public/cron/renewal-reminders'
     | '/api/public/cron/retention'
+    | '/api/public/hooks/check-backlinks'
     | '/api/public/leads/confirm'
     | '/api/public/leads/unsubscribe'
     | '/api/public/payments/webhook'
@@ -933,6 +945,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/learn/$moduleId'
     | '/api/public/cron/renewal-reminders'
     | '/api/public/cron/retention'
+    | '/api/public/hooks/check-backlinks'
     | '/api/public/leads/confirm'
     | '/api/public/leads/unsubscribe'
     | '/api/public/payments/webhook'
@@ -980,6 +993,7 @@ export interface RootRouteChildren {
   ReaderSeriesIssueRoute: typeof ReaderSeriesIssueRoute
   ApiPublicCronRenewalRemindersRoute: typeof ApiPublicCronRenewalRemindersRoute
   ApiPublicCronRetentionRoute: typeof ApiPublicCronRetentionRoute
+  ApiPublicHooksCheckBacklinksRoute: typeof ApiPublicHooksCheckBacklinksRoute
   ApiPublicLeadsConfirmRoute: typeof ApiPublicLeadsConfirmRoute
   ApiPublicLeadsUnsubscribeRoute: typeof ApiPublicLeadsUnsubscribeRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -1477,6 +1491,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicLeadsConfirmRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/check-backlinks': {
+      id: '/api/public/hooks/check-backlinks'
+      path: '/api/public/hooks/check-backlinks'
+      fullPath: '/api/public/hooks/check-backlinks'
+      preLoaderRoute: typeof ApiPublicHooksCheckBacklinksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cron/retention': {
       id: '/api/public/cron/retention'
       path: '/api/public/cron/retention'
@@ -1690,6 +1711,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReaderSeriesIssueRoute: ReaderSeriesIssueRoute,
   ApiPublicCronRenewalRemindersRoute: ApiPublicCronRenewalRemindersRoute,
   ApiPublicCronRetentionRoute: ApiPublicCronRetentionRoute,
+  ApiPublicHooksCheckBacklinksRoute: ApiPublicHooksCheckBacklinksRoute,
   ApiPublicLeadsConfirmRoute: ApiPublicLeadsConfirmRoute,
   ApiPublicLeadsUnsubscribeRoute: ApiPublicLeadsUnsubscribeRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,

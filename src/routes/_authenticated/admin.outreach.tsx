@@ -19,6 +19,7 @@ import {
   listOutreachProspects,
   upsertOutreachProspect,
   deleteOutreachProspect,
+  runBacklinkCheckNow,
 } from "@/lib/outreach.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/outreach")({
@@ -82,6 +83,7 @@ function AdminOutreach() {
   const listFn = useServerFn(listOutreachProspects);
   const upsertFn = useServerFn(upsertOutreachProspect);
   const deleteFn = useServerFn(deleteOutreachProspect);
+  const checkFn = useServerFn(runBacklinkCheckNow);
 
   const q = useQuery({ queryKey: ["admin-outreach"], queryFn: () => listFn() });
 
@@ -108,6 +110,15 @@ function AdminOutreach() {
       invalidate();
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Delete failed"),
+  });
+
+  const check = useMutation({
+    mutationFn: () => checkFn(),
+    onSuccess: (r) => {
+      toast.success(`Checked ${r.checked} link${r.checked === 1 ? "" : "s"} · ${r.broken} broken`);
+      invalidate();
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Check failed"),
   });
 
   const editRow = (r: Row) =>
@@ -142,7 +153,10 @@ function AdminOutreach() {
       ["contacted", "replied", "negotiating", "published"].includes(r.status),
     ).length;
     const acquired = rows.filter((r) => r.link_acquired).length;
-    return { total, contacted, acquired };
+    const broken = rows.filter(
+      (r) => r.link_acquired && (r.link_check_status === "broken" || r.link_check_status === "error"),
+    ).length;
+    return { total, contacted, acquired, broken };
   }, [rows]);
 
   return (
@@ -159,10 +173,24 @@ function AdminOutreach() {
         </Link>
       </div>
 
-      <div className="mt-6 grid grid-cols-3 gap-4">
+      <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
         <Stat label="Prospects" value={stats.total} />
         <Stat label="Contacted+" value={stats.contacted} />
         <Stat label="Links acquired" value={stats.acquired} />
+        <Stat label="Broken" value={stats.broken} danger />
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <Button
+          size="sm"
+          onClick={() => check.mutate()}
+          disabled={check.isPending || stats.acquired === 0}
+        >
+          {check.isPending ? "Checking…" : "Check backlinks now"}
+        </Button>
+        <p className="text-xs text-muted-foreground">
+          Auto-checked daily. Runs HEAD/GET on each acquired URL and flags 4xx/5xx.
+        </p>
       </div>
 
       <div className="mt-6 flex flex-wrap gap-3">
@@ -236,6 +264,36 @@ function AdminOutreach() {
                   >
                     ✔ Link: {r.link_acquired_url}
                   </a>
+                )}
+                {r.link_acquired && r.link_check_status !== "unchecked" && (
+                  <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px]">
+                    <span
+                      className={
+                        r.link_check_status === "ok"
+                          ? "text-emerald-400"
+                          : r.link_check_status === "redirect"
+                            ? "text-[var(--gold)]"
+                            : "text-red-400 font-bold"
+                      }
+                    >
+                      {r.link_check_status === "ok" && "● OK"}
+                      {r.link_check_status === "redirect" && "● Redirect"}
+                      {r.link_check_status === "broken" && "● Broken"}
+                      {r.link_check_status === "error" && "● Error"}
+                      {r.link_check_http_status ? ` (${r.link_check_http_status})` : ""}
+                    </span>
+                    {r.link_last_checked_at && (
+                      <span className="text-muted-foreground">
+                        checked {new Date(r.link_last_checked_at).toLocaleString()}
+                      </span>
+                    )}
+                    {r.link_failure_count > 1 && (
+                      <span className="text-red-400">{r.link_failure_count} consecutive fails</span>
+                    )}
+                    {r.link_check_note && (
+                      <span className="text-muted-foreground italic">— {r.link_check_note}</span>
+                    )}
+                  </div>
                 )}
               </div>
               <div className="flex flex-col items-end gap-2 text-xs">
@@ -395,10 +453,14 @@ function AdminOutreach() {
   );
 }
 
-function Stat({ label, value }: { label: string; value: number }) {
+function Stat({ label, value, danger = false }: { label: string; value: number; danger?: boolean }) {
   return (
     <div className="rounded-md border border-border bg-card p-4">
-      <div className="font-mono text-2xl font-black text-[var(--gold)]">{value}</div>
+      <div
+        className={`font-mono text-2xl font-black ${danger && value > 0 ? "text-red-400" : "text-[var(--gold)]"}`}
+      >
+        {value}
+      </div>
       <div className="mt-1 text-[10px] font-bold uppercase tracking-[3px] text-muted-foreground">
         {label}
       </div>

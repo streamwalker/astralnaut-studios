@@ -107,3 +107,11 @@ export const deleteOutreachProspect = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+export const runBacklinkCheckNow = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.userId);
+    const { runBacklinkCheck } = await import("@/lib/backlink-check.server");
+    return await runBacklinkCheck(50);
+  });
