@@ -1544,6 +1544,63 @@ export type Database = {
         }
         Relationships: []
       }
+      outreach_prospects: {
+        Row: {
+          category: string | null
+          contact_email: string | null
+          contact_name: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          last_contacted_at: string | null
+          link_acquired: boolean
+          link_acquired_at: string | null
+          link_acquired_url: string | null
+          notes: string | null
+          site_name: string | null
+          status: string
+          tier: number
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          category?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          last_contacted_at?: string | null
+          link_acquired?: boolean
+          link_acquired_at?: string | null
+          link_acquired_url?: string | null
+          notes?: string | null
+          site_name?: string | null
+          status?: string
+          tier?: number
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          category?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          last_contacted_at?: string | null
+          link_acquired?: boolean
+          link_acquired_at?: string | null
+          link_acquired_url?: string | null
+          notes?: string | null
+          site_name?: string | null
+          status?: string
+          tier?: number
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       raffle_entries: {
         Row: {
           created_at: string
