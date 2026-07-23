@@ -55,13 +55,19 @@ type Props = {
 const publicUrl = (path: string) =>
   supabase.storage.from("comic-pages").getPublicUrl(path).data.publicUrl;
 
-export function PageRow({ page, neighbors, invalidateKeys }: Props) {
+export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidateKeys }: Props) {
   const qc = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState(initialIndex);
   const [busy, setBusy] = useState(false);
+
+  const hasSiblings = siblings && siblings.length > 1;
+  const previewPage = hasSiblings && previewIndex >= 0 && previewIndex < siblings!.length
+    ? siblings![previewIndex]
+    : page;
 
   const invalidate = () => {
     for (const k of invalidateKeys) qc.invalidateQueries({ queryKey: k as unknown[] });
