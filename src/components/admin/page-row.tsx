@@ -63,7 +63,15 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(initialIndex);
   const [zoom, setZoom] = useState(1);
+  const [device, setDevice] = useState<"mobile" | "tablet" | "desktop" | "full">("full");
   const [busy, setBusy] = useState(false);
+
+  const deviceSizes: Record<typeof device, { w: number; h: number } | null> = {
+    mobile: { w: 390, h: 844 },
+    tablet: { w: 820, h: 1180 },
+    desktop: { w: 1440, h: 900 },
+    full: null,
+  };
 
   const hasSiblings = siblings && siblings.length > 1;
   const previewPage = hasSiblings && previewIndex >= 0 && previewIndex < siblings!.length
