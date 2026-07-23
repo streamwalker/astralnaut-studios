@@ -83,6 +83,7 @@ function AdminOutreach() {
   const listFn = useServerFn(listOutreachProspects);
   const upsertFn = useServerFn(upsertOutreachProspect);
   const deleteFn = useServerFn(deleteOutreachProspect);
+  const checkFn = useServerFn(runBacklinkCheckNow);
 
   const q = useQuery({ queryKey: ["admin-outreach"], queryFn: () => listFn() });
 
@@ -109,6 +110,15 @@ function AdminOutreach() {
       invalidate();
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Delete failed"),
+  });
+
+  const check = useMutation({
+    mutationFn: () => checkFn(),
+    onSuccess: (r) => {
+      toast.success(`Checked ${r.checked} link${r.checked === 1 ? "" : "s"} · ${r.broken} broken`);
+      invalidate();
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Check failed"),
   });
 
   const editRow = (r: Row) =>
@@ -143,7 +153,10 @@ function AdminOutreach() {
       ["contacted", "replied", "negotiating", "published"].includes(r.status),
     ).length;
     const acquired = rows.filter((r) => r.link_acquired).length;
-    return { total, contacted, acquired };
+    const broken = rows.filter(
+      (r) => r.link_acquired && (r.link_check_status === "broken" || r.link_check_status === "error"),
+    ).length;
+    return { total, contacted, acquired, broken };
   }, [rows]);
 
   return (
