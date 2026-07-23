@@ -69,6 +69,18 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
     ? siblings![previewIndex]
     : page;
 
+  useEffect(() => {
+    if (!previewOpen) return;
+    setPreviewIndex(initialIndex);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") setPreviewIndex((i) => Math.max(0, i - 1));
+      if (e.key === "ArrowRight") setPreviewIndex((i) => Math.min((siblings?.length ?? 1) - 1, i + 1));
+      if (e.key === "Escape") setPreviewOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [previewOpen, initialIndex, siblings?.length]);
+
   const invalidate = () => {
     for (const k of invalidateKeys) qc.invalidateQueries({ queryKey: k as unknown[] });
   };
