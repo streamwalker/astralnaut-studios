@@ -152,19 +152,31 @@ export function PageRow({ page, neighbors, invalidateKeys }: Props) {
 
   return (
     <li className="flex items-center gap-3 rounded-lg border border-border/60 bg-background/40 p-3">
-      <img
-        src={publicUrl(page.image_path)}
-        alt={page.alt_text ?? ""}
-        className="h-14 w-14 rounded object-cover"
-      />
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-semibold">{page.title}</div>
+      <button
+        type="button"
+        onClick={() => setPreviewOpen(true)}
+        className="group relative h-14 w-14 shrink-0 overflow-hidden rounded ring-offset-background transition hover:ring-2 hover:ring-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        aria-label={`Preview ${page.title}`}
+      >
+        <img
+          src={publicUrl(page.image_path)}
+          alt={page.alt_text ?? ""}
+          className="h-14 w-14 object-cover transition group-hover:scale-105"
+        />
+      </button>
+      <button
+        type="button"
+        onClick={() => setPreviewOpen(true)}
+        className="min-w-0 flex-1 text-left"
+      >
+        <div className="truncate text-sm font-semibold hover:underline">{page.title}</div>
         <div className="truncate text-xs text-muted-foreground">
           {page.slug} · page {page.page_number} ·{" "}
           {page.published_at ? "published" : "draft"}
           {page.is_free ? " · free" : ""}
         </div>
-      </div>
+      </button>
+
 
       {neighbors && (
         <div className="flex flex-col">
