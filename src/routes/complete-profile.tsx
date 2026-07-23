@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useServerFn } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,12 +7,35 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CountryInput } from "@/components/ui/country-input";
-import { isValidCountry } from "@/lib/countries";
+import { COUNTRIES } from "@/lib/countries";
+import { saveProfile } from "@/lib/profile.functions";
 
+const COUNTRY_SET = new Set(COUNTRIES.map((c) => c.toLowerCase()));
+
+const profileFormSchema = z.object({
+  fullName: z
+    .string()
+    .trim()
+    .min(2, "Full name must be at least 2 characters")
+    .max(100, "Full name must be under 100 characters")
+    .regex(/^[\p{L}\p{M}\s'.\-]+$/u, "Full name contains invalid characters"),
+  city: z
+    .string()
+    .trim()
+    .min(1, "City is required")
+    .max(100, "City must be under 100 characters")
+    .regex(/^[\p{L}\p{M}\s'.\-,]+$/u, "City contains invalid characters"),
+  country: z
+    .string()
+    .trim()
+    .max(80, "Country must be under 80 characters")
+    .refine((c) => COUNTRY_SET.has(c.toLowerCase()), "Please select a country from the list"),
+});
 
 const searchSchema = z.object({
   next: z.string().optional().catch(undefined),
 });
+
 
 export const Route = createFileRoute("/complete-profile")({
   head: () => ({
@@ -28,11 +51,14 @@ export const Route = createFileRoute("/complete-profile")({
 function CompleteProfilePage() {
   const nav = useNavigate();
   const search = Route.useSearch();
+  const save = useServerFn(saveProfile);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [fullName, setFullName] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
+  const [errors, setErrors] = useState<{ fullName?: string; city?: string; country?: string }>({});
+
 
   useEffect(() => {
     (async () => {
