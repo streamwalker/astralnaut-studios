@@ -181,6 +181,24 @@ function LoginPage() {
         </div>
 
         <form onSubmit={handleEmail} className="space-y-3">
+          {mode === "signup" && (
+            <>
+              <div>
+                <Label htmlFor="full_name">Full name</Label>
+                <Input id="full_name" type="text" required autoComplete="name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="city">City</Label>
+                  <Input id="city" type="text" required autoComplete="address-level2" value={city} onChange={(e) => setCity(e.target.value)} />
+                </div>
+                <div>
+                  <Label htmlFor="country">Country</Label>
+                  <Input id="country" type="text" required autoComplete="country-name" value={country} onChange={(e) => setCountry(e.target.value)} />
+                </div>
+              </div>
+            </>
+          )}
           <div>
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
