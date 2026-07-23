@@ -467,6 +467,19 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
               </Button>
               <Button
                 type="button"
+                variant="ghost"
+                size="sm"
+                disabled={busy}
+                onClick={duplicatePage}
+                className="h-8 gap-1.5 border border-white/10 bg-white/5 px-2.5 text-xs font-medium text-white hover:bg-white/15 hover:text-white"
+                aria-label="Duplicate page"
+                title="Duplicate this page as a draft"
+              >
+                <Copy className="h-3.5 w-3.5" />
+                Duplicate
+              </Button>
+              <Button
+                type="button"
                 variant="secondary"
                 size="sm"
                 onClick={() => setPreviewOpen(false)}
