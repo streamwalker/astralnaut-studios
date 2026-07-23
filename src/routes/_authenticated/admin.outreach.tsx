@@ -265,6 +265,36 @@ function AdminOutreach() {
                     ✔ Link: {r.link_acquired_url}
                   </a>
                 )}
+                {r.link_acquired && r.link_check_status !== "unchecked" && (
+                  <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px]">
+                    <span
+                      className={
+                        r.link_check_status === "ok"
+                          ? "text-emerald-400"
+                          : r.link_check_status === "redirect"
+                            ? "text-[var(--gold)]"
+                            : "text-red-400 font-bold"
+                      }
+                    >
+                      {r.link_check_status === "ok" && "● OK"}
+                      {r.link_check_status === "redirect" && "● Redirect"}
+                      {r.link_check_status === "broken" && "● Broken"}
+                      {r.link_check_status === "error" && "● Error"}
+                      {r.link_check_http_status ? ` (${r.link_check_http_status})` : ""}
+                    </span>
+                    {r.link_last_checked_at && (
+                      <span className="text-muted-foreground">
+                        checked {new Date(r.link_last_checked_at).toLocaleString()}
+                      </span>
+                    )}
+                    {r.link_failure_count > 1 && (
+                      <span className="text-red-400">{r.link_failure_count} consecutive fails</span>
+                    )}
+                    {r.link_check_note && (
+                      <span className="text-muted-foreground italic">— {r.link_check_note}</span>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="flex flex-col items-end gap-2 text-xs">
                 <span className={`font-bold uppercase ${STATUS_COLORS[r.status as Status]}`}>
