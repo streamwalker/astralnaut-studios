@@ -92,6 +92,7 @@ function Reader() {
         window.location.assign(`/complete-profile?next=${encodeURIComponent(next)}`);
         return;
       }
+      setReaderLocation({ city: prof.city, country: prof.country });
       setAccessOk(true);
     })();
     return () => { cancelled = true; };
