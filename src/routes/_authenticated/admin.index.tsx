@@ -266,6 +266,8 @@ function AdminPage() {
                   <PageRow
                     key={p.id}
                     page={p}
+                    siblings={issuePages}
+                    initialIndex={idx}
                     neighbors={{
                       up: issuePages[idx - 1],
                       down: issuePages[idx + 1],
