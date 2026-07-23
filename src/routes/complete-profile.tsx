@@ -70,6 +70,11 @@ function CompleteProfilePage() {
         nav({ to: "/login", search: { next } });
         return;
       }
+      if (!userRes.user.email_confirmed_at) {
+        const next = search.next || "/";
+        window.location.assign(`/verify-email?next=${encodeURIComponent(next)}`);
+        return;
+      }
       const { data: prof } = await supabase
         .from("profiles")
         .select("full_name, city, country")

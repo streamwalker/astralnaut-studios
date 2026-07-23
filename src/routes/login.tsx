@@ -83,11 +83,13 @@ function LoginPage() {
     try {
       if (mode === "signup") {
         stashPendingConsent();
+        const dest = successDestination();
+        const verifyUrl = `/verify-email?next=${encodeURIComponent(dest)}&email=${encodeURIComponent(email)}`;
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: window.location.origin + successDestination(),
+            emailRedirectTo: window.location.origin + verifyUrl,
             data: {
               full_name: fullName.trim(),
               city: city.trim(),
@@ -114,9 +116,17 @@ function LoginPage() {
           } catch { /* non-fatal */ }
         }
         toast.success("Check your email to confirm your account.");
+        window.location.assign(verifyUrl);
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data: signInData, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        if (!signInData.user?.email_confirmed_at) {
+          toast.info("Please verify your email to continue.");
+          window.location.assign(
+            `/verify-email?next=${encodeURIComponent(successDestination())}&email=${encodeURIComponent(email)}`,
+          );
+          return;
+        }
         toast.success("Welcome back.");
         window.location.assign(successDestination());
       }

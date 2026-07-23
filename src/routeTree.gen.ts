@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as UnsolicitedSubmissionsRouteImport } from './routes/unsolicited-submissions'
 import { Route as TrustRouteImport } from './routes/trust'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -87,6 +88,11 @@ import { Route as AuthenticatedAdminLearnModuleIdRouteImport } from './routes/_a
 import { Route as AuthenticatedAdminHelpSlugRouteImport } from './routes/_authenticated/admin.help.$slug'
 import { Route as AuthenticatedReaderSeriesIssueLettersRouteImport } from './routes/_authenticated/reader.$series.$issue.letters'
 
+const VerifyEmailRoute = VerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UnsolicitedSubmissionsRoute = UnsolicitedSubmissionsRouteImport.update({
   id: '/unsolicited-submissions',
   path: '/unsolicited-submissions',
@@ -521,6 +527,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/trust': typeof TrustRoute
   '/unsolicited-submissions': typeof UnsolicitedSubmissionsRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/archive/briefings': typeof ArchiveBriefingsRoute
@@ -599,6 +606,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/trust': typeof TrustRoute
   '/unsolicited-submissions': typeof UnsolicitedSubmissionsRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/archive/briefings': typeof ArchiveBriefingsRoute
@@ -679,6 +687,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/trust': typeof TrustRoute
   '/unsolicited-submissions': typeof UnsolicitedSubmissionsRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/_authenticated/growth': typeof AuthenticatedGrowthRoute
   '/_authenticated/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/archive/briefings': typeof ArchiveBriefingsRoute
@@ -759,6 +768,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/trust'
     | '/unsolicited-submissions'
+    | '/verify-email'
     | '/growth'
     | '/growth-package'
     | '/archive/briefings'
@@ -837,6 +847,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/trust'
     | '/unsolicited-submissions'
+    | '/verify-email'
     | '/growth'
     | '/growth-package'
     | '/archive/briefings'
@@ -916,6 +927,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/trust'
     | '/unsolicited-submissions'
+    | '/verify-email'
     | '/_authenticated/growth'
     | '/_authenticated/growth-package'
     | '/archive/briefings'
@@ -996,6 +1008,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   TrustRoute: typeof TrustRoute
   UnsolicitedSubmissionsRoute: typeof UnsolicitedSubmissionsRoute
+  VerifyEmailRoute: typeof VerifyEmailRoute
   ProductHandleRoute: typeof ProductHandleRoute
   RaffleFreeEntryRoute: typeof RaffleFreeEntryRoute
   RaffleRulesRoute: typeof RaffleRulesRoute
@@ -1014,6 +1027,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify-email': {
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/unsolicited-submissions': {
       id: '/unsolicited-submissions'
       path: '/unsolicited-submissions'
@@ -1722,6 +1742,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   TrustRoute: TrustRoute,
   UnsolicitedSubmissionsRoute: UnsolicitedSubmissionsRoute,
+  VerifyEmailRoute: VerifyEmailRoute,
   ProductHandleRoute: ProductHandleRoute,
   RaffleFreeEntryRoute: RaffleFreeEntryRoute,
   RaffleRulesRoute: RaffleRulesRoute,

@@ -77,6 +77,10 @@ function Reader() {
         window.location.assign(`/login?next=${encodeURIComponent(next)}`);
         return;
       }
+      if (!userRes.user.email_confirmed_at) {
+        window.location.assign(`/verify-email?next=${encodeURIComponent(next)}`);
+        return;
+      }
       const { data: prof } = await supabase
         .from("profiles")
         .select("full_name, city, country")
