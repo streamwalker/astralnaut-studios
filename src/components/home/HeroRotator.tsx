@@ -331,14 +331,19 @@ function SlotContent({ slot }: { slot: HeroSlot }) {
       </div>
 
       {showImage ? (
-        <img
-          src={slot.titleImage}
-          alt={slot.titleAlt ?? ""}
-          className="pointer-events-none select-none mt-5 h-auto w-full max-w-[440px] drop-shadow-[0_8px_30px_rgba(0,0,0,0.7)]"
-          loading="eager"
-          draggable={false}
-          onError={() => setImgFailed(true)}
-        />
+        <h1 className="mt-5">
+          <span className="sr-only">{slot.titleAlt ?? fallbackTitle}</span>
+          <img
+            src={slot.titleImage}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none select-none h-auto w-full max-w-[440px] drop-shadow-[0_8px_30px_rgba(0,0,0,0.7)]"
+            loading="eager"
+            fetchPriority="high"
+            draggable={false}
+            onError={() => setImgFailed(true)}
+          />
+        </h1>
       ) : (
         <h1 className="pointer-events-none select-none mt-5 text-fluid-h1 font-black tracking-tight text-white drop-shadow-[0_4px_18px_rgba(0,0,0,0.7)]">
           {fallbackTitle}
