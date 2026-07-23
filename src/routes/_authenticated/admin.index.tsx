@@ -291,10 +291,12 @@ function AdminPage() {
                 {comics?.length ?? 0} page{(comics?.length ?? 0) === 1 ? "" : "s"} total · showing 30 most recent.
               </p>
               <ul className="mt-3 space-y-3">
-                {comics?.slice(0, 30).map((c) => (
+                {comics?.slice(0, 30).map((c, idx) => (
                   <PageRow
                     key={c.id}
                     page={c}
+                    siblings={comics.slice(0, 30)}
+                    initialIndex={idx}
                     invalidateKeys={[["admin-comics"]]}
                   />
                 ))}
