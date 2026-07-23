@@ -19,6 +19,7 @@ import {
   listOutreachProspects,
   upsertOutreachProspect,
   deleteOutreachProspect,
+  runBacklinkCheckNow,
 } from "@/lib/outreach.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/outreach")({
