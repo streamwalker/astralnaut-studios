@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, useNavigate, useServerFn } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -89,27 +91,21 @@ function CompleteProfilePage() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName.trim() || !city.trim() || !country.trim()) {
-      toast.error("Please fill in all fields.");
+    const parsed = profileFormSchema.safeParse({ fullName, city, country });
+    if (!parsed.success) {
+      const fieldErrors: typeof errors = {};
+      for (const iss of parsed.error.issues) {
+        const key = iss.path[0] as keyof typeof errors;
+        if (key && !fieldErrors[key]) fieldErrors[key] = iss.message;
+      }
+      setErrors(fieldErrors);
+      toast.error(parsed.error.issues[0]?.message ?? "Please fix the errors and try again.");
       return;
     }
-    if (!isValidCountry(country)) {
-      toast.error("Please select a country from the list.");
-      return;
-    }
-
+    setErrors({});
     setBusy(true);
     try {
-      const { data: userRes } = await supabase.auth.getUser();
-      if (!userRes.user) throw new Error("Not signed in.");
-      const { error } = await supabase.from("profiles").upsert({
-        id: userRes.user.id,
-        email: userRes.user.email,
-        full_name: fullName.trim(),
-        city: city.trim(),
-        country: country.trim(),
-      });
-      if (error) throw error;
+      await save({ data: parsed.data });
       toast.success("Profile saved.");
       const dest = search.next || "/";
       window.location.assign(dest);
@@ -119,6 +115,7 @@ function CompleteProfilePage() {
       setBusy(false);
     }
   };
+
 
   if (loading) {
     return (
