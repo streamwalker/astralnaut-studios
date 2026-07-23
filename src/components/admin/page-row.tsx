@@ -285,6 +285,16 @@ export function PageRow({ page, neighbors, invalidateKeys }: Props) {
                 {page.is_free ? " · free" : ""}
               </span>
             </DialogTitle>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => setPreviewOpen(false)}
+              className="h-8 w-8 text-white hover:bg-white/10 hover:text-white"
+              aria-label="Close preview"
+            >
+              <X className="h-5 w-5" />
+            </Button>
           </DialogHeader>
           <div className="flex h-full w-full items-center justify-center overflow-auto p-4 pt-14">
             <img
