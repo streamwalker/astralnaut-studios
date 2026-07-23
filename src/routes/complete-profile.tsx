@@ -135,19 +135,22 @@ function CompleteProfilePage() {
         <form onSubmit={onSubmit} className="mt-6 space-y-3">
           <div>
             <Label htmlFor="full_name">Full name</Label>
-            <Input id="full_name" required autoComplete="name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+            <Input id="full_name" required autoComplete="name" value={fullName} onChange={(e) => setFullName(e.target.value)} aria-invalid={!!errors.fullName} />
+            {errors.fullName ? <p className="mt-1 text-xs text-destructive">{errors.fullName}</p> : null}
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label htmlFor="city">City</Label>
-              <Input id="city" required autoComplete="address-level2" value={city} onChange={(e) => setCity(e.target.value)} />
+              <Input id="city" required autoComplete="address-level2" value={city} onChange={(e) => setCity(e.target.value)} aria-invalid={!!errors.city} />
+              {errors.city ? <p className="mt-1 text-xs text-destructive">{errors.city}</p> : null}
             </div>
             <div>
               <Label htmlFor="country">Country</Label>
-              <CountryInput id="country" required value={country} onChange={(e) => setCountry(e.target.value)} />
+              <CountryInput id="country" required value={country} onChange={(e) => setCountry(e.target.value)} aria-invalid={!!errors.country} />
+              {errors.country ? <p className="mt-1 text-xs text-destructive">{errors.country}</p> : null}
             </div>
-
           </div>
+
           <Button type="submit" disabled={busy} className="w-full">
             {busy ? "Saving…" : "Continue"}
           </Button>
