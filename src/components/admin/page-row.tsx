@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { MoreVertical, ArrowUp, ArrowDown, Image as ImageIcon, Pencil, Trash2, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { MoreVertical, ArrowUp, ArrowDown, Image as ImageIcon, Pencil, Trash2, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,6 +62,7 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(initialIndex);
+  const [zoom, setZoom] = useState(1);
   const [busy, setBusy] = useState(false);
 
   const hasSiblings = siblings && siblings.length > 1;
@@ -72,10 +73,14 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
   useEffect(() => {
     if (!previewOpen) return;
     setPreviewIndex(initialIndex);
+    setZoom(1);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") setPreviewIndex((i) => Math.max(0, i - 1));
       if (e.key === "ArrowRight") setPreviewIndex((i) => Math.min((siblings?.length ?? 1) - 1, i + 1));
       if (e.key === "Escape") setPreviewOpen(false);
+      if (e.key === "+" || e.key === "=") setZoom((z) => Math.min(4, z + 0.25));
+      if (e.key === "-" || e.key === "_") setZoom((z) => Math.max(0.25, z - 0.25));
+      if (e.key === "0") setZoom(1);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -300,17 +305,30 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
           <DialogHeader className="absolute left-0 right-0 top-0 z-10 flex-row items-center justify-between gap-3 border-b border-white/10 bg-black/60 px-4 py-2 backdrop-blur">
             <div className="flex min-w-0 flex-1 items-center gap-2">
               {hasSiblings && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  disabled={previewIndex === 0}
-                  onClick={() => setPreviewIndex((i) => i - 1)}
-                  className="h-8 w-8 shrink-0 text-white hover:bg-white/10 hover:text-white disabled:opacity-30"
-                  aria-label="Previous page"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </Button>
+                <>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    disabled={previewIndex === 0}
+                    onClick={() => setPreviewIndex((i) => i - 1)}
+                    className="h-8 w-8 shrink-0 text-white hover:bg-white/10 hover:text-white disabled:opacity-30"
+                    aria-label="Previous page"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    disabled={previewIndex === (siblings?.length ?? 1) - 1}
+                    onClick={() => setPreviewIndex((i) => i + 1)}
+                    className="h-8 w-8 shrink-0 text-white hover:bg-white/10 hover:text-white disabled:opacity-30"
+                    aria-label="Next page"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </Button>
+                </>
               )}
               <DialogTitle className="truncate text-sm font-semibold text-white">
                 {previewPage.title}
@@ -320,29 +338,58 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
                 </span>
               </DialogTitle>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               {hasSiblings && (
+                <span className="hidden text-xs text-white/60 sm:inline">
+                  {previewIndex + 1} / {siblings?.length}
+                </span>
+              )}
+              <div className="flex items-center gap-1 rounded-md border border-white/10 bg-white/5 px-1">
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
-                  disabled={previewIndex === (siblings?.length ?? 1) - 1}
-                  onClick={() => setPreviewIndex((i) => i + 1)}
-                  className="h-8 w-8 text-white hover:bg-white/10 hover:text-white disabled:opacity-30"
-                  aria-label="Next page"
+                  onClick={() => setZoom((z) => Math.max(0.25, z - 0.25))}
+                  className="h-7 w-7 text-white hover:bg-white/10 hover:text-white disabled:opacity-30"
+                  aria-label="Zoom out"
                 >
-                  <ChevronRight className="h-5 w-5" />
+                  <ZoomOut className="h-4 w-4" />
                 </Button>
-              )}
+                <span className="min-w-[3ch] text-center text-xs font-medium text-white/90">
+                  {Math.round(zoom * 100)}%
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setZoom((z) => Math.min(4, z + 0.25))}
+                  className="h-7 w-7 text-white hover:bg-white/10 hover:text-white disabled:opacity-30"
+                  aria-label="Zoom in"
+                >
+                  <ZoomIn className="h-4 w-4" />
+                </Button>
+              </div>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                onClick={() => setPreviewOpen(false)}
+                onClick={() => setZoom(1)}
                 className="h-8 w-8 text-white hover:bg-white/10 hover:text-white"
-                aria-label="Close preview"
+                aria-label="Reset zoom"
+                title="Reset zoom (0)"
               >
-                <X className="h-5 w-5" />
+                <RotateCcw className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => setPreviewOpen(false)}
+                className="h-8 border border-white/10 bg-white/10 px-2.5 text-xs font-medium text-white hover:bg-white/20 hover:text-white"
+                aria-label="Close preview"
+                title="Close (Esc)"
+              >
+                Esc
               </Button>
             </div>
           </DialogHeader>
@@ -350,7 +397,13 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
             <img
               src={publicUrl(previewPage.image_path)}
               alt={previewPage.alt_text ?? previewPage.title}
-              className="max-h-full max-w-full object-contain"
+              className="object-contain transition-all duration-200"
+              style={{
+                width: zoom === 1 ? "auto" : `${zoom * 100}%`,
+                height: zoom === 1 ? "auto" : `${zoom * 100}%`,
+                maxWidth: zoom === 1 ? "100%" : "none",
+                maxHeight: zoom === 1 ? "100%" : "none",
+              }}
             />
           </div>
         </DialogContent>
