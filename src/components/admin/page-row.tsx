@@ -73,10 +73,14 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
   useEffect(() => {
     if (!previewOpen) return;
     setPreviewIndex(initialIndex);
+    setZoom(1);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") setPreviewIndex((i) => Math.max(0, i - 1));
       if (e.key === "ArrowRight") setPreviewIndex((i) => Math.min((siblings?.length ?? 1) - 1, i + 1));
       if (e.key === "Escape") setPreviewOpen(false);
+      if (e.key === "+" || e.key === "=") setZoom((z) => Math.min(4, z + 0.25));
+      if (e.key === "-" || e.key === "_") setZoom((z) => Math.max(0.25, z - 0.25));
+      if (e.key === "0") setZoom(1);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
