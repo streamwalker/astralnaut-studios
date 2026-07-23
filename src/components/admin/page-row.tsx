@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { MoreVertical, ArrowUp, ArrowDown, Image as ImageIcon, Pencil, Trash2 } from "lucide-react";
+import { MoreVertical, ArrowUp, ArrowDown, Image as ImageIcon, Pencil, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
