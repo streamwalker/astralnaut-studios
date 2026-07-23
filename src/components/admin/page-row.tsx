@@ -183,6 +183,62 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
     }
   };
 
+  // ----- Duplicate page -----
+  const duplicatePage = async () => {
+    const src = previewPage;
+    setBusy(true);
+    try {
+      // Copy storage object
+      const ext = src.image_path.split(".").pop() || "png";
+      const base = src.image_path.replace(/\.[^./]+$/, "");
+      const newPath = `${base}.copy-${Date.now()}.${ext}`;
+      const { error: copyErr } = await supabase.storage
+        .from("comic-pages")
+        .copy(src.image_path, newPath);
+      if (copyErr) throw copyErr;
+
+      // Determine next page_number within the same issue
+      let nextPageNumber = src.page_number + 1;
+      if (src.issue_id) {
+        const { data: maxRow } = await supabase
+          .from("comics")
+          .select("page_number")
+          .eq("issue_id", src.issue_id)
+          .order("page_number", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        nextPageNumber = (maxRow?.page_number ?? src.page_number) + 1;
+      }
+
+      const suffix = Date.now().toString(36);
+      const newSlug = `${src.slug}-copy-${suffix}`.slice(0, 120);
+
+      const { error: insErr } = await supabase.from("comics").insert({
+        slug: newSlug,
+        title: `${src.title} (copy)`,
+        page_number: nextPageNumber,
+        image_path: newPath,
+        alt_text: src.alt_text ?? null,
+        issue_id: src.issue_id ?? null,
+        is_free: src.is_free ?? false,
+        published_at: null,
+      });
+      if (insErr) {
+        await supabase.storage.from("comic-pages").remove([newPath]);
+        throw insErr;
+      }
+
+      toast.success("Page duplicated as draft.");
+      invalidate();
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+
+
   return (
     <li className="flex items-center gap-3 rounded-lg border border-border/60 bg-background/40 p-3">
       <button
