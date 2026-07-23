@@ -58,11 +58,13 @@ export function PageRow({ page, neighbors, invalidateKeys }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const invalidate = () => {
     for (const k of invalidateKeys) qc.invalidateQueries({ queryKey: k as unknown[] });
   };
+
 
   // ----- Replace image -----
   const onReplace = async (file: File) => {
@@ -150,19 +152,31 @@ export function PageRow({ page, neighbors, invalidateKeys }: Props) {
 
   return (
     <li className="flex items-center gap-3 rounded-lg border border-border/60 bg-background/40 p-3">
-      <img
-        src={publicUrl(page.image_path)}
-        alt={page.alt_text ?? ""}
-        className="h-14 w-14 rounded object-cover"
-      />
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-semibold">{page.title}</div>
+      <button
+        type="button"
+        onClick={() => setPreviewOpen(true)}
+        className="group relative h-14 w-14 shrink-0 overflow-hidden rounded ring-offset-background transition hover:ring-2 hover:ring-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        aria-label={`Preview ${page.title}`}
+      >
+        <img
+          src={publicUrl(page.image_path)}
+          alt={page.alt_text ?? ""}
+          className="h-14 w-14 object-cover transition group-hover:scale-105"
+        />
+      </button>
+      <button
+        type="button"
+        onClick={() => setPreviewOpen(true)}
+        className="min-w-0 flex-1 text-left"
+      >
+        <div className="truncate text-sm font-semibold hover:underline">{page.title}</div>
         <div className="truncate text-xs text-muted-foreground">
           {page.slug} · page {page.page_number} ·{" "}
           {page.published_at ? "published" : "draft"}
           {page.is_free ? " · free" : ""}
         </div>
-      </div>
+      </button>
+
 
       {neighbors && (
         <div className="flex flex-col">
@@ -257,9 +271,34 @@ export function PageRow({ page, neighbors, invalidateKeys }: Props) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent
+          className="!max-w-[100vw] h-[100vh] w-screen gap-0 border-0 bg-black/95 p-0 sm:rounded-none"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
+          <DialogHeader className="absolute left-0 right-0 top-0 z-10 flex-row items-center justify-between gap-3 border-b border-white/10 bg-black/60 px-4 py-2 backdrop-blur">
+            <DialogTitle className="truncate text-sm font-semibold text-white">
+              {page.title}
+              <span className="ml-2 text-xs font-normal text-white/60">
+                page {page.page_number} · {page.published_at ? "published" : "draft"}
+                {page.is_free ? " · free" : ""}
+              </span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex h-full w-full items-center justify-center overflow-auto p-4 pt-14">
+            <img
+              src={publicUrl(page.image_path)}
+              alt={page.alt_text ?? page.title}
+              className="max-h-full max-w-full object-contain"
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </li>
   );
 }
+
 
 function EditDialog({
   open,
