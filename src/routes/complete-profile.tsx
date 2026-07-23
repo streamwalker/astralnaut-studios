@@ -6,6 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { CountryInput } from "@/components/ui/country-input";
+import { isValidCountry } from "@/lib/countries";
+
 
 const searchSchema = z.object({
   next: z.string().optional().catch(undefined),
@@ -64,6 +67,11 @@ function CompleteProfilePage() {
       toast.error("Please fill in all fields.");
       return;
     }
+    if (!isValidCountry(country)) {
+      toast.error("Please select a country from the list.");
+      return;
+    }
+
     setBusy(true);
     try {
       const { data: userRes } = await supabase.auth.getUser();
@@ -113,8 +121,9 @@ function CompleteProfilePage() {
             </div>
             <div>
               <Label htmlFor="country">Country</Label>
-              <Input id="country" required autoComplete="country-name" value={country} onChange={(e) => setCountry(e.target.value)} />
+              <CountryInput id="country" required value={country} onChange={(e) => setCountry(e.target.value)} />
             </div>
+
           </div>
           <Button type="submit" disabled={busy} className="w-full">
             {busy ? "Saving…" : "Continue"}
