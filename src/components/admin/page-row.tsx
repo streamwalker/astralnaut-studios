@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { MoreVertical, ArrowUp, ArrowDown, Image as ImageIcon, Pencil, Trash2, X, ChevronLeft, ChevronRight } from "lucide-react";
