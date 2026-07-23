@@ -67,6 +67,11 @@ function CompleteProfilePage() {
       toast.error("Please fill in all fields.");
       return;
     }
+    if (!isValidCountry(country)) {
+      toast.error("Please select a country from the list.");
+      return;
+    }
+
     setBusy(true);
     try {
       const { data: userRes } = await supabase.auth.getUser();
@@ -116,8 +121,9 @@ function CompleteProfilePage() {
             </div>
             <div>
               <Label htmlFor="country">Country</Label>
-              <Input id="country" required autoComplete="country-name" value={country} onChange={(e) => setCountry(e.target.value)} />
+              <CountryInput id="country" required value={country} onChange={(e) => setCountry(e.target.value)} />
             </div>
+
           </div>
           <Button type="submit" disabled={busy} className="w-full">
             {busy ? "Saving…" : "Continue"}
