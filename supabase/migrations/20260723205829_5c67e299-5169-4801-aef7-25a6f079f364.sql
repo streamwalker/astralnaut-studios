@@ -1,0 +1,1 @@
+REVOKE SELECT (internal_identifier) ON public.issues FROM anon;
