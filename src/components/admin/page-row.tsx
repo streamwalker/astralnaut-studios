@@ -423,17 +423,38 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
             </div>
           </DialogHeader>
           <div className="flex h-full w-full items-center justify-center overflow-auto p-4 pt-14">
-            <img
-              src={publicUrl(previewPage.image_path)}
-              alt={previewPage.alt_text ?? previewPage.title}
-              className="object-contain transition-all duration-200"
-              style={{
-                width: zoom === 1 ? "auto" : `${zoom * 100}%`,
-                height: zoom === 1 ? "auto" : `${zoom * 100}%`,
-                maxWidth: zoom === 1 ? "100%" : "none",
-                maxHeight: zoom === 1 ? "100%" : "none",
-              }}
-            />
+            {(() => {
+              const frame = deviceSizes[device];
+              const img = (
+                <img
+                  src={publicUrl(previewPage.image_path)}
+                  alt={previewPage.alt_text ?? previewPage.title}
+                  className="object-contain transition-all duration-200"
+                  style={{
+                    width: zoom === 1 ? "auto" : `${zoom * 100}%`,
+                    height: zoom === 1 ? "auto" : `${zoom * 100}%`,
+                    maxWidth: zoom === 1 ? "100%" : "none",
+                    maxHeight: zoom === 1 ? "100%" : "none",
+                  }}
+                />
+              );
+              if (!frame) return img;
+              return (
+                <div
+                  className="relative flex items-center justify-center overflow-auto rounded-[2rem] border-4 border-white/20 bg-black shadow-2xl"
+                  style={{
+                    width: `min(${frame.w}px, 95vw)`,
+                    height: `min(${frame.h}px, calc(100vh - 6rem))`,
+                    aspectRatio: `${frame.w} / ${frame.h}`,
+                  }}
+                >
+                  {img}
+                  <span className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-widest text-white/50">
+                    {device} · {frame.w}×{frame.h}
+                  </span>
+                </div>
+              );
+            })()}
           </div>
         </DialogContent>
       </Dialog>
