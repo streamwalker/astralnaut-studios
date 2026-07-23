@@ -298,23 +298,53 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <DialogHeader className="absolute left-0 right-0 top-0 z-10 flex-row items-center justify-between gap-3 border-b border-white/10 bg-black/60 px-4 py-2 backdrop-blur">
-            <DialogTitle className="truncate text-sm font-semibold text-white">
-              {page.title}
-              <span className="ml-2 text-xs font-normal text-white/60">
-                page {page.page_number} · {page.published_at ? "published" : "draft"}
-                {page.is_free ? " · free" : ""}
-              </span>
-            </DialogTitle>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={() => setPreviewOpen(false)}
-              className="h-8 w-8 text-white hover:bg-white/10 hover:text-white"
-              aria-label="Close preview"
-            >
-              <X className="h-5 w-5" />
-            </Button>
+            <div className="flex min-w-0 flex-1 items-center gap-2">
+              {hasSiblings && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  disabled={previewIndex === 0}
+                  onClick={() => setPreviewIndex((i) => i - 1)}
+                  className="h-8 w-8 shrink-0 text-white hover:bg-white/10 hover:text-white disabled:opacity-30"
+                  aria-label="Previous page"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </Button>
+              )}
+              <DialogTitle className="truncate text-sm font-semibold text-white">
+                {previewPage.title}
+                <span className="ml-2 text-xs font-normal text-white/60">
+                  page {previewPage.page_number} · {previewPage.published_at ? "published" : "draft"}
+                  {previewPage.is_free ? " · free" : ""}
+                </span>
+              </DialogTitle>
+            </div>
+            <div className="flex items-center gap-1">
+              {hasSiblings && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  disabled={previewIndex === (siblings?.length ?? 1) - 1}
+                  onClick={() => setPreviewIndex((i) => i + 1)}
+                  className="h-8 w-8 text-white hover:bg-white/10 hover:text-white disabled:opacity-30"
+                  aria-label="Next page"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+              )}
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => setPreviewOpen(false)}
+                className="h-8 w-8 text-white hover:bg-white/10 hover:text-white"
+                aria-label="Close preview"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
           </DialogHeader>
           <div className="flex h-full w-full items-center justify-center overflow-auto p-4 pt-14">
             <img
