@@ -411,9 +411,21 @@ function Reader() {
     return () => { cancelled = true; };
   }, [current?.id, current?.image_path, isFree]);
 
+  if (!accessOk) {
+    return (
+      <>
+        <SiteHeader />
+        <div className="container-wide py-16 text-center text-sm text-[var(--mute)]">
+          Verifying access…
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <SiteHeader />
+
       <div
         className="container-wide py-6"
         style={{ ["--reader-ui-scale" as string]: String(uiScale) }}
