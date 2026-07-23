@@ -42,12 +42,44 @@ const upsertSchema = z.object({
   link_acquired_url: z.string().trim().url().max(500).optional().nullable().or(z.literal("")),
 });
 
+function normalizeUrl(raw: string): string {
+  try {
+    const u = new URL(raw.trim());
+    u.hash = "";
+    u.hostname = u.hostname.toLowerCase().replace(/^www\./, "");
+    // Strip tracking params
+    const drop = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "fbclid", "gclid", "ref", "ref_src"];
+    drop.forEach((k) => u.searchParams.delete(k));
+    // Normalize trailing slash on path (keep root "/")
+    if (u.pathname.length > 1 && u.pathname.endsWith("/")) u.pathname = u.pathname.slice(0, -1);
+    return u.toString().toLowerCase();
+  } catch {
+    return raw.trim().toLowerCase();
+  }
+}
+
 export const upsertOutreachProspect = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => upsertSchema.parse(d))
   .handler(async ({ context, data }) => {
     await assertAdmin(context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Duplicate detection: normalize URL and check for existing prospect with matching URL
+    const normalized = normalizeUrl(data.url);
+    const { data: allRows, error: dupErr } = await supabaseAdmin
+      .from("outreach_prospects")
+      .select("id, url");
+    if (dupErr) throw new Error(dupErr.message);
+    const conflict = (allRows ?? []).find(
+      (r) => normalizeUrl(r.url) === normalized && r.id !== data.id,
+    );
+    if (conflict) {
+      throw new Error(
+        `Duplicate prospect: this URL already exists in the tracker (${conflict.url}). Edit the existing entry instead.`,
+      );
+    }
+
     const payload = {
       url: data.url,
       site_name: data.site_name || null,
