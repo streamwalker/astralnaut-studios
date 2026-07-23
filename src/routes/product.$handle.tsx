@@ -54,6 +54,28 @@ export const Route = createFileRoute("/product/$handle")({
         { name: "twitter:image:alt", content: imgAlt },
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: product
+        ? [{
+            type: "application/ld+json",
+            children: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Product",
+              name: product.title,
+              description: product.description,
+              image: product.images?.edges?.map((e) => absUrl(e.node.url)).filter(Boolean),
+              url,
+              offers: {
+                "@type": "Offer",
+                url,
+                priceCurrency: product.variants?.edges?.[0]?.node?.price?.currencyCode,
+                price: product.variants?.edges?.[0]?.node?.price?.amount,
+                availability: product.variants?.edges?.[0]?.node?.availableForSale
+                  ? "https://schema.org/InStock"
+                  : "https://schema.org/OutOfStock",
+              },
+            }),
+          }]
+        : [],
     };
   },
   loader: ({ context, params }) =>
