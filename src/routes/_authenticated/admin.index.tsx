@@ -78,7 +78,7 @@ function AdminPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("comics")
-        .select("id, title, slug, page_number, image_path, published_at, created_at, is_free, alt_text, issue_id")
+        .select("id, title, slug, page_number, image_path, published_at, created_at, updated_at, is_free, alt_text, issue_id")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
@@ -121,7 +121,7 @@ function AdminPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("comics")
-        .select("id, title, slug, page_number, image_path, published_at, is_free, alt_text, issue_id")
+        .select("id, title, slug, page_number, image_path, published_at, updated_at, is_free, alt_text, issue_id")
         .eq("issue_id", mgrIssueId)
         .order("page_number", { ascending: true });
       if (error) throw error;

@@ -39,6 +39,7 @@ export type PageRowData = {
   page_number: number;
   image_path: string;
   published_at: string | null;
+  updated_at: string | null;
   is_free?: boolean | null;
   alt_text?: string | null;
   issue_id?: string | null;
