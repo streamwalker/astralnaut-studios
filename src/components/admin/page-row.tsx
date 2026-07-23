@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { MoreVertical, ArrowUp, ArrowDown, Image as ImageIcon, Pencil, Trash2, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
+import { MoreVertical, ArrowUp, ArrowDown, Image as ImageIcon, Pencil, Trash2, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCcw, Smartphone, Tablet, Monitor } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,7 +63,15 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(initialIndex);
   const [zoom, setZoom] = useState(1);
+  const [device, setDevice] = useState<"mobile" | "tablet" | "desktop" | "full">("full");
   const [busy, setBusy] = useState(false);
+
+  const deviceSizes: Record<typeof device, { w: number; h: number } | null> = {
+    mobile: { w: 390, h: 844 },
+    tablet: { w: 820, h: 1180 },
+    desktop: { w: 1440, h: 900 },
+    full: null,
+  };
 
   const hasSiblings = siblings && siblings.length > 1;
   const previewPage = hasSiblings && previewIndex >= 0 && previewIndex < siblings!.length
@@ -344,6 +352,27 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
                   {previewIndex + 1} / {siblings?.length}
                 </span>
               )}
+              <div className="hidden items-center gap-1 rounded-md border border-white/10 bg-white/5 px-1 md:flex">
+                {([
+                  { id: "mobile", icon: Smartphone, label: "Mobile (390×844)" },
+                  { id: "tablet", icon: Tablet, label: "Tablet (820×1180)" },
+                  { id: "desktop", icon: Monitor, label: "Desktop (1440×900)" },
+                ] as const).map(({ id, icon: Icon, label }) => (
+                  <Button
+                    key={id}
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setDevice((d) => (d === id ? "full" : id))}
+                    className={`h-7 w-7 hover:bg-white/10 hover:text-white ${device === id ? "bg-white/20 text-white" : "text-white/70"}`}
+                    aria-label={label}
+                    title={label}
+                    aria-pressed={device === id}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </Button>
+                ))}
+              </div>
               <div className="flex items-center gap-1 rounded-md border border-white/10 bg-white/5 px-1">
                 <Button
                   type="button"
@@ -394,17 +423,38 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
             </div>
           </DialogHeader>
           <div className="flex h-full w-full items-center justify-center overflow-auto p-4 pt-14">
-            <img
-              src={publicUrl(previewPage.image_path)}
-              alt={previewPage.alt_text ?? previewPage.title}
-              className="object-contain transition-all duration-200"
-              style={{
-                width: zoom === 1 ? "auto" : `${zoom * 100}%`,
-                height: zoom === 1 ? "auto" : `${zoom * 100}%`,
-                maxWidth: zoom === 1 ? "100%" : "none",
-                maxHeight: zoom === 1 ? "100%" : "none",
-              }}
-            />
+            {(() => {
+              const frame = deviceSizes[device];
+              const img = (
+                <img
+                  src={publicUrl(previewPage.image_path)}
+                  alt={previewPage.alt_text ?? previewPage.title}
+                  className="object-contain transition-all duration-200"
+                  style={{
+                    width: zoom === 1 ? "auto" : `${zoom * 100}%`,
+                    height: zoom === 1 ? "auto" : `${zoom * 100}%`,
+                    maxWidth: zoom === 1 ? "100%" : "none",
+                    maxHeight: zoom === 1 ? "100%" : "none",
+                  }}
+                />
+              );
+              if (!frame) return img;
+              return (
+                <div
+                  className="relative flex items-center justify-center overflow-auto rounded-[2rem] border-4 border-white/20 bg-black shadow-2xl"
+                  style={{
+                    width: `min(${frame.w}px, 95vw)`,
+                    height: `min(${frame.h}px, calc(100vh - 6rem))`,
+                    aspectRatio: `${frame.w} / ${frame.h}`,
+                  }}
+                >
+                  {img}
+                  <span className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-widest text-white/50">
+                    {device} · {frame.w}×{frame.h}
+                  </span>
+                </div>
+              );
+            })()}
           </div>
         </DialogContent>
       </Dialog>
