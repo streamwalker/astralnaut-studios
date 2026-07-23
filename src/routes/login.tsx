@@ -202,7 +202,7 @@ function LoginPage() {
                 </div>
                 <div>
                   <Label htmlFor="country">Country</Label>
-                  <Input id="country" type="text" required autoComplete="country-name" value={country} onChange={(e) => setCountry(e.target.value)} />
+                  <CountryInput id="country" required value={country} onChange={(e) => setCountry(e.target.value)} />
                 </div>
               </div>
             </>
