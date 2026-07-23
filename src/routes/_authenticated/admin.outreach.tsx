@@ -154,7 +154,7 @@ function AdminOutreach() {
             Manage backlink prospects. Track URLs, contacts, tier, status, and acquired links.
           </p>
         </div>
-        <Link to="/_authenticated/admin" className="text-xs text-muted-foreground hover:text-[var(--neon)]">
+        <Link to="/admin" className="text-xs text-muted-foreground hover:text-[var(--neon)]">
           ← Admin
         </Link>
       </div>
