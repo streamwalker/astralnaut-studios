@@ -28,16 +28,23 @@ export function useSubscriberCount() {
   });
 
   const stats = query.data ?? FALLBACK;
-  const showCount =
+  const pctOfGoal =
+    stats.campaignGoal > 0 ? stats.subscriberCount / stats.campaignGoal : 0;
+  const revealCampaign =
     siteConfig.SHOW_SUBSCRIBER_COUNT &&
-    stats.subscriberCount >= siteConfig.MIN_SUBSCRIBER_COUNT_TO_SHOW;
+    stats.subscriberCount >= siteConfig.MIN_SUBSCRIBER_COUNT_TO_SHOW &&
+    pctOfGoal >= siteConfig.CAMPAIGN_REVEAL_PCT;
 
   return {
     ...stats,
     isLoading: query.isLoading,
-    /** Whether the raw count should be shown publicly. */
-    showCount,
+    /** Fraction of the campaign goal currently reached (0–1+). */
+    pctOfGoal,
+    /** Whether the subscriber count + milestone strip should be revealed. */
+    revealCampaign,
+    /** Back-compat alias. */
+    showCount: revealCampaign,
     /** Convenience: the count to display, or null when suppressed. */
-    displayCount: showCount ? stats.subscriberCount : null,
+    displayCount: revealCampaign ? stats.subscriberCount : null,
   };
 }

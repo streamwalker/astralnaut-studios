@@ -18,7 +18,8 @@ interface Props {
  * so the two surfaces can never disagree.
  */
 export function MilestoneStrip({ name, ends_at, rewards }: Props) {
-  const { subscriberCount, campaignGoal } = useSubscriberCount();
+  const { subscriberCount, campaignGoal, revealCampaign } = useSubscriberCount();
+  if (!revealCampaign) return null;
   const goal = campaignGoal || siteConfig.CAMPAIGN.goal;
   const pct = goal > 0 ? Math.min(100, Math.round((subscriberCount / goal) * 100)) : 0;
 

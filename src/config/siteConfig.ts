@@ -18,6 +18,14 @@ export const siteConfig = {
    */
   MIN_SUBSCRIBER_COUNT_TO_SHOW: 50,
 
+  /**
+   * Reveal threshold — the public subscriber count and the "Active campaign"
+   * milestone strip stay hidden until we've reached this fraction of the
+   * current campaign goal. Prevents early low numbers from undercutting
+   * momentum. Set to 0 to always show (subject to the other gates).
+   */
+  CAMPAIGN_REVEAL_PCT: 0.7,
+
   /** When true, Initiate card shows "Most readers save with annual" nudge. */
   SHOW_ANNUAL_NUDGE: false as boolean,
 
