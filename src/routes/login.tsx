@@ -7,6 +7,9 @@ import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { CountryInput } from "@/components/ui/country-input";
+import { isValidCountry } from "@/lib/countries";
+
 import { LEGAL_CONFIG } from "@/config/legal";
 import { recordSignupConsent } from "@/lib/consent.functions";
 import logo from "@/assets/astralnaut-logo.png";
@@ -71,6 +74,11 @@ function LoginPage() {
       toast.error("Please provide your full name, city, and country.");
       return;
     }
+    if (mode === "signup" && !isValidCountry(country)) {
+      toast.error("Please select a country from the list.");
+      return;
+    }
+
     setBusy(true);
     try {
       if (mode === "signup") {
