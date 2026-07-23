@@ -66,6 +66,31 @@ function Reader() {
   const { issue, pages } = Route.useLoaderData();
   const { page } = Route.useSearch();
   const navigate = useNavigate();
+  const [accessOk, setAccessOk] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const next = `/reader/${issue.series.slug}/${issue.issue_number}?page=${page}`;
+      const { data: userRes } = await supabase.auth.getUser();
+      if (cancelled) return;
+      if (!userRes.user) {
+        window.location.assign(`/login?next=${encodeURIComponent(next)}`);
+        return;
+      }
+      const { data: prof } = await supabase
+        .from("profiles")
+        .select("full_name, city, country")
+        .eq("id", userRes.user.id)
+        .maybeSingle();
+      if (cancelled) return;
+      if (!prof || !prof.full_name || !prof.city || !prof.country) {
+        window.location.assign(`/complete-profile?next=${encodeURIComponent(next)}`);
+        return;
+      }
+      setAccessOk(true);
+    })();
+    return () => { cancelled = true; };
+  }, [issue.series.slug, issue.issue_number, page]);
   const total = Math.ceil(Number(issue.total_pages));
   const freeMax = Math.floor(Number(issue.free_pages));
   const current = pages.find((p: typeof pages[number]) => p.page_number === page);
