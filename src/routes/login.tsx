@@ -40,6 +40,9 @@ function LoginPage() {
   const [mode, setMode] = useState<"signin" | "signup">(search.plan ? "signup" : "signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [busy, setBusy] = useState(false);
 
