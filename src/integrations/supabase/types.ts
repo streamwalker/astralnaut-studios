@@ -1556,6 +1556,11 @@ export type Database = {
           link_acquired: boolean
           link_acquired_at: string | null
           link_acquired_url: string | null
+          link_check_http_status: number | null
+          link_check_note: string | null
+          link_check_status: string
+          link_failure_count: number
+          link_last_checked_at: string | null
           notes: string | null
           site_name: string | null
           status: string
@@ -1574,6 +1579,11 @@ export type Database = {
           link_acquired?: boolean
           link_acquired_at?: string | null
           link_acquired_url?: string | null
+          link_check_http_status?: number | null
+          link_check_note?: string | null
+          link_check_status?: string
+          link_failure_count?: number
+          link_last_checked_at?: string | null
           notes?: string | null
           site_name?: string | null
           status?: string
@@ -1592,6 +1602,11 @@ export type Database = {
           link_acquired?: boolean
           link_acquired_at?: string | null
           link_acquired_url?: string | null
+          link_check_http_status?: number | null
+          link_check_note?: string | null
+          link_check_status?: string
+          link_failure_count?: number
+          link_last_checked_at?: string | null
           notes?: string | null
           site_name?: string | null
           status?: string
