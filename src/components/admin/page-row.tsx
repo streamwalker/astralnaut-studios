@@ -271,9 +271,34 @@ export function PageRow({ page, neighbors, invalidateKeys }: Props) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent
+          className="!max-w-[100vw] h-[100vh] w-screen gap-0 border-0 bg-black/95 p-0 sm:rounded-none"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
+          <DialogHeader className="absolute left-0 right-0 top-0 z-10 flex-row items-center justify-between gap-3 border-b border-white/10 bg-black/60 px-4 py-2 backdrop-blur">
+            <DialogTitle className="truncate text-sm font-semibold text-white">
+              {page.title}
+              <span className="ml-2 text-xs font-normal text-white/60">
+                page {page.page_number} · {page.published_at ? "published" : "draft"}
+                {page.is_free ? " · free" : ""}
+              </span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex h-full w-full items-center justify-center overflow-auto p-4 pt-14">
+            <img
+              src={publicUrl(page.image_path)}
+              alt={page.alt_text ?? page.title}
+              className="max-h-full max-w-full object-contain"
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </li>
   );
 }
+
 
 function EditDialog({
   open,
