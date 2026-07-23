@@ -423,10 +423,14 @@ function AdminOutreach() {
   );
 }
 
-function Stat({ label, value }: { label: string; value: number }) {
+function Stat({ label, value, danger = false }: { label: string; value: number; danger?: boolean }) {
   return (
     <div className="rounded-md border border-border bg-card p-4">
-      <div className="font-mono text-2xl font-black text-[var(--gold)]">{value}</div>
+      <div
+        className={`font-mono text-2xl font-black ${danger && value > 0 ? "text-red-400" : "text-[var(--gold)]"}`}
+      >
+        {value}
+      </div>
       <div className="mt-1 text-[10px] font-bold uppercase tracking-[3px] text-muted-foreground">
         {label}
       </div>
