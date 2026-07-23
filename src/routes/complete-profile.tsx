@@ -49,9 +49,10 @@ function CompleteProfilePage() {
         setCity(prof.city ?? "");
         setCountry(prof.country ?? "");
         if (prof.full_name && prof.city && prof.country && search.next) {
-          nav({ to: search.next as never, replace: true });
+          window.location.replace(search.next);
           return;
         }
+
       }
       setLoading(false);
     })();
