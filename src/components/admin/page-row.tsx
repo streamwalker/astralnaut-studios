@@ -1,7 +1,7 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { MoreVertical, ArrowUp, ArrowDown, Image as ImageIcon, Pencil, Trash2, X } from "lucide-react";
+import { MoreVertical, ArrowUp, ArrowDown, Image as ImageIcon, Pencil, Trash2, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,19 +47,39 @@ export type PageRowData = {
 type Props = {
   page: PageRowData;
   neighbors?: { up?: PageRowData; down?: PageRowData };
+  siblings?: PageRowData[];
+  initialIndex?: number;
   invalidateKeys: Array<readonly unknown[]>;
 };
 
 const publicUrl = (path: string) =>
   supabase.storage.from("comic-pages").getPublicUrl(path).data.publicUrl;
 
-export function PageRow({ page, neighbors, invalidateKeys }: Props) {
+export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidateKeys }: Props) {
   const qc = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState(initialIndex);
   const [busy, setBusy] = useState(false);
+
+  const hasSiblings = siblings && siblings.length > 1;
+  const previewPage = hasSiblings && previewIndex >= 0 && previewIndex < siblings!.length
+    ? siblings![previewIndex]
+    : page;
+
+  useEffect(() => {
+    if (!previewOpen) return;
+    setPreviewIndex(initialIndex);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") setPreviewIndex((i) => Math.max(0, i - 1));
+      if (e.key === "ArrowRight") setPreviewIndex((i) => Math.min((siblings?.length ?? 1) - 1, i + 1));
+      if (e.key === "Escape") setPreviewOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [previewOpen, initialIndex, siblings?.length]);
 
   const invalidate = () => {
     for (const k of invalidateKeys) qc.invalidateQueries({ queryKey: k as unknown[] });
@@ -278,28 +298,58 @@ export function PageRow({ page, neighbors, invalidateKeys }: Props) {
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <DialogHeader className="absolute left-0 right-0 top-0 z-10 flex-row items-center justify-between gap-3 border-b border-white/10 bg-black/60 px-4 py-2 backdrop-blur">
-            <DialogTitle className="truncate text-sm font-semibold text-white">
-              {page.title}
-              <span className="ml-2 text-xs font-normal text-white/60">
-                page {page.page_number} · {page.published_at ? "published" : "draft"}
-                {page.is_free ? " · free" : ""}
-              </span>
-            </DialogTitle>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={() => setPreviewOpen(false)}
-              className="h-8 w-8 text-white hover:bg-white/10 hover:text-white"
-              aria-label="Close preview"
-            >
-              <X className="h-5 w-5" />
-            </Button>
+            <div className="flex min-w-0 flex-1 items-center gap-2">
+              {hasSiblings && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  disabled={previewIndex === 0}
+                  onClick={() => setPreviewIndex((i) => i - 1)}
+                  className="h-8 w-8 shrink-0 text-white hover:bg-white/10 hover:text-white disabled:opacity-30"
+                  aria-label="Previous page"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </Button>
+              )}
+              <DialogTitle className="truncate text-sm font-semibold text-white">
+                {previewPage.title}
+                <span className="ml-2 text-xs font-normal text-white/60">
+                  page {previewPage.page_number} · {previewPage.published_at ? "published" : "draft"}
+                  {previewPage.is_free ? " · free" : ""}
+                </span>
+              </DialogTitle>
+            </div>
+            <div className="flex items-center gap-1">
+              {hasSiblings && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  disabled={previewIndex === (siblings?.length ?? 1) - 1}
+                  onClick={() => setPreviewIndex((i) => i + 1)}
+                  className="h-8 w-8 text-white hover:bg-white/10 hover:text-white disabled:opacity-30"
+                  aria-label="Next page"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+              )}
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => setPreviewOpen(false)}
+                className="h-8 w-8 text-white hover:bg-white/10 hover:text-white"
+                aria-label="Close preview"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
           </DialogHeader>
           <div className="flex h-full w-full items-center justify-center overflow-auto p-4 pt-14">
             <img
-              src={publicUrl(page.image_path)}
-              alt={page.alt_text ?? page.title}
+              src={publicUrl(previewPage.image_path)}
+              alt={previewPage.alt_text ?? previewPage.title}
               className="max-h-full max-w-full object-contain"
             />
           </div>
