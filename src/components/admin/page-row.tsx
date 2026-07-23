@@ -352,6 +352,27 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
                   {previewIndex + 1} / {siblings?.length}
                 </span>
               )}
+              <div className="hidden items-center gap-1 rounded-md border border-white/10 bg-white/5 px-1 md:flex">
+                {([
+                  { id: "mobile", icon: Smartphone, label: "Mobile (390×844)" },
+                  { id: "tablet", icon: Tablet, label: "Tablet (820×1180)" },
+                  { id: "desktop", icon: Monitor, label: "Desktop (1440×900)" },
+                ] as const).map(({ id, icon: Icon, label }) => (
+                  <Button
+                    key={id}
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setDevice((d) => (d === id ? "full" : id))}
+                    className={`h-7 w-7 hover:bg-white/10 hover:text-white ${device === id ? "bg-white/20 text-white" : "text-white/70"}`}
+                    aria-label={label}
+                    title={label}
+                    aria-pressed={device === id}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </Button>
+                ))}
+              </div>
               <div className="flex items-center gap-1 rounded-md border border-white/10 bg-white/5 px-1">
                 <Button
                   type="button"
