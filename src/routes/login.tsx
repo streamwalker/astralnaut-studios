@@ -67,6 +67,10 @@ function LoginPage() {
       toast.error("Please review and accept the account terms to continue.");
       return;
     }
+    if (mode === "signup" && (!fullName.trim() || !city.trim() || !country.trim())) {
+      toast.error("Please provide your full name, city, and country.");
+      return;
+    }
     setBusy(true);
     try {
       if (mode === "signup") {
@@ -74,7 +78,14 @@ function LoginPage() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin + successDestination() },
+          options: {
+            emailRedirectTo: window.location.origin + successDestination(),
+            data: {
+              full_name: fullName.trim(),
+              city: city.trim(),
+              country: country.trim(),
+            },
+          },
         });
         if (error) throw error;
         // If confirmation is disabled the session exists immediately; record now.
@@ -83,6 +94,16 @@ function LoginPage() {
             await recordSignupConsent({ data: { consentText: LEGAL_CONFIG.clickwrap.signup } });
             localStorage.removeItem(PENDING_KEY);
           } catch { /* Root SIGNED_IN handler will retry */ }
+          // Ensure profile row has the details even if the trigger missed a field.
+          try {
+            await supabase.from("profiles").upsert({
+              id: data.session.user.id,
+              email,
+              full_name: fullName.trim(),
+              city: city.trim(),
+              country: country.trim(),
+            });
+          } catch { /* non-fatal */ }
         }
         toast.success("Check your email to confirm your account.");
       } else {
