@@ -62,6 +62,7 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(initialIndex);
+  const [zoom, setZoom] = useState(1);
   const [busy, setBusy] = useState(false);
 
   const hasSiblings = siblings && siblings.length > 1;
