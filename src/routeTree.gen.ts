@@ -30,6 +30,7 @@ import { Route as CorporateRouteImport } from './routes/corporate'
 import { Route as CopyrightDmcaRouteImport } from './routes/copyright-dmca'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ContentAccessibilityRouteImport } from './routes/content-accessibility'
+import { Route as CompleteProfileRouteImport } from './routes/complete-profile'
 import { Route as CommunityGuidelinesRouteImport } from './routes/community-guidelines'
 import { Route as ChildrenOfAquariusRouteImport } from './routes/children-of-aquarius'
 import { Route as CanonCameoTermsRouteImport } from './routes/canon-cameo-terms'
@@ -189,6 +190,11 @@ const CookiesRoute = CookiesRouteImport.update({
 const ContentAccessibilityRoute = ContentAccessibilityRouteImport.update({
   id: '/content-accessibility',
   path: '/content-accessibility',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompleteProfileRoute = CompleteProfileRouteImport.update({
+  id: '/complete-profile',
+  path: '/complete-profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommunityGuidelinesRoute = CommunityGuidelinesRouteImport.update({
@@ -493,6 +499,7 @@ export interface FileRoutesByFullPath {
   '/canon-cameo-terms': typeof CanonCameoTermsRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
   '/community-guidelines': typeof CommunityGuidelinesRoute
+  '/complete-profile': typeof CompleteProfileRoute
   '/content-accessibility': typeof ContentAccessibilityRoute
   '/cookies': typeof CookiesRoute
   '/copyright-dmca': typeof CopyrightDmcaRoute
@@ -570,6 +577,7 @@ export interface FileRoutesByTo {
   '/canon-cameo-terms': typeof CanonCameoTermsRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
   '/community-guidelines': typeof CommunityGuidelinesRoute
+  '/complete-profile': typeof CompleteProfileRoute
   '/content-accessibility': typeof ContentAccessibilityRoute
   '/cookies': typeof CookiesRoute
   '/copyright-dmca': typeof CopyrightDmcaRoute
@@ -649,6 +657,7 @@ export interface FileRoutesById {
   '/canon-cameo-terms': typeof CanonCameoTermsRoute
   '/children-of-aquarius': typeof ChildrenOfAquariusRoute
   '/community-guidelines': typeof CommunityGuidelinesRoute
+  '/complete-profile': typeof CompleteProfileRoute
   '/content-accessibility': typeof ContentAccessibilityRoute
   '/cookies': typeof CookiesRoute
   '/copyright-dmca': typeof CopyrightDmcaRoute
@@ -728,6 +737,7 @@ export interface FileRouteTypes {
     | '/canon-cameo-terms'
     | '/children-of-aquarius'
     | '/community-guidelines'
+    | '/complete-profile'
     | '/content-accessibility'
     | '/cookies'
     | '/copyright-dmca'
@@ -805,6 +815,7 @@ export interface FileRouteTypes {
     | '/canon-cameo-terms'
     | '/children-of-aquarius'
     | '/community-guidelines'
+    | '/complete-profile'
     | '/content-accessibility'
     | '/cookies'
     | '/copyright-dmca'
@@ -883,6 +894,7 @@ export interface FileRouteTypes {
     | '/canon-cameo-terms'
     | '/children-of-aquarius'
     | '/community-guidelines'
+    | '/complete-profile'
     | '/content-accessibility'
     | '/cookies'
     | '/copyright-dmca'
@@ -962,6 +974,7 @@ export interface RootRouteChildren {
   CanonCameoTermsRoute: typeof CanonCameoTermsRoute
   ChildrenOfAquariusRoute: typeof ChildrenOfAquariusRoute
   CommunityGuidelinesRoute: typeof CommunityGuidelinesRoute
+  CompleteProfileRoute: typeof CompleteProfileRoute
   ContentAccessibilityRoute: typeof ContentAccessibilityRoute
   CookiesRoute: typeof CookiesRoute
   CopyrightDmcaRoute: typeof CopyrightDmcaRoute
@@ -1146,6 +1159,13 @@ declare module '@tanstack/react-router' {
       path: '/content-accessibility'
       fullPath: '/content-accessibility'
       preLoaderRoute: typeof ContentAccessibilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/complete-profile': {
+      id: '/complete-profile'
+      path: '/complete-profile'
+      fullPath: '/complete-profile'
+      preLoaderRoute: typeof CompleteProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/community-guidelines': {
@@ -1680,6 +1700,7 @@ const rootRouteChildren: RootRouteChildren = {
   CanonCameoTermsRoute: CanonCameoTermsRoute,
   ChildrenOfAquariusRoute: ChildrenOfAquariusRoute,
   CommunityGuidelinesRoute: CommunityGuidelinesRoute,
+  CompleteProfileRoute: CompleteProfileRoute,
   ContentAccessibilityRoute: ContentAccessibilityRoute,
   CookiesRoute: CookiesRoute,
   CopyrightDmcaRoute: CopyrightDmcaRoute,
