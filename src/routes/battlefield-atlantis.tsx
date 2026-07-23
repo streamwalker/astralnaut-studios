@@ -115,7 +115,7 @@ function BAPage() {
               </div>
             )}
 
-            {/* Top-left: $1.00 / ISSUE #1 comic price box */}
+            {/* Top-left: $4.99 / ISSUE #1 comic price box */}
 
             <div className="absolute left-3 top-3 overflow-hidden rounded-sm border border-black/40 bg-[#f5e9c8] font-mono text-black shadow-md">
               <div className="flex border-b border-black/30 text-[10px] font-black">
