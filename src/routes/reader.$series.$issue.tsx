@@ -67,6 +67,7 @@ function Reader() {
   const { page } = Route.useSearch();
   const navigate = useNavigate();
   const [accessOk, setAccessOk] = useState(false);
+  const [readerLocation, setReaderLocation] = useState<{ city: string; country: string } | null>(null);
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -91,6 +92,7 @@ function Reader() {
         window.location.assign(`/complete-profile?next=${encodeURIComponent(next)}`);
         return;
       }
+      setReaderLocation({ city: prof.city, country: prof.country });
       setAccessOk(true);
     })();
     return () => { cancelled = true; };
@@ -439,6 +441,21 @@ function Reader() {
           <Link to={`/${issue.series.slug}` as "/battlefield-atlantis"} className="text-[var(--mute)] hover:text-[var(--neon)]">← {issue.series.name}</Link>
           <div className="font-mono text-[var(--mute)]">PAGE <span className="text-[var(--ink)]">{page}</span> / {total} · {isFree ? <span className="text-[var(--neon)]">FREE</span> : <span className="text-[var(--gold)]">LOCKED</span>}</div>
         </div>
+        {readerLocation ? (
+          <div
+            className="mt-1 flex items-center justify-end gap-2 font-mono uppercase tracking-[2px] text-[var(--mute)]"
+            style={{ fontSize: `calc(10px * ${uiScale})` }}
+            title="Signed in from"
+          >
+            <span aria-hidden="true">◉</span>
+            <span>
+              {readerLocation.city}, {readerLocation.country}
+            </span>
+            <Link to="/complete-profile" className="underline underline-offset-2 hover:text-[var(--neon)]">
+              Edit
+            </Link>
+          </div>
+        ) : null}
         <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
           Page {page} of {total}{isFree ? ", free preview" : ", locked"}
         </div>
