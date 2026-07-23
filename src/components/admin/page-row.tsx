@@ -348,8 +348,8 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
           </DialogHeader>
           <div className="flex h-full w-full items-center justify-center overflow-auto p-4 pt-14">
             <img
-              src={publicUrl(page.image_path)}
-              alt={page.alt_text ?? page.title}
+              src={publicUrl(previewPage.image_path)}
+              alt={previewPage.alt_text ?? previewPage.title}
               className="max-h-full max-w-full object-contain"
             />
           </div>
