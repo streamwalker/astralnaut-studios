@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { track } from "@/lib/analytics";
+import { supabase } from "@/integrations/supabase/client";
+import { buildGlowFilter, HERO_GLOW_QUERY_KEY, type HeroGlow } from "@/lib/hero-glow";
 import videoAsset from "@/assets/battlefield-atlantis-teaser.mp4.asset.json";
 import posterAsset from "@/assets/battlefield-atlantis-teaser-poster.jpg.asset.json";
 import baLogo from "@/assets/battlefield-atlantis-logo-clean.png";
