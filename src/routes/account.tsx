@@ -97,6 +97,7 @@ function AccountPage() {
       if (mounted) {
         setEmail(u.user.email ?? "");
         setMemberSince(u.user.created_at ?? null);
+        setLastSignIn(u.user.last_sign_in_at ?? null);
       }
       const env = getStripeEnvironment();
       const { data } = await supabase
