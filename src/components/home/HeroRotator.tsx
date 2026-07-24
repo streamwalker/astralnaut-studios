@@ -100,6 +100,20 @@ export function HeroRotator() {
   const [reducedMotion, setReducedMotion] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
+  const { data: glowRows } = useQuery({
+    queryKey: HERO_GLOW_QUERY_KEY,
+    staleTime: 60_000,
+    queryFn: async (): Promise<HeroGlow[]> => {
+      const { data, error } = await supabase
+        .from("hero_logo_glow")
+        .select("series_slug, enabled, color, intensity, spread");
+      if (error) throw error;
+      return (data ?? []) as HeroGlow[];
+    },
+  });
+  const glowMap = new Map<string, HeroGlow>();
+  (glowRows ?? []).forEach((g) => glowMap.set(g.series_slug, g));
+
   // Detect reduced motion (disables autoplay + video).
   useEffect(() => {
     if (typeof window === "undefined") return;
