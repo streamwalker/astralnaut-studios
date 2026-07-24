@@ -143,7 +143,15 @@ export function SiteHeader() {
               </button>
             </>
           ) : data?.user ? (
-            <Link to="/account" data-tour="nav-account" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Account</Link>
+            <>
+              <Link to="/account" data-tour="nav-account" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Account</Link>
+              <button
+                onClick={signOut}
+                className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]"
+              >
+                Sign out
+              </button>
+            </>
           ) : (
             <Link to="/login" data-tour="nav-account" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Sign in</Link>
           )}

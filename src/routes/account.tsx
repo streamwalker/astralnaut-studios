@@ -406,9 +406,9 @@ function AccountPage() {
         </section>
 
         {/* FOOTER ACTIONS */}
-        <div className="mt-12 flex items-center justify-between">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 sm:flex-row">
           <Link to="/" className="text-sm text-[var(--mute)] hover:text-[var(--neon)]">← Back to library</Link>
-          <button onClick={signOut} className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Sign out</button>
+          <button onClick={signOut} className="btn-ghost">Sign out</button>
         </div>
       </main>
       <SiteFooter />
