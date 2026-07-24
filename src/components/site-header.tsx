@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { ConfirmButton } from "@/components/admin/confirm-button";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -135,22 +136,32 @@ export function SiteHeader() {
                 />
                 Admin Mode
               </Link>
-              <button
-                onClick={signOut}
-                className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]"
-              >
-                Sign out
-              </button>
+              <ConfirmButton
+                trigger={
+                  <button className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">
+                    Sign out
+                  </button>
+                }
+                title="Sign out?"
+                description="You'll leave your session and return to the library."
+                confirmLabel="Sign out"
+                onConfirm={signOut}
+              />
             </>
           ) : data?.user ? (
             <>
               <Link to="/account" data-tour="nav-account" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Account</Link>
-              <button
-                onClick={signOut}
-                className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]"
-              >
-                Sign out
-              </button>
+              <ConfirmButton
+                trigger={
+                  <button className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">
+                    Sign out
+                  </button>
+                }
+                title="Sign out?"
+                description="You'll leave your session and return to the library."
+                confirmLabel="Sign out"
+                onConfirm={signOut}
+              />
             </>
           ) : (
             <Link to="/login" data-tour="nav-account" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Sign in</Link>

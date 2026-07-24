@@ -13,6 +13,7 @@ import ndfAsset from "@/assets/factions/nerrian-defense-force-logo.png.asset.jso
 import tpcAsset from "@/assets/factions/tri-planetary-coalition-logo.png.asset.json";
 import { useI18n } from "@/hooks/useI18n";
 import { StandingAndCancelFlow } from "@/components/account/StandingAndCancelFlow";
+import { ConfirmButton } from "@/components/admin/confirm-button";
 
 type SubRow = {
   status: string;
@@ -408,7 +409,14 @@ function AccountPage() {
         {/* FOOTER ACTIONS */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 sm:flex-row">
           <Link to="/" className="text-sm text-[var(--mute)] hover:text-[var(--neon)]">← Back to library</Link>
-          <button onClick={signOut} className="btn-ghost">Sign out</button>
+          <ConfirmButton
+            trigger={<button className="btn-ghost">Sign out</button>}
+            title="Sign out?"
+            description="You'll leave your session and return to the library."
+            confirmLabel="Sign out"
+            destructive
+            onConfirm={signOut}
+          />
         </div>
       </main>
       <SiteFooter />
