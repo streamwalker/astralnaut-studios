@@ -136,6 +136,7 @@ export function SiteHeader() {
                 />
                 Admin Mode
               </Link>
+              <SignInStatus user={data.user} />
               <ConfirmButton
                 trigger={
                   <button className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">
@@ -151,6 +152,7 @@ export function SiteHeader() {
           ) : data?.user ? (
             <>
               <Link to="/account" data-tour="nav-account" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Account</Link>
+              <SignInStatus user={data.user} />
               <ConfirmButton
                 trigger={
                   <button className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">
