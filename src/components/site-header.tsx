@@ -151,12 +151,17 @@ export function SiteHeader() {
           ) : data?.user ? (
             <>
               <Link to="/account" data-tour="nav-account" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Account</Link>
-              <button
-                onClick={signOut}
-                className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]"
-              >
-                Sign out
-              </button>
+              <ConfirmButton
+                trigger={
+                  <button className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">
+                    Sign out
+                  </button>
+                }
+                title="Sign out?"
+                description="You'll leave your session and return to the library."
+                confirmLabel="Sign out"
+                onConfirm={signOut}
+              />
             </>
           ) : (
             <Link to="/login" data-tour="nav-account" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Sign in</Link>
