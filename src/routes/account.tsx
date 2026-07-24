@@ -409,7 +409,14 @@ function AccountPage() {
         {/* FOOTER ACTIONS */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 sm:flex-row">
           <Link to="/" className="text-sm text-[var(--mute)] hover:text-[var(--neon)]">← Back to library</Link>
-          <button onClick={signOut} className="btn-ghost">Sign out</button>
+          <ConfirmButton
+            trigger={<button className="btn-ghost">Sign out</button>}
+            title="Sign out?"
+            description="You'll leave your session and return to the library."
+            confirmLabel="Sign out"
+            destructive
+            onConfirm={signOut}
+          />
         </div>
       </main>
       <SiteFooter />
