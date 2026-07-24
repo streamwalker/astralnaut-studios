@@ -136,12 +136,17 @@ export function SiteHeader() {
                 />
                 Admin Mode
               </Link>
-              <button
-                onClick={signOut}
-                className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]"
-              >
-                Sign out
-              </button>
+              <ConfirmButton
+                trigger={
+                  <button className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">
+                    Sign out
+                  </button>
+                }
+                title="Sign out?"
+                description="You'll leave your session and return to the library."
+                confirmLabel="Sign out"
+                onConfirm={signOut}
+              />
             </>
           ) : data?.user ? (
             <>
