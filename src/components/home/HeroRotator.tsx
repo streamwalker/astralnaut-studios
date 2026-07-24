@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { track } from "@/lib/analytics";
+import { supabase } from "@/integrations/supabase/client";
+import { buildGlowFilter, HERO_GLOW_QUERY_KEY, type HeroGlow } from "@/lib/hero-glow";
 import videoAsset from "@/assets/battlefield-atlantis-teaser.mp4.asset.json";
 import posterAsset from "@/assets/battlefield-atlantis-teaser-poster.jpg.asset.json";
 import baLogo from "@/assets/battlefield-atlantis-logo-clean.png";
@@ -97,6 +100,20 @@ export function HeroRotator() {
   const [reducedMotion, setReducedMotion] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
+  const { data: glowRows } = useQuery({
+    queryKey: HERO_GLOW_QUERY_KEY,
+    staleTime: 60_000,
+    queryFn: async (): Promise<HeroGlow[]> => {
+      const { data, error } = await supabase
+        .from("hero_logo_glow")
+        .select("series_slug, enabled, color, intensity, spread");
+      if (error) throw error;
+      return (data ?? []) as HeroGlow[];
+    },
+  });
+  const glowMap = new Map<string, HeroGlow>();
+  (glowRows ?? []).forEach((g) => glowMap.set(g.series_slug, g));
+
   // Detect reduced motion (disables autoplay + video).
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -182,7 +199,7 @@ export function HeroRotator() {
       {/* Content rendered over the active background. */}
       <div className="container-wide pointer-events-none relative z-20 flex min-h-[480px] items-center pb-16 pt-6 sm:min-h-[560px] sm:pb-20 sm:pt-10 md:min-h-[640px] md:pb-24 md:pt-16">
         <div className="pointer-events-auto max-w-2xl">
-          <SlotContent slot={HERO_SLOTS[active]!} />
+          <SlotContent slot={HERO_SLOTS[active]!} glow={glowMap.get(HERO_SLOTS[active]!.id)} />
         </div>
       </div>
 
@@ -310,7 +327,7 @@ function SlotPanel({
   );
 }
 
-function SlotContent({ slot }: { slot: HeroSlot }) {
+function SlotContent({ slot, glow }: { slot: HeroSlot; glow?: HeroGlow }) {
   const [imgFailed, setImgFailed] = useState(false);
 
   // Reset failure flag if the slot's logo changes.
@@ -338,12 +355,7 @@ function SlotContent({ slot }: { slot: HeroSlot }) {
             alt=""
             aria-hidden="true"
             className="pointer-events-none select-none h-auto w-full max-w-[440px]"
-            style={{
-              filter:
-                slot.id === "battlefield-atlantis"
-                  ? "drop-shadow(0 0 18px rgba(255,255,255,0.55)) drop-shadow(0 0 42px rgba(180,210,255,0.35)) drop-shadow(0 8px 30px rgba(0,0,0,0.7))"
-                  : "drop-shadow(0 8px 30px rgba(0,0,0,0.7))",
-            }}
+            style={{ filter: buildGlowFilter(glow) }}
             loading="eager"
             fetchPriority="high"
             draggable={false}

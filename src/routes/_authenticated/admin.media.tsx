@@ -46,6 +46,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
+import { LogoGlowPanel } from "@/components/admin/media/glow-panel";
 
 export const Route = createFileRoute("/_authenticated/admin/media")({
   head: () => ({ meta: [{ title: "Media Manager — Admin" }] }),
@@ -93,14 +94,16 @@ function MediaManagerPage() {
       </header>
       <main className="mx-auto max-w-6xl px-6 py-10">
         <Tabs defaultValue="covers">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="covers">Book Covers</TabsTrigger>
             <TabsTrigger value="carousel">Landing Carousel</TabsTrigger>
             <TabsTrigger value="cast">Cast Portraits</TabsTrigger>
+            <TabsTrigger value="glow">Logo Glow</TabsTrigger>
           </TabsList>
           <TabsContent value="covers" className="mt-6"><CoversPanel /></TabsContent>
           <TabsContent value="carousel" className="mt-6"><CarouselPanel /></TabsContent>
           <TabsContent value="cast" className="mt-6"><CastPanel /></TabsContent>
+          <TabsContent value="glow" className="mt-6"><LogoGlowPanel /></TabsContent>
         </Tabs>
       </main>
     </div>

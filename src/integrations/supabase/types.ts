@@ -1164,6 +1164,33 @@ export type Database = {
         }
         Relationships: []
       }
+      hero_logo_glow: {
+        Row: {
+          color: string
+          enabled: boolean
+          intensity: number
+          series_slug: string
+          spread: number
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          enabled?: boolean
+          intensity?: number
+          series_slug: string
+          spread?: number
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          enabled?: boolean
+          intensity?: number
+          series_slug?: string
+          spread?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       issue_drops: {
         Row: {
           id: string
