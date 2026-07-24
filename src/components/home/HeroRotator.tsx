@@ -327,8 +327,22 @@ function SlotPanel({
   );
 }
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const mql = window.matchMedia("(max-width: 640px)");
+    const update = () => setIsMobile(mql.matches);
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
+  return isMobile;
+}
+
 function SlotContent({ slot, glow }: { slot: HeroSlot; glow?: HeroGlow }) {
   const [imgFailed, setImgFailed] = useState(false);
+  const isMobile = useIsMobile();
 
   // Reset failure flag if the slot's logo changes.
   useEffect(() => {
@@ -337,6 +351,16 @@ function SlotContent({ slot, glow }: { slot: HeroSlot; glow?: HeroGlow }) {
 
   const showImage = !!slot.titleImage && !imgFailed;
   const fallbackTitle = slot.titleText ?? slot.titleAlt ?? "";
+
+  const effectiveGlow: HeroGlow | undefined = isMobile
+    ? {
+        series_slug: glow?.series_slug ?? slot.id,
+        color: glow?.color ?? "#ffffff",
+        enabled: true,
+        intensity: Math.min(100, Math.round((glow?.intensity ?? 40) * 1.6 + 10)),
+        spread: Math.min(200, Math.round((glow?.spread ?? 40) * 1.35 + 6)),
+      }
+    : glow;
 
   return (
     <div id={`hero-slot-${slot.id}`} key={slot.id} className="animate-fade-in relative z-20">
@@ -355,7 +379,7 @@ function SlotContent({ slot, glow }: { slot: HeroSlot; glow?: HeroGlow }) {
             alt=""
             aria-hidden="true"
             className="pointer-events-none select-none h-auto w-full max-w-[440px]"
-            style={{ filter: buildGlowFilter(glow) }}
+            style={{ filter: buildGlowFilter(effectiveGlow) }}
             loading="eager"
             fetchPriority="high"
             draggable={false}
