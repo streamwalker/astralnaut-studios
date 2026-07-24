@@ -327,7 +327,7 @@ function SlotPanel({
   );
 }
 
-function SlotContent({ slot }: { slot: HeroSlot }) {
+function SlotContent({ slot, glow }: { slot: HeroSlot; glow?: HeroGlow }) {
   const [imgFailed, setImgFailed] = useState(false);
 
   // Reset failure flag if the slot's logo changes.
@@ -355,12 +355,7 @@ function SlotContent({ slot }: { slot: HeroSlot }) {
             alt=""
             aria-hidden="true"
             className="pointer-events-none select-none h-auto w-full max-w-[440px]"
-            style={{
-              filter:
-                slot.id === "battlefield-atlantis"
-                  ? "drop-shadow(0 0 18px rgba(255,255,255,0.55)) drop-shadow(0 0 42px rgba(180,210,255,0.35)) drop-shadow(0 8px 30px rgba(0,0,0,0.7))"
-                  : "drop-shadow(0 8px 30px rgba(0,0,0,0.7))",
-            }}
+            style={{ filter: buildGlowFilter(glow) }}
             loading="eager"
             fetchPriority="high"
             draggable={false}
