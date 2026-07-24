@@ -337,12 +337,19 @@ function SlotContent({ slot }: { slot: HeroSlot }) {
             src={slot.titleImage}
             alt=""
             aria-hidden="true"
-            className="pointer-events-none select-none h-auto w-full max-w-[440px] drop-shadow-[0_8px_30px_rgba(0,0,0,0.7)]"
+            className="pointer-events-none select-none h-auto w-full max-w-[440px]"
+            style={{
+              filter:
+                slot.id === "battlefield-atlantis"
+                  ? "drop-shadow(0 0 18px rgba(255,255,255,0.55)) drop-shadow(0 0 42px rgba(180,210,255,0.35)) drop-shadow(0 8px 30px rgba(0,0,0,0.7))"
+                  : "drop-shadow(0 8px 30px rgba(0,0,0,0.7))",
+            }}
             loading="eager"
             fetchPriority="high"
             draggable={false}
             onError={() => setImgFailed(true)}
           />
+
         </h1>
       ) : (
         <h1 className="pointer-events-none select-none mt-5 text-fluid-h1 font-black tracking-tight text-white drop-shadow-[0_4px_18px_rgba(0,0,0,0.7)]">
