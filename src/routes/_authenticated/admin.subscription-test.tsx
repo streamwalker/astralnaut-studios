@@ -104,7 +104,7 @@ function SubscriptionTestPage() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    nav({ to: "/" });
+    nav({ to: "/", replace: true });
   };
 
   const toggleCheck = (tierKey: string, idx: number) => {

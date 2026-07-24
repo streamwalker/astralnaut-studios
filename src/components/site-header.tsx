@@ -57,7 +57,7 @@ export function SiteHeader() {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    nav_({ to: "/" });
+    nav_({ to: "/", replace: true });
   };
 
   return (

@@ -129,7 +129,7 @@ function AccountPage() {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    navigate({ to: "/" });
+    navigate({ to: "/", replace: true });
   };
 
   const isActive = sub && ["active", "trialing", "past_due"].includes(sub.status);

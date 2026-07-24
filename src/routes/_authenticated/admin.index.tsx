@@ -131,7 +131,7 @@ function AdminPage() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    nav({ to: "/" });
+    nav({ to: "/", replace: true });
   };
 
   if (roleLoading) {
