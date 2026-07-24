@@ -48,6 +48,19 @@ function useAdminSession() {
   });
 }
 
+function SignInStatus({ user }: { user: { last_sign_in_at?: string | null; email?: string | null } | null }) {
+  if (!user) return null;
+  const last = user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "just now";
+  return (
+    <div className="hidden items-center gap-2 sm:flex" title={`Signed in as ${user.email ?? "reader"}`}>
+      <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: "var(--neon)", boxShadow: "0 0 8px var(--neon)" }} />
+      <span className="text-xs text-[var(--ink2)]">
+        Signed in <span className="text-[var(--mute)]">· {last}</span>
+      </span>
+    </div>
+  );
+}
+
 export function SiteHeader() {
   const { data } = useAdminSession();
   const isAdmin = !!data?.isAdmin;
@@ -136,6 +149,7 @@ export function SiteHeader() {
                 />
                 Admin Mode
               </Link>
+              <SignInStatus user={data.user} />
               <ConfirmButton
                 trigger={
                   <button className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">
@@ -151,6 +165,7 @@ export function SiteHeader() {
           ) : data?.user ? (
             <>
               <Link to="/account" data-tour="nav-account" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Account</Link>
+              <SignInStatus user={data.user} />
               <ConfirmButton
                 trigger={
                   <button className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">

@@ -83,6 +83,7 @@ function AccountPage() {
   const saveShipping = useServerFn(updateShippingAddress);
   const [email, setEmail] = useState<string>("");
   const [memberSince, setMemberSince] = useState<string | null>(null);
+  const [lastSignIn, setLastSignIn] = useState<string | null>(null);
   const [sub, setSub] = useState<SubRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [portalLoading, setPortalLoading] = useState(false);
@@ -96,6 +97,7 @@ function AccountPage() {
       if (mounted) {
         setEmail(u.user.email ?? "");
         setMemberSince(u.user.created_at ?? null);
+        setLastSignIn(u.user.last_sign_in_at ?? null);
       }
       const env = getStripeEnvironment();
       const { data } = await supabase
@@ -409,14 +411,22 @@ function AccountPage() {
         {/* FOOTER ACTIONS */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 sm:flex-row">
           <Link to="/" className="text-sm text-[var(--mute)] hover:text-[var(--neon)]">← Back to library</Link>
-          <ConfirmButton
-            trigger={<button className="btn-ghost">Sign out</button>}
-            title="Sign out?"
-            description="You'll leave your session and return to the library."
-            confirmLabel="Sign out"
-            destructive
-            onConfirm={signOut}
-          />
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2" title={`Signed in as ${email || "reader"}`}>
+              <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: "var(--neon)", boxShadow: "0 0 8px var(--neon)" }} />
+              <span className="text-xs text-[var(--ink2)]">
+                Signed in <span className="text-[var(--mute)]">· {lastSignIn ? new Date(lastSignIn).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "just now"}</span>
+              </span>
+            </div>
+            <ConfirmButton
+              trigger={<button className="btn-ghost">Sign out</button>}
+              title="Sign out?"
+              description="You'll leave your session and return to the library."
+              confirmLabel="Sign out"
+              destructive
+              onConfirm={signOut}
+            />
+          </div>
         </div>
       </main>
       <SiteFooter />
