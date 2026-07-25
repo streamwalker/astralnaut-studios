@@ -175,6 +175,28 @@ function LoginPage() {
     }
   };
 
+  // OAuth flows return to /login?oauth=1. Once the session is present, route
+  // admins to /admin and everyone else to /account (or their original `next`).
+  useEffect(() => {
+    if (search.oauth !== "1") return;
+    let cancelled = false;
+    const finish = async (userId: string) => {
+      const dest = await successDestination(userId);
+      if (!cancelled) window.location.assign(dest);
+    };
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user && !cancelled) void finish(data.user.id);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session?.user && !cancelled) {
+        void finish(session.user.id);
+      }
+    });
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
+  }, [search.oauth]);
 
   const planLabel = search.plan
     ? `${search.plan[0].toUpperCase()}${search.plan.slice(1)}`
