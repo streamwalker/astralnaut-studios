@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { AccessDenied } from "@/components/access-denied";
 
 export const Route = createFileRoute("/_authenticated/admin/security")({
   head: () => ({ meta: [{ title: "Security — Admin" }] }),
@@ -57,8 +58,10 @@ function SecurityPage() {
   });
 
   useEffect(() => {
-    if (!roleLoading && isAdmin === false) nav({ to: "/" });
+    // Intentionally no auto-redirect: we render an AccessDenied screen below
+    // so non-admin visitors get an explanation instead of a silent bounce.
   }, [isAdmin, roleLoading, nav]);
+
 
   const sinceIso = useMemo(
     () => new Date(Date.now() - windowMins * 60_000).toISOString(),
@@ -113,9 +116,13 @@ function SecurityPage() {
     if (!error) qc.invalidateQueries({ queryKey: ["security-alerts"] });
   }
 
-  if (roleLoading || !isAdmin) {
+  if (roleLoading) {
     return <div className="p-10 text-center text-sm text-muted-foreground">Checking access…</div>;
   }
+  if (!isAdmin) {
+    return <AccessDenied area="The security console" email={userData?.email} />;
+  }
+
 
   return (
     <div className="min-h-screen bg-background text-foreground">

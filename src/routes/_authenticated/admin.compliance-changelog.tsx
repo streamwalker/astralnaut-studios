@@ -1,20 +1,43 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { AccessDenied } from "@/components/access-denied";
 
 export const Route = createFileRoute("/_authenticated/admin/compliance-changelog")({
-  beforeLoad: async () => {
-    const { data: u } = await supabase.auth.getUser();
-    if (!u.user) throw redirect({ to: "/auth" });
-    const { data: isAdmin } = await supabase.rpc("has_role", {
-      _user_id: u.user.id,
-      _role: "admin" as never,
-    });
-    if (!isAdmin) throw redirect({ to: "/" });
-  },
   component: ChangeLogPage,
 });
 
+function useAdminGate() {
+  const { data: user } = useQuery({
+    queryKey: ["auth-user"],
+    queryFn: async () => (await supabase.auth.getUser()).data.user,
+  });
+  const { data: isAdmin, isLoading } = useQuery({
+    queryKey: ["is-admin", user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const { data } = await supabase.rpc("has_role", {
+        _user_id: user!.id,
+        _role: "admin" as never,
+      });
+      return !!data;
+    },
+  });
+  return { user, isAdmin, isLoading };
+}
+
 function ChangeLogPage() {
+  const { user, isAdmin, isLoading } = useAdminGate();
+  if (isLoading) {
+    return <div className="p-10 text-center text-sm text-muted-foreground">Checking access…</div>;
+  }
+  if (!isAdmin) {
+    return <AccessDenied area="The compliance change log" email={user?.email} />;
+  }
+  return <ChangeLogContent />;
+}
+
+function ChangeLogContent() {
   return (
     <main className="mx-auto max-w-4xl px-6 py-10 text-[var(--ink)]">
       <div className="mb-6 rounded-md border border-red-500/50 bg-red-500/10 p-4 text-sm text-red-200">

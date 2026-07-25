@@ -26,6 +26,7 @@ import {
   deleteAdminUser,
 } from "@/lib/admin-users.functions";
 import logo from "@/assets/astralnaut-logo.png";
+import { AccessDenied } from "@/components/access-denied";
 
 type Search = { userId?: string };
 
@@ -79,16 +80,9 @@ function AdminUsersPage() {
     return <div className="flex min-h-screen items-center justify-center text-muted-foreground">Checking access…</div>;
   }
   if (!isAdmin) {
-    return (
-      <div className="flex min-h-screen items-center justify-center px-4">
-        <div className="max-w-md rounded-2xl border border-border bg-card p-8 text-center">
-          <h1 className="text-xl font-bold">Not authorized</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Admin access required.</p>
-          <Link to="/admin" className="mt-4 inline-block text-sm underline">Back to admin</Link>
-        </div>
-      </div>
-    );
+    return <AccessDenied area="User management" email={me?.email} />;
   }
+
 
   return (
     <div className="min-h-screen bg-background text-foreground">
