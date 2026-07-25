@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { consumeReturnTo, peekReturnTo } from "@/lib/return-to";
 import logo from "@/assets/astralnaut-logo.png";
 
 const searchSchema = z.object({
