@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { AccessDenied } from "@/components/access-denied";
 
 export const Route = createFileRoute("/_authenticated/admin/security")({
   head: () => ({ meta: [{ title: "Security — Admin" }] }),
