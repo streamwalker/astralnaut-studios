@@ -101,6 +101,13 @@ function AccountPage() {
         setLastSignIn(u.user.last_sign_in_at ?? null);
       }
       const env = getStripeEnvironment();
+      const { data: roleRows } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", u.user.id);
+      if (mounted) {
+        setIsAdmin((roleRows ?? []).some((r) => r.role === "admin"));
+      }
       const { data } = await supabase
         .from("subscriptions")
         .select("status, price_id, current_period_end, cancel_at_period_end, shipping_name, shipping_line1, shipping_line2, shipping_city, shipping_state, shipping_postal_code, shipping_country")
