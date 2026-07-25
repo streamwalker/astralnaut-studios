@@ -84,8 +84,8 @@ function CompleteProfilePage() {
         setFullName(prof.full_name ?? "");
         setCity(prof.city ?? "");
         setCountry(prof.country ?? "");
-        if (prof.full_name && prof.city && prof.country && search.next) {
-          window.location.replace(search.next);
+        if (prof.full_name && prof.city && prof.country) {
+          window.location.replace(search.next || "/account");
           return;
         }
 
