@@ -229,6 +229,12 @@ function LoginPage() {
             <p className="mt-1 text-sm text-muted-foreground">
               Sign in to read free previews, track your standing, and unlock subscriber perks.
             </p>
+            {search.next && search.oauth !== "1" && (
+              <p className="mt-3 flex items-center gap-2 rounded-lg border border-[var(--neon)]/20 bg-[var(--neon)]/5 px-3 py-2 text-xs text-[var(--neon)]">
+                <span aria-hidden>↩</span>
+                After signing in, you'll be redirected back to the page you came from.
+              </p>
+            )}
           </>
         )}
 
