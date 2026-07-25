@@ -53,7 +53,9 @@ function LoginPage() {
   // Where to send the user after successful auth.
   // If they came with a plan, take them straight back to /pricing with
   // autocheckout=1 so the checkout modal opens immediately.
-  const successDestination = () => {
+  // Admins always land in /admin; everyone else lands on /account or the
+  // `next` path they were originally trying to reach.
+  const successDestination = async (userId?: string) => {
     if (search.plan) {
       const params = new URLSearchParams({
         plan: search.plan,
@@ -61,6 +63,15 @@ function LoginPage() {
         autocheckout: "1",
       });
       return `/pricing?${params.toString()}`;
+    }
+    if (userId) {
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "admin")
+        .maybeSingle();
+      if (!error && data) return "/admin";
     }
     return search.next || "/account";
   };
