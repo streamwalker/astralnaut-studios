@@ -73,7 +73,7 @@ function LoginPage() {
         .maybeSingle();
       if (!error && data) return "/admin";
     }
-    return search.next || "/account";
+    return search.next || "/";
   };
 
   const handleEmail = async (e: React.FormEvent) => {
