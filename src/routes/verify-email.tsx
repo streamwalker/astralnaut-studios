@@ -31,23 +31,22 @@ function VerifyEmailPage() {
   const [checking, setChecking] = useState(false);
   const [resending, setResending] = useState(false);
 
-  // If already verified, bounce to destination.
+  // Confirmation links land on a fresh URL without the `?next=` param — fall
+  // back to the sessionStorage-persisted return path so users still resume
+  // to the exact page they originally requested.
+  const resolveDest = () => next || peekReturnTo() || "/account";
+  const goDest = () => window.location.replace(consumeReturnTo() || next || "/account");
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
       const { data } = await supabase.auth.getUser();
       if (cancelled) return;
       if (data.user?.email) setEmail((prev: string) => prev || data.user!.email!);
-      if (data.user?.email_confirmed_at) {
-        window.location.replace(next || "/account");
-      }
+      if (data.user?.email_confirmed_at) goDest();
     })();
-    // Auth state updates the moment the user clicks the confirmation link
-    // in a second tab and returns — recheck immediately.
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user?.email_confirmed_at) {
-        window.location.replace(next || "/account");
-      }
+      if (session?.user?.email_confirmed_at) goDest();
     });
     return () => {
       cancelled = true;
