@@ -27,6 +27,7 @@ const searchSchema = z.object({
   next: z.string().optional().catch(undefined),
   plan: z.enum(["reader", "initiate", "patron"]).optional().catch(undefined),
   interval: z.enum(["monthly", "yearly"]).optional().catch(undefined),
+  oauth: z.string().optional().catch(undefined),
 });
 
 export const Route = createFileRoute("/login")({
