@@ -159,8 +159,14 @@ function LoginPage() {
     if (mode === "signup") stashPendingConsent();
     setBusy(true);
     try {
+      const oauthReturnParams = new URLSearchParams({ oauth: "1" });
+      if (search.next) oauthReturnParams.set("next", search.next);
+      if (search.plan) {
+        oauthReturnParams.set("plan", search.plan);
+        if (search.interval) oauthReturnParams.set("interval", search.interval);
+      }
       const { error } = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin + successDestination(),
+        redirect_uri: `${window.location.origin}/login?${oauthReturnParams.toString()}`,
       });
       if (error) throw error;
     } catch (err) {
