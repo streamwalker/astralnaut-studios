@@ -116,9 +116,13 @@ function SecurityPage() {
     if (!error) qc.invalidateQueries({ queryKey: ["security-alerts"] });
   }
 
-  if (roleLoading || !isAdmin) {
+  if (roleLoading) {
     return <div className="p-10 text-center text-sm text-muted-foreground">Checking access…</div>;
   }
+  if (!isAdmin) {
+    return <AccessDenied area="The security console" email={userData?.email} />;
+  }
+
 
   return (
     <div className="min-h-screen bg-background text-foreground">
