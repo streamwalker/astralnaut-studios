@@ -61,7 +61,7 @@ function LoginPage() {
       });
       return `/pricing?${params.toString()}`;
     }
-    return search.next || "/admin";
+    return search.next || "/account";
   };
 
   const handleEmail = async (e: React.FormEvent) => {
