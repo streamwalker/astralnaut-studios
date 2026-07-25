@@ -419,7 +419,19 @@ function AccountPage() {
         {/* FOOTER ACTIONS */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 sm:flex-row">
           <Link to="/" className="text-sm text-[var(--mute)] hover:text-[var(--neon)]">← Back to library</Link>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-end">
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[2px]"
+              style={{
+                color: isAdmin ? "var(--gold)" : "var(--neon)",
+                borderColor: isAdmin ? "var(--gold)" : "var(--neon)",
+                background: isAdmin ? "rgba(255,184,64,0.08)" : "rgba(60,220,255,0.08)",
+              }}
+              title={isAdmin ? "Administrator access" : "Customer account"}
+            >
+              <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: isAdmin ? "var(--gold)" : "var(--neon)" }} />
+              {isAdmin ? "Admin" : "Customer"}
+            </span>
             <div className="flex items-center gap-2" title={`Signed in as ${email || "reader"}`}>
               <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: "var(--neon)", boxShadow: "0 0 8px var(--neon)" }} />
               <span className="text-xs text-[var(--ink2)]">
