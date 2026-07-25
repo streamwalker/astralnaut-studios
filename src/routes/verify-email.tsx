@@ -84,7 +84,7 @@ function VerifyEmailPage() {
         email,
         options: {
           emailRedirectTo:
-            window.location.origin + (next ? `/verify-email?next=${encodeURIComponent(next)}` : "/verify-email"),
+            window.location.origin + `/verify-email?next=${encodeURIComponent(resolveDest())}`,
         },
       });
       if (error) throw error;
