@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { CountryInput } from "@/components/ui/country-input";
 import { COUNTRIES } from "@/lib/countries";
 import { saveProfile } from "@/lib/profile.functions";
+import { consumeReturnTo, peekReturnTo } from "@/lib/return-to";
 
 const COUNTRY_SET = new Set(COUNTRIES.map((c) => c.toLowerCase()));
 
@@ -62,16 +63,20 @@ function CompleteProfilePage() {
   const [errors, setErrors] = useState<{ fullName?: string; city?: string; country?: string }>({});
 
 
+  // `search.next` wins when present, otherwise consult sessionStorage so the
+  // intended URL survives email-confirmation and OAuth round-trips.
+  const resolveNext = () => search.next || peekReturnTo() || "/account";
+
   useEffect(() => {
     (async () => {
       const { data: userRes } = await supabase.auth.getUser();
       if (!userRes.user) {
-        const next = search.next || "/";
+        const next = resolveNext();
         nav({ to: "/login", search: { next } });
         return;
       }
       if (!userRes.user.email_confirmed_at) {
-        const next = search.next || "/";
+        const next = resolveNext();
         window.location.assign(`/verify-email?next=${encodeURIComponent(next)}`);
         return;
       }
@@ -85,7 +90,7 @@ function CompleteProfilePage() {
         setCity(prof.city ?? "");
         setCountry(prof.country ?? "");
         if (prof.full_name && prof.city && prof.country) {
-          window.location.replace(search.next || "/account");
+          window.location.replace(consumeReturnTo() || search.next || "/account");
           return;
         }
 
@@ -112,7 +117,7 @@ function CompleteProfilePage() {
     try {
       await save({ data: parsed.data });
       toast.success("Profile saved.");
-      const dest = search.next || "/";
+      const dest = consumeReturnTo() || search.next || "/account";
       window.location.assign(dest);
     } catch (err) {
       toast.error((err as Error).message);

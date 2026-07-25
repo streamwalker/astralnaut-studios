@@ -12,6 +12,7 @@ import { isValidCountry } from "@/lib/countries";
 
 import { LEGAL_CONFIG } from "@/config/legal";
 import { recordSignupConsent } from "@/lib/consent.functions";
+import { rememberReturnTo, consumeReturnTo, peekReturnTo } from "@/lib/return-to";
 import logo from "@/assets/astralnaut-logo.png";
 
 // Persist the exact clickwrap text so the SIGNED_IN handler in __root can
@@ -66,8 +67,12 @@ function LoginPage() {
     }
     // Preserve the page the user was on before the auth gate — this wins
     // over role-based defaults so intended destinations survive the round-trip
-    // through /login → /verify-email → /complete-profile.
+    // through /login → /verify-email → /complete-profile. We check `search.next`
+    // first (fresh URL param), then fall back to sessionStorage which persists
+    // across OAuth redirects and email-confirmation links.
     if (search.next) return search.next;
+    const stored = consumeReturnTo();
+    if (stored) return stored;
     if (userId) {
       const { data, error } = await supabase
         .from("user_roles")
@@ -79,6 +84,12 @@ function LoginPage() {
     }
     return "/";
   };
+
+  // Mirror any `?next=` param into sessionStorage on arrival so it survives
+  // the email-confirmation click (which lands on a fresh URL without params).
+  useEffect(() => {
+    if (search.next) rememberReturnTo(search.next);
+  }, [search.next]);
 
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -233,7 +244,7 @@ function LoginPage() {
             <p className="mt-1 text-sm text-muted-foreground">
               Sign in to read free previews, track your standing, and unlock subscriber perks.
             </p>
-            {search.next && search.oauth !== "1" && (
+            {(search.next || peekReturnTo()) && search.oauth !== "1" && (
               <p className="mt-3 flex items-center gap-2 rounded-lg border border-[var(--neon)]/20 bg-[var(--neon)]/5 px-3 py-2 text-xs text-[var(--neon)]">
                 <span aria-hidden>↩</span>
                 After signing in, you'll be redirected back to the page you came from.
