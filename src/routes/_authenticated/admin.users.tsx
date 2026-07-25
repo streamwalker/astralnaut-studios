@@ -26,6 +26,7 @@ import {
   deleteAdminUser,
 } from "@/lib/admin-users.functions";
 import logo from "@/assets/astralnaut-logo.png";
+import { AccessDenied } from "@/components/access-denied";
 
 type Search = { userId?: string };
 
