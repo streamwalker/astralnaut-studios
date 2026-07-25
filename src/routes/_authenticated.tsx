@@ -12,16 +12,22 @@ function AuthGate() {
 
   useEffect(() => {
     let mounted = true;
+    const nextPath =
+      typeof window !== "undefined"
+        ? window.location.pathname + window.location.search + window.location.hash
+        : undefined;
+    const goLogin = () =>
+      nav({ to: "/login", search: (nextPath && nextPath !== "/login" ? { next: nextPath } : {}) as never });
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
       if (!data.session) {
-        nav({ to: "/login" });
+        goLogin();
       } else {
         setReady(true);
       }
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (!session) nav({ to: "/login" });
+      if (!session) goLogin();
     });
     return () => {
       mounted = false;
