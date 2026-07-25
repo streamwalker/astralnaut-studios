@@ -84,6 +84,7 @@ function AccountPage() {
   const [email, setEmail] = useState<string>("");
   const [memberSince, setMemberSince] = useState<string | null>(null);
   const [lastSignIn, setLastSignIn] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [sub, setSub] = useState<SubRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [portalLoading, setPortalLoading] = useState(false);
