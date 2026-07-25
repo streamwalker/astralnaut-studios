@@ -61,7 +61,7 @@ function VerifyEmailPage() {
       if (error) throw error;
       if (data.user?.email_confirmed_at) {
         toast.success("Email verified.");
-        window.location.replace(next || "/account");
+        goDest();
       } else {
         toast.info("Still waiting on confirmation. Check your inbox (and spam folder).");
       }
