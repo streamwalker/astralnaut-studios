@@ -155,16 +155,9 @@ function SubscriptionTestPage() {
   }
 
   if (!isAdmin) {
-    return (
-      <div className="flex min-h-screen items-center justify-center px-4">
-        <div className="max-w-md rounded-2xl border border-border bg-card p-8 text-center">
-          <h1 className="text-xl font-bold">Not authorized</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Your account doesn't have admin access.</p>
-          <Button onClick={handleSignOut} variant="outline" className="mt-6">Sign out</Button>
-        </div>
-      </div>
-    );
+    return <AccessDenied area="The subscription test console" email={userData?.email} />;
   }
+
 
   return (
     <div className="min-h-screen bg-background text-foreground">
