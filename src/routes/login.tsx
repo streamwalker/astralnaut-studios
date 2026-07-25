@@ -64,6 +64,10 @@ function LoginPage() {
       });
       return `/pricing?${params.toString()}`;
     }
+    // Preserve the page the user was on before the auth gate — this wins
+    // over role-based defaults so intended destinations survive the round-trip
+    // through /login → /verify-email → /complete-profile.
+    if (search.next) return search.next;
     if (userId) {
       const { data, error } = await supabase
         .from("user_roles")
@@ -73,7 +77,7 @@ function LoginPage() {
         .maybeSingle();
       if (!error && data) return "/admin";
     }
-    return search.next || "/";
+    return "/";
   };
 
   const handleEmail = async (e: React.FormEvent) => {
