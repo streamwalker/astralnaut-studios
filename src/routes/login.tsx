@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -27,6 +27,7 @@ const searchSchema = z.object({
   next: z.string().optional().catch(undefined),
   plan: z.enum(["reader", "initiate", "patron"]).optional().catch(undefined),
   interval: z.enum(["monthly", "yearly"]).optional().catch(undefined),
+  oauth: z.string().optional().catch(undefined),
 });
 
 export const Route = createFileRoute("/login")({
@@ -52,7 +53,9 @@ function LoginPage() {
   // Where to send the user after successful auth.
   // If they came with a plan, take them straight back to /pricing with
   // autocheckout=1 so the checkout modal opens immediately.
-  const successDestination = () => {
+  // Admins always land in /admin; everyone else lands on /account or the
+  // `next` path they were originally trying to reach.
+  const successDestination = async (userId?: string) => {
     if (search.plan) {
       const params = new URLSearchParams({
         plan: search.plan,
@@ -60,6 +63,15 @@ function LoginPage() {
         autocheckout: "1",
       });
       return `/pricing?${params.toString()}`;
+    }
+    if (userId) {
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "admin")
+        .maybeSingle();
+      if (!error && data) return "/admin";
     }
     return search.next || "/account";
   };
@@ -83,7 +95,7 @@ function LoginPage() {
     try {
       if (mode === "signup") {
         stashPendingConsent();
-        const dest = successDestination();
+        const dest = await successDestination();
         const verifyUrl = `/verify-email?next=${encodeURIComponent(dest)}&email=${encodeURIComponent(email)}`;
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -122,13 +134,15 @@ function LoginPage() {
         if (error) throw error;
         if (!signInData.user?.email_confirmed_at) {
           toast.info("Please verify your email to continue.");
+          const dest = await successDestination(signInData.user?.id);
           window.location.assign(
-            `/verify-email?next=${encodeURIComponent(successDestination())}&email=${encodeURIComponent(email)}`,
+            `/verify-email?next=${encodeURIComponent(dest)}&email=${encodeURIComponent(email)}`,
           );
           return;
         }
         toast.success("Welcome back.");
-        window.location.assign(successDestination());
+        const dest = await successDestination(signInData.user?.id);
+        window.location.assign(dest);
       }
     } catch (err) {
       toast.error((err as Error).message);
@@ -145,8 +159,14 @@ function LoginPage() {
     if (mode === "signup") stashPendingConsent();
     setBusy(true);
     try {
+      const oauthReturnParams = new URLSearchParams({ oauth: "1" });
+      if (search.next) oauthReturnParams.set("next", search.next);
+      if (search.plan) {
+        oauthReturnParams.set("plan", search.plan);
+        if (search.interval) oauthReturnParams.set("interval", search.interval);
+      }
       const { error } = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin + successDestination(),
+        redirect_uri: `${window.location.origin}/login?${oauthReturnParams.toString()}`,
       });
       if (error) throw error;
     } catch (err) {
@@ -155,6 +175,28 @@ function LoginPage() {
     }
   };
 
+  // OAuth flows return to /login?oauth=1. Once the session is present, route
+  // admins to /admin and everyone else to /account (or their original `next`).
+  useEffect(() => {
+    if (search.oauth !== "1") return;
+    let cancelled = false;
+    const finish = async (userId: string) => {
+      const dest = await successDestination(userId);
+      if (!cancelled) window.location.assign(dest);
+    };
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user && !cancelled) void finish(data.user.id);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session?.user && !cancelled) {
+        void finish(session.user.id);
+      }
+    });
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
+  }, [search.oauth]);
 
   const planLabel = search.plan
     ? `${search.plan[0].toUpperCase()}${search.plan.slice(1)}`
