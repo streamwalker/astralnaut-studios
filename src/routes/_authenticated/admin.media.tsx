@@ -47,6 +47,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
 import { LogoGlowPanel } from "@/components/admin/media/glow-panel";
+import { AccessDenied } from "@/components/access-denied";
 
 export const Route = createFileRoute("/_authenticated/admin/media")({
   head: () => ({ meta: [{ title: "Media Manager — Admin" }] }),
