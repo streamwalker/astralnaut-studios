@@ -67,8 +67,12 @@ function LoginPage() {
     }
     // Preserve the page the user was on before the auth gate — this wins
     // over role-based defaults so intended destinations survive the round-trip
-    // through /login → /verify-email → /complete-profile.
+    // through /login → /verify-email → /complete-profile. We check `search.next`
+    // first (fresh URL param), then fall back to sessionStorage which persists
+    // across OAuth redirects and email-confirmation links.
     if (search.next) return search.next;
+    const stored = consumeReturnTo();
+    if (stored) return stored;
     if (userId) {
       const { data, error } = await supabase
         .from("user_roles")
@@ -80,6 +84,12 @@ function LoginPage() {
     }
     return "/";
   };
+
+  // Mirror any `?next=` param into sessionStorage on arrival so it survives
+  // the email-confirmation click (which lands on a fresh URL without params).
+  useEffect(() => {
+    if (search.next) rememberReturnTo(search.next);
+  }, [search.next]);
 
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault();
