@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import logo from "@/assets/astralnaut-logo.png";
+import { AccessDenied } from "@/components/access-denied";
 
 const TIERS = [
   {
