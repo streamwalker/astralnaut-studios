@@ -75,15 +75,9 @@ function MediaManagerPage() {
 
   if (roleLoading) return <div className="flex min-h-screen items-center justify-center text-muted-foreground">Checking access…</div>;
   if (!isAdmin) {
-    return (
-      <div className="flex min-h-screen items-center justify-center px-4">
-        <div className="max-w-md rounded-2xl border border-border bg-card p-8 text-center">
-          <h1 className="text-xl font-bold">Not authorized</h1>
-          <Button onClick={() => nav({ to: "/" })} variant="outline" className="mt-6">Home</Button>
-        </div>
-      </div>
-    );
+    return <AccessDenied area="The Media Manager" email={userData?.email} />;
   }
+
 
   return (
     <div className="min-h-screen bg-background text-foreground">
