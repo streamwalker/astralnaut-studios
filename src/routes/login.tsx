@@ -61,7 +61,7 @@ function LoginPage() {
       });
       return `/pricing?${params.toString()}`;
     }
-    return search.next || "/admin";
+    return search.next || "/account";
   };
 
   const handleEmail = async (e: React.FormEvent) => {
@@ -185,7 +185,7 @@ function LoginPage() {
           <>
             <h1 className="text-2xl font-bold">{mode === "signin" ? "Sign in" : "Create account"}</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Admin access for Astralnaut Studios.
+              Sign in to read free previews, track your standing, and unlock subscriber perks.
             </p>
           </>
         )}
