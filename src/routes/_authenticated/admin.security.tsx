@@ -58,8 +58,10 @@ function SecurityPage() {
   });
 
   useEffect(() => {
-    if (!roleLoading && isAdmin === false) nav({ to: "/" });
+    // Intentionally no auto-redirect: we render an AccessDenied screen below
+    // so non-admin visitors get an explanation instead of a silent bounce.
   }, [isAdmin, roleLoading, nav]);
+
 
   const sinceIso = useMemo(
     () => new Date(Date.now() - windowMins * 60_000).toISOString(),
