@@ -90,7 +90,9 @@ function CompleteProfilePage() {
         setCity(prof.city ?? "");
         setCountry(prof.country ?? "");
         if (prof.full_name && prof.city && prof.country) {
-          window.location.replace(consumeReturnTo() || search.next || "/account");
+          const dest = consumeReturnTo() || search.next || "/account";
+          clearReturnTo();
+          window.location.replace(dest);
           return;
         }
 
