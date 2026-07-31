@@ -35,7 +35,11 @@ function VerifyEmailPage() {
   // back to the sessionStorage-persisted return path so users still resume
   // to the exact page they originally requested.
   const resolveDest = () => next || peekReturnTo() || "/account";
-  const goDest = () => window.location.replace(consumeReturnTo() || next || "/account");
+  const goDest = () => {
+    const dest = consumeReturnTo() || next || "/account";
+    clearReturnTo();
+    window.location.replace(dest);
+  };
 
   useEffect(() => {
     let cancelled = false;
