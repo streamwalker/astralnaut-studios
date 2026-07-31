@@ -12,7 +12,7 @@ import { isValidCountry } from "@/lib/countries";
 
 import { LEGAL_CONFIG } from "@/config/legal";
 import { recordSignupConsent } from "@/lib/consent.functions";
-import { rememberReturnTo, consumeReturnTo, peekReturnTo } from "@/lib/return-to";
+import { rememberReturnTo, consumeReturnTo, peekReturnTo, clearReturnTo } from "@/lib/return-to";
 import logo from "@/assets/astralnaut-logo.png";
 
 // Persist the exact clickwrap text so the SIGNED_IN handler in __root can
