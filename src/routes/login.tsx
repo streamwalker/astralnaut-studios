@@ -151,6 +151,7 @@ function LoginPage() {
         if (!signInData.user?.email_confirmed_at) {
           toast.info("Please verify your email to continue.");
           const dest = await successDestination(signInData.user?.id);
+          clearReturnTo();
           window.location.assign(
             `/verify-email?next=${encodeURIComponent(dest)}&email=${encodeURIComponent(email)}`,
           );
@@ -158,6 +159,7 @@ function LoginPage() {
         }
         toast.success("Welcome back.");
         const dest = await successDestination(signInData.user?.id);
+        clearReturnTo();
         window.location.assign(dest);
       }
     } catch (err) {
