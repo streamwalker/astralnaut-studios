@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { CountryInput } from "@/components/ui/country-input";
 import { COUNTRIES } from "@/lib/countries";
 import { saveProfile } from "@/lib/profile.functions";
-import { consumeReturnTo, peekReturnTo } from "@/lib/return-to";
+import { consumeReturnTo, peekReturnTo, clearReturnTo } from "@/lib/return-to";
 
 const COUNTRY_SET = new Set(COUNTRIES.map((c) => c.toLowerCase()));
 
@@ -90,7 +90,9 @@ function CompleteProfilePage() {
         setCity(prof.city ?? "");
         setCountry(prof.country ?? "");
         if (prof.full_name && prof.city && prof.country) {
-          window.location.replace(consumeReturnTo() || search.next || "/account");
+          const dest = consumeReturnTo() || search.next || "/account";
+          clearReturnTo();
+          window.location.replace(dest);
           return;
         }
 
@@ -118,6 +120,7 @@ function CompleteProfilePage() {
       await save({ data: parsed.data });
       toast.success("Profile saved.");
       const dest = consumeReturnTo() || search.next || "/account";
+      clearReturnTo();
       window.location.assign(dest);
     } catch (err) {
       toast.error((err as Error).message);

@@ -12,7 +12,7 @@ import { isValidCountry } from "@/lib/countries";
 
 import { LEGAL_CONFIG } from "@/config/legal";
 import { recordSignupConsent } from "@/lib/consent.functions";
-import { rememberReturnTo, consumeReturnTo, peekReturnTo } from "@/lib/return-to";
+import { rememberReturnTo, consumeReturnTo, peekReturnTo, clearReturnTo } from "@/lib/return-to";
 import logo from "@/assets/astralnaut-logo.png";
 
 // Persist the exact clickwrap text so the SIGNED_IN handler in __root can
@@ -143,6 +143,7 @@ function LoginPage() {
           } catch { /* non-fatal */ }
         }
         toast.success("Check your email to confirm your account.");
+        clearReturnTo();
         window.location.assign(verifyUrl);
       } else {
         const { data: signInData, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -150,6 +151,7 @@ function LoginPage() {
         if (!signInData.user?.email_confirmed_at) {
           toast.info("Please verify your email to continue.");
           const dest = await successDestination(signInData.user?.id);
+          clearReturnTo();
           window.location.assign(
             `/verify-email?next=${encodeURIComponent(dest)}&email=${encodeURIComponent(email)}`,
           );
@@ -157,6 +159,7 @@ function LoginPage() {
         }
         toast.success("Welcome back.");
         const dest = await successDestination(signInData.user?.id);
+        clearReturnTo();
         window.location.assign(dest);
       }
     } catch (err) {
@@ -197,6 +200,7 @@ function LoginPage() {
     let cancelled = false;
     const finish = async (userId: string) => {
       const dest = await successDestination(userId);
+      clearReturnTo();
       if (!cancelled) window.location.assign(dest);
     };
     supabase.auth.getUser().then(({ data }) => {
