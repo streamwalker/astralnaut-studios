@@ -120,6 +120,7 @@ function CompleteProfilePage() {
       await save({ data: parsed.data });
       toast.success("Profile saved.");
       const dest = consumeReturnTo() || search.next || "/account";
+      clearReturnTo();
       window.location.assign(dest);
     } catch (err) {
       toast.error((err as Error).message);
