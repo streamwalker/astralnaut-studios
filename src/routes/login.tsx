@@ -143,6 +143,7 @@ function LoginPage() {
           } catch { /* non-fatal */ }
         }
         toast.success("Check your email to confirm your account.");
+        clearReturnTo();
         window.location.assign(verifyUrl);
       } else {
         const { data: signInData, error } = await supabase.auth.signInWithPassword({ email, password });
