@@ -200,6 +200,7 @@ function LoginPage() {
     let cancelled = false;
     const finish = async (userId: string) => {
       const dest = await successDestination(userId);
+      clearReturnTo();
       if (!cancelled) window.location.assign(dest);
     };
     supabase.auth.getUser().then(({ data }) => {
