@@ -3,7 +3,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -183,8 +182,16 @@ function LoginPage() {
         oauthReturnParams.set("plan", search.plan);
         if (search.interval) oauthReturnParams.set("interval", search.interval);
       }
-      const { error } = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}/login?${oauthReturnParams.toString()}`,
+      // Native Supabase OAuth. Supabase redirects the browser to Google and
+      // returns to `redirectTo` with a PKCE `code`, which the client exchanges
+      // automatically (detectSessionInUrl) — the `oauth=1` effect below then
+      // routes the user on. `redirectTo` must be allow-listed in the Supabase
+      // dashboard under Authentication -> URL Configuration.
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/login?${oauthReturnParams.toString()}`,
+        },
       });
       if (error) throw error;
     } catch (err) {
