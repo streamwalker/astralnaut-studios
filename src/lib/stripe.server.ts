@@ -8,8 +8,15 @@ const getEnv = (key: string): string => {
 
 export type StripeEnv = 'sandbox' | 'live';
 
-const GATEWAY_STRIPE_BASE = 'https://connector-gateway.lovable.dev/stripe';
-
+/**
+ * Stripe secret key for the given environment.
+ *
+ * STRIPE_LIVE_API_KEY    -> sk_live_...
+ * STRIPE_SANDBOX_API_KEY -> sk_test_...
+ *
+ * Server-side only. These must never be bundled into client code — the
+ * publishable key for the browser is VITE_PAYMENTS_CLIENT_TOKEN.
+ */
 export function getConnectionApiKey(env: StripeEnv): string {
   return env === 'sandbox'
     ? getEnv('STRIPE_SANDBOX_API_KEY')
@@ -17,22 +24,10 @@ export function getConnectionApiKey(env: StripeEnv): string {
 }
 
 export function createStripeClient(env: StripeEnv): Stripe {
-  const connectionApiKey = getConnectionApiKey(env);
-  const lovableApiKey = getEnv('LOVABLE_API_KEY');
-
-  return new Stripe(connectionApiKey, {
+  return new Stripe(getConnectionApiKey(env), {
     apiVersion: '2026-03-25.dahlia',
-    httpClient: Stripe.createFetchHttpClient(((url: URL | RequestInfo, init?: RequestInit) => {
-      const gatewayUrl = url.toString().replace('https://api.stripe.com', GATEWAY_STRIPE_BASE);
-      return fetch(gatewayUrl, {
-        ...init,
-        headers: {
-          ...Object.fromEntries(new Headers(init?.headers).entries()),
-          'X-Connection-Api-Key': connectionApiKey,
-          'Lovable-API-Key': lovableApiKey,
-        },
-      });
-    }) as typeof fetch),
+    // Cloudflare Workers has no Node http/https stack; the SDK must use fetch.
+    httpClient: Stripe.createFetchHttpClient(),
   });
 }
 

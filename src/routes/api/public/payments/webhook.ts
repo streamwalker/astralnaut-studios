@@ -13,6 +13,10 @@ function getSupabase() {
 function resolvePriceId(item: any): string {
   return (
     item?.price?.lookup_key ||
+    // DO NOT RENAME. This reads metadata stored on live Stripe Price objects
+    // that were created while the store ran on Lovable. The key exists in
+    // Stripe, not in this codebase — changing it here silently breaks plan
+    // resolution for every pre-existing subscriber.
     item?.price?.metadata?.lovable_external_id ||
     item?.price?.id
   );

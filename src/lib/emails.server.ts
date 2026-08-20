@@ -1,8 +1,8 @@
-// Server-only email helpers. Uses Resend via the Lovable connector gateway
-// when RESEND_API_KEY is configured; otherwise no-ops and logs a queue notice
-// so downstream infrastructure work (Stage 4/5) can pick up the pending sends.
+// Server-only email helpers. Calls the Resend API directly when RESEND_API_KEY
+// is configured; otherwise no-ops and logs a queue notice so downstream
+// infrastructure work (Stage 4/5) can pick up the pending sends.
 
-const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
+const RESEND_API_URL = "https://api.resend.com/emails";
 const FROM = "Real World Comics <noreply@astralnautstudios.com>";
 
 type EmailPayload = {
@@ -12,9 +12,8 @@ type EmailPayload = {
 };
 
 async function send(payload: EmailPayload): Promise<{ sent: boolean; queued: boolean; error?: string }> {
-  const lovableKey = process.env.LOVABLE_API_KEY;
   const resendKey = process.env.RESEND_API_KEY;
-  if (!lovableKey || !resendKey) {
+  if (!resendKey) {
     console.warn("[email] RESEND_API_KEY missing — queued in log only", {
       to: payload.to,
       subject: payload.subject,
@@ -22,12 +21,11 @@ async function send(payload: EmailPayload): Promise<{ sent: boolean; queued: boo
     return { sent: false, queued: true };
   }
   try {
-    const res = await fetch(`${GATEWAY_URL}/emails`, {
+    const res = await fetch(RESEND_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${lovableKey}`,
-        "X-Connection-Api-Key": resendKey,
+        Authorization: `Bearer ${resendKey}`,
       },
       body: JSON.stringify({
         from: FROM,
@@ -38,7 +36,7 @@ async function send(payload: EmailPayload): Promise<{ sent: boolean; queued: boo
     });
     if (!res.ok) {
       const text = await res.text();
-      console.error("[email] Resend gateway error", res.status, text);
+      console.error("[email] Resend API error", res.status, text);
       return { sent: false, queued: false, error: `${res.status}: ${text}` };
     }
     return { sent: true, queued: false };

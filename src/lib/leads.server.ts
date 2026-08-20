@@ -4,7 +4,7 @@
  * scope (would leak into the client bundle).
  */
 
-const RESEND_GATEWAY = "https://connector-gateway.lovable.dev/resend/emails";
+const RESEND_API_URL = "https://api.resend.com/emails";
 
 function getSiteUrl(): string {
   const url =
@@ -21,15 +21,14 @@ interface SendConfirmArgs {
 }
 
 /**
- * Sends a double-opt-in confirmation email via Resend (through the Lovable
- * connector gateway). Silently no-ops when keys aren't configured so the
- * lead capture flow itself never fails.
+ * Sends a double-opt-in confirmation email via the Resend API. Silently
+ * no-ops when the key isn't configured so the lead capture flow itself
+ * never fails.
  */
 export async function sendConfirmEmail({ email, token, seriesSlug }: SendConfirmArgs): Promise<void> {
-  const lovableKey = process.env.LOVABLE_API_KEY;
   const resendKey = process.env.RESEND_API_KEY;
-  if (!lovableKey || !resendKey) {
-    console.warn("[leads] Email not sent — RESEND_API_KEY or LOVABLE_API_KEY missing");
+  if (!resendKey) {
+    console.warn("[leads] Email not sent — RESEND_API_KEY missing");
     return;
   }
 
@@ -54,12 +53,11 @@ export async function sendConfirmEmail({ email, token, seriesSlug }: SendConfirm
 </body></html>`;
 
   try {
-    const res = await fetch(RESEND_GATEWAY, {
+    const res = await fetch(RESEND_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${lovableKey}`,
-        "X-Connection-Api-Key": resendKey,
+        Authorization: `Bearer ${resendKey}`,
       },
       body: JSON.stringify({
         from: "Real World Comics <hello@astralnautstudios.com>",
