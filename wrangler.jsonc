@@ -1,7 +1,31 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "tanstack-start-app",
+  // Nitro inherits name / compatibility_date / compatibility_flags / routes
+  // from this file into the generated .output/server/wrangler.json, and
+  // overrides `main` there — so `main` below applies to `vite dev` only.
+  // `npm run deploy` deploys the generated config, not this one.
+  "name": "astralnaut-studios",
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   "main": "src/server.ts",
+
+  // --- DNS cutover -------------------------------------------------------
+  // Deliberately commented out. Uncommenting before astralnautstudios.com is
+  // an active zone in Cloudflare makes `wrangler deploy` fail, which would
+  // block every deploy — including the workers.dev deploy needed to smoke
+  // test the live app first.
+  //
+  // Cutover order:
+  //   1. Deploy as-is. Verify at astralnaut-studios.<subdomain>.workers.dev.
+  //   2. Add astralnautstudios.com as a zone in Cloudflare, then repoint the
+  //      nameservers at IONOS (Domains -> DNS -> Nameservers -> Use custom).
+  //      Wait for the zone to report Active.
+  //   3. Uncomment the block below and deploy. Wrangler attaches both
+  //      hostnames and creates the proxied DNS records automatically —
+  //      do not hand-create A/CNAME records for them.
+  //
+  // "routes": [
+  //   { "pattern": "astralnautstudios.com", "custom_domain": true },
+  //   { "pattern": "www.astralnautstudios.com", "custom_domain": true }
+  // ],
 }
