@@ -14,6 +14,8 @@ import tpcAsset from "@/assets/factions/tri-planetary-coalition-logo.png.asset.j
 import { useI18n } from "@/hooks/useI18n";
 import { StandingAndCancelFlow } from "@/components/account/StandingAndCancelFlow";
 import { ConfirmButton } from "@/components/admin/confirm-button";
+import { trackMetaEventOnce } from "@/lib/meta-pixel";
+import { amountForPriceId } from "@/config/pricingTiers";
 
 type SubRow = {
   status: string;
@@ -77,7 +79,7 @@ export const Route = createFileRoute("/account")({
 });
 
 function AccountPage() {
-  const { checkout } = Route.useSearch();
+  const { checkout, session_id } = Route.useSearch();
   const navigate = useNavigate();
   const portal = useServerFn(createPortalSession);
   const saveShipping = useServerFn(updateShippingAddress);
@@ -123,6 +125,35 @@ function AccountPage() {
     })();
     return () => { mounted = false; };
   }, []);
+
+  // Meta Pixel Purchase.
+  //
+  // This URL (/account?checkout=success&session_id=...) is bookmarkable and
+  // refreshable, so the send is keyed on the Stripe Checkout Session id and
+  // guarded by trackMetaEventOnce — a reload must not re-report the revenue.
+  // trackMetaEventOnce self-checks marketing consent.
+  //
+  // `session_id` doubles as the eventID, which is what Meta deduplicates
+  // against if the same Purchase is later sent server-side via the Conversions
+  // API from the Stripe webhook. That server-side send, not this one, should be
+  // treated as the authoritative revenue figure: the row read here is whatever
+  // the webhook has written so far, so on a mid-cycle upgrade it can still be
+  // the previous tier.
+  useEffect(() => {
+    if (checkout !== "success" || loading || !sub || !session_id) return;
+    const amount = amountForPriceId(sub.price_id);
+    trackMetaEventOnce(
+      session_id,
+      "Purchase",
+      {
+        content_ids: [sub.price_id],
+        content_type: "product",
+        num_items: 1,
+        ...(amount === null ? {} : { value: amount, currency: "USD" }),
+      },
+      { eventID: session_id },
+    );
+  }, [checkout, loading, sub, session_id]);
 
   const openPortal = async () => {
     setPortalLoading(true);

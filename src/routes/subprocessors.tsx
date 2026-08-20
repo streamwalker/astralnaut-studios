@@ -9,13 +9,14 @@ const D = LEGAL_CONFIG.documents.subprocessors;
 const ROWS: Array<{
   name: string; service: string; data: string; location: string; url: string;
 }> = [
-  { name: "Supabase (Lovable Cloud)", service: "Application database, authentication, file storage, edge functions", data: "Account email, hashed password, profile, subscription state, letters/comments, order metadata, visitor analytics, DSAR records", location: "United States", url: "https://supabase.com/privacy" },
+  { name: "Supabase", service: "Application database, authentication, file storage, edge functions", data: "Account email, hashed password, profile, subscription state, letters/comments, order metadata, visitor analytics, DSAR records", location: "United States", url: "https://supabase.com/privacy" },
   { name: "Cloudflare, Inc.", service: "CDN, DNS, TLS termination, edge runtime hosting", data: "IP address, request metadata", location: "Global edge; US-headquartered", url: "https://www.cloudflare.com/privacypolicy/" },
   { name: "Stripe, Inc.", service: "Payment processing for subscriptions", data: "Name, billing address, tokenized card data (not stored by us), transaction history", location: "United States / Ireland", url: "https://stripe.com/privacy" },
   { name: "Shopify Inc.", service: "Merchandise store and checkout", data: "Name, shipping address, order history, email", location: "Canada / United States", url: "https://www.shopify.com/legal/privacy" },
   { name: "Resend, Inc.", service: "Transactional email (subscriber alerts, confirmations, DSAR acknowledgements)", data: "Email address, message content, delivery metadata", location: "United States", url: "https://resend.com/legal/privacy-policy" },
   { name: "Google LLC", service: "Optional Google sign-in", data: "Email, OAuth identifier", location: "United States", url: "https://policies.google.com/privacy" },
   { name: "Discord Inc.", service: "External community for verified 18+ members (opt-in)", data: "Discord user handle when member opts to join", location: "United States", url: "https://discord.com/privacy" },
+  { name: "Meta Platforms, Inc.", service: "Advertising measurement via the Meta Pixel. Loaded only for visitors who consent to marketing cookies, and never for visitors sending a Global Privacy Control signal.", data: "Browser identifier (_fbp), click identifier from a Meta ad (_fbc), pages viewed, checkout-started and subscription-purchased events with the subscription price, IP address, user agent", location: "United States / Ireland", url: "https://www.facebook.com/privacy/policy/" },
 ];
 
 export const Route = createFileRoute("/subprocessors")({
@@ -37,7 +38,8 @@ function SubprocessorsPage() {
       version={D.version}
       canonical="/subprocessors"
     >
-      <p>Publish only vendors actually used in production. For each provider we list the legal vendor name, service, categories of data, processing location, and link to its privacy or security information. Streamwalkers does not currently claim that a Data Processing Addendum, Standard Contractual Clauses, or a UK transfer addendum has been executed with every vendor listed; contracts are being verified.</p>
+      <p>Publish only vendors actually used in production. For each provider we list the legal vendor name, service, categories of data, processing location, and link to its privacy or security information. Streamwalkers does not currently claim that a Data Processing Addendum, Standard Contractual Clauses, or a UK transfer addendum has been executed with every vendor listed; contracts are being verified. Some vendors receive data only if you choose to allow it: the Meta Pixel is not loaded, and Meta receives nothing, unless you consent to marketing cookies in our{" "}
+        <a className="underline" href="/cookies">Cookie Policy</a>{" "}preference center.</p>
       <div className="table-scroll -mx-4 px-4 sm:mx-0 sm:px-0">
         <table>
         <thead>

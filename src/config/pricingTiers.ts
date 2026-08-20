@@ -88,6 +88,25 @@ export const pricingTiers: PricingTier[] = [
   },
 ];
 
+/**
+ * List price in USD for a Stripe price identifier ("initiate_yearly", etc.).
+ *
+ * Returns null for an unrecognized identifier rather than guessing, so callers
+ * reporting revenue omit the amount instead of sending a wrong one.
+ *
+ * This is the *list* price. It ignores coupons, proration, and tax, so it is
+ * suitable for ad-platform optimization signal but is not an accounting figure.
+ * Authoritative amounts come from Stripe on the webhook.
+ */
+export function amountForPriceId(priceId: string | null | undefined): number | null {
+  if (!priceId) return null;
+  for (const t of pricingTiers) {
+    if (t.monthlyPriceId === priceId) return t.priceMonthly;
+    if (t.yearlyPriceId === priceId) return t.priceYearly;
+  }
+  return null;
+}
+
 export function getTier(key: TierKey): PricingTier {
   const t = pricingTiers.find((x) => x.key === key);
   if (!t) throw new Error(`Unknown tier: ${key}`);

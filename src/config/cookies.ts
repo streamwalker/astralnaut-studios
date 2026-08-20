@@ -9,8 +9,8 @@
 //   Functional  — remembers non-essential preferences (language, dismissed
 //                 promo bar, motion preference).
 //   Analytics   — first-party usage measurement. Loads only with consent.
-//   Marketing   — advertising / cross-site tracking. Not currently in use;
-//                 category exists so future additions inherit the gate.
+//   Marketing   — advertising / cross-site tracking. Currently the Meta Pixel
+//                 only. Loads only with consent; never for GPC visitors.
 
 export type CookieCategory = "necessary" | "functional" | "analytics" | "marketing";
 
@@ -29,7 +29,7 @@ export const COOKIE_INVENTORY: CookieRow[] = [
   // ── Necessary ────────────────────────────────────────────────────────────
   {
     name: "sb-<project>-auth-token",
-    provider: "Supabase (Lovable Cloud)",
+    provider: "Supabase",
     purpose: "Signed-in session for the reader, account, checkout, and community features.",
     category: "necessary",
     party: "First-party",
@@ -140,10 +140,37 @@ export const COOKIE_INVENTORY: CookieRow[] = [
     duration: "Rolling retention per Privacy Policy.",
   },
 
-  // ── Marketing ────────────────────────────────────────────────────────────
-  // No marketing / advertising / cross-site tracking technologies are
-  // currently deployed. The category is retained so any future addition
-  // must load through the same consent gate before it can run.
+  // ── Marketing (loads only on consent; never for GPC visitors) ────────────
+  // Set by the Meta Pixel. src/components/meta-pixel.tsx loads it exclusively
+  // through loadIfConsented("marketing", ...), so fbevents.js is not fetched
+  // and no fbq call is made until the visitor opts in.
+  {
+    name: "_fbp / _fbc",
+    provider: "Meta",
+    purpose: "Identifies your browser and the ad you arrived from, so Meta can measure whether its advertising led to a subscription. Set only if you consent to marketing.",
+    category: "marketing",
+    party: "First-party",
+    storage: "cookie",
+    duration: "90 days.",
+  },
+  {
+    name: "fr",
+    provider: "Meta",
+    purpose: "Meta's own advertising and cross-site measurement cookie, set on facebook.com when the pixel runs. Set only if you consent to marketing.",
+    category: "marketing",
+    party: "Third-party",
+    storage: "cookie",
+    duration: "90 days (Meta-managed).",
+  },
+  {
+    name: "meta_pixel_once:<checkout session>",
+    provider: "AstralnautStudios.com",
+    purpose: "Records that a completed-purchase event was already reported, so refreshing the confirmation page does not report the same purchase twice.",
+    category: "marketing",
+    party: "First-party",
+    storage: "sessionStorage",
+    duration: "Cleared when you close the tab.",
+  },
 ];
 
-export const COOKIE_INVENTORY_VERIFIED_AT = "2026-07-12";
+export const COOKIE_INVENTORY_VERIFIED_AT = "2026-08-20";

@@ -39,7 +39,13 @@ export const LEGAL_CONFIG = {
     terms:                { version: "2026.07.12", effective: "[EFFECTIVE DATE]", updated: "[LAST UPDATED DATE]" },
     subscription:         { version: "2026.07.12", effective: "[EFFECTIVE DATE]", updated: "[LAST UPDATED DATE]" },
     privacy:              { version: "2026.07.12", effective: "[EFFECTIVE DATE]", updated: "[LAST UPDATED DATE]" },
-    cookies:              { version: "2026.07.12", effective: "[EFFECTIVE DATE]", updated: "[LAST UPDATED DATE]" },
+    // 2026.08.20 — Meta Pixel added to the previously-empty Marketing category.
+    // Bumping this version is load-bearing, not cosmetic: readConsent() discards
+    // any stored choice whose policyVersion does not match, so every visitor is
+    // re-prompted. That is deliberate. Consent collected under 2026.07.12 was
+    // given against a policy that stated no marketing technology was deployed,
+    // so it cannot carry over to a third-party cross-site tracker.
+    cookies:              { version: "2026.08.20", effective: "[EFFECTIVE DATE]", updated: "[LAST UPDATED DATE]" },
     community:            { version: "2026.07.12", effective: "[EFFECTIVE DATE]", updated: "[LAST UPDATED DATE]" },
     dmca:                 { version: "2026.07.12", effective: "[EFFECTIVE DATE]", updated: "[LAST UPDATED DATE]" },
     sweepstakes:          { version: "2026.07.12", effective: "[EFFECTIVE DATE]", updated: "[LAST UPDATED DATE]" },
@@ -47,7 +53,9 @@ export const LEGAL_CONFIG = {
     unsolicited:          { version: "2026.07.12", effective: "[EFFECTIVE DATE]", updated: "[LAST UPDATED DATE]" },
     contentAccessibility: { version: "2026.07.12", effective: "[EFFECTIVE DATE]", updated: "[LAST UPDATED DATE]" },
     shipping:             { version: "2026.07.12", effective: "[EFFECTIVE DATE]", updated: "[LAST UPDATED DATE]" },
-    subprocessors:        { version: "2026.07.12", effective: "[EFFECTIVE DATE]", updated: "[LAST UPDATED DATE]" },
+    // 2026.08.20 — Meta Platforms, Inc. added as a consent-gated subprocessor.
+    // Nothing gates on this version; it stamps which published text is current.
+    subprocessors:        { version: "2026.08.20", effective: "[EFFECTIVE DATE]", updated: "[LAST UPDATED DATE]" },
   },
   shipping: {
     territories: "United States (50 states and District of Columbia)",

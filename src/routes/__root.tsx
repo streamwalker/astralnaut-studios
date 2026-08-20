@@ -16,15 +16,13 @@ import { TourOverlay } from "@/components/tour/TourOverlay";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AnalyticsTracker } from "@/components/analytics-tracker";
 import { VisitorTracker } from "@/components/visitor-tracker";
-import { MetaPixelTracker } from "@/components/meta-pixel-tracker";
+import { MetaPixel } from "@/components/meta-pixel";
 import { Toaster } from "@/components/ui/sonner";
 import { useCartSync } from "@/hooks/useCartSync";
 import { CookieConsent } from "@/components/cookie-consent";
 import { useMotionRootAttr } from "@/hooks/useMotionPref";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 
-
-const META_PIXEL_ID = "2035981390457132";
 
 function NotFoundComponent() {
   return (
@@ -109,11 +107,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=swap" },
     ],
-    scripts: [
-      {
-        children: `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${META_PIXEL_ID}');fbq('track','PageView');`,
-      },
-    ],
   }),
 
   shellComponent: RootShell,
@@ -137,15 +130,6 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <link rel="manifest" href="/manifest.webmanifest" />
       </head>
       <body>
-        <noscript>
-          <img
-            height="1"
-            width="1"
-            style={{ display: "none" }}
-            alt=""
-            src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
-          />
-        </noscript>
         {children}
         <Scripts />
       </body>
@@ -202,7 +186,7 @@ function RootComponent() {
         <TourOverlay />
         <AnalyticsTracker />
         <VisitorTracker />
-        <MetaPixelTracker />
+        <MetaPixel />
         <CookieConsent />
         <Toaster position="top-right" />
       </TooltipProvider>

@@ -1,6 +1,8 @@
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { getStripe, getStripeEnvironment } from "@/lib/stripe";
 import { createCheckoutSession } from "@/utils/payments.functions";
+import { trackMetaEvent } from "@/lib/meta-pixel";
+import { amountForPriceId } from "@/config/pricingTiers";
 
 interface Props {
   priceId: string;
@@ -23,6 +25,18 @@ export function StripeEmbeddedCheckout({ priceId, customerEmail, userId, returnU
       },
     });
     if (!secret) throw new Error("Failed to create checkout session");
+
+    // Fired only after Stripe hands back a session, so a failed create is not
+    // counted as an abandoned checkout. trackMetaEvent() self-checks marketing
+    // consent, so no gate is needed at the call site.
+    const amount = amountForPriceId(priceId);
+    trackMetaEvent("InitiateCheckout", {
+      content_ids: [priceId],
+      content_type: "product",
+      num_items: 1,
+      ...(amount === null ? {} : { value: amount, currency: "USD" }),
+    });
+
     return secret;
   };
 

@@ -32,7 +32,7 @@ function CookiesPage() {
       version={D.version}
       canonical="/cookies"
     >
-      <p>AstralnautStudios.com uses cookies, local storage, session storage, and similar technologies. Necessary technologies support sign-in, security, carts, checkout, load balancing, consent choices, and account features. Functional technologies remember non-essential preferences such as your language and whether you disabled non-essential animations. Analytics technologies (first-party only) measure use and performance and load only after you consent. Marketing technologies would enable advertising or cross-site tracking — none are currently deployed; the category exists so any future addition must pass the same consent gate before it can run.</p>
+      <p>AstralnautStudios.com uses cookies, local storage, session storage, and similar technologies. Necessary technologies support sign-in, security, carts, checkout, load balancing, consent choices, and account features. Functional technologies remember non-essential preferences such as your language and whether you disabled non-essential animations. Analytics technologies (first-party only) measure use and performance and load only after you consent. Marketing technologies enable advertising and cross-site tracking; the only one in use is the Meta Pixel, which measures whether our advertising on Facebook and Instagram led to a subscription. It is not requested from Meta&rsquo;s servers, and sends nothing, unless you consent to marketing.</p>
 
       <h2>Technologies verified in use</h2>
       <p><em>Inventory verified on {COOKIE_INVENTORY_VERIFIED_AT}. This table lists what the site is actually observed to set, not a generic template.</em></p>
@@ -66,7 +66,7 @@ function CookiesPage() {
       </div>
 
       <h2>Your controls</h2>
-      <p>Necessary technologies cannot be disabled through the preference center because the Service cannot function without them. Functional, analytics, and marketing categories are opt-in and can be changed or withdrawn at any time. Withdrawal takes effect immediately: category cookies are removed where feasible and the associated scripts are unloaded. We honor the Global Privacy Control (Sec-GPC) browser signal — when present we automatically treat analytics and marketing as opted out and record that the choice was derived from GPC.</p>
+      <p>Necessary technologies cannot be disabled through the preference center because the Service cannot function without them. Functional, analytics, and marketing categories are opt-in and can be changed or withdrawn at any time. Withdrawal takes effect immediately: category cookies are removed where feasible and the associated scripts stop sending. A third-party script already running in the page cannot be removed from it, so for the Meta Pixel withdrawal instructs it to stop transmitting and deletes its cookies; it is not loaded at all on any subsequent page load. We honor the Global Privacy Control (Sec-GPC) browser signal — when present we automatically treat analytics and marketing as opted out and record that the choice was derived from GPC.</p>
       <p>
         <button
           type="button"

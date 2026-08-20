@@ -185,7 +185,7 @@ export function CookieConsent() {
               />
               <CategoryToggle
                 title="Marketing"
-                description="Advertising or cross-site tracking. None are currently deployed; this control governs any future addition."
+                description="Advertising and cross-site tracking. Currently the Meta Pixel, which tells Meta whether its ads led to a subscription. Left off, it is never loaded."
                 checked={gpc ? false : toggles.marketing}
                 disabled={gpc}
                 onChange={(v) => setToggles((t) => ({ ...t, marketing: v }))}

@@ -152,7 +152,17 @@ export function loadIfConsented(
   };
 
   maybeRun();
-  const onChange = () => maybeRun();
+  const onChange = () => {
+    // Re-arm on withdrawal. Without this the `loaded` latch is permanent and
+    // the "again after any withdrawal-then-re-consent" half of the contract
+    // above never happens — an SDK revoked on withdrawal would stay revoked
+    // for the rest of the page's life even after the visitor opted back in.
+    if (!hasConsent(category)) {
+      loaded = false;
+      return;
+    }
+    maybeRun();
+  };
   window.addEventListener(CONSENT_CHANGED_EVENT, onChange);
   return () => window.removeEventListener(CONSENT_CHANGED_EVENT, onChange);
 }
@@ -167,6 +177,27 @@ export function openCookiePreferences() {
     window.dispatchEvent(new CustomEvent(OPEN_PREFS_EVENT));
   } catch {
     /* ignore */
+  }
+}
+
+/**
+ * Expire one cookie across every domain scope it could plausibly have been set
+ * on. A cookie is only overwritten when the domain and path of the deletion
+ * match the ones used to set it, and third-party SDKs choose those themselves —
+ * Meta's `_fbp`, for instance, is written to the registrable domain
+ * (`.astralnautstudios.com`), which a bare host-only delete from `www.` will
+ * not touch. Extra attempts against scopes that were never used are inert.
+ */
+function deleteCookieEverywhere(name: string) {
+  const expired = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+  document.cookie = expired;
+
+  // hostname "www.example.com" -> ["www.example.com", "example.com"]
+  const parts = window.location.hostname.split(".");
+  for (let i = 0; i < parts.length - 1; i++) {
+    const domain = parts.slice(i).join(".");
+    document.cookie = `${expired}; domain=${domain}`;
+    document.cookie = `${expired}; domain=.${domain}`;
   }
 }
 
@@ -193,15 +224,26 @@ function cleanupCookiesForWithdrawnCategories(state: CookieConsentState) {
         // Best-effort cookie deletion. Row `name` may be a display label
         // ("a / b" or a pattern); split on ' / ' and try each token.
         const names = row.name.split("/").map((n) => n.trim().split(" ")[0]);
-        for (const n of names) {
-          document.cookie = `${n}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
-        }
+        for (const n of names) deleteCookieEverywhere(n);
       } else if (row.storage === "localStorage" || row.storage === "sessionStorage") {
         // Never remove necessary items even if a future change re-categorises them.
         if (row.category === "necessary") continue;
+        const store = row.storage === "localStorage" ? localStorage : sessionStorage;
         try {
-          if (row.storage === "localStorage") localStorage.removeItem(row.name);
-          else sessionStorage.removeItem(row.name);
+          // Rows written as a pattern ("reader-lead-capture-<series>",
+          // "meta_pixel_once:<checkout session>") stand for a family of keys,
+          // so an exact removeItem would silently miss every real one. Treat
+          // the text before the placeholder as a prefix.
+          const placeholder = row.name.indexOf("<");
+          if (placeholder === -1) {
+            store.removeItem(row.name);
+          } else {
+            const prefix = row.name.slice(0, placeholder);
+            for (let i = store.length - 1; i >= 0; i--) {
+              const key = store.key(i);
+              if (key && key.startsWith(prefix)) store.removeItem(key);
+            }
+          }
         } catch { /* ignore */ }
       }
     }
