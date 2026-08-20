@@ -10,7 +10,7 @@
  * subprocessor legal name, the /raffle/* → /sweepstakes/* redirect stubs,
  * and the admin compliance change-log which documents the sweep itself).
  *
- * Runs automatically before `bun run build` via the `prebuild` npm hook.
+ * Runs automatically before `npm run build` via the `prebuild` npm hook.
  */
 import { execSync } from "node:child_process";
 
