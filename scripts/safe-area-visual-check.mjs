@@ -15,7 +15,7 @@
  * Usage:
  *   node scripts/safe-area-visual-check.mjs [--base=http://localhost:8080]
  *
- * Screenshots and a JSON report land in .lovable/safe-area-report/.
+ * Screenshots and a JSON report land in .reports/safe-area/ (gitignored).
  * Exits non-zero when any assertion fails so CI can gate on it.
  */
 import { chromium } from "playwright";
@@ -23,7 +23,7 @@ import { mkdir, writeFile, rm } from "node:fs/promises";
 import path from "node:path";
 
 const BASE = (process.argv.find((a) => a.startsWith("--base=")) ?? "--base=http://localhost:8080").slice(7);
-const OUT = path.resolve(".lovable/safe-area-report");
+const OUT = path.resolve(".reports/safe-area");
 
 // Notched device profiles. `insets` mirrors env(safe-area-inset-*) so we can
 // assert positions numerically instead of eyeballing screenshots.

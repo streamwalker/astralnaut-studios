@@ -38,7 +38,8 @@ const EXCLUDES = [
   "src/routeTree.gen.ts",     // auto-generated (redirect route names leak in)
   "src/integrations/supabase/types.ts", // auto-generated DB types (raffle_entries table)
   "node_modules/**",
-  ".lovable/**",
+  "docs/**",                  // planning/compliance notes, not shipped copy
+  ".reports/**",              // scratch output from scripts/safe-area-visual-check.mjs
   "scripts/check-banned-terms.mjs", // this file
 ];
 

@@ -178,7 +178,7 @@ A banner shows when test mode is active. Real customers never see it in producti
       summary: "Ship safely and verify the live site.",
       body: `## Publish
 
-Use the **Publish** flow. Live URLs: **astralnaut-studios.lovable.app**, **astralnautstudios.com**, and **www.astralnautstudios.com**.
+Deploys run from the repository — merging to \`main\` builds and publishes to Cloudflare Workers. Live URLs: **astralnautstudios.com** and **www.astralnautstudios.com**.
 
 ## Post-publish checklist
 
@@ -214,7 +214,7 @@ Print your **Astralnaut Certified — Admin** badge from the course overview.`,
         },
         {
           q: "The published custom domain is:",
-          options: ["astra.com", "astralnautstudios.com", "studios.lovable.dev"],
+          options: ["astra.com", "astralnautstudios.com", "astralnaut.studios.io"],
           answerIndex: 1,
         },
       ],

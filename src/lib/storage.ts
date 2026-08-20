@@ -4,7 +4,7 @@ export function pageUrl(image_path: string | null | undefined): string | null {
   if (!image_path) return null;
   // Already a full URL
   if (/^https?:\/\//.test(image_path)) return image_path;
-  // Absolute path (e.g. Lovable-hosted CDN asset like "/__l5e/...")
+  // Absolute path already rooted at the site origin — serve as-is.
   if (image_path.startsWith("/")) return image_path;
   // Bucket-qualified path "bucket/foo.png"
   if (image_path.includes("/")) {

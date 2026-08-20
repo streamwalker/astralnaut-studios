@@ -10,7 +10,6 @@ export type CheckResult = {
 
 const OUR_DOMAINS = [
   "astralnautstudios.com",
-  "astralnaut-studios.lovable.app",
   "darkerages.com",
   "battlefieldatlantis.com",
 ];

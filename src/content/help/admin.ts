@@ -149,7 +149,7 @@ For one-off fixes you can update the row directly — but always also fix the ro
       summary: "Push to production and confirm the live site updated.",
       body: `## Publishing
 
-Use the **Publish** flow in the platform. The published URL is **astralnaut-studios.lovable.app** plus your custom domains (**astralnautstudios.com**, **www.astralnautstudios.com**).
+Deploys run from the repository. Merging to \`main\` builds the site and publishes it to Cloudflare Workers. Live domains: **astralnautstudios.com** and **www.astralnautstudios.com**.
 
 ## Verification checklist
 
