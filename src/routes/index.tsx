@@ -24,8 +24,8 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "Real World Comics — The next page only drops here" },
       { name: "description", content: "Three serialized comic properties from Astralnaut Studios. Motion-enhanced art, weekly drops, subscriber-only canon voting, real prizes." },
-      { property: "og:title", content: "Real World Comics — Astralnaut Studios" },
-      { property: "og:description", content: "The next page only drops here. Five new pages a week. Built for readers, not pirates." },
+      { property: "og:title", content: "Astralnaut Studios" },
+      { property: "og:description", content: "Astralnaut Studios and Real World Comics are imprints of Streamwalkers Corporation" },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${SITE_URL}/` },
       { property: "og:image", content: OG_DEFAULT_IMAGE },
