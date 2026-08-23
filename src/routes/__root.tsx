@@ -16,6 +16,7 @@ import { TourOverlay } from "@/components/tour/TourOverlay";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AnalyticsTracker } from "@/components/analytics-tracker";
 import { VisitorTracker } from "@/components/visitor-tracker";
+import { MetaPixelTracker } from "@/components/meta-pixel-tracker";
 import { Toaster } from "@/components/ui/sonner";
 import { useCartSync } from "@/hooks/useCartSync";
 import { CookieConsent } from "@/components/cookie-consent";
@@ -201,6 +202,7 @@ function RootComponent() {
         <TourOverlay />
         <AnalyticsTracker />
         <VisitorTracker />
+        <MetaPixelTracker />
         <CookieConsent />
         <Toaster position="top-right" />
       </TooltipProvider>
