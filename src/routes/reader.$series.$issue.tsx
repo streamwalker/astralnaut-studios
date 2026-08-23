@@ -66,7 +66,7 @@ function flashVariantFor(series: string, issueNumber: number | string, page: num
 
 function Reader() {
   const { issue, pages } = Route.useLoaderData();
-  const { page } = Route.useSearch();
+  const { page = 1 } = Route.useSearch();
   const navigate = useNavigate();
   const [accessOk, setAccessOk] = useState(false);
   const [readerLocation, setReaderLocation] = useState<{ city: string; country: string } | null>(null);
