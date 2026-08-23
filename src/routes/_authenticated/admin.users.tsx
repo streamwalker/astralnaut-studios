@@ -32,7 +32,7 @@ type Search = { userId?: string };
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
   head: () => ({ meta: [{ title: "Users — Admin" }] }),
-  validateSearch: (s: Record<string, unknown>): Search => ({
+  validateSearch: (s: Record<string, unknown>): { userId?: string } => ({
     userId: typeof s.userId === "string" ? s.userId : undefined,
   }),
   component: AdminUsersPage,

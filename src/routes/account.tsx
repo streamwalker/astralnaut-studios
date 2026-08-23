@@ -65,7 +65,7 @@ export const Route = createFileRoute("/account")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  validateSearch: (s: Record<string, unknown>) => ({
+  validateSearch: (s: Record<string, unknown>): { checkout?: string; session_id?: string } => ({
     checkout: typeof s.checkout === "string" ? s.checkout : undefined,
     session_id: typeof s.session_id === "string" ? s.session_id : undefined,
   }),

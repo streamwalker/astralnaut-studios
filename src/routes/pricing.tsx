@@ -42,7 +42,11 @@ export const Route = createFileRoute("/pricing")({
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/pricing` }],
   }),
-  validateSearch: (s: Record<string, unknown>) => ({
+  validateSearch: (s: Record<string, unknown>): {
+    plan?: "reader" | "initiate" | "patron";
+    interval?: "monthly" | "yearly";
+    autocheckout?: 1;
+  } => ({
     plan: z.enum(["reader", "initiate", "patron"]).optional().catch(undefined).parse(s.plan),
     interval: z.enum(["monthly", "yearly"]).optional().catch(undefined).parse(s.interval),
     autocheckout: s.autocheckout === "1" || s.autocheckout === 1 || s.autocheckout === true ? 1 : undefined,

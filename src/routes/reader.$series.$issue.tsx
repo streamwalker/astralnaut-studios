@@ -23,7 +23,9 @@ function usePrefersReducedMotion() {
 }
 
 export const Route = createFileRoute("/reader/$series/$issue")({
-  validateSearch: (s) => ({ page: z.coerce.number().int().min(1).max(50).catch(1).parse(s.page ?? 1) }),
+  validateSearch: (s: Record<string, unknown>): { page?: number } => ({
+    page: z.coerce.number().int().min(1).max(50).catch(1).parse(s.page ?? 1),
+  }),
   loader: async ({ params }) => {
     const slug = `${params.series}-issue-${params.issue}`;
     const bundle = await getIssueBundle({ data: { slug } });
