@@ -9,7 +9,7 @@ type Tab = "strategy" | "playbook" | "studio" | "dashboard";
 
 export const Route = createFileRoute("/_authenticated/growth-package")({
   head: () => ({ meta: [{ title: "Growth Package — Astralnaut Studios" }] }),
-  validateSearch: (s: Record<string, unknown>): { tab: Tab } => {
+  validateSearch: (s: Record<string, unknown>): { tab?: Tab } => {
     const t = s.tab;
     return { tab: t === "playbook" || t === "studio" || t === "dashboard" ? t : "strategy" };
   },

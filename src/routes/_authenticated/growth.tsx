@@ -10,7 +10,9 @@ import { Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/_authenticated/growth")({
   head: () => ({ meta: [{ title: "Growth Dashboard — Astralnaut Studios" }] }),
-  validateSearch: (s: Record<string, unknown>) => ({ export: s.export === "1" ? "1" : undefined }),
+  validateSearch: (s: Record<string, unknown>): { export?: "1" } => ({
+    export: s.export === "1" ? "1" : undefined,
+  }),
   component: GrowthDashboard,
 });
 

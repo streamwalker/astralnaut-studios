@@ -23,7 +23,9 @@ function usePrefersReducedMotion() {
 }
 
 export const Route = createFileRoute("/reader/$series/$issue")({
-  validateSearch: (s) => ({ page: z.coerce.number().int().min(1).max(50).catch(1).parse(s.page ?? 1) }),
+  validateSearch: (s: Record<string, unknown>): { page?: number } => ({
+    page: z.coerce.number().int().min(1).max(50).catch(1).parse(s.page ?? 1),
+  }),
   loader: async ({ params }) => {
     const slug = `${params.series}-issue-${params.issue}`;
     const bundle = await getIssueBundle({ data: { slug } });
@@ -64,7 +66,7 @@ function flashVariantFor(series: string, issueNumber: number | string, page: num
 
 function Reader() {
   const { issue, pages } = Route.useLoaderData();
-  const { page } = Route.useSearch();
+  const { page = 1 } = Route.useSearch();
   const navigate = useNavigate();
   const [accessOk, setAccessOk] = useState(false);
   const [readerLocation, setReaderLocation] = useState<{ city: string; country: string } | null>(null);

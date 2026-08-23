@@ -16,7 +16,7 @@ export const Route = createFileRoute("/dsar/verify")({
     path: "/dsar/verify",
   }),
   component: DsarVerifyPage,
-  validateSearch: (s: Record<string, unknown>) => ({
+  validateSearch: (s: Record<string, unknown>): { ref?: string; token?: string } => ({
     ref: typeof s.ref === "string" ? s.ref : "",
     token: typeof s.token === "string" ? s.token : "",
   }),
