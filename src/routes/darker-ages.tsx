@@ -2,10 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { RightsNotice } from "@/components/rights-notice";
 import daLogo from "@/assets/darker-ages-logo.png";
-import daCoverAsset from "@/assets/darker-ages-issue-1-cover.png.asset.json";
+import { DARKER_AGES_COVER } from "@/lib/media";
 import { SITE_URL, absUrl } from "@/lib/seo";
 
-const DA_COVER_URL = absUrl(daCoverAsset.url);
+const DA_COVER_URL = absUrl(DARKER_AGES_COVER);
 
 export const Route = createFileRoute("/darker-ages")({
   head: () => ({
@@ -58,7 +58,7 @@ function DarkerAges() {
         <p className="mx-auto mt-6 max-w-2xl text-fluid-h2 font-medium text-[var(--ink2)]">After the protective magic of the old age has died, what was held back is loose.</p>
         <figure className="mx-auto mt-12 max-w-[420px]">
           <img
-            src={daCoverAsset.url}
+            src={DARKER_AGES_COVER}
             alt="Darker Ages Issue #1 — The Astral Temptation cover"
             className="w-full rounded-lg shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)] ring-1 ring-white/10"
             loading="eager"

@@ -446,7 +446,7 @@ function SlideRow({
           </div>
         ) : null}
         <Input value={alt} onChange={(e) => setAlt(e.target.value)} placeholder="Alt text" className="h-8 text-xs" />
-        <Input value={imagePath} onChange={(e) => setImagePath(e.target.value)} placeholder="bucket/path.png or /__l5e/..." className="h-8 font-mono text-xs" />
+        <Input value={imagePath} onChange={(e) => setImagePath(e.target.value)} placeholder="bucket/path.png or /site-relative.png" className="h-8 font-mono text-xs" />
         <div className="flex flex-wrap items-center gap-3 text-xs">
           <label className="flex items-center gap-1">
             Order

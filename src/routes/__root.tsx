@@ -9,8 +9,6 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
-import iconPng from "@/assets/astralnaut-icon-512.png.asset.json";
-import appleTouchIcon from "@/assets/astralnaut-apple-touch-icon.png.asset.json";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { TourOverlay } from "@/components/tour/TourOverlay";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -125,8 +123,10 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <meta name="apple-mobile-web-app-title" content="Astralnaut" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" type="image/png" sizes="512x512" href={iconPng.url} />
-        <link rel="apple-touch-icon" sizes="180x180" href={appleTouchIcon.url} />
+        {/* Served from public/ at stable paths so the webmanifest can reference
+            the same files. Favicons must not be content-hashed. */}
+        <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.webmanifest" />
       </head>
       <body>

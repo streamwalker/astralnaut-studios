@@ -9,8 +9,8 @@ import rwcLogo from "@/assets/real-world-comics-logo.png";
 import baLogo from "@/assets/battlefield-atlantis-logo.png";
 import coaLogo from "@/assets/children-of-aquarius-logo.png";
 import daLogo from "@/assets/darker-ages-logo.png";
-import ndfAsset from "@/assets/factions/nerrian-defense-force-logo.png.asset.json";
-import tpcAsset from "@/assets/factions/tri-planetary-coalition-logo.png.asset.json";
+import ndfLogo from "@/assets/factions/nerrian-defense-force-logo.png";
+import tpcLogo from "@/assets/factions/tri-planetary-coalition-logo.png";
 import { useI18n } from "@/hooks/useI18n";
 import { StandingAndCancelFlow } from "@/components/account/StandingAndCancelFlow";
 import { ConfirmButton } from "@/components/admin/confirm-button";
@@ -394,7 +394,7 @@ function AccountPage() {
           </h2>
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             <FactionTile
-              logo={ndfAsset.url}
+              logo={ndfLogo}
               name="Nerrian Defense Force"
               short="NDF"
               tagline="Vigilant · Protect · Prevail"
@@ -402,7 +402,7 @@ function AccountPage() {
               accent="var(--neon)"
             />
             <FactionTile
-              logo={tpcAsset.url}
+              logo={tpcLogo}
               name="Tri-Planetary Coalition"
               short="TPC"
               tagline="Unity · Diplomacy · Commerce"

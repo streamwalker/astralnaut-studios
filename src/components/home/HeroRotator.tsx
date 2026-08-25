@@ -4,14 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import { track } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 import { buildGlowFilter, HERO_GLOW_QUERY_KEY, type HeroGlow } from "@/lib/hero-glow";
-import videoAsset from "@/assets/battlefield-atlantis-teaser.mp4.asset.json";
-import posterAsset from "@/assets/battlefield-atlantis-teaser-poster.jpg.asset.json";
+import { DARKER_AGES_COVER, HERO_VIDEO_URL } from "@/lib/media";
+import heroPoster from "@/assets/battlefield-atlantis-teaser-poster.jpg";
 import baLogo from "@/assets/battlefield-atlantis-logo-clean.png";
 import coaLogo from "@/assets/children-of-aquarius-logo-clean.png";
 import daLogo from "@/assets/darker-ages-logo-clean.png";
 import coaCover from "@/assets/coa-issue-1-cover.png";
-import daCoverAsset from "@/assets/darker-ages-issue-1-cover.png.asset.json";
-const daCover = daCoverAsset.url;
 
 type CTA = { label: string; to: string; params?: Record<string, string> };
 
@@ -46,8 +44,9 @@ const HERO_SLOTS: HeroSlot[] = [
     tagline: "The world before our world began. Meet the heroes of old who paved the way for our world today. The First Act is Free.",
     primary: { label: "Read the first act free", to: "/reader/$series/$issue", params: { series: "battlefield-atlantis", issue: "1" } },
     secondary: { label: "See the series", to: "/battlefield-atlantis" },
-    backgroundVideo: videoAsset.url,
-    backgroundPoster: posterAsset.url,
+    // undefined when VITE_HERO_VIDEO_URL is unset — the poster still is used instead.
+    backgroundVideo: HERO_VIDEO_URL,
+    backgroundPoster: heroPoster,
     accent: "#22d3ff",
   },
   {
@@ -59,7 +58,7 @@ const HERO_SLOTS: HeroSlot[] = [
     tagline: "A medieval reckoning told through firelight, blood, and prophecy. Witness the world before the gods left.",
     primary: { label: "Enter the series", to: "/darker-ages" },
     secondary: { label: "See pricing", to: "/pricing" },
-    backgroundImage: daCover,
+    backgroundImage: DARKER_AGES_COVER,
     overlay:
       "linear-gradient(90deg, rgba(28,8,2,0.94) 0%, rgba(28,8,2,0.7) 40%, rgba(28,8,2,0.3) 80%, rgba(28,8,2,0.1) 100%)",
     accent: "#f97316",
