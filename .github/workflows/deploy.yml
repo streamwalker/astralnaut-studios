@@ -37,12 +37,11 @@ jobs:
       - name: Build
         run: npm run build
 
-      # Advisory only. The repo carries 33 pre-existing TanStack Router
-      # `search` prop errors; failing the deploy on them would block every
-      # push. Remove `continue-on-error` once that debt is cleared.
+      # Blocking. The 33 pre-existing TanStack Router `search` prop errors were
+      # cleared during the Lovable migration, so `tsc --noEmit` is at zero and
+      # any new type error should stop the deploy rather than warn.
       - name: Typecheck
         run: npm run typecheck
-        continue-on-error: true
 
       - name: Verify deploy bundle
         run: npm run deploy:dry

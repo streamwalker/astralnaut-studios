@@ -10,9 +10,17 @@
  * subprocessor legal name, the /raffle/* → /sweepstakes/* redirect stubs,
  * and the admin compliance change-log which documents the sweep itself).
  *
+ * Implemented with node:fs only. It deliberately does NOT shell out to
+ * ripgrep: `rg` is not installed on GitHub's ubuntu-latest runners, so an
+ * rg-based implementation passes locally and dies in CI with
+ * `/bin/sh: 1: rg: not found`.
+ *
  * Runs automatically before `npm run build` via the `prebuild` npm hook.
  */
-import { execSync } from "node:child_process";
+import { readdirSync, readFileSync, statSync } from "node:fs";
+import { join, relative, sep } from "node:path";
+
+const ROOTS = ["src", "public"];
 
 const BANNED = [
   { name: "LLC", regex: /\bLLC\b/i },
@@ -32,7 +40,8 @@ const ALLOWLIST = [
   { file: "src/routes/_authenticated/admin.compliance-changelog.tsx", term: "raffle", reason: "Compliance change-log documents the sweep" },
 ];
 
-// Files/globs that ripgrep should never search.
+// Paths that are never scanned. A trailing "/**" excludes the whole directory;
+// anything else is an exact repo-relative file path.
 const EXCLUDES = [
   "supabase/migrations/**",   // immutable history
   "src/routeTree.gen.ts",     // auto-generated (redirect route names leak in)
@@ -43,27 +52,69 @@ const EXCLUDES = [
   "scripts/check-banned-terms.mjs", // this file
 ];
 
-function scan(term, regex) {
-  const args = [
-    "rg", "-n", "-i", "--no-heading", "--color=never",
-    ...EXCLUDES.flatMap((g) => ["-g", `!${g}`]),
-    "-e", regex.source,
-    "src/", "public/",
-  ];
+const EXCLUDED_DIRS = EXCLUDES.filter((p) => p.endsWith("/**")).map((p) => p.slice(0, -3));
+const EXCLUDED_FILES = new Set(EXCLUDES.filter((p) => !p.endsWith("/**")));
+
+/** Repo-relative POSIX path, so ALLOWLIST/EXCLUDES entries match on Windows too. */
+function rel(absolutePath) {
+  return relative(process.cwd(), absolutePath).split(sep).join("/");
+}
+
+function isExcluded(relPath) {
+  if (EXCLUDED_FILES.has(relPath)) return true;
+  return EXCLUDED_DIRS.some((dir) => relPath === dir || relPath.startsWith(`${dir}/`));
+}
+
+/** A NUL byte in the first 8 KiB means binary — images, video, fonts. */
+function isBinary(buffer) {
+  return buffer.subarray(0, 8192).includes(0);
+}
+
+function* walk(dir) {
+  let entries;
   try {
-    const out = execSync(args.map((a) => `'${a.replace(/'/g, "'\\''")}'`).join(" "), {
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"],
-    });
-    return out.split("\n").filter(Boolean).map((line) => {
-      const [file, lineNo, ...rest] = line.split(":");
-      return { file, line: Number(lineNo), text: rest.join(":"), term };
-    });
+    entries = readdirSync(dir, { withFileTypes: true });
   } catch (err) {
-    // rg exits 1 when no matches — treat as clean.
-    if (err.status === 1) return [];
+    if (err.code === "ENOENT") return; // root not present in this checkout
     throw err;
   }
+  for (const entry of entries) {
+    const abs = join(dir, entry.name);
+    const relPath = rel(abs);
+    if (isExcluded(relPath)) continue;
+    if (entry.isDirectory()) {
+      yield* walk(abs);
+    } else if (entry.isFile()) {
+      yield { abs, relPath };
+    }
+  }
+}
+
+function scanAll() {
+  const hits = [];
+  for (const root of ROOTS) {
+    for (const { abs, relPath } of walk(root)) {
+      let buffer;
+      try {
+        buffer = readFileSync(abs);
+      } catch {
+        continue; // unreadable (broken symlink, permissions) — not our problem
+      }
+      if (isBinary(buffer)) continue;
+
+      const lines = buffer.toString("utf8").split(/\r?\n/);
+      for (const { name, regex } of BANNED) {
+        // Fresh regex per file: avoids any lastIndex state leaking between files.
+        const matcher = new RegExp(regex.source, "i");
+        lines.forEach((text, i) => {
+          if (matcher.test(text)) {
+            hits.push({ file: relPath, line: i + 1, text, term: name });
+          }
+        });
+      }
+    }
+  }
+  return hits;
 }
 
 function isAllowed(hit) {
@@ -72,12 +123,7 @@ function isAllowed(hit) {
   );
 }
 
-const violations = [];
-for (const { name, regex } of BANNED) {
-  for (const hit of scan(name, regex)) {
-    if (!isAllowed(hit)) violations.push(hit);
-  }
-}
+const violations = scanAll().filter((hit) => !isAllowed(hit));
 
 if (violations.length === 0) {
   console.log("✓ Banned-term check passed (LLC, raffle).");
