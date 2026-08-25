@@ -5,7 +5,27 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { consumeReturnTo, peekReturnTo, clearReturnTo } from "@/lib/return-to";
+import { trackMetaEventOnce } from "@/lib/meta-pixel";
 import logo from "@/assets/astralnaut-logo.png";
+
+// A confirmed email is the point Meta should count as the registration: the
+// double opt-in means an unverified signup may never become a reader, so
+// firing at account creation would optimize the ads toward dead addresses.
+//
+// Guarded twice, because this route is reachable at any time by someone who
+// verified long ago: trackMetaEventOnce dedupes within a session, and the
+// freshness window below rejects a revisit that is not the actual moment of
+// confirmation.
+const REGISTRATION_FRESH_MS = 10 * 60 * 1000;
+
+function reportRegistration(user: { id: string; email_confirmed_at?: string | null }): void {
+  const confirmedAt = user.email_confirmed_at ? Date.parse(user.email_confirmed_at) : NaN;
+  if (!Number.isFinite(confirmedAt)) return;
+  if (Date.now() - confirmedAt > REGISTRATION_FRESH_MS) return;
+  // eventID lets a future Conversions API send of the same signup dedupe
+  // against this browser event. trackMetaEventOnce self-checks consent.
+  trackMetaEventOnce(user.id, "CompleteRegistration", {}, { eventID: user.id });
+}
 
 const searchSchema = z.object({
   next: z.string().optional().catch(undefined),
@@ -47,10 +67,18 @@ function VerifyEmailPage() {
       const { data } = await supabase.auth.getUser();
       if (cancelled) return;
       if (data.user?.email) setEmail((prev: string) => prev || data.user!.email!);
-      if (data.user?.email_confirmed_at) goDest();
+      if (data.user?.email_confirmed_at) {
+        // Order is load-bearing: goDest() calls location.replace(), so the
+        // pixel request must be dispatched before the page starts unloading.
+        reportRegistration(data.user);
+        goDest();
+      }
     })();
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user?.email_confirmed_at) goDest();
+      if (session?.user?.email_confirmed_at) {
+        reportRegistration(session.user);
+        goDest();
+      }
     });
     return () => {
       cancelled = true;
@@ -65,6 +93,7 @@ function VerifyEmailPage() {
       if (error) throw error;
       if (data.user?.email_confirmed_at) {
         toast.success("Email verified.");
+        reportRegistration(data.user);
         goDest();
       } else {
         toast.info("Still waiting on confirmation. Check your inbox (and spam folder).");

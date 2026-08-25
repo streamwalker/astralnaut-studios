@@ -163,9 +163,9 @@ export const COOKIE_INVENTORY: CookieRow[] = [
     duration: "90 days (Meta-managed).",
   },
   {
-    name: "meta_pixel_once:<checkout session>",
+    name: "meta_pixel_once:<checkout session or account id>",
     provider: "AstralnautStudios.com",
-    purpose: "Records that a completed-purchase event was already reported, so refreshing the confirmation page does not report the same purchase twice.",
+    purpose: "Records that a completed-purchase or completed-registration event was already reported, so reloading the page does not report the same purchase or sign-up twice.",
     category: "marketing",
     party: "First-party",
     storage: "sessionStorage",
