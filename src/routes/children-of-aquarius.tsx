@@ -10,6 +10,8 @@ import { AuthorBioAB } from "@/components/author-bio-ab";
 import { AuthorFaq, FAQ_FALLBACK } from "@/components/author-faq";
 import { listActiveAuthorFaq } from "@/lib/author-faq.functions";
 
+const OG_IMAGE = pageUrl("comic-pages/children-of-aquarius/issue-1/main-cover.png")!;
+
 
 
 export const Route = createFileRoute("/children-of-aquarius")({
@@ -33,10 +35,10 @@ export const Route = createFileRoute("/children-of-aquarius")({
       { property: "og:site_name", content: "Real World Comics — Astralnaut Studios" },
       { property: "article:author", content: "Phil Russell" },
       { property: "article:publisher", content: "Streamwalkers Corporation" },
-      { property: "og:image", content: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/children-of-aquarius/issue-1/page-0.png" },
+      { property: "og:image", content: OG_IMAGE },
       { property: "og:image:alt", content: "Children of Aquarius Issue 1 cover — Real World Comics" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/children-of-aquarius/issue-1/page-0.png" },
+      { name: "twitter:image", content: OG_IMAGE },
       { name: "twitter:image:alt", content: "Children of Aquarius Issue 1 cover — Real World Comics" },
     ],
     links: [{ rel: "canonical", href: "https://astralnautstudios.com/children-of-aquarius" }],
@@ -58,7 +60,7 @@ export const Route = createFileRoute("/children-of-aquarius")({
           inLanguage: "en",
           isAccessibleForFree: true,
           creativeWorkStatus: "Published",
-          image: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/children-of-aquarius/issue-1/page-0.png",
+          image: OG_IMAGE,
           url: "https://astralnautstudios.com/children-of-aquarius",
         }),
       },

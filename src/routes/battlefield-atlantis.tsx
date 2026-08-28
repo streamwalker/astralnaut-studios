@@ -7,6 +7,8 @@ import baLogo from "@/assets/battlefield-atlantis-logo.png";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Lock } from "lucide-react";
 
+const OG_IMAGE = pageUrl("comic-pages/battlefield-atlantis/issue-1/variant-cover-m.png")!;
+
 export const Route = createFileRoute("/battlefield-atlantis")({
   loader: async () => {
     const bundle = await getSeriesBundle({ data: { slug: "battlefield-atlantis" } });
@@ -26,10 +28,10 @@ export const Route = createFileRoute("/battlefield-atlantis")({
       { property: "og:site_name", content: "Real World Comics — Astralnaut Studios" },
       { property: "article:author", content: "Phil Russell" },
       { property: "article:publisher", content: "Streamwalkers Corporation" },
-      { property: "og:image", content: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/battlefield-atlantis/issue-1/variant-cover-m.png" },
+      { property: "og:image", content: OG_IMAGE },
       { property: "og:image:alt", content: "Battlefield Atlantis Issue 1 cover — Real World Comics" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/battlefield-atlantis/issue-1/variant-cover-m.png" },
+      { name: "twitter:image", content: OG_IMAGE },
       { name: "twitter:image:alt", content: "Battlefield Atlantis Issue 1 cover — Real World Comics" },
     ],
     links: [{ rel: "canonical", href: "https://astralnautstudios.com/battlefield-atlantis" }],
@@ -50,7 +52,7 @@ export const Route = createFileRoute("/battlefield-atlantis")({
         inLanguage: "en",
         isAccessibleForFree: true,
         creativeWorkStatus: "Published",
-        image: "https://xcznyhkaispxnjrvhdnc.supabase.co/storage/v1/object/public/comic-pages/battlefield-atlantis/issue-1/variant-cover-m.png",
+        image: OG_IMAGE,
         url: "https://astralnautstudios.com/battlefield-atlantis",
       }),
     }],
