@@ -58,24 +58,43 @@ See `.env.example` for what each one is and which code path reads it. The
 committed in `.env` / `.env.development` / `.env.production` — they are build
 inputs, not secrets.
 
-Rotate `SUPABASE_SERVICE_ROLE_KEY` in the Supabase dashboard before going live.
-Lovable's platform held a copy of the old one.
+`SUPABASE_SERVICE_ROLE_KEY` must be the key for `scjatmhkwcrqwssyypkd` — the
+Streamwalkers-owned project the repo points at. Do not carry over the old
+project's key: it authenticates against a different database, so every
+server-side read would silently hit the Lovable-owned copy instead. There is no
+rotation to do, because this project's key has never left the dashboard.
 
 ### 3. Supabase redirect allow-list
 
-Google sign-in now goes through Supabase directly rather than Lovable's
-wrapper. Supabase rejects any redirect target it does not recognize, so add
-these under Authentication -> URL Configuration -> Redirect URLs:
+**Done — 2026-08-28.** Recorded here so it can be re-verified, not repeated.
+
+This applies to the Streamwalkers-owned project `scjatmhkwcrqwssyypkd`, which is
+what `.env` and `supabase/config.toml` point at. The old Lovable-owned project
+`xcznyhkaispxnjrvhdnc` still serves the live site and is not configured here.
+
+Google sign-in goes through Supabase directly rather than Lovable's wrapper.
+Supabase rejects any redirect target it does not recognize. Under
+Authentication -> URL Configuration:
+
+- Site URL: `https://astralnautstudios.com`
+- Redirect URLs:
 
 ```
-https://astralnautstudios.com/login
-https://www.astralnautstudios.com/login
-http://localhost:8080/login
+https://astralnautstudios.com/**
+https://www.astralnautstudios.com/**
+http://localhost:8080/**
 ```
 
-(`vite dev` serves on 8080, not Vite's default 5173.)
+Wildcards, not literal `/login` paths. `src/routes/login.tsx` builds
+`redirectTo` from `window.location.origin` and appends more than one path
+(`/verify-email?...` and `/login?oauth=1...`), so a per-path allow-list would
+reject the verification round trip.
 
-Site URL should be `https://astralnautstudios.com`.
+(`vite dev` serves on 8080 — pinned in `vite.config.ts` — not Vite's default
+5173, and not the 3000 Supabase pre-fills.)
+
+Leaked-password protection is also enabled, under Authentication -> Providers ->
+Email. The Attack Protection page only reports status; it does not toggle it.
 
 ### 4. Resend sending domain
 
@@ -116,11 +135,14 @@ Do this only after a `workers.dev` deploy has been smoke tested.
 
 ## Known state
 
-`npm run typecheck` reports 33 pre-existing errors, all of them TanStack Router
-`search` prop mismatches (TS2741/TS2345) inherited from the Lovable-era code.
-None are in files touched during the migration. The workflow runs typecheck with
-`continue-on-error: true` so they do not block deploys; remove that flag once the
-debt is cleared.
+`npm run typecheck` is at **zero errors**. The 33 TanStack Router `search` prop
+mismatches (TS2741/TS2345) inherited from the Lovable-era code were cleared
+during the migration, and `continue-on-error` has been removed from the workflow
+step — a new type error now blocks the deploy rather than warning.
+
+Verified 2026-08-28 against the current tree: `npm run build` succeeds,
+`npm run typecheck` exits 0, and `npm run deploy:dry` packages 300 modules at
+9,139 KiB (1,714 KiB gzipped) with a single `env.ASSETS` binding.
 
 `npm run lint` reports several thousand errors, nearly all `prettier/prettier`
 formatting. The repo has never been formatted. `npm run format` will fix it, but
