@@ -12,18 +12,37 @@
  */
 
 /**
- * Absolute URL of the hero background video, or `undefined` when unset.
+ * Site-relative path of the committed hero background loop.
  *
- * `HeroRotator` treats `undefined` as "no video": it renders the committed
- * poster still instead and never mounts a `<video>` element. That is a
- * deliberate, visible-but-correct fallback, not a broken state — it is the same
- * path already taken for reduced-motion and save-data users.
+ * The 48.8 MiB master could never ship this way. This is a re-encode of the
+ * teaser sized for a background that is permanently behind a darkening gradient
+ * and a logo lockup: 1440x602, h264 high, CRF 29, **no audio track at all**
+ * (the element is `muted`, so the audio was dead weight), `+faststart` so the
+ * moov atom is at the head and playback can begin on the first range request.
+ * That lands at ~5.1 MiB — a fifth of the 25 MiB per-file Workers cap, so it
+ * ships as an ordinary static asset and is served from Cloudflare's edge.
  *
- * To turn the video back on, upload the teaser to the public `site-media`
- * bucket and set `VITE_HERO_VIDEO_URL` in `.env.production`.
+ * Kept in `public/` rather than imported from `src/assets/` for the same reason
+ * as `DARKER_AGES_COVER` below: a stable, unhashed URL. That matters here
+ * because the same path is the thing you would swap for a Supabase Storage URL
+ * via `VITE_HERO_VIDEO_URL` without touching code.
+ */
+const HERO_VIDEO_LOCAL = "/hero/battlefield-atlantis-teaser.mp4";
+
+/**
+ * URL of the hero background video.
+ *
+ * `VITE_HERO_VIDEO_URL` wins when set, so the loop can be moved to Supabase
+ * Storage (or any CDN) later by setting one env var — no code change, no
+ * rebuild of the component. Unset, it resolves to the committed asset above.
+ *
+ * `HeroRotator` still treats a falsy value as "no video" and renders the
+ * committed poster still instead of mounting a `<video>`. That branch is now
+ * reached only by reduced-motion and save-data users, which is exactly what it
+ * was written for.
  */
 export const HERO_VIDEO_URL: string | undefined =
-  import.meta.env.VITE_HERO_VIDEO_URL || undefined;
+  import.meta.env.VITE_HERO_VIDEO_URL || HERO_VIDEO_LOCAL;
 
 /**
  * Site-relative path of the Darker Ages Issue #1 cover.

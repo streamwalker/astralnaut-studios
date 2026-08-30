@@ -41,8 +41,13 @@ const HERO_SLOTS: HeroSlot[] = [
     eyebrow: "Issue #1 is live · Read free",
     titleImage: baLogo,
     titleAlt: "Battlefield Atlantis",
-    tagline: "The world before our world began. Meet the heroes of old who paved the way for our world today. The First Act is Free.",
-    primary: { label: "Read the first act free", to: "/reader/$series/$issue", params: { series: "battlefield-atlantis", issue: "1" } },
+    tagline:
+      "The world before our world began. Meet the heroes of old who paved the way for our world today. The First Act is Free.",
+    primary: {
+      label: "Read the first act free",
+      to: "/reader/$series/$issue",
+      params: { series: "battlefield-atlantis", issue: "1" },
+    },
     secondary: { label: "See the series", to: "/battlefield-atlantis" },
     // undefined when VITE_HERO_VIDEO_URL is unset — the poster still is used instead.
     backgroundVideo: HERO_VIDEO_URL,
@@ -55,7 +60,8 @@ const HERO_SLOTS: HeroSlot[] = [
     eyebrow: "Coming soon · Add to your library",
     titleImage: daLogo,
     titleAlt: "Darker Ages",
-    tagline: "A medieval reckoning told through firelight, blood, and prophecy. Witness the world before the gods left.",
+    tagline:
+      "A medieval reckoning told through firelight, blood, and prophecy. Witness the world before the gods left.",
     primary: { label: "Enter the series", to: "/darker-ages" },
     secondary: { label: "See pricing", to: "/pricing" },
     backgroundImage: DARKER_AGES_COVER,
@@ -69,7 +75,8 @@ const HERO_SLOTS: HeroSlot[] = [
     eyebrow: "Cast · World · First look",
     titleImage: coaLogo,
     titleAlt: "Children of Aquarius",
-    tagline: "Disclosure-era prophecy meets oceanic uprising. Meet the children before the world meets them.",
+    tagline:
+      "Disclosure-era prophecy meets oceanic uprising. Meet the children before the world meets them.",
     primary: { label: "Meet the cast", to: "/children-of-aquarius" },
     secondary: { label: "See the slate", to: "/" },
     backgroundImage: coaCover,
@@ -82,7 +89,8 @@ const HERO_SLOTS: HeroSlot[] = [
     tab: "PS5 Milestone",
     eyebrow: "Subscriber unlock · 1,000",
     titleText: "A PlayStation 5 unlocks at 1,000 subscribers.",
-    tagline: "Patron tier unlocks cameo eligibility. Sweepstakes windows open every 10,000-subscriber milestone. No purchase necessary.",
+    tagline:
+      "Patron tier unlocks cameo eligibility. Sweepstakes windows open every 10,000-subscriber milestone. No purchase necessary.",
     primary: { label: "See the milestone", to: "/pricing" },
     secondary: { label: "Browse the slate", to: "/" },
     overlay:
@@ -97,6 +105,7 @@ export function HeroRotator() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [saveData, setSaveData] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   const { data: glowRows } = useQuery({
@@ -121,6 +130,30 @@ export function HeroRotator() {
     const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     mq.addEventListener?.("change", onChange);
     return () => mq.removeEventListener?.("change", onChange);
+  }, []);
+
+  // Respect Save-Data and metered/slow connections. The loop is ~5 MiB, which is
+  // rude to pull onto a capped plan for decoration the reader did not ask for —
+  // and the poster still is a finished piece of art, not a degraded placeholder.
+  // `connection` is not in every browser's lib.dom, hence the narrow cast.
+  useEffect(() => {
+    if (typeof navigator === "undefined") return;
+    const conn = (
+      navigator as Navigator & {
+        connection?: {
+          saveData?: boolean;
+          effectiveType?: string;
+          addEventListener?: (t: string, l: () => void) => void;
+          removeEventListener?: (t: string, l: () => void) => void;
+        };
+      }
+    ).connection;
+    if (!conn) return;
+    const update = () =>
+      setSaveData(conn.saveData === true || /^(slow-2g|2g|3g)$/.test(conn.effectiveType ?? ""));
+    update();
+    conn.addEventListener?.("change", update);
+    return () => conn.removeEventListener?.("change", update);
   }, []);
 
   // Pause on tab-hidden.
@@ -158,7 +191,9 @@ export function HeroRotator() {
 
   // Touch swipe.
   const touchX = useRef<number | null>(null);
-  const onTouchStart = (e: React.TouchEvent) => { touchX.current = e.touches[0]?.clientX ?? null; };
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchX.current = e.touches[0]?.clientX ?? null;
+  };
   const onTouchEnd = (e: React.TouchEvent) => {
     if (touchX.current == null) return;
     const dx = (e.changedTouches[0]?.clientX ?? 0) - touchX.current;
@@ -191,7 +226,7 @@ export function HeroRotator() {
           slot={slot}
           isActive={i === active}
           shouldRender={i === active || i === nextIdx}
-          allowVideo={!reducedMotion}
+          allowVideo={!reducedMotion && !saveData}
         />
       ))}
 
@@ -268,8 +303,9 @@ function SlotPanel({
     if (!v) return;
     const p = v.play();
     if (p && typeof p.then === "function") {
-      p.then(() => track("hero_video_played", { slot: slot.id }))
-       .catch(() => track("hero_video_blocked", { slot: slot.id }));
+      p.then(() => track("hero_video_played", { slot: slot.id })).catch(() =>
+        track("hero_video_blocked", { slot: slot.id }),
+      );
     }
   }, [renderVideo, slot.id]);
 
@@ -384,7 +420,6 @@ function SlotContent({ slot, glow }: { slot: HeroSlot; glow?: HeroGlow }) {
             draggable={false}
             onError={() => setImgFailed(true)}
           />
-
         </h1>
       ) : (
         <h1 className="pointer-events-none select-none mt-5 text-fluid-h1 font-black tracking-tight text-white drop-shadow-[0_4px_18px_rgba(0,0,0,0.7)]">
@@ -404,13 +439,23 @@ function SlotContent({ slot, glow }: { slot: HeroSlot; glow?: HeroGlow }) {
   );
 }
 
-function CtaButton({ cta, slot, variant }: { cta: CTA; slot: string; variant: "marvel" | "ghost" }) {
+function CtaButton({
+  cta,
+  slot,
+  variant,
+}: {
+  cta: CTA;
+  slot: string;
+  variant: "marvel" | "ghost";
+}) {
   const className = variant === "marvel" ? "btn-marvel" : "btn-hero-ghost";
   const onClick = () => track("hero_cta_click", { slot, target: cta.to });
   const children: ReactNode = (
     <>
       {cta.label}
-      <span aria-hidden className="ml-2">→</span>
+      <span aria-hidden className="ml-2">
+        →
+      </span>
     </>
   );
   if (cta.params) {
