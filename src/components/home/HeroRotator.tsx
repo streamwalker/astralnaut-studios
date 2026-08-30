@@ -101,12 +101,33 @@ const HERO_SLOTS: HeroSlot[] = [
 
 const AUTOPLAY_MS = 15000;
 
+/**
+ * Stall guard for a slot whose video drives the advance.
+ *
+ * The normal path is the `ended` event. But `ended` never fires if the network
+ * drops mid-stream or the tab is throttled hard enough to starve the decoder,
+ * and a carousel that silently stops rotating is a worse failure than one that
+ * moves on early. Comfortably longer than the teaser (40.5s) so it never
+ * pre-empts a healthy playthrough.
+ */
+const VIDEO_STALL_MS = 70000;
+
 export function HeroRotator() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [saveData, setSaveData] = useState(false);
+  const [videoUnplayable, setVideoUnplayable] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
+
+  const advance = useCallback(() => {
+    setActive((i) => (i + 1) % HERO_SLOTS.length);
+  }, []);
+
+  // Both are read inside SlotPanel's play effect, so they must be referentially
+  // stable — an inline arrow here would re-run that effect on every render and
+  // restart playback each time.
+  const markVideoUnplayable = useCallback(() => setVideoUnplayable(true), []);
 
   const { data: glowRows } = useQuery({
     queryKey: HERO_GLOW_QUERY_KEY,
@@ -164,14 +185,28 @@ export function HeroRotator() {
     return () => document.removeEventListener("visibilitychange", onVis);
   }, []);
 
+  // A slot with a playable background video holds the stage until the video
+  // finishes, rather than being cut off a third of the way in by the flat
+  // AUTOPLAY_MS timer. `videoUnplayable` covers autoplay refusal and decode
+  // errors, where no `ended` event is ever coming and the timer must take over.
+  const activeSlot = HERO_SLOTS[active];
+  const videoDrivesAdvance =
+    !reducedMotion && !saveData && !videoUnplayable && !!activeSlot?.backgroundVideo;
+
+  // A fresh slot deserves a fresh verdict — a video that failed on a dead
+  // connection should be retried once the carousel comes back around.
+  useEffect(() => {
+    setVideoUnplayable(false);
+  }, [active]);
+
   // Autoplay.
   useEffect(() => {
     if (paused || reducedMotion) return;
-    const t = window.setTimeout(() => {
-      setActive((i) => (i + 1) % HERO_SLOTS.length);
-    }, AUTOPLAY_MS);
+    // When the video owns the pacing this timeout is only a stall guard — a
+    // healthy playthrough fires `ended` well before VIDEO_STALL_MS elapses.
+    const t = window.setTimeout(advance, videoDrivesAdvance ? VIDEO_STALL_MS : AUTOPLAY_MS);
     return () => window.clearTimeout(t);
-  }, [active, paused, reducedMotion]);
+  }, [active, paused, reducedMotion, videoDrivesAdvance, advance]);
 
   // Fire view event per slot.
   useEffect(() => {
@@ -227,6 +262,9 @@ export function HeroRotator() {
           isActive={i === active}
           shouldRender={i === active || i === nextIdx}
           allowVideo={!reducedMotion && !saveData}
+          paused={paused}
+          onEnded={advance}
+          onUnplayable={markVideoUnplayable}
         />
       ))}
 
@@ -286,28 +324,43 @@ function SlotPanel({
   isActive,
   shouldRender,
   allowVideo,
+  paused,
+  onEnded,
+  onUnplayable,
 }: {
   slot: HeroSlot;
   isActive: boolean;
   shouldRender: boolean;
   allowVideo: boolean;
+  paused: boolean;
+  onEnded: () => void;
+  onUnplayable: () => void;
 }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   // Only render the video element for the active slot to avoid pulling N videos in parallel.
   const renderVideo = isActive && allowVideo && !!slot.backgroundVideo;
 
+  // Hovering the hero pauses rotation; the video has to honour that too, or the
+  // slot would advance out from under a reader who paused it deliberately.
   useEffect(() => {
     if (!renderVideo) return;
     const v = videoRef.current;
     if (!v) return;
+    if (paused) {
+      v.pause();
+      return;
+    }
     const p = v.play();
     if (p && typeof p.then === "function") {
-      p.then(() => track("hero_video_played", { slot: slot.id })).catch(() =>
-        track("hero_video_blocked", { slot: slot.id }),
-      );
+      p.then(() => track("hero_video_played", { slot: slot.id })).catch(() => {
+        // Autoplay refused. No `ended` event is coming, so hand pacing back to
+        // the timer rather than letting the carousel sit on a frozen poster.
+        track("hero_video_blocked", { slot: slot.id });
+        onUnplayable();
+      });
     }
-  }, [renderVideo, slot.id]);
+  }, [renderVideo, paused, slot.id, onUnplayable]);
 
   return (
     <div
@@ -335,8 +388,14 @@ function SlotPanel({
           poster={slot.backgroundPoster}
           autoPlay
           muted
-          loop
           playsInline
+          // Deliberately NOT looped. This slot holds the stage for one full
+          // playthrough and `ended` is what moves the carousel on, so a loop
+          // would mean `ended` never fires and rotation stops dead.
+          onEnded={onEnded}
+          // Decode/network failure: same reasoning as a refused play() — no
+          // `ended` is coming, so give the pacing back to the timer.
+          onError={onUnplayable}
           // metadata-only avoids pulling the full teaser on first paint; play() will stream on demand
           preload="metadata"
           tabIndex={-1}
