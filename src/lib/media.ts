@@ -1,11 +1,15 @@
 /**
- * External media that cannot ship inside the Worker bundle.
+ * Media served from a stable, unhashed URL rather than a Vite asset import.
  *
  * Cloudflare Workers static assets are capped at **25 MiB per file**
  * (https://developers.cloudflare.com/workers/platform/limits/). The Battlefield
- * Atlantis teaser is 48.8 MiB, so it can never be served from `.output/public`
- * — `wrangler deploy` rejects the file outright. It therefore lives in Supabase
- * Storage, next to the comic pages that are already served from there.
+ * Atlantis teaser *master* is 48.8 MiB, so the master could never be served
+ * from `.output/public` — `wrangler deploy` rejects it outright. The obvious
+ * workaround was Supabase Storage. It turned out not to be needed: the cap was
+ * a symptom, not the constraint. What ships is a re-encode sized for the job
+ * (see `HERO_VIDEO_LOCAL`), which lands at ~5.1 MiB and is served from the edge
+ * like any other static file. `VITE_HERO_VIDEO_URL` still exists as the escape
+ * hatch if it ever does need to move off-origin.
  *
  * Everything else recovered from the old Lovable CDN is well under the cap and
  * is committed to `src/assets/` as a normal Vite asset import.
