@@ -33,6 +33,28 @@ the `VITE_*` half inlined at build time — see `client.server.ts` and
 every SSR render threw `Missing Supabase environment variable(s): SUPABASE_URL`
 and returned a branded 500 while signup and login still worked.
 
+## Never guard a route with `beforeLoad`
+
+A TanStack Router `beforeLoad` runs during SSR on the Worker as well as in the
+browser. The Supabase client persists its session in `localStorage`, which the
+Worker cannot read, so `supabase.auth.getSession()` / `getUser()` inside
+`beforeLoad` always resolves to no session on the server. A `beforeLoad` that
+throws `redirect({ to: "/login" })` therefore fires for **every** visitor,
+signed in or not, as a server-side 307 issued before any JavaScript runs.
+
+That is exactly what happened to `/account`, which sat outside the
+`_authenticated` layout and rolled its own guard. Diagnosing it needs a header
+dump, not a browser — a `307` with `content-length: 0` at the edge proves the
+server decided, whereas a `200` would mean the client did:
+
+```bash
+curl -s -o /dev/null -D - https://astralnautstudios.com/account
+```
+
+Every gated route belongs under `src/routes/_authenticated/`. That layout is a
+pathless one, so the URL is unchanged, and it checks the session in a
+`useEffect` on the client where the session actually lives.
+
 ## One-time setup
 
 ### 1. Repository secrets
