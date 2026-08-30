@@ -24,6 +24,15 @@ at the repo root — is what gets deployed. Nitro copies `name`,
 `compatibility_date`, `compatibility_flags`, and `routes` from the root config
 into it, and overrides `main`.
 
+It does **not** copy a `vars` block. Adding `vars` to `wrangler.jsonc` has no
+effect on the deployed Worker: `process.env` at runtime contains only what has
+been uploaded with `wrangler secret put`. Server code that needs a public
+Supabase value therefore reads `process.env.X || import.meta.env.VITE_X`, with
+the `VITE_*` half inlined at build time — see `client.server.ts` and
+`auth-middleware.ts`. Skipping that fallback is what broke the reader route:
+every SSR render threw `Missing Supabase environment variable(s): SUPABASE_URL`
+and returned a branded 500 while signup and login still worked.
+
 ## One-time setup
 
 ### 1. Repository secrets
