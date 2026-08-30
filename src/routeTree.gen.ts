@@ -69,6 +69,7 @@ import { Route as AuthenticatedAdminLearnRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminLettersRouteImport } from './routes/_authenticated/admin.letters'
 import { Route as AuthenticatedAdminMediaRouteImport } from './routes/_authenticated/admin.media'
 import { Route as AuthenticatedAdminOutreachRouteImport } from './routes/_authenticated/admin.outreach'
+import { Route as AuthenticatedAdminPromosRouteImport } from './routes/_authenticated/admin.promos'
 import { Route as AuthenticatedAdminSecurityRouteImport } from './routes/_authenticated/admin.security'
 import { Route as AuthenticatedAdminSubscriptionTestRouteImport } from './routes/_authenticated/admin.subscription-test'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
@@ -393,6 +394,12 @@ const AuthenticatedAdminOutreachRoute =
     path: '/admin/outreach',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAdminPromosRoute =
+  AuthenticatedAdminPromosRouteImport.update({
+    id: '/admin/promos',
+    path: '/admin/promos',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAdminSecurityRoute =
   AuthenticatedAdminSecurityRouteImport.update({
     id: '/admin/security',
@@ -555,6 +562,7 @@ export interface FileRoutesByFullPath {
   '/admin/letters': typeof AuthenticatedAdminLettersRoute
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/outreach': typeof AuthenticatedAdminOutreachRoute
+  '/admin/promos': typeof AuthenticatedAdminPromosRoute
   '/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -634,6 +642,7 @@ export interface FileRoutesByTo {
   '/admin/letters': typeof AuthenticatedAdminLettersRoute
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/outreach': typeof AuthenticatedAdminOutreachRoute
+  '/admin/promos': typeof AuthenticatedAdminPromosRoute
   '/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -715,6 +724,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/letters': typeof AuthenticatedAdminLettersRoute
   '/_authenticated/admin/media': typeof AuthenticatedAdminMediaRoute
   '/_authenticated/admin/outreach': typeof AuthenticatedAdminOutreachRoute
+  '/_authenticated/admin/promos': typeof AuthenticatedAdminPromosRoute
   '/_authenticated/admin/security': typeof AuthenticatedAdminSecurityRoute
   '/_authenticated/admin/subscription-test': typeof AuthenticatedAdminSubscriptionTestRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -796,6 +806,7 @@ export interface FileRouteTypes {
     | '/admin/letters'
     | '/admin/media'
     | '/admin/outreach'
+    | '/admin/promos'
     | '/admin/security'
     | '/admin/subscription-test'
     | '/admin/users'
@@ -875,6 +886,7 @@ export interface FileRouteTypes {
     | '/admin/letters'
     | '/admin/media'
     | '/admin/outreach'
+    | '/admin/promos'
     | '/admin/security'
     | '/admin/subscription-test'
     | '/admin/users'
@@ -955,6 +967,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/letters'
     | '/_authenticated/admin/media'
     | '/_authenticated/admin/outreach'
+    | '/_authenticated/admin/promos'
     | '/_authenticated/admin/security'
     | '/_authenticated/admin/subscription-test'
     | '/_authenticated/admin/users'
@@ -1446,6 +1459,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminOutreachRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin/promos': {
+      id: '/_authenticated/admin/promos'
+      path: '/admin/promos'
+      fullPath: '/admin/promos'
+      preLoaderRoute: typeof AuthenticatedAdminPromosRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/admin/security': {
       id: '/_authenticated/admin/security'
       path: '/admin/security'
@@ -1615,6 +1635,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAdminLettersRoute: typeof AuthenticatedAdminLettersRoute
   AuthenticatedAdminMediaRoute: typeof AuthenticatedAdminMediaRoute
   AuthenticatedAdminOutreachRoute: typeof AuthenticatedAdminOutreachRoute
+  AuthenticatedAdminPromosRoute: typeof AuthenticatedAdminPromosRoute
   AuthenticatedAdminSecurityRoute: typeof AuthenticatedAdminSecurityRoute
   AuthenticatedAdminSubscriptionTestRoute: typeof AuthenticatedAdminSubscriptionTestRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
@@ -1638,6 +1659,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminLettersRoute: AuthenticatedAdminLettersRoute,
   AuthenticatedAdminMediaRoute: AuthenticatedAdminMediaRoute,
   AuthenticatedAdminOutreachRoute: AuthenticatedAdminOutreachRoute,
+  AuthenticatedAdminPromosRoute: AuthenticatedAdminPromosRoute,
   AuthenticatedAdminSecurityRoute: AuthenticatedAdminSecurityRoute,
   AuthenticatedAdminSubscriptionTestRoute:
     AuthenticatedAdminSubscriptionTestRoute,

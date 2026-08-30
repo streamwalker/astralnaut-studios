@@ -43,6 +43,14 @@ export const Route = createFileRoute("/reader/$series/$issue")({
 });
 
 type FlashVariant = "lightning" | "explosion" | "pulse" | "ember";
+type ReadMode = "single" | "all";
+
+// Shared by the reader's small square controls. Hoisted to module scope because
+// the text-size control now lives outside the page-viewer toolbar — that toolbar
+// only renders in single-page mode, and the control scales the chrome in both.
+// min-h-11/min-w-11 is the 44px touch target.
+const UI_CTRL_CLS =
+  "btn-ghost inline-flex min-h-11 min-w-11 items-center justify-center px-2 py-1 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--neon)] focus-visible:ring-offset-2 focus-visible:ring-offset-black";
 
 // Per-page flash overlay map, keyed by `${series-slug}:${issue-number}:${page-number}`.
 // Add entries here to tune the first-view animation for any specific page.
@@ -104,6 +112,34 @@ function Reader() {
   const current = pages.find((p: typeof pages[number]) => p.page_number === page);
   const isFree = page <= freeMax;
   const img = pageUrl(current?.image_path);
+
+  // Two ways to read, because they suit different moments. "All pages" is a
+  // continuous vertical strip that scrolls with the document — the way people
+  // actually read comics on a phone. "Single page" is the click-to-turn view
+  // with zoom and pan, for studying one page of art.
+  //
+  // The choice is remembered because it is a reading preference, not a
+  // per-issue decision, and re-picking it on every page turn would be its own
+  // annoyance.
+  const READ_MODE_KEY = "reader:mode:v1";
+  const [mode, setMode] = useState<ReadMode>("single");
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(READ_MODE_KEY);
+      if (raw === "all" || raw === "single") setMode(raw);
+    } catch { /* ignore */ }
+  }, []);
+  const chooseMode = useCallback((next: ReadMode) => {
+    setMode(next);
+    try { localStorage.setItem(READ_MODE_KEY, next); } catch { /* ignore */ }
+  }, []);
+
+  // Every page the reader is actually entitled to see. Paid pages come back
+  // from the loader with image_path stripped to "", so this cannot leak them.
+  const readablePages = pages.filter(
+    (p: typeof pages[number]) => p.page_number <= freeMax && !!p.image_path,
+  );
+  const firstLockedPage = freeMax + 1;
   const ZOOM_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2, 3] as const;
   const FIT = 0 as const; // 0 = fit-width mode
   const [zoom, setZoom] = useState<number>(FIT);
@@ -320,6 +356,9 @@ function Reader() {
     });
   }, []);
   const zoomReset = useCallback(() => setZoom(FIT), []);
+  // True when the viewer needs to be its own scroll container: the image is
+  // wider/taller than the frame and has to be panned within it.
+  const panBox = zoom !== FIT;
   const toggleActual = useCallback(() => setZoom((z) => (z === FIT ? 1 : FIT)), []);
   const onImageClick = useCallback(() => {
     setZoom((z) => (z === FIT ? lastZoomIn : FIT));
@@ -332,8 +371,17 @@ function Reader() {
 
 
 
+  // In the strip, "go to page N" is a scroll, not a navigation. Each page
+  // renders with id="rp-N"; anything past the free run has no anchor, so the
+  // jump is clamped rather than silently doing nothing.
+  const scrollToPage = useCallback((n: number) => {
+    const target = Math.min(Math.max(1, n), Math.max(1, freeMax));
+    document.getElementById(`rp-${target}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [freeMax]);
+
   function goTo(target: number) {
     const next = Math.min(total, Math.max(1, target));
+    if (mode === "all") { scrollToPage(next); return; }
     navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: next } });
   }
   function go(delta: number) {
@@ -401,23 +449,33 @@ function Reader() {
   // Best-effort access logging for paid-content auditing & burst detection.
   // Only logs when signed in — the server fn requires auth and derives the
   // user id from the session, so clients can't spoof another user.
+  // The strip renders every free page at once, so the audit record has to cover
+  // all of them — logging only the "current" page would under-report exactly
+  // the view that reads the most.
+  const loggedPaths = mode === "all"
+    ? readablePages.map((p: typeof pages[number]) => p.image_path)
+    : current?.image_path ? [current.image_path] : [];
+  const loggedKey = loggedPaths.join("|");
   useEffect(() => {
-    if (!current?.image_path) return;
+    if (!loggedKey) return;
     let cancelled = false;
     (async () => {
       const { data } = await supabase.auth.getUser();
       if (cancelled || !data.user) return;
       logStorageAccess({
         data: {
-          paths: [current.image_path],
+          paths: loggedKey.split("|"),
           bucket: "comic-pages",
-          comicId: current.id ?? null,
-          isFree,
+          comicId: mode === "all" ? null : current?.id ?? null,
+          isFree: mode === "all" ? true : isFree,
         },
       }).catch(() => {});
     })();
     return () => { cancelled = true; };
-  }, [current?.id, current?.image_path, isFree]);
+    // loggedKey is the stable identity of the path set; current?.id only
+    // matters in single-page mode, where it moves in lockstep with it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loggedKey, mode, isFree]);
 
   if (!accessOk) {
     return (
@@ -463,8 +521,70 @@ function Reader() {
         </div>
 
 
-        <div className="mt-4 panel relative overflow-hidden">
-          {isFree && img ? (
+        <div
+          className="mt-4 flex flex-wrap items-center justify-between gap-2"
+          style={{ fontSize: `calc(10px * ${uiScale})` }}
+        >
+          <div
+            role="group"
+            aria-label="Reading mode"
+            className="inline-flex overflow-hidden rounded-sm border border-white/10"
+          >
+            <ModeButton
+              active={mode === "all"}
+              onClick={() => chooseMode("all")}
+              label="Read all pages"
+              hint="Continuous vertical scroll"
+            >
+              ▤ All pages
+            </ModeButton>
+            <ModeButton
+              active={mode === "single"}
+              onClick={() => chooseMode("single")}
+              label="Single page"
+              hint="Click to turn, zoom and pan"
+            >
+              ❐ Single page
+            </ModeButton>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-mono uppercase tracking-[2px] text-[var(--mute)]">
+              {mode === "all"
+                ? `${readablePages.length} page${readablePages.length === 1 ? "" : "s"} · scroll to read`
+                : "Click the art to zoom · ← → to turn"}
+            </span>
+            {/* Text-size control lives out here rather than in the page-viewer
+                toolbar, because it scales the reader chrome in both modes and
+                the toolbar only exists in single-page mode. */}
+            <div className="flex items-center gap-1">
+              <button type="button" onClick={uiScaleDown} aria-label="Decrease reader interface text size" disabled={atMinUi} className={UI_CTRL_CLS}>
+                <span aria-hidden="true">A−</span>
+              </button>
+              <button type="button" onClick={uiScaleReset} aria-label="Reset reader interface text size to default" aria-pressed={uiScale === 1} className={UI_CTRL_CLS}>
+                A
+              </button>
+              <button type="button" onClick={uiScaleUp} aria-label="Increase reader interface text size" disabled={atMaxUi} className={UI_CTRL_CLS}>
+                <span aria-hidden="true">A+</span>
+              </button>
+              <span aria-live="polite" aria-atomic="true" className="ml-1 font-mono tabular-nums text-[var(--ink)]">
+                <span className="sr-only">Interface text size: </span>
+                UI {Math.round(uiScale * 100)}%
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3 panel relative overflow-hidden">
+          {mode === "all" ? (
+            <AllPagesStrip
+              pages={readablePages}
+              total={total}
+              freeMax={freeMax}
+              firstLockedPage={firstLockedPage}
+              seriesSlug={issue.series.slug}
+              dropAt={pages.find((p: typeof pages[number]) => p.page_number === firstLockedPage)?.drop_at}
+            />
+          ) : isFree && img ? (
             <div ref={stageRef} className={isFullscreen ? "flex h-full w-full flex-col bg-black" : "contents"}>
               <div role="status" aria-live="assertive" aria-atomic="true" className="sr-only">
                 {fsAnnouncement}
@@ -479,110 +599,61 @@ function Reader() {
               >
                 <span id="viewer-toolbar-hint">Scroll & zoom</span>
                 <div className="flex flex-wrap items-center gap-1">
-                  {(() => {
-                    const ctrlCls =
-                      "btn-ghost inline-flex min-h-11 min-w-11 items-center justify-center px-2 py-1 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--neon)] focus-visible:ring-offset-2 focus-visible:ring-offset-black";
-                    return (
-                      <>
-                        <button
-                          type="button"
-                          onClick={zoomOut}
-                          aria-label="Zoom out"
-                          aria-keyshortcuts="-"
-                          disabled={zoom !== FIT && zoom <= ZOOM_STEPS[0]}
-                          className={ctrlCls}
-                        >
-                          <span aria-hidden="true">−</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={zoomReset}
-                          aria-label="Fit page to width"
-                          aria-pressed={zoom === FIT}
-                          aria-keyshortcuts="0"
-                          className={ctrlCls}
-                        >
-                          Fit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={zoomIn}
-                          aria-label="Zoom in"
-                          aria-keyshortcuts="+ ="
-                          disabled={zoom !== FIT && zoom >= ZOOM_STEPS[ZOOM_STEPS.length - 1]}
-                          className={ctrlCls}
-                        >
-                          <span aria-hidden="true">+</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={toggleActual}
-                          aria-label={zoom === FIT ? "Show at actual size (100%)" : "Fit page to width"}
-                          aria-pressed={zoom !== FIT && zoom === 1}
-                          className={ctrlCls}
-                        >
-                          {zoom === FIT ? "1:1" : "Fit"}
-                        </button>
-                        <button
-                          ref={fsButtonRef}
-                          type="button"
-                          onClick={toggleFullscreen}
-                          aria-label={isFullscreen ? "Exit full screen" : "Enter full screen"}
-                          aria-pressed={isFullscreen}
-                          aria-keyshortcuts="F"
-                          className={ctrlCls}
-                        >
-                          <span aria-hidden="true">⤢ </span>{isFullscreen ? "Exit" : "Full"}
-                        </button>
+                  <button
+                    type="button"
+                    onClick={zoomOut}
+                    aria-label="Zoom out"
+                    aria-keyshortcuts="-"
+                    disabled={zoom !== FIT && zoom <= ZOOM_STEPS[0]}
+                    className={UI_CTRL_CLS}
+                  >
+                    <span aria-hidden="true">−</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={zoomReset}
+                    aria-label="Fit page to width"
+                    aria-pressed={zoom === FIT}
+                    aria-keyshortcuts="0"
+                    className={UI_CTRL_CLS}
+                  >
+                    Fit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={zoomIn}
+                    aria-label="Zoom in"
+                    aria-keyshortcuts="+ ="
+                    disabled={zoom !== FIT && zoom >= ZOOM_STEPS[ZOOM_STEPS.length - 1]}
+                    className={UI_CTRL_CLS}
+                  >
+                    <span aria-hidden="true">+</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={toggleActual}
+                    aria-label={zoom === FIT ? "Show at actual size (100%)" : "Fit page to width"}
+                    aria-pressed={zoom !== FIT && zoom === 1}
+                    className={UI_CTRL_CLS}
+                  >
+                    {zoom === FIT ? "1:1" : "Fit"}
+                  </button>
+                  <button
+                    ref={fsButtonRef}
+                    type="button"
+                    onClick={toggleFullscreen}
+                    aria-label={isFullscreen ? "Exit full screen" : "Enter full screen"}
+                    aria-pressed={isFullscreen}
+                    aria-keyshortcuts="F"
+                    className={UI_CTRL_CLS}
+                  >
+                    <span aria-hidden="true">⤢ </span>{isFullscreen ? "Exit" : "Full"}
+                  </button>
 
-                        <span
-                          aria-live="polite"
-                          aria-atomic="true"
-                          className="ml-2 tabular-nums text-[var(--ink)]"
-                        >
-                          <span className="sr-only">Zoom level: </span>
-                          {zoom === FIT ? "FIT" : `${Math.round(zoom * 100)}%`}
-                        </span>
-
-                        <span aria-hidden="true" className="mx-1 opacity-30">|</span>
-                        <button
-                          type="button"
-                          onClick={uiScaleDown}
-                          aria-label="Decrease reader interface text size"
-                          disabled={atMinUi}
-                          className={ctrlCls}
-                        >
-                          <span aria-hidden="true">A−</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={uiScaleReset}
-                          aria-label="Reset reader interface text size to default"
-                          aria-pressed={uiScale === 1}
-                          className={ctrlCls}
-                        >
-                          A
-                        </button>
-                        <button
-                          type="button"
-                          onClick={uiScaleUp}
-                          aria-label="Increase reader interface text size"
-                          disabled={atMaxUi}
-                          className={ctrlCls}
-                        >
-                          <span aria-hidden="true">A+</span>
-                        </button>
-                        <span
-                          aria-live="polite"
-                          aria-atomic="true"
-                          className="ml-1 tabular-nums text-[var(--ink)]"
-                        >
-                          <span className="sr-only">Interface text size: </span>
-                          UI {Math.round(uiScale * 100)}%
-                        </span>
-                      </>
-                    );
-                  })()}
+                  <span aria-live="polite" aria-atomic="true" className="ml-2 tabular-nums text-[var(--ink)]">
+                    <span className="sr-only">Zoom level: </span>
+                    {zoom === FIT ? "FIT" : `${Math.round(zoom * 100)}%`}
+                  </span>
                 </div>
               </div>
               <div
@@ -600,10 +671,19 @@ function Reader() {
                 }}
                 className="relative w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--neon)] focus-visible:ring-inset"
                 style={{
-                  height: isFullscreen ? "100%" : "min(85vh, 1200px)",
+                  // A fit-width comic page is roughly 1.4× taller than it is
+                  // wide, so inside a fixed 85vh box the bottom third of every
+                  // page sat below an inner scrollbar — and `overscroll-behavior:
+                  // contain` stopped that inner scroll from handing off to the
+                  // document, so readers hit a dead end at the bottom of the art.
+                  //
+                  // At fit width the page now flows at its natural height and the
+                  // document scrolls normally. The fixed-height pan box is kept
+                  // only where it earns its place: zoomed in, or full screen.
+                  height: isFullscreen ? "100%" : panBox ? "min(85vh, 1200px)" : "auto",
                   flex: isFullscreen ? "1 1 auto" : undefined,
-                  overflow: "auto",
-                  overscrollBehavior: "contain",
+                  overflow: isFullscreen || panBox ? "auto" : "visible",
+                  overscrollBehavior: isFullscreen || panBox ? "contain" : undefined,
                   touchAction: "pan-x pan-y",
                   background: "rgba(0,0,0,0.35)",
                 }}
@@ -686,18 +766,43 @@ function Reader() {
           </div>
         )}
 
-        <div className="mt-4 flex items-center justify-between">
-          <button onClick={() => go(-1)} disabled={page <= 1} className="btn-ghost disabled:opacity-30">← Prev</button>
-          <div className="flex gap-1">
-            {Array.from({ length: total }).map((_, i) => {
-              const n = i + 1;
-              return (
-                <button key={n} aria-label={`Go to page ${n}`} onClick={() => navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: n } })} className="h-2 w-2 rounded-full" style={{ background: n === page ? "var(--neon)" : n <= freeMax ? "rgba(34,211,255,0.3)" : "rgba(255,255,255,0.1)" }} />
-              );
-            })}
+        {mode === "all" ? (
+          // In the strip there is no "current page" to advance from, so the
+          // dots become jump targets and Prev/Next would be meaningless.
+          <div className="mt-4 flex items-center justify-between">
+            <button onClick={() => scrollToPage(1)} className="btn-ghost">↑ Top</button>
+            <div className="flex flex-wrap justify-center gap-1">
+              {Array.from({ length: total }).map((_, i) => {
+                const n = i + 1;
+                const reachable = n <= freeMax;
+                return (
+                  <button
+                    key={n}
+                    aria-label={reachable ? `Jump to page ${n}` : `Page ${n} is locked`}
+                    disabled={!reachable}
+                    onClick={() => scrollToPage(n)}
+                    className="h-2 w-2 rounded-full disabled:cursor-not-allowed"
+                    style={{ background: reachable ? "rgba(34,211,255,0.5)" : "rgba(255,255,255,0.1)" }}
+                  />
+                );
+              })}
+            </div>
+            <button onClick={() => scrollToPage(freeMax)} className="btn-ghost">↓ End</button>
           </div>
-          <button onClick={() => go(1)} disabled={page >= total} className="btn-ghost disabled:opacity-30">Next →</button>
-        </div>
+        ) : (
+          <div className="mt-4 flex items-center justify-between">
+            <button onClick={() => go(-1)} disabled={page <= 1} className="btn-ghost disabled:opacity-30">← Prev</button>
+            <div className="flex gap-1">
+              {Array.from({ length: total }).map((_, i) => {
+                const n = i + 1;
+                return (
+                  <button key={n} aria-label={`Go to page ${n}`} onClick={() => navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: n } })} className="h-2 w-2 rounded-full" style={{ background: n === page ? "var(--neon)" : n <= freeMax ? "rgba(34,211,255,0.3)" : "rgba(255,255,255,0.1)" }} />
+                );
+              })}
+            </div>
+            <button onClick={() => go(1)} disabled={page >= total} className="btn-ghost disabled:opacity-30">Next →</button>
+          </div>
+        )}
 
         <div className="mt-6 text-center">
           <Link
@@ -718,6 +823,106 @@ function Reader() {
         />
       </div>
     </>
+  );
+}
+
+function ModeButton({
+  active,
+  onClick,
+  label,
+  hint,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  hint: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      aria-label={`${label} — ${hint}`}
+      title={hint}
+      className="inline-flex min-h-11 items-center justify-center px-3 py-1 font-mono uppercase tracking-[2px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--neon)] focus-visible:ring-inset"
+      style={{
+        background: active ? "rgba(34,211,255,0.14)" : "transparent",
+        color: active ? "var(--neon)" : "var(--mute)",
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+/**
+ * The continuous vertical strip.
+ *
+ * Deliberately plain: one image per page at fit width, in normal document flow.
+ * There is no inner scroll container, so the browser's own scrolling — wheel,
+ * trackpad, touch, scrollbar, spacebar, Page Down — reaches the bottom of the
+ * art without the reader having to find the right region of the screen first.
+ *
+ * Only free pages are passed in. Paid pages arrive from the loader with an
+ * empty image_path, so there is nothing here that could leak them; the paywall
+ * simply terminates the strip.
+ */
+function AllPagesStrip({
+  pages,
+  total,
+  freeMax,
+  firstLockedPage,
+  seriesSlug,
+  dropAt,
+}: {
+  pages: ReadonlyArray<{ id?: string | null; page_number: number; image_path: string; alt_text?: string | null }>;
+  total: number;
+  freeMax: number;
+  firstLockedPage: number;
+  seriesSlug: string;
+  dropAt?: string | null;
+}) {
+  if (pages.length === 0) {
+    return (
+      <div className="aspect-[1054/1491] flex items-center justify-center p-10 text-center text-[var(--mute)]">
+        Page art forthcoming
+      </div>
+    );
+  }
+  return (
+    <div className="bg-black/35">
+      {pages.map((p, i) => (
+        <figure key={p.page_number} id={`rp-${p.page_number}`} className="relative scroll-mt-4">
+          <img
+            src={pageUrl(p.image_path) ?? undefined}
+            alt={p.alt_text ?? `Page ${p.page_number}`}
+            // The first page is what the reader is waiting on, so it loads
+            // eagerly; the rest stream in as they approach the viewport, which
+            // is what keeps a twenty-page strip from being a twenty-image
+            // blocking download.
+            loading={i === 0 ? "eager" : "lazy"}
+            decoding="async"
+            draggable={false}
+            className="block h-auto w-full select-none"
+          />
+          <figcaption className="pointer-events-none absolute right-2 top-2 rounded-sm bg-black/70 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[2px] text-[var(--mute)]">
+            {p.page_number} / {total}
+          </figcaption>
+        </figure>
+      ))}
+      {firstLockedPage <= total ? (
+        <div className="border-t border-white/10">
+          <PaywallWithCapture
+            page={firstLockedPage}
+            freeMax={freeMax}
+            dropAt={dropAt}
+            seriesSlug={seriesSlug}
+          />
+        </div>
+      ) : null}
+    </div>
   );
 }
 

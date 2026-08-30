@@ -3,6 +3,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { RightsNotice } from "@/components/rights-notice";
 import { getSeriesBundle, getIssueBundle } from "@/lib/public.functions";
 import { pageUrl } from "@/lib/storage";
+import { deriveSchedule, formatDropDate, dropWeekday, type DropRow } from "@/lib/drop-schedule";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Lock } from "lucide-react";
 import coaLogo from "@/assets/children-of-aquarius-logo.png";
@@ -87,7 +88,10 @@ function COAPage() {
   const { bundle, issueBundle } = Route.useLoaderData();
   const issue = issueBundle?.issue;
   const pages = issueBundle?.pages ?? [];
-  const drops = issueBundle?.drops ?? [];
+  // Was: label map built from every row, and drops[0] as "next drop". Every CoA
+  // row is dated June–July, so the live page showed a past date as upcoming.
+  // deriveSchedule only ever surfaces drops still ahead of today.
+  const schedule = deriveSchedule((issueBundle?.drops ?? []) as DropRow[]);
   const factions = bundle.factions;
   const cover = pageUrl(issue?.cover_path);
   const readerLink = issue
@@ -97,13 +101,6 @@ function COAPage() {
   const totalPages = Math.ceil(Number(issue?.total_pages ?? 24));
   const freeCount = Number(issue?.free_pages ?? 9);
   const paidCount = Number(issue?.paid_pages ?? 15);
-
-  // Build a per-page drop label map from issue_drops (week → pages[]).
-  const DROP_SCHEDULE: Record<number, string> = {};
-  for (const d of drops as Array<{ week: number; patron_date: string; pages: number[] }>) {
-    const label = `PATRON TUE · ${formatDropDate(d.patron_date)}`;
-    for (const p of d.pages ?? []) DROP_SCHEDULE[p] = label;
-  }
 
   const characters = bundle.characters;
   // Up to 3 hero sticker thumbs from the cast.
@@ -291,24 +288,22 @@ function COAPage() {
               <DetailRow label={`Pages ${freeCount + 1}–${totalPages}`} value={<span className="text-cyan-400">Subscribers</span>} />
             </dl>
 
-            {/* Next drop sub-card */}
-            {drops.length > 0 && (() => {
-              const next = drops[0] as { week: number; patron_date: string; reader_date: string; pages: number[] };
-              return (
-                <div className="mt-5 rounded-md border border-[var(--gold)]/30 bg-black/40 p-4">
-                  <div className="text-[10px] font-black uppercase tracking-[2px] text-[var(--gold)]">
-                    Next drop · Pages {next.pages.join(", ")} ({next.pages.length} pages)
-                  </div>
-                  <div className="mt-3 space-y-1.5 text-xs">
-                    <div className="flex justify-between"><span className="text-[var(--ink2)]">Patron</span><span className="font-mono text-cyan-300">Tue · {formatDropDate(next.patron_date)}</span></div>
-                    <div className="flex justify-between"><span className="text-[var(--ink2)]">Reader</span><span className="font-mono text-cyan-300">Thu · {formatDropDate(next.reader_date)}</span></div>
-                  </div>
+            {/* Next drop sub-card — only when something is genuinely ahead. */}
+            {schedule.next && (
+              <div className="mt-5 rounded-md border border-[var(--gold)]/30 bg-black/40 p-4">
+                <div className="text-[10px] font-black uppercase tracking-[2px] text-[var(--gold)]">
+                  Next drop · Pages {schedule.next.pages.join(", ")} ({schedule.next.pages.length} pages)
                 </div>
-              );
-            })()}
+                <div className="mt-3 space-y-1.5 text-xs">
+                  <DropDate tier="Patron" date={schedule.next.patron} />
+                  <DropDate tier="Initiate" date={schedule.next.initiate} />
+                  <DropDate tier="Reader" date={schedule.next.reader} />
+                </div>
+              </div>
+            )}
 
             <dl className="mt-5 divide-y divide-white/5 text-sm">
-              <DetailRow label="Issue completes" value={drops.length > 0 ? `Week of ${formatDropDate((drops[drops.length - 1] as { reader_date: string }).reader_date)}` : "5-week run"} />
+              <DetailRow label="Issue completes" value={schedule.completes ?? "Schedule to be announced"} />
               <DetailRow label="Cadence" value="3 pages / week" />
             </dl>
           </aside>
@@ -325,7 +320,7 @@ function COAPage() {
               const isFree = n <= freeCount;
               const found = pages.find((p: typeof pages[number]) => p.page_number === n);
               const thumb = pageUrl(found?.image_path);
-              const dropLabel = DROP_SCHEDULE[n];
+              const dropLabel = schedule.labels[n];
 
               if (isFree) {
                 const card = (
@@ -501,12 +496,13 @@ function DetailRow({ label, value }: { label: string; value: React.ReactNode }) 
   );
 }
 
-
-function formatDropDate(iso: string): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  const month = d.toLocaleString("en-US", { month: "short", timeZone: "UTC" }).toUpperCase();
-  const day = String(d.getUTCDate()).padStart(2, "0");
-  return `${month} ${day}`;
+// Weekday derived from the date, not a literal — see the BA page for the same
+// component and the same reason.
+function DropDate({ tier, date }: { tier: string; date: string }) {
+  return (
+    <div className="flex justify-between">
+      <span className="text-[var(--ink2)]">{tier}</span>
+      <span className="font-mono text-cyan-300">{dropWeekday(date)} · {formatDropDate(date)}</span>
+    </div>
+  );
 }

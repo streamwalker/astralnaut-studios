@@ -1,42 +1,74 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { track } from "@/lib/analytics";
+import { getLivePromo } from "@/lib/promos.functions";
 
-const STORAGE_KEY = "rwc.promo.dismissed.v1";
+// Dismissal is keyed per announcement. With a single shared key, a reader who
+// dismissed one announcement would never see the next one either — which turns
+// a scheduled announcement into a silent no-op for exactly the returning
+// readers it is aimed at.
+const STORAGE_PREFIX = "rwc.promo.dismissed.v2:";
 
-interface PromoBarProps {
-  text?: string;
-  href?: string;
-  cta?: string;
-}
+// Shown when the queue is empty. Evergreen on purpose: no dates, nothing that
+// can rot. Anything date-stamped belongs in the promos table with an end date.
+const FALLBACK = {
+  message: "BATTLEFIELD ATLANTIS #1 IS LIVE — READ THE FIRST ACT FREE",
+  href: "/reader/battlefield-atlantis/1" as string | null,
+  cta: "Start reading" as string | null,
+};
 
 /**
  * Thin sitewide announcement bar above the main nav.
- * Per-session dismissible. SSR-safe: visibility decided after mount to avoid hydration mismatch.
+ *
+ * Content comes from the promos queue, highest-priority row whose window
+ * contains now(); falls back to evergreen copy when nothing is scheduled.
+ * Per-session dismissible, keyed on the promo id.
+ * SSR-safe: visibility decided after mount to avoid hydration mismatch.
  */
-export function PromoBar({
-  text = "BATTLEFIELD ATLANTIS #1 IS LIVE — READ THE FIRST ACT FREE",
-  href = "/reader/battlefield-atlantis/1",
-  cta = "Start reading",
-}: PromoBarProps) {
+export function PromoBar() {
+  const promoFn = useServerFn(getLivePromo);
+  const { data: promo } = useQuery({
+    queryKey: ["live-promo"],
+    queryFn: () => promoFn({}),
+    staleTime: 300_000,
+  });
+
+  const content = promo
+    ? { message: promo.message, href: promo.href, cta: promo.cta }
+    : FALLBACK;
+  const storageKey = STORAGE_PREFIX + (promo?.id ?? "fallback");
+
   const [mounted, setMounted] = useState(false);
   const [dismissed, setDismissed] = useState(true);
 
+  // Re-runs when the promo resolves, so dismissal is re-evaluated against the
+  // key that actually applies rather than the placeholder one.
   useEffect(() => {
     setMounted(true);
     try {
-      setDismissed(sessionStorage.getItem(STORAGE_KEY) === "1");
+      setDismissed(sessionStorage.getItem(storageKey) === "1");
     } catch {
       setDismissed(false);
     }
-  }, []);
+  }, [storageKey]);
 
   if (!mounted || dismissed) return null;
 
   const dismiss = () => {
     setDismissed(true);
-    try { sessionStorage.setItem(STORAGE_KEY, "1"); } catch { /* ignore */ }
-    track("promo_bar_dismiss", {});
+    try { sessionStorage.setItem(storageKey, "1"); } catch { /* ignore */ }
+    track("promo_bar_dismiss", { promoId: promo?.id ?? null });
   };
+
+  const label = (
+    <>
+      {content.message}
+      {content.cta ? (
+        <span className="ml-3 hidden text-[var(--neon)] sm:inline">{content.cta} →</span>
+      ) : null}
+    </>
+  );
 
   return (
     <div
@@ -46,14 +78,22 @@ export function PromoBar({
       style={{ background: "#000", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-center gap-3 px-6 py-2 pr-12 text-center">
-        <a
-          href={href}
-          onClick={() => track("promo_bar_click", { href })}
-          className="text-[11px] font-black uppercase tracking-[2.5px] text-white transition-colors hover:text-[var(--neon)]"
-        >
-          {text}
-          <span className="ml-3 hidden text-[var(--neon)] sm:inline">{cta} →</span>
-        </a>
+        {content.href ? (
+          <a
+            href={content.href}
+            onClick={() => track("promo_bar_click", { href: content.href })}
+            className="text-[11px] font-black uppercase tracking-[2.5px] text-white transition-colors hover:text-[var(--neon)]"
+          >
+            {label}
+          </a>
+        ) : (
+          // An announcement with nowhere to send people is still a valid
+          // announcement ("pages 11-14 drop October 7"), so render it as text
+          // rather than forcing a link that would go somewhere unrelated.
+          <span className="text-[11px] font-black uppercase tracking-[2.5px] text-white">
+            {label}
+          </span>
+        )}
       </div>
       <button
         type="button"

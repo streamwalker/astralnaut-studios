@@ -3,6 +3,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { RightsNotice } from "@/components/rights-notice";
 import { getSeriesBundle, getIssueBundle } from "@/lib/public.functions";
 import { pageUrl } from "@/lib/storage";
+import { deriveSchedule, formatDropDate, formatDropDateLong, dropWeekday, type DropRow } from "@/lib/drop-schedule";
 import baLogo from "@/assets/battlefield-atlantis-logo.png";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Lock } from "lucide-react";
@@ -60,25 +61,13 @@ export const Route = createFileRoute("/battlefield-atlantis")({
   component: BAPage,
 });
 
-// Locked-page drop schedule (presentation-only). Pages 10-20.
-const DROP_SCHEDULE: Record<number, string> = {
-  10: "PATRON TUE · JUL 08",
-  11: "PATRON TUE · JUL 08",
-  12: "PATRON TUE · JUL 08",
-  13: "PATRON TUE · JUL 08",
-  14: "PATRON TUE · JUL 15",
-  15: "PATRON TUE · JUL 15",
-  16: "PATRON TUE · JUL 15",
-  17: "PATRON TUE · JUL 15",
-  18: "PATRON TUE · JUL 22",
-  19: "PATRON TUE · JUL 22",
-  20: "PATRON TUE · JUL 22",
-};
-
 function BAPage() {
   const { bundle, issueBundle } = Route.useLoaderData();
   const issue = issueBundle?.issue;
   const pages = issueBundle?.pages ?? [];
+  // The schedule is data, not a const map. It used to be eleven hardcoded
+  // strings, which is why this page still advertised July drops in late August.
+  const schedule = deriveSchedule((issueBundle?.drops ?? []) as DropRow[]);
   const characters = bundle.characters;
   const factions = bundle.factions;
   const cover = pageUrl(issue?.cover_path);
@@ -224,7 +213,11 @@ function BAPage() {
               <div className="text-[var(--ink2)]">
                 <span className="mr-2">⚡</span>
                 <span className="font-black uppercase tracking-wider text-[var(--gold)]">Early Access:</span>{" "}
-                Patron Tuesdays · Initiate Wednesdays · Reader Thursdays · 4 pages/week · issue completes end of July
+                Patron Tuesdays · Initiate Wednesdays · Reader Thursdays
+                {/* The tier order is a standing product promise and stays. The
+                    completion date is a claim about a specific issue, so it is
+                    only made when a scheduled drop backs it up. */}
+                {schedule.completes ? ` · issue completes ${schedule.completes.toLowerCase()}` : ""}
               </div>
             </div>
           </div>
@@ -243,7 +236,10 @@ function BAPage() {
               </div>
               <p className="mt-2 text-sm leading-relaxed text-[var(--ink2)]">
                 Pages 1–9 comprise the complete first act and are free for everyone. Page 9.5 is the title page and is also free.
-                Pages 10–20 continue the episode for subscribers, with four new pages released each week.
+                Pages 10–20 continue the episode for subscribers
+                {schedule.next
+                  ? `, beginning ${formatDropDateLong(schedule.next.patron)} for Patrons.`
+                  : ", released on a weekly tier-staggered schedule."}
               </p>
             </div>
 
@@ -291,18 +287,24 @@ function BAPage() {
               <DetailRow label="Pages 10–20" value={<span className="text-cyan-400">Subscribers</span>} />
             </dl>
 
-            {/* Next drop sub-card */}
-            <div className="mt-5 rounded-md border border-[var(--gold)]/30 bg-black/40 p-4">
-              <div className="text-[10px] font-black uppercase tracking-[2px] text-[var(--gold)]">Next drop · Pages 10–13 (4 pages)</div>
-              <div className="mt-3 space-y-1.5 text-xs">
-                <div className="flex justify-between"><span className="text-[var(--ink2)]">Patron</span><span className="font-mono text-cyan-300">Tue · Jul 08</span></div>
-                <div className="flex justify-between"><span className="text-[var(--ink2)]">Initiate</span><span className="font-mono text-cyan-300">Wed · Jul 09</span></div>
-                <div className="flex justify-between"><span className="text-[var(--ink2)]">Reader</span><span className="font-mono text-cyan-300">Thu · Jul 10</span></div>
+            {/* Next drop sub-card — rendered only when a drop is actually
+                scheduled ahead of today. No row, no card: an empty schedule is
+                honest, a stale one is not. */}
+            {schedule.next && (
+              <div className="mt-5 rounded-md border border-[var(--gold)]/30 bg-black/40 p-4">
+                <div className="text-[10px] font-black uppercase tracking-[2px] text-[var(--gold)]">
+                  Next drop · Pages {schedule.next.pages.join(", ")} ({schedule.next.pages.length} pages)
+                </div>
+                <div className="mt-3 space-y-1.5 text-xs">
+                  <DropDate tier="Patron" date={schedule.next.patron} />
+                  <DropDate tier="Initiate" date={schedule.next.initiate} />
+                  <DropDate tier="Reader" date={schedule.next.reader} />
+                </div>
               </div>
-            </div>
+            )}
 
             <dl className="mt-5 divide-y divide-white/5 text-sm">
-              <DetailRow label="Issue completes" value="End of July" />
+              <DetailRow label="Issue completes" value={schedule.completes ?? "Schedule to be announced"} />
               <DetailRow label="Variant covers" value="3 available" />
             </dl>
           </aside>
@@ -320,7 +322,7 @@ function BAPage() {
               const isFree = n <= 9;
               const found = pages.find((p: typeof pages[number]) => p.page_number === n);
               const thumb = pageUrl(found?.image_path);
-              const dropLabel = DROP_SCHEDULE[n];
+              const dropLabel = schedule.labels[n];
 
               if (isFree) {
                 const card = (
@@ -505,6 +507,18 @@ function DetailRow({ label, value }: { label: string; value: React.ReactNode }) 
     <div className="flex items-center justify-between gap-4 py-2.5">
       <dt className="text-[var(--ink2)]">{label}</dt>
       <dd className="text-right font-bold text-white">{value}</dd>
+    </div>
+  );
+}
+
+// One tier's line in the next-drop card. The weekday comes from the date rather
+// than a literal, so moving a drop off its usual day cannot leave "Tue" beside
+// a Thursday.
+function DropDate({ tier, date }: { tier: string; date: string }) {
+  return (
+    <div className="flex justify-between">
+      <span className="text-[var(--ink2)]">{tier}</span>
+      <span className="font-mono text-cyan-300">{dropWeekday(date)} · {formatDropDate(date)}</span>
     </div>
   );
 }

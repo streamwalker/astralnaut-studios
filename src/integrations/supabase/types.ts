@@ -1194,6 +1194,7 @@ export type Database = {
       issue_drops: {
         Row: {
           id: string
+          initiate_date: string | null
           issue_id: string
           pages: number[]
           patron_date: string
@@ -1202,6 +1203,7 @@ export type Database = {
         }
         Insert: {
           id?: string
+          initiate_date?: string | null
           issue_id: string
           pages: number[]
           patron_date: string
@@ -1210,6 +1212,7 @@ export type Database = {
         }
         Update: {
           id?: string
+          initiate_date?: string | null
           issue_id?: string
           pages?: number[]
           patron_date?: string
@@ -1669,6 +1672,45 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      promos: {
+        Row: {
+          created_at: string
+          cta: string | null
+          ends_at: string | null
+          href: string | null
+          id: string
+          is_active: boolean
+          message: string
+          priority: number
+          starts_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cta?: string | null
+          ends_at?: string | null
+          href?: string | null
+          id?: string
+          is_active?: boolean
+          message: string
+          priority?: number
+          starts_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cta?: string | null
+          ends_at?: string | null
+          href?: string | null
+          id?: string
+          is_active?: boolean
+          message?: string
+          priority?: number
+          starts_at?: string | null
           updated_at?: string
         }
         Relationships: []
