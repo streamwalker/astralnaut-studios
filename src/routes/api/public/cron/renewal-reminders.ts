@@ -43,6 +43,15 @@ async function runReminders(): Promise<{ sent: number; skipped: number; errors: 
   let sent = 0, skipped = 0, errors = 0;
   const origin = process.env.SITE_URL || "https://astralnautstudios.com";
 
+  // KNOWN BROKEN — do not schedule this endpoint until it is fixed.
+  // "annual_renewal_reminder" is not an allowed value of the
+  // consent_events_event_type_check constraint and never has been (the
+  // original migration used "renewal_reminder_sent", which 20260712082529
+  // dropped). The insert below therefore always throws. Because the email is
+  // sent BEFORE the audit row is written, and the idempotency probe reads that
+  // same row, a scheduled run would re-send the same reminder to the same
+  // subscriber on every invocation. Fixing it needs a DB constraint change,
+  // which is a separate, approved decision.
   for (const sub of subs ?? []) {
     // Idempotency: skip if we already sent a reminder for this period.
     const { data: prior } = await (supabaseAdmin as any)

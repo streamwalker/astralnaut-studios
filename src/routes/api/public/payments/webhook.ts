@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { CONSENT_EVENT } from "@/config/legal";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { type StripeEnv, verifyWebhook, createStripeClient } from "@/lib/stripe.server";
 import {
@@ -108,7 +109,7 @@ async function handleSubscriptionUpsert(subscription: any, env: StripeEnv, shipp
     // Persist consent-of-record for the cancellation action itself.
     await getSupabase().from("consent_events").insert({
       user_id: userId,
-      event_type: "subscription_cancel",
+      event_type: CONSENT_EVENT.subscriptionCancel,
       subscription_policy_version: null,
       plan_id: priceId,
       plan_name: planLabelFromPriceId(priceId),

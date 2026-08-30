@@ -6,7 +6,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { LEGAL_CONFIG } from "@/config/legal";
+import { CONSENT_EVENT, LEGAL_CONFIG } from "@/config/legal";
 
 function reqMeta() {
   const ua = getRequestHeader("user-agent") ?? null;
@@ -30,14 +30,14 @@ export const recordSignupConsent = createServerFn({ method: "POST" })
       .from("consent_events")
       .select("id")
       .eq("user_id", context.userId)
-      .eq("event_type", "signup_clickwrap")
+      .eq("event_type", CONSENT_EVENT.signupClickwrap)
       .limit(1)
       .maybeSingle();
     if (existing) return { ok: true, alreadyRecorded: true };
 
     const { error } = await supabaseAdmin.from("consent_events").insert({
       user_id: context.userId,
-      event_type: "signup_clickwrap",
+      event_type: CONSENT_EVENT.signupClickwrap,
       terms_version: LEGAL_CONFIG.documents.terms.version,
       privacy_version: LEGAL_CONFIG.documents.privacy.version,
       consent_text: data.consentText,
@@ -57,7 +57,7 @@ export const hasSignupConsent = createServerFn({ method: "GET" })
       .from("consent_events")
       .select("id")
       .eq("user_id", context.userId)
-      .eq("event_type", "signup_clickwrap")
+      .eq("event_type", CONSENT_EVENT.signupClickwrap)
       .limit(1)
       .maybeSingle();
     return { hasConsent: !!data };
@@ -89,7 +89,7 @@ export const recordCheckoutConsent = createServerFn({ method: "POST" })
       .from("consent_events")
       .insert({
         user_id: context.userId,
-        event_type: "subscription_checkout",
+        event_type: CONSENT_EVENT.checkoutConsent,
         terms_version: LEGAL_CONFIG.documents.terms.version,
         privacy_version: LEGAL_CONFIG.documents.privacy.version,
         subscription_policy_version: LEGAL_CONFIG.documents.subscription.version,

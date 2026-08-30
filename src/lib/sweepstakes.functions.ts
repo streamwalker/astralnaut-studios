@@ -15,7 +15,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { LEGAL_CONFIG, isPlaceholder } from "@/config/legal";
+import { CONSENT_EVENT, LEGAL_CONFIG, isPlaceholder } from "@/config/legal";
 
 // ---------- helpers ---------------------------------------------------------
 
@@ -297,7 +297,7 @@ export const submitFreeEntry = createServerFn({ method: "POST" })
         // Record marketing consent separately from the entry itself, per the
         // no-auto-subscribe rule.
         await supabaseAdmin.from("consent_events").insert({
-          event_type: "sweepstakes_marketing_optin",
+          event_type: CONSENT_EVENT.sweepstakesMarketingOptin,
           consent_text:
             "I want to receive occasional marketing email from Streamwalkers Corporation. I understand entry is not conditioned on this and I can unsubscribe at any time.",
           metadata: { promotion_id: promo.id, source: "free_entry", email: normalized },

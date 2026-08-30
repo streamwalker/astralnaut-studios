@@ -125,6 +125,29 @@ export function isSweepstakesActivatable(promo: ActiveSweepstakes | null): promo
   return required.every((v) => v !== undefined && v !== null && !isPlaceholder(v));
 }
 
+/**
+ * Allowed values for `public.consent_events.event_type`.
+ *
+ * These MUST stay in lockstep with the `consent_events_event_type_check`
+ * CHECK constraint in the database. Migration 20260712082529 renamed two of
+ * them (`subscription_checkout` -> `checkout_consent`,
+ * `cancellation` -> `subscription_cancel`) without updating the call sites,
+ * which silently broke every paid checkout. Import from here rather than
+ * inlining the string, so a future rename surfaces at compile time instead of
+ * at the point of sale.
+ */
+export const CONSENT_EVENT = {
+  signupClickwrap: "signup_clickwrap",
+  checkoutConsent: "checkout_consent",
+  subscriptionCancel: "subscription_cancel",
+  canonTermsAck: "canon_terms_ack",
+  sweepstakesMarketingOptin: "sweepstakes_marketing_optin",
+  communityGuidelinesAck: "community_guidelines_ack",
+  cookieConsentUpdate: "cookie_consent_update",
+} as const;
+
+export type ConsentEventType = (typeof CONSENT_EVENT)[keyof typeof CONSENT_EVENT];
+
 /** Renders a checkout consent line with $PRICE substituted for the real price. */
 export function renderCheckoutConsentText(
   interval: "monthly" | "yearly",

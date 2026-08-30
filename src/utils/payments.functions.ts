@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { CONSENT_EVENT } from "@/config/legal";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { type StripeEnv, createStripeClient } from "@/lib/stripe.server";
@@ -149,7 +150,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       .maybeSingle();
     if (consentErr || !consent) throw new Error("Consent record not found");
     if (consent.user_id !== context.userId) throw new Error("Consent does not belong to this user");
-    if (consent.event_type !== "subscription_checkout") throw new Error("Wrong consent type");
+    if (consent.event_type !== CONSENT_EVENT.checkoutConsent) throw new Error("Wrong consent type");
     if (consent.plan_id !== data.priceId) throw new Error("Consent does not match selected plan");
     const ageMs = Date.now() - new Date(consent.created_at).getTime();
     if (ageMs > 30 * 60 * 1000) throw new Error("Consent has expired — please re-confirm");
