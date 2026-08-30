@@ -15,7 +15,7 @@ import { useI18n } from "@/hooks/useI18n";
 import { StandingAndCancelFlow } from "@/components/account/StandingAndCancelFlow";
 import { ConfirmButton } from "@/components/admin/confirm-button";
 import { trackMetaEventOnce } from "@/lib/meta-pixel";
-import { amountForPriceId } from "@/config/pricingTiers";
+import { amountForPriceId, getTier } from "@/config/pricingTiers";
 
 type SubRow = {
   status: string;
@@ -266,7 +266,16 @@ function AccountPage() {
               ) : (
                 <>
                   <h2 className="mt-3 text-2xl font-black">No active subscription</h2>
-                  <p className="mt-1 text-sm text-[var(--ink2)]">Pick a tier to unlock pages 10–24 of every issue.</p>
+                  {/*
+                    No page numbers here on purpose. Issues do not share a page
+                    count (Battlefield Atlantis #1 is 20.5, Children of Aquarius
+                    #1 is 24), so any single range is wrong for one of them, and
+                    a hardcoded range silently rots as the run grows. Tier claims
+                    belong in src/config/pricingTiers.ts.
+                  */}
+                  <p className="mt-1 text-sm text-[var(--ink2)]">
+                    Pick a tier to unlock the full run of every series — and read new pages first.
+                  </p>
                   <Link to="/pricing" className="btn-cta mt-5 inline-flex">See plans</Link>
                 </>
               )}
@@ -345,11 +354,13 @@ function AccountPage() {
                     )}
                     <div className="text-[10px] font-bold uppercase tracking-[2px]" style={{ color: t.color }}>{t.day}</div>
                     <div className="mt-1 text-xl font-black">{t.label}</div>
-                    <p className="mt-2 text-xs text-[var(--ink2)]">
-                      {k === "patron" && "First in line. 48h before Reader. Cameo eligibility + signed print quarterly."}
-                      {k === "initiate" && "24h before Reader. Numbered digital variants + process content."}
-                      {k === "reader" && "All series, all 20 pages. Community + voting access."}
-                    </p>
+                    {/*
+                      Read from the pricing config rather than repeating tier
+                      copy here. This block used to carry its own strings and
+                      drifted out of sync with /pricing — it still advertised
+                      "all 20 pages" after the page counts changed.
+                    */}
+                    <p className="mt-2 text-xs text-[var(--ink2)]">{getTier(k).headline}</p>
                   </div>
                 );
               })}

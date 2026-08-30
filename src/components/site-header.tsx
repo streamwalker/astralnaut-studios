@@ -84,7 +84,7 @@ export function SiteHeader() {
               alt="Astralnaut Studios"
               width={160}
               height={80}
-              className="h-8 w-auto sm:h-10"
+              className="h-8 w-auto shrink-0 sm:h-10"
               decoding="async"
               fetchPriority="high"
               style={{ filter: "drop-shadow(0 0 12px rgba(34,211,255,0.35))" }}
@@ -95,14 +95,14 @@ export function SiteHeader() {
               alt="Real World Comics"
               width={160}
               height={90}
-              className="hidden h-7 w-auto sm:block md:h-8"
+              className="hidden h-7 w-auto shrink-0 sm:block md:h-8"
               decoding="async"
               loading="lazy"
               style={{ filter: "drop-shadow(0 0 10px rgba(34,211,255,0.3))" }}
             />
           </Link>
           {!isHome && (
-            <Link to="/" className="hidden text-sm text-[var(--ink2)] hover:text-[var(--neon)] sm:block">
+            <Link to="/" className="hidden shrink-0 whitespace-nowrap text-sm text-[var(--ink2)] hover:text-[var(--neon)] sm:block">
               ← Home
             </Link>
           )}
@@ -152,7 +152,7 @@ export function SiteHeader() {
               <SignInStatus user={data.user} />
               <ConfirmButton
                 trigger={
-                  <button className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">
+                  <button className="whitespace-nowrap text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">
                     Sign out
                   </button>
                 }
@@ -168,7 +168,7 @@ export function SiteHeader() {
               <SignInStatus user={data.user} />
               <ConfirmButton
                 trigger={
-                  <button className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">
+                  <button className="whitespace-nowrap text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">
                     Sign out
                   </button>
                 }
