@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { supabase } from "@/integrations/supabase/client";
@@ -60,7 +60,7 @@ function tierKeyFromPriceId(priceId: string | null | undefined): TierKey | null 
   return k === "reader" || k === "initiate" || k === "patron" ? k : null;
 }
 
-export const Route = createFileRoute("/account")({
+export const Route = createFileRoute("/_authenticated/account")({
   head: () => ({
     meta: [
       { title: "Your account — Real World Comics" },
@@ -71,10 +71,12 @@ export const Route = createFileRoute("/account")({
     checkout: typeof s.checkout === "string" ? s.checkout : undefined,
     session_id: typeof s.session_id === "string" ? s.session_id : undefined,
   }),
-  beforeLoad: async () => {
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) throw redirect({ to: "/login", search: { next: "/account" } as never });
-  },
+  // No `beforeLoad` auth guard here, on purpose. `beforeLoad` also runs during
+  // SSR on the Worker, where `supabase.auth.getUser()` can never succeed — the
+  // session lives in localStorage, which the server cannot read. That made this
+  // route 307 to /login for *every* visitor, signed in or not. Auth is enforced
+  // client-side by the `_authenticated` layout instead, which is what every
+  // other gated route in this app already uses.
   component: AccountPage,
 });
 

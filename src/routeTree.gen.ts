@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
-import { Route as AccountRouteImport } from './routes/account'
 import { Route as ArchiveRouteImport } from './routes/archive'
 import { Route as AstralnautStudiosRouteImport } from './routes/astralnaut-studios'
 import { Route as BattlefieldAtlantisRouteImport } from './routes/battlefield-atlantis'
@@ -41,6 +40,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TrustRouteImport } from './routes/trust'
 import { Route as UnsolicitedSubmissionsRouteImport } from './routes/unsolicited-submissions'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AuthenticatedGrowthRouteImport } from './routes/_authenticated/growth'
 import { Route as AuthenticatedGrowthPackageRouteImport } from './routes/_authenticated/growth-package'
 import { Route as ArchiveBriefingsRouteImport } from './routes/archive.briefings'
@@ -95,11 +95,6 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AccountRoute = AccountRouteImport.update({
-  id: '/account',
-  path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ArchiveRoute = ArchiveRouteImport.update({
@@ -246,6 +241,11 @@ const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
   path: '/verify-email',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedGrowthRoute = AuthenticatedGrowthRouteImport.update({
   id: '/growth',
@@ -498,7 +498,6 @@ const AuthenticatedReaderSeriesIssueLettersRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/account': typeof AccountRoute
   '/archive': typeof ArchiveRouteWithChildren
   '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
@@ -528,6 +527,7 @@ export interface FileRoutesByFullPath {
   '/trust': typeof TrustRoute
   '/unsolicited-submissions': typeof UnsolicitedSubmissionsRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/account': typeof AuthenticatedAccountRoute
   '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/archive/briefings': typeof ArchiveBriefingsRoute
@@ -577,7 +577,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/account': typeof AccountRoute
   '/archive': typeof ArchiveRouteWithChildren
   '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
@@ -607,6 +606,7 @@ export interface FileRoutesByTo {
   '/trust': typeof TrustRoute
   '/unsolicited-submissions': typeof UnsolicitedSubmissionsRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/account': typeof AuthenticatedAccountRoute
   '/growth': typeof AuthenticatedGrowthRoute
   '/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/archive/briefings': typeof ArchiveBriefingsRoute
@@ -658,7 +658,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/account': typeof AccountRoute
   '/archive': typeof ArchiveRouteWithChildren
   '/astralnaut-studios': typeof AstralnautStudiosRoute
   '/battlefield-atlantis': typeof BattlefieldAtlantisRoute
@@ -688,6 +687,7 @@ export interface FileRoutesById {
   '/trust': typeof TrustRoute
   '/unsolicited-submissions': typeof UnsolicitedSubmissionsRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/_authenticated/growth': typeof AuthenticatedGrowthRoute
   '/_authenticated/growth-package': typeof AuthenticatedGrowthPackageRoute
   '/archive/briefings': typeof ArchiveBriefingsRoute
@@ -739,7 +739,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/account'
     | '/archive'
     | '/astralnaut-studios'
     | '/battlefield-atlantis'
@@ -769,6 +768,7 @@ export interface FileRouteTypes {
     | '/trust'
     | '/unsolicited-submissions'
     | '/verify-email'
+    | '/account'
     | '/growth'
     | '/growth-package'
     | '/archive/briefings'
@@ -818,7 +818,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/account'
     | '/archive'
     | '/astralnaut-studios'
     | '/battlefield-atlantis'
@@ -848,6 +847,7 @@ export interface FileRouteTypes {
     | '/trust'
     | '/unsolicited-submissions'
     | '/verify-email'
+    | '/account'
     | '/growth'
     | '/growth-package'
     | '/archive/briefings'
@@ -898,7 +898,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
-    | '/account'
     | '/archive'
     | '/astralnaut-studios'
     | '/battlefield-atlantis'
@@ -928,6 +927,7 @@ export interface FileRouteTypes {
     | '/trust'
     | '/unsolicited-submissions'
     | '/verify-email'
+    | '/_authenticated/account'
     | '/_authenticated/growth'
     | '/_authenticated/growth-package'
     | '/archive/briefings'
@@ -979,7 +979,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  AccountRoute: typeof AccountRoute
   ArchiveRoute: typeof ArchiveRouteWithChildren
   AstralnautStudiosRoute: typeof AstralnautStudiosRoute
   BattlefieldAtlantisRoute: typeof BattlefieldAtlantisRoute
@@ -1039,13 +1038,6 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/account': {
-      id: '/account'
-      path: '/account'
-      fullPath: '/account'
-      preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/archive': {
@@ -1250,6 +1242,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/verify-email'
       preLoaderRoute: typeof VerifyEmailRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/growth': {
       id: '/_authenticated/growth'
@@ -1605,6 +1604,7 @@ const AuthenticatedAdminLearnRouteWithChildren =
   )
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
   AuthenticatedGrowthRoute: typeof AuthenticatedGrowthRoute
   AuthenticatedGrowthPackageRoute: typeof AuthenticatedGrowthPackageRoute
   AuthenticatedAdminAuthorBioRoute: typeof AuthenticatedAdminAuthorBioRoute
@@ -1626,6 +1626,7 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
   AuthenticatedGrowthRoute: AuthenticatedGrowthRoute,
   AuthenticatedGrowthPackageRoute: AuthenticatedGrowthPackageRoute,
   AuthenticatedAdminAuthorBioRoute: AuthenticatedAdminAuthorBioRoute,
@@ -1713,7 +1714,6 @@ const LearnRouteWithChildren = LearnRoute._addFileChildren(LearnRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  AccountRoute: AccountRoute,
   ArchiveRoute: ArchiveRouteWithChildren,
   AstralnautStudiosRoute: AstralnautStudiosRoute,
   BattlefieldAtlantisRoute: BattlefieldAtlantisRoute,
