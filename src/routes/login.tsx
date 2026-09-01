@@ -38,7 +38,6 @@ const searchSchema = z.object({
   next: z.string().optional().catch(undefined),
   plan: z.enum(["reader", "initiate", "patron"]).optional().catch(undefined),
   interval: z.enum(["monthly", "yearly"]).optional().catch(undefined),
-  oauth: z.string().optional().catch(undefined),
   // Which tab the OAuth round-trip started from. Carried through `redirectTo`
   // because the component remounts on the way back and local state is lost.
   mode: z.enum(["signin", "signup"]).optional().catch(undefined),
@@ -46,7 +45,26 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Sign in — Astralnaut Studios" }] }),
-  validateSearch: (s: Record<string, unknown>) => searchSchema.parse(s),
+  // The `oauth?: 1` annotation is load-bearing: without it TypeScript infers
+  // `oauth` as a *required* key of the search type, and every `to="/login"`
+  // navigation in the app is forced to pass it.
+  validateSearch: (s: Record<string, unknown>): z.infer<typeof searchSchema> & { oauth?: 1 } => ({
+    ...searchSchema.parse(s),
+    // `oauth` is NOT in searchSchema on purpose. TanStack Router's default
+    // parser is parseSearchWith(JSON.parse), so `?oauth=1` arrives here as the
+    // NUMBER 1 — not the string "1". A z.string() rejected it, .catch(undefined)
+    // blanked it, and because validateSearch's return value is re-serialized
+    // back into the address bar, the router then dropped `oauth` from the URL
+    // entirely. The OAuth return handler below is gated on this param, so it
+    // never ran: Google sign-in completed, a session was written to
+    // localStorage, and the login form simply re-rendered. Verified live on
+    // 2026-09-01 — `?oauth=1` was stripped, `?oauth=yes` (which JSON.parse
+    // rejects, so it stays a string) survived.
+    //
+    // pricing.tsx hit the identical trap with `autocheckout` and normalises it
+    // the same way. Accept every shape the round-trip can produce.
+    oauth: s.oauth === "1" || s.oauth === 1 || s.oauth === true ? 1 : undefined,
+  }),
   component: LoginPage,
 });
 
@@ -222,7 +240,7 @@ function LoginPage() {
   // OAuth flows return to /login?oauth=1. Once the session is present, route
   // admins to /admin and everyone else to /account (or their original `next`).
   useEffect(() => {
-    if (search.oauth !== "1") return;
+    if (!search.oauth) return;
     let cancelled = false;
     const finish = async (user: { id: string; email?: string; created_at: string }) => {
       // Guard against silent auto-provisioning: if this round-trip started on
@@ -383,7 +401,7 @@ function LoginPage() {
             <p className="mt-1 text-sm text-muted-foreground">
               Sign in to read free previews, track your standing, and unlock subscriber perks.
             </p>
-            {(search.next || peekReturnTo()) && search.oauth !== "1" && (
+            {(search.next || peekReturnTo()) && !search.oauth && (
               <p className="mt-3 flex items-center gap-2 rounded-lg border border-[var(--neon)]/20 bg-[var(--neon)]/5 px-3 py-2 text-xs text-[var(--neon)]">
                 <span aria-hidden>↩</span>
                 After signing in, you'll be redirected back to the page you came from.
