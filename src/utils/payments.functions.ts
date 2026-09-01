@@ -172,7 +172,6 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       mode: "subscription",
       ui_mode: "embedded_page",
       return_url: data.returnUrl,
-      ...({ managed_payments: { enabled: true } } as any),
       customer: customerId,
       metadata: { userId: effectiveUserId, tier_price: data.priceId, consent_id: consent.id },
       subscription_data: {
