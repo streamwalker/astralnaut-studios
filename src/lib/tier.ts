@@ -26,6 +26,17 @@ export const TIER_ACCENT: Record<Tier, string> = {
   patron: "var(--plasma)",
 };
 
+/**
+ * Ordinal position of a tier, for comparing two plans.
+ *
+ * Used by /pricing to decide whether a card is an upgrade, a downgrade, or
+ * the plan the viewer already holds. Compare ranks — never compare tier
+ * strings directly, and never re-declare this ordering elsewhere.
+ */
+export function tierRank(tier: Tier): number {
+  return TIER_RANK[tier];
+}
+
 /** Resolve a `price_id` lookup_key (e.g. "patron_yearly") to its tier. */
 export function tierFromPriceId(priceId: string | null | undefined): Tier {
   if (!priceId) return "none";

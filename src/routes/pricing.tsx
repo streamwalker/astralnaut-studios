@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
+import { createPortalSession } from "@/utils/payments.functions";
+import { getStripeEnvironment } from "@/lib/stripe";
+import { TIER_LABEL, tierRank, type Tier } from "@/lib/tier";
 import { HelpTip } from "@/components/help/HelpTip";
 import { CheckoutConsentPanel } from "@/components/checkout-consent-panel";
 import { recordCheckoutConsent } from "@/lib/consent.functions";
@@ -54,12 +59,55 @@ export const Route = createFileRoute("/pricing")({
   component: Pricing,
 });
 
+/**
+ * What the CTA on a tier card should do for the current viewer.
+ *
+ * `checkout` is only ever returned when the viewer holds no entitlement.
+ * Everyone with an active subscription is routed to the Stripe billing
+ * portal, which switches the existing subscription with prorations —
+ * starting a second Checkout session would create a *second* subscription
+ * and bill them twice.
+ */
+type CardAction = "checkout" | "current" | "upgrade" | "downgrade" | "switch-interval";
+
+function resolveCardAction(
+  tier: PricingTier,
+  interval: "monthly" | "yearly",
+  sub: { isActive: boolean; tier: Tier; priceId: string | null },
+): CardAction {
+  if (!sub.isActive || sub.tier === "none") return "checkout";
+  const cardPriceId = interval === "monthly" ? tier.monthlyPriceId : tier.yearlyPriceId;
+  if (sub.priceId === cardPriceId) return "current";
+  if (sub.tier === tier.key) return "switch-interval";
+  return tierRank(tier.key) > tierRank(sub.tier) ? "upgrade" : "downgrade";
+}
+
 function Pricing() {
   const search = Route.useSearch();
   const [interval, setInterval] = useState<"monthly" | "yearly">(search.interval ?? "monthly");
   const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
   const navigate = useNavigate();
   const { openCheckout, isOpen, checkoutElement, closeCheckout } = useStripeCheckout();
+
+  // Entitlement, read from the local `subscriptions` table (webhook-populated).
+  const sub = useSubscription();
+  const portal = useServerFn(createPortalSession);
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  const openPortal = async () => {
+    setPortalLoading(true);
+    try {
+      const url = await portal({
+        data: { environment: getStripeEnvironment(), returnUrl: window.location.href },
+      });
+      window.open(url, "_blank");
+    } catch (e) {
+      console.error(e);
+      toast.error("Could not open the billing portal. Manage your plan from your account page.");
+    } finally {
+      setPortalLoading(false);
+    }
+  };
 
   // Stage 3: consent panel gates checkout. When set, we show the disclosure
   // + required checkbox instead of the Stripe modal.
@@ -75,8 +123,28 @@ function Pricing() {
     return () => subscription.unsubscribe();
   }, []);
 
+  /**
+   * Single gate in front of Checkout.
+   *
+   * Both entry points reach it — the CTA buttons and the `?autocheckout=1`
+   * return from login — so an existing subscriber cannot buy a second
+   * subscription by either route.
+   */
   const beginCheckout = (tier: PricingTier, intv: "monthly" | "yearly") => {
     if (!user) return;
+    if (sub.isLoading) return;
+    if (sub.isActive) {
+      track("pricing_checkout_blocked_existing_sub", {
+        tier: tier.key,
+        current_tier: sub.tier,
+        interval: intv,
+      });
+      toast.info(
+        `You're already subscribed to ${TIER_LABEL[sub.tier]}. Opening your billing portal to change plans.`,
+      );
+      void openPortal();
+      return;
+    }
     setPendingCheckout({ tier, intv });
   };
 
@@ -109,14 +177,26 @@ function Pricing() {
     }
   };
 
-  const handleSubscribe = (tier: PricingTier) => {
+  const handleSubscribe = (tier: PricingTier, action: CardAction) => {
     const isLoggedIn = !!user;
-    track("pricing_cta_click", { tier: tier.key, interval, logged_in: isLoggedIn });
+    track("pricing_cta_click", {
+      tier: tier.key,
+      interval,
+      logged_in: isLoggedIn,
+      action,
+      current_tier: sub.tier,
+    });
     if (!isLoggedIn) {
       navigate({
         to: "/login",
         search: { next: "/pricing", plan: tier.key, interval } as never,
       });
+      return;
+    }
+    // Any plan change on an existing subscription happens in the portal, where
+    // Stripe swaps the price with prorations instead of opening a new one.
+    if (action !== "checkout") {
+      void openPortal();
       return;
     }
     beginCheckout(tier, interval);
@@ -173,19 +253,76 @@ function Pricing() {
           </div>
         </div>
 
+        {sub.isActive && (
+          <div
+            className="mx-auto mt-10 flex max-w-3xl flex-col items-center gap-3 rounded-lg border p-5 text-center sm:flex-row sm:justify-between sm:text-left"
+            style={{ borderColor: "var(--neon)", background: "rgba(34,211,255,0.06)" }}
+            role="status"
+          >
+            <div>
+              <div className="text-sm font-bold uppercase tracking-[2px]" style={{ color: "var(--neon)" }}>
+                You're subscribed · {TIER_LABEL[sub.tier]}
+                {sub.priceId?.endsWith("_yearly") ? " (yearly)" : sub.priceId ? " (monthly)" : ""}
+              </div>
+              <p className="mt-1 text-sm text-[var(--ink2)]">
+                {sub.cancelAtPeriodEnd || sub.inGracePeriod
+                  ? `Your subscription is set to end${
+                      sub.currentPeriodEnd
+                        ? ` on ${new Date(sub.currentPeriodEnd).toLocaleDateString()}`
+                        : ""
+                    }. You keep access until then.`
+                  : `Renews${
+                      sub.currentPeriodEnd
+                        ? ` on ${new Date(sub.currentPeriodEnd).toLocaleDateString()}`
+                        : " automatically"
+                    }. Changing tier here updates your existing subscription — you're never charged twice.`}
+              </p>
+            </div>
+            <div className="flex shrink-0 gap-2">
+              <button
+                onClick={openPortal}
+                disabled={portalLoading}
+                className="btn-cta whitespace-nowrap disabled:opacity-60"
+              >
+                {portalLoading ? "Opening…" : "Manage subscription"}
+              </button>
+              <Link to="/account" className="btn-ghost whitespace-nowrap">
+                Account
+              </Link>
+            </div>
+          </div>
+        )}
+
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {pricingTiers.map((t) => {
             const price = priceForInterval(t, interval);
             const suffix = interval === "monthly" ? "/mo" : "/yr";
             const monthlyEquiv = interval === "yearly" ? t.priceYearly / 12 : null;
             const isInitiateAnnual = t.highlightAnnual && interval === "yearly";
+            const action = resolveCardAction(t, interval, sub);
+            const isCurrent = action === "current";
             return (
               <div
                 key={t.key}
                 className="card-rwc relative flex flex-col p-7"
-                style={t.popular ? { borderColor: "var(--neon)" } : undefined}
+                style={
+                  isCurrent
+                    ? { borderColor: t.accent, boxShadow: `0 0 0 1px ${t.accent}` }
+                    : t.popular
+                      ? { borderColor: "var(--neon)" }
+                      : undefined
+                }
+                aria-current={isCurrent ? "true" : undefined}
               >
-                {t.popular && (
+                {isCurrent && (
+                  <div
+                    className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[2px]"
+                    style={{ background: t.accent, color: "#02000c" }}
+                  >
+                    Your plan
+                  </div>
+                )}
+                {!isCurrent && t.popular && (
                   <div
                     className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[2px]"
                     style={{ background: "var(--neon)", color: "#02000c" }}
@@ -228,9 +365,29 @@ function Pricing() {
                     </li>
                   ))}
                 </ul>
-                <button onClick={() => handleSubscribe(t)} className="btn-cta mt-8 w-full justify-center">
-                  {ctaLabel(t, interval)}
+                <button
+                  onClick={() => handleSubscribe(t, action)}
+                  disabled={isCurrent || sub.isLoading || (action !== "checkout" && portalLoading)}
+                  className={`mt-8 w-full justify-center ${isCurrent ? "btn-ghost" : "btn-cta"} disabled:cursor-default disabled:opacity-70`}
+                  aria-disabled={isCurrent || undefined}
+                >
+                  {sub.isLoading
+                    ? "Checking your plan…"
+                    : action === "current"
+                      ? "Your current plan"
+                      : action === "switch-interval"
+                        ? `Switch to ${interval} billing`
+                        : action === "upgrade"
+                          ? `Upgrade to ${t.name}`
+                          : action === "downgrade"
+                            ? `Change to ${t.name}`
+                            : ctaLabel(t, interval)}
                 </button>
+                {isCurrent && (
+                  <p className="mt-2 text-center text-[11px] text-[var(--mute)]">
+                    Manage or cancel from your billing portal.
+                  </p>
+                )}
               </div>
             );
           })}
