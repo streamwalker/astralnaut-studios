@@ -196,13 +196,45 @@ const TIER_LOOKUP_KEYS = [
 ] as const;
 
 /**
+ * Metadata key stamped on every portal configuration we create, so a later
+ * call can recognise its own work instead of creating another one.
+ */
+const PORTAL_CONFIG_KEY = "rwc_portal_config";
+
+/**
+ * Bump this whenever the feature block below changes in a way that must NOT
+ * be served from an already-existing configuration — the proration behaviour
+ * above all. Configurations already attached to an open portal session keep
+ * working; new sessions get a freshly built one.
+ */
+const PORTAL_CONFIG_VERSION = "v2-always-invoice";
+
+/**
+ * Per-isolate memo, so a warm worker serving several portal opens does the
+ * Stripe lookup once. Empty on a cold start, which is fine — it is a cache,
+ * never a source of truth.
+ */
+const portalConfigCache = new Map<string, string>();
+
+/**
+ * Identity of a configuration: feature version plus the exact set of prices
+ * it allows. If a tier price is added or rotated, the fingerprint changes and
+ * a new configuration gets built, rather than silently reusing a portal that
+ * cannot offer the new price.
+ */
+function portalFingerprint(priceIds: string[]): string {
+  return `${PORTAL_CONFIG_VERSION}:${[...priceIds].sort().join(",")}`;
+}
+
+/**
  * Build (or reuse) a Billing Portal configuration that lets the customer
  * switch between any of our six tiers, with prorated charges/credits
- * applied immediately. New tier benefits unlock the moment the change
- * is confirmed — both for upgrades and downgrades.
+ * invoiced immediately. New tier benefits unlock the moment the change is
+ * confirmed — both for upgrades and downgrades.
  */
 async function getOrCreatePortalConfiguration(
   stripe: ReturnType<typeof createStripeClient>,
+  environment: StripeEnv,
 ): Promise<string> {
   const prices = await stripe.prices.list({
     lookup_keys: [...TIER_LOOKUP_KEYS],
@@ -223,7 +255,27 @@ async function getOrCreatePortalConfiguration(
     prices: priceIds,
   }));
 
+  const fingerprint = portalFingerprint(prices.data.map((p) => p.id));
+  const cacheKey = `${environment}:${fingerprint}`;
+
+  const memoized = portalConfigCache.get(cacheKey);
+  if (memoized) return memoized;
+
+  // Look for one we built earlier from identical inputs. Newest first, so the
+  // match is on the first page in practice; a single page is a deliberate
+  // bound on how much work a portal open may cost.
+  const existing = await stripe.billingPortal.configurations.list({
+    active: true,
+    limit: 100,
+  });
+  const reusable = existing.data.find((c) => c.metadata?.[PORTAL_CONFIG_KEY] === fingerprint);
+  if (reusable) {
+    portalConfigCache.set(cacheKey, reusable.id);
+    return reusable.id;
+  }
+
   const config = await stripe.billingPortal.configurations.create({
+    metadata: { [PORTAL_CONFIG_KEY]: fingerprint },
     business_profile: { headline: "Manage your Real World Comics subscription" },
     features: {
       customer_update: { enabled: true, allowed_updates: ["email", "address", "shipping", "tax_id"] },
@@ -241,14 +293,23 @@ async function getOrCreatePortalConfiguration(
       subscription_update: {
         enabled: true,
         default_allowed_updates: ["price", "quantity", "promotion_code"],
-        // create_prorations = immediate switch, prorated charge for upgrades,
-        // prorated credit on next invoice for downgrades. Benefits start now.
-        proration_behavior: "create_prorations",
+        // always_invoice = switch now AND invoice the prorated difference now.
+        //
+        // Do not go back to "create_prorations". That value writes the
+        // proration lines but does not invoice them, so they wait for the
+        // subscription's next scheduled invoice. On a yearly plan that is up
+        // to a year away: the customer would get Initiate immediately having
+        // paid the Reader price, and the ~$49 difference would go uncollected
+        // until renewal. On upgrade the customer is charged the difference
+        // today; on downgrade the credit lands on their Stripe balance and is
+        // applied to future invoices (Stripe does not refund it).
+        proration_behavior: "always_invoice",
         products,
       },
     },
   });
 
+  portalConfigCache.set(cacheKey, config.id);
   return config.id;
 }
 
@@ -274,7 +335,7 @@ export const createPortalSession = createServerFn({ method: "POST" })
     if (subError || !sub?.stripe_customer_id) throw new Error("No subscription found");
 
     const stripe = createStripeClient(data.environment);
-    const configuration = await getOrCreatePortalConfiguration(stripe);
+    const configuration = await getOrCreatePortalConfiguration(stripe, data.environment);
     const portal = await stripe.billingPortal.sessions.create({
       customer: sub.stripe_customer_id as string,
       configuration,

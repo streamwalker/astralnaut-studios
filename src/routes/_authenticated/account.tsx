@@ -312,9 +312,18 @@ function AccountPage() {
               <div className="mt-4 rounded-md border border-[var(--border-line)] bg-black/20 p-4 text-xs text-[var(--ink2)]">
                 <div className="text-[10px] font-bold uppercase tracking-[2px] text-[var(--gold)]">Changing tiers</div>
                 <ul className="mt-2 space-y-1.5">
-                  <li><span className="font-semibold text-[var(--ink)]">Upgrade:</span> benefits unlock immediately, prorated charge for the remainder of the period.</li>
+                  <li>
+                    <span className="font-semibold text-[var(--ink)]">Upgrade:</span> benefits
+                    unlock immediately. You're charged the difference for the rest of the current
+                    period today, with your unused time on the old tier credited. Your renewal date
+                    doesn't change.
+                  </li>
                   <li><span className="font-semibold text-[var(--ink)]">Downgrade:</span> immediate switch with an unused-time credit applied to your next invoice.</li>
-                  <li><span className="font-semibold text-[var(--ink)]">Monthly ↔ Yearly:</span> same proration rules — no loss of access.</li>
+                  <li>
+                    <span className="font-semibold text-[var(--ink)]">Monthly ↔ Yearly:</span>{" "}
+                    switching interval starts a new billing period from the day you switch, with
+                    unused time credited. No loss of access.
+                  </li>
                   <li><span className="font-semibold text-[var(--ink)]">Cancel:</span> you keep access until the end of the current billing period.</li>
                 </ul>
                 <p className="mt-3">Opens Stripe's secure portal in a new tab. Update payment method, shipping, or tax ID there too.</p>
