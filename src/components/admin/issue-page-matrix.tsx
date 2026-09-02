@@ -3,6 +3,8 @@ import { getIssuePageMatrix } from "@/lib/comic-pages.functions";
 import { pageUrl } from "@/lib/storage";
 import { formatDropDate } from "@/lib/drop-schedule";
 import { releaseBadge, type PageRelease } from "@/lib/page-access";
+import { TermTooltip } from "@/components/info-hint";
+import type { GlossaryKey } from "@/lib/glossary";
 
 /**
  * Admin-only view of every page uploaded to an issue and who can read it today.
@@ -37,27 +39,38 @@ function badgeClass(release: PageRelease | null): string {
   return KIND_STYLE[release.kind];
 }
 
+/**
+ * Every badge in the legend is its own tooltip trigger. The legend is the one
+ * place an admin looks to work out what a colour means, so it is where the
+ * definition belongs — rather than in a wiki nobody opens.
+ */
 function Legend() {
-  const items: Array<[string, string]> = [
-    ["FREE", KIND_STYLE.free],
-    ["PATRON", KIND_STYLE.patron],
-    ["INITIATE+", KIND_STYLE.initiate],
-    ["READER+", KIND_STYLE.reader],
-    ["ALL SUBS", KIND_STYLE.unscheduled],
-    ["UNRELEASED", KIND_STYLE.scheduled],
-    ["UNPUBLISHED", KIND_STYLE.unpublished],
-    ["NO FILE", KIND_STYLE.no_file],
+  const items: Array<[string, string, GlossaryKey]> = [
+    ["FREE", KIND_STYLE.free, "freePages"],
+    ["PATRON", KIND_STYLE.patron, "tierPatron"],
+    ["INITIATE+", KIND_STYLE.initiate, "tierInitiate"],
+    ["READER+", KIND_STYLE.reader, "tierReader"],
+    ["ALL SUBS", KIND_STYLE.unscheduled, "allSubs"],
+    ["UNRELEASED", KIND_STYLE.scheduled, "unreleased"],
+    ["UNPUBLISHED", KIND_STYLE.unpublished, "published"],
+    ["NO FILE", KIND_STYLE.no_file, "noFile"],
   ];
   return (
     <div className="mt-4 flex flex-wrap items-center gap-2">
-      {items.map(([label, cls]) => (
-        <span
-          key={label}
-          className={`rounded px-2 py-0.5 text-[10px] font-black tracking-wider ${cls}`}
-        >
-          {label}
-        </span>
+      {items.map(([label, cls, term]) => (
+        <TermTooltip key={label} term={term} side="bottom" className="rounded">
+          <span
+            className={`block rounded px-2 py-0.5 text-[10px] font-black tracking-wider ${cls}`}
+          >
+            {label}
+          </span>
+        </TermTooltip>
       ))}
+      <TermTooltip term="drop" side="bottom" className="rounded">
+        <span className="block rounded border border-white/20 px-2 py-0.5 text-[10px] font-black tracking-wider text-white/60">
+          WHAT IS A DROP?
+        </span>
+      </TermTooltip>
     </div>
   );
 }

@@ -21,6 +21,7 @@ import { PageRow } from "@/components/admin/page-row";
 import { AnalyticsPanel } from "@/components/admin/analytics-panel";
 import { SerialMetadataPanel } from "@/components/admin/serial-metadata-panel";
 import { AccessDenied } from "@/components/access-denied";
+import { InfoHint, LabelWithHint, TermTooltip } from "@/components/info-hint";
 import {
   auditPageNumbers,
   describeProblem,
@@ -385,17 +386,23 @@ function SinglePageForm() {
   return (
     <form onSubmit={handleUpload} className="space-y-4">
       <div>
-        <Label htmlFor="title">Title *</Label>
+        <LabelWithHint htmlFor="title" term="title">
+          Title *
+        </LabelWithHint>
         <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Battlefield Atlantis — Issue #1, Page 5" required />
       </div>
 
       <div className="grid grid-cols-[2fr_1fr] gap-3">
         <div>
-          <Label htmlFor="slug">Slug *</Label>
+          <LabelWithHint htmlFor="slug" term="slug">
+            Slug *
+          </LabelWithHint>
           <Input id="slug" value={slug} onChange={(e) => setSlug(slugify(e.target.value))} placeholder="battlefield-atlantis-1-5" required />
         </div>
         <div>
-          <Label htmlFor="page">Page # *</Label>
+          <LabelWithHint htmlFor="page" term="pageNumber">
+            Page # *
+          </LabelWithHint>
           <Input id="page" type="number" min={1} value={pageNumber} onChange={(e) => setPageNumber(parseInt(e.target.value, 10) || 1)} required />
         </div>
       </div>
@@ -406,12 +413,16 @@ function SinglePageForm() {
       </div>
 
       <div>
-        <Label htmlFor="alt">Alt text</Label>
+        <LabelWithHint htmlFor="alt" term="altText">
+          Alt text
+        </LabelWithHint>
         <Input id="alt" value={altText} onChange={(e) => setAltText(e.target.value)} placeholder="Orion looks up as Zeus extends a glowing hand." />
       </div>
 
       <div>
-        <Label htmlFor="transcript">Transcript (optional)</Label>
+        <LabelWithHint htmlFor="transcript" term="transcript">
+          Transcript (optional)
+        </LabelWithHint>
         <Textarea id="transcript" rows={3} value={transcript} onChange={(e) => setTranscript(e.target.value)} placeholder="Panel 1: …" />
       </div>
 
@@ -769,16 +780,16 @@ function BatchUploadForm() {
       {issueId === "__new__" && (
         <div className="grid gap-3 rounded-lg border border-dashed border-border p-4 sm:grid-cols-[1fr_2fr_2fr]">
           <div>
-            <Label>Issue #</Label>
+            <LabelWithHint term="issueNumber">Issue #</LabelWithHint>
             <Input type="number" min={1} value={newIssueNumber}
               onChange={(e) => setNewIssueNumber(parseInt(e.target.value, 10) || 1)} />
           </div>
           <div>
-            <Label>Title</Label>
+            <LabelWithHint term="title">Title</LabelWithHint>
             <Input value={newIssueTitle} onChange={(e) => setNewIssueTitle(e.target.value)} placeholder="The Trident Wakes" />
           </div>
           <div>
-            <Label>Slug</Label>
+            <LabelWithHint term="slug">Slug</LabelWithHint>
             <Input value={newIssueSlug} onChange={(e) => setNewIssueSlug(slugify(e.target.value))} placeholder="the-trident-wakes" />
           </div>
         </div>
@@ -786,13 +797,13 @@ function BatchUploadForm() {
 
       <div className="grid gap-3 sm:grid-cols-3">
         <div>
-          <Label>Starting page #</Label>
+          <LabelWithHint term="startingPage">Starting page #</LabelWithHint>
           <Input type="number" min={1} value={startPage}
             onChange={(e) => setStartPage(parseInt(e.target.value, 10) || 1)}
             onBlur={renumberFromStart} />
         </div>
         <div>
-          <Label>Free pages</Label>
+          <LabelWithHint term="freePages">Free pages</LabelWithHint>
           <Input type="number" min={0} value={freePages}
             onChange={(e) => setFreePages(parseInt(e.target.value, 10) || 0)} />
         </div>
@@ -862,7 +873,10 @@ function BatchUploadForm() {
           {audit.blocking.length === 0 && audit.warnings.length > 0 && (
             <div className="rounded-lg border border-border bg-background/40 p-3 text-xs text-muted-foreground">
               {audit.warnings.map((p, i) => (
-                <div key={`${p.kind}-${i}`}>{describeProblem(p)}</div>
+                <div key={`${p.kind}-${i}`} className="flex items-start gap-1.5">
+                  <span>{describeProblem(p)}</span>
+                  {p.kind === "gap" && <InfoHint term="numberingGap" side="bottom" />}
+                </div>
               ))}
             </div>
           )}
@@ -874,14 +888,26 @@ function BatchUploadForm() {
                   <div className="flex items-center gap-2">
                     <span className="truncate text-xs text-muted-foreground">{q.file.name}</span>
                     {q.source === "fallback" && (
-                      <Badge variant="outline" className="shrink-0 text-[10px]">
-                        no page # in filename
-                      </Badge>
+                      <TermTooltip
+                        term="pageMissing"
+                        side="bottom"
+                        className="shrink-0 rounded-full"
+                      >
+                        <Badge variant="outline" className="text-[10px]">
+                          no page # in filename
+                        </Badge>
+                      </TermTooltip>
                     )}
                     {q.source === "trailing" && (
-                      <Badge variant="outline" className="shrink-0 text-[10px]">
-                        page # guessed
-                      </Badge>
+                      <TermTooltip
+                        term="pageGuessed"
+                        side="bottom"
+                        className="shrink-0 rounded-full"
+                      >
+                        <Badge variant="outline" className="text-[10px]">
+                          page # guessed
+                        </Badge>
+                      </TermTooltip>
                     )}
                   </div>
                   <div className="mt-1 grid grid-cols-[80px_1fr] gap-2">

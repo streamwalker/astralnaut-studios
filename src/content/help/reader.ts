@@ -1,3 +1,4 @@
+import { readerGlossaryArticle } from "./glossary-article";
 import type { HelpTrack } from "./types";
 
 export const readerHelp: HelpTrack = {
@@ -275,5 +276,6 @@ Contact support. We'll remove your personal data subject to legal/billing retent
 
 Available on request through support.`,
     },
+    readerGlossaryArticle(),
   ],
 };

@@ -1,3 +1,4 @@
+import { adminGlossaryArticle } from "./glossary-article";
 import type { HelpTrack } from "./types";
 
 export const adminHelp: HelpTrack = {
@@ -173,5 +174,6 @@ Deploys run from the repository. Merging to \`main\` builds the site and publish
 
 Progress is saved locally in your browser.`,
     },
+    adminGlossaryArticle(),
   ],
 };
