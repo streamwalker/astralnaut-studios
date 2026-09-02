@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/site-header";
 import { RightsNotice } from "@/components/rights-notice";
 import { Indicia } from "@/components/indicia";
 import { getIssueBundle } from "@/lib/public.functions";
+import { getEntitledIssuePages } from "@/lib/comic-pages.functions";
 import { logStorageAccess } from "@/lib/storage-access.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { pageUrl } from "@/lib/storage";
@@ -107,11 +108,42 @@ function Reader() {
     })();
     return () => { cancelled = true; };
   }, [issue.series.slug, issue.issue_number, page]);
+
+  // Paid pages arrive from the loader with image_path blanked for everyone, so
+  // the reader has to ask the server for them separately. The server hands them
+  // back only to an admin or an active subscriber; everyone else gets an empty
+  // list and keeps seeing the paywall exactly as before.
+  const [paidPaths, setPaidPaths] = useState<ReadonlyMap<number, string>>(() => new Map());
+  const [entitled, setEntitled] = useState(false);
+  useEffect(() => {
+    if (!accessOk) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await getEntitledIssuePages({ data: { issueId: issue.id } });
+        if (cancelled || !res.entitled) return;
+        setEntitled(true);
+        setPaidPaths(new Map(res.pages.map((p) => [p.page_number, p.image_path])));
+      } catch {
+        // Entitlement lookup failed — fall through to the paywall rather than
+        // guessing. A transient failure must never unlock, and must never blank
+        // the free pages either.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [accessOk, issue.id]);
+
   const total = Math.ceil(Number(issue.total_pages));
   const freeMax = Math.floor(Number(issue.free_pages));
   const current = pages.find((p: typeof pages[number]) => p.page_number === page);
   const isFree = page <= freeMax;
-  const img = pageUrl(current?.image_path);
+  // "Unlocked" is free-by-position OR paid-and-entitled. The FREE/LOCKED badge
+  // still reports the page's commercial status; this drives what renders.
+  const currentPath = isFree ? current?.image_path : paidPaths.get(page);
+  const unlocked = !!currentPath;
+  const img = pageUrl(currentPath);
 
   // Two ways to read, because they suit different moments. "All pages" is a
   // continuous vertical strip that scrolls with the document — the way people
@@ -134,12 +166,24 @@ function Reader() {
     try { localStorage.setItem(READ_MODE_KEY, next); } catch { /* ignore */ }
   }, []);
 
-  // Every page the reader is actually entitled to see. Paid pages come back
-  // from the loader with image_path stripped to "", so this cannot leak them.
-  const readablePages = pages.filter(
-    (p: typeof pages[number]) => p.page_number <= freeMax && !!p.image_path,
-  );
-  const firstLockedPage = freeMax + 1;
+  // Every page the reader is actually entitled to see: the free run, plus any
+  // paid page the server confirmed this caller is entitled to. Paid pages come
+  // back from the loader with image_path stripped to "", so an unentitled
+  // reader's `paidPaths` stays empty and this collapses to the free run.
+  const readablePages = pages
+    .map((p: (typeof pages)[number]) =>
+      p.page_number <= freeMax ? p : { ...p, image_path: paidPaths.get(p.page_number) ?? "" },
+    )
+    .filter((p: (typeof pages)[number]) => !!p.image_path);
+  const readableSet = new Set(readablePages.map((p: (typeof pages)[number]) => p.page_number));
+  // The wall goes at the first page the reader cannot open, not at a fixed
+  // offset — otherwise a subscriber sees a paywall stapled to the middle of
+  // pages they just unlocked.
+  const firstLockedPage =
+    Array.from({ length: total }, (_, i) => i + 1).find((n) => !readableSet.has(n)) ?? total + 1;
+  // The strip renders contiguously from page 1, so the furthest it can scroll
+  // to is the last page before the wall — not the highest readable number.
+  const maxScrollable = Math.max(1, firstLockedPage - 1);
   const ZOOM_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2, 3] as const;
   const FIT = 0 as const; // 0 = fit-width mode
   const [zoom, setZoom] = useState<number>(FIT);
@@ -372,12 +416,12 @@ function Reader() {
 
 
   // In the strip, "go to page N" is a scroll, not a navigation. Each page
-  // renders with id="rp-N"; anything past the free run has no anchor, so the
+  // renders with id="rp-N"; anything past the unlocked run has no anchor, so the
   // jump is clamped rather than silently doing nothing.
   const scrollToPage = useCallback((n: number) => {
-    const target = Math.min(Math.max(1, n), Math.max(1, freeMax));
+    const target = Math.min(Math.max(1, n), maxScrollable);
     document.getElementById(`rp-${target}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [freeMax]);
+  }, [maxScrollable]);
 
   function goTo(target: number) {
     const next = Math.min(total, Math.max(1, target));
@@ -452,9 +496,15 @@ function Reader() {
   // The strip renders every free page at once, so the audit record has to cover
   // all of them — logging only the "current" page would under-report exactly
   // the view that reads the most.
-  const loggedPaths = mode === "all"
-    ? readablePages.map((p: typeof pages[number]) => p.image_path)
-    : current?.image_path ? [current.image_path] : [];
+  // `logStorageAccess` validates at most 20 paths. Before subscriber unlock the
+  // strip could only ever hold the free run, so this was safe by accident; now
+  // a 24-page issue would blow the limit and throw away the whole audit record.
+  const loggedPaths =
+    mode === "all"
+      ? readablePages.slice(0, 20).map((p: (typeof pages)[number]) => p.image_path)
+      : currentPath
+        ? [currentPath]
+        : [];
   const loggedKey = loggedPaths.join("|");
   useEffect(() => {
     if (!loggedKey) return;
@@ -467,7 +517,10 @@ function Reader() {
           paths: loggedKey.split("|"),
           bucket: "comic-pages",
           comicId: mode === "all" ? null : current?.id ?? null,
-          isFree: mode === "all" ? true : isFree,
+          // The strip can now mix free and unlocked-paid pages, so a blanket
+          // `true` would under-report paid reads — exactly what this log exists
+          // to catch. `null` means "mixed / not asserted".
+          isFree: mode === "all" ? null : isFree,
         },
       }).catch(() => {});
     })();
@@ -499,7 +552,7 @@ function Reader() {
         <h1 className="sr-only">{issue.series.name} Issue {issue.issue_number} — Page {page}</h1>
         <div className="flex items-center justify-between" style={{ fontSize: `calc(0.875rem * ${uiScale})` }}>
           <Link to={`/${issue.series.slug}` as "/battlefield-atlantis"} className="text-[var(--mute)] hover:text-[var(--neon)]">← {issue.series.name}</Link>
-          <div className="font-mono text-[var(--mute)]">PAGE <span className="text-[var(--ink)]">{page}</span> / {total} · {isFree ? <span className="text-[var(--neon)]">FREE</span> : <span className="text-[var(--gold)]">LOCKED</span>}</div>
+          <div className="font-mono text-[var(--mute)]">PAGE <span className="text-[var(--ink)]">{page}</span> / {total} · {isFree ? <span className="text-[var(--neon)]">FREE</span> : unlocked ? <span className="text-[var(--neon)]">UNLOCKED</span> : <span className="text-[var(--gold)]">LOCKED</span>}</div>
         </div>
         {readerLocation ? (
           <div
@@ -517,7 +570,7 @@ function Reader() {
           </div>
         ) : null}
         <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
-          Page {page} of {total}{isFree ? ", free preview" : ", locked"}
+          Page {page} of {total}{isFree ? ", free preview" : unlocked ? ", unlocked by subscription" : ", locked"}
         </div>
 
 
@@ -580,11 +633,12 @@ function Reader() {
               pages={readablePages}
               total={total}
               freeMax={freeMax}
+              entitled={entitled}
               firstLockedPage={firstLockedPage}
               seriesSlug={issue.series.slug}
               dropAt={pages.find((p: typeof pages[number]) => p.page_number === firstLockedPage)?.drop_at}
             />
-          ) : isFree && img ? (
+          ) : unlocked && img ? (
             <div ref={stageRef} className={isFullscreen ? "flex h-full w-full flex-col bg-black" : "contents"}>
               <div role="status" aria-live="assertive" aria-atomic="true" className="sr-only">
                 {fsAnnouncement}
@@ -711,7 +765,9 @@ function Reader() {
                 )}
               </div>
             </div>
-          ) : isFree && !img ? (
+          ) : (isFree || entitled) && !img ? (
+            // Entitled but no art on file — the honest answer is "not drawn
+            // yet", not a paywall the reader has already paid past.
             <div className="aspect-[1054/1491] flex items-center justify-center p-10 text-center text-[var(--mute)]">Page art forthcoming</div>
           ) : (
             <PaywallWithCapture
@@ -774,7 +830,7 @@ function Reader() {
             <div className="flex flex-wrap justify-center gap-1">
               {Array.from({ length: total }).map((_, i) => {
                 const n = i + 1;
-                const reachable = n <= freeMax;
+                const reachable = n <= maxScrollable;
                 return (
                   <button
                     key={n}
@@ -787,7 +843,7 @@ function Reader() {
                 );
               })}
             </div>
-            <button onClick={() => scrollToPage(freeMax)} className="btn-ghost">↓ End</button>
+            <button onClick={() => scrollToPage(maxScrollable)} className="btn-ghost">↓ End</button>
           </div>
         ) : (
           <div className="mt-4 flex items-center justify-between">
@@ -796,7 +852,7 @@ function Reader() {
               {Array.from({ length: total }).map((_, i) => {
                 const n = i + 1;
                 return (
-                  <button key={n} aria-label={`Go to page ${n}`} onClick={() => navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: n } })} className="h-2 w-2 rounded-full" style={{ background: n === page ? "var(--neon)" : n <= freeMax ? "rgba(34,211,255,0.3)" : "rgba(255,255,255,0.1)" }} />
+                  <button key={n} aria-label={`Go to page ${n}`} onClick={() => navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: n } })} className="h-2 w-2 rounded-full" style={{ background: n === page ? "var(--neon)" : readableSet.has(n) ? "rgba(34,211,255,0.3)" : "rgba(255,255,255,0.1)" }} />
                 );
               })}
             </div>
@@ -865,14 +921,18 @@ function ModeButton({
  * trackpad, touch, scrollbar, spacebar, Page Down — reaches the bottom of the
  * art without the reader having to find the right region of the screen first.
  *
- * Only free pages are passed in. Paid pages arrive from the loader with an
- * empty image_path, so there is nothing here that could leak them; the paywall
- * simply terminates the strip.
+ * Receives free pages plus any paid pages the caller is entitled to. Paid pages
+ * arrive from the loader with an empty image_path for every visitor; the reader
+ * re-fills them only after `getEntitledIssuePages` has confirmed entitlement
+ * server-side. Leak protection therefore lives in that gate, not here — anything
+ * holding a path by this point has already been authorised. The strip renders
+ * contiguously and terminates at the first page still without one.
  */
 function AllPagesStrip({
   pages,
   total,
   freeMax,
+  entitled,
   firstLockedPage,
   seriesSlug,
   dropAt,
@@ -880,6 +940,7 @@ function AllPagesStrip({
   pages: ReadonlyArray<{ id?: string | null; page_number: number; image_path: string; alt_text?: string | null }>;
   total: number;
   freeMax: number;
+  entitled: boolean;
   firstLockedPage: number;
   seriesSlug: string;
   dropAt?: string | null;
@@ -914,12 +975,19 @@ function AllPagesStrip({
       ))}
       {firstLockedPage <= total ? (
         <div className="border-t border-white/10">
-          <PaywallWithCapture
-            page={firstLockedPage}
-            freeMax={freeMax}
-            dropAt={dropAt}
-            seriesSlug={seriesSlug}
-          />
+          {entitled ? (
+            // A subscriber who has read to the end of what exists is not being
+            // paywalled — they are waiting on a drop. Pitching them a tier they
+            // already pay for is the wrong message.
+            <CaughtUpWall page={firstLockedPage} dropAt={dropAt} />
+          ) : (
+            <PaywallWithCapture
+              page={firstLockedPage}
+              freeMax={freeMax}
+              dropAt={dropAt}
+              seriesSlug={seriesSlug}
+            />
+          )}
         </div>
       ) : null}
     </div>
@@ -993,6 +1061,32 @@ function Paywall({ page, freeMax, dropAt }: { page: number; freeMax: number; dro
     </div>
   );
 }
+/**
+ * The end-of-strip panel for a reader who is already entitled. Same slot as the
+ * paywall, opposite message: nothing is being withheld for payment, the next
+ * page simply has not dropped yet.
+ */
+function CaughtUpWall({ page, dropAt }: { page: number; dropAt?: string | null }) {
+  return (
+    <div
+      className="mx-auto max-w-xl p-10 text-center"
+      style={{ background: "var(--gradient-panel)" }}
+    >
+      <div className="eyebrow">You're caught up</div>
+      <h2 className="text-fluid-h2 mt-3 font-black">Page {page} hasn't dropped yet.</h2>
+      <p className="text-fluid-body measure mx-auto mt-3 text-[var(--ink2)]">
+        You've read everything released so far. New pages arrive on the weekly cadence and unlock
+        automatically with your subscription.
+      </p>
+      {dropAt && (
+        <p className="mt-2 font-mono text-sm text-[var(--gold)]">
+          Next drop · {new Date(dropAt).toLocaleDateString()}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function Stat({ label, price }: { label: string; price: string }) {
   return (<div className="card-rwc p-3"><div className="font-mono text-lg font-black text-[var(--neon)]">{price}</div><div className="text-[10px] font-bold uppercase tracking-[2px] text-[var(--mute)]">{label}</div></div>);
 }

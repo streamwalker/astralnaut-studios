@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database } from "@/integrations/supabase/types";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { recordStorageAccess } from "./storage-access.server";
 
@@ -11,6 +13,75 @@ const InputSchema = z.object({
   paths: z.array(z.string().min(1).max(500)).min(1).max(20),
   expiresIn: z.number().int().min(10).max(300).optional(),
 });
+
+const IssueInputSchema = z.object({
+  issueId: z.string().uuid(),
+});
+
+/** Shared entitlement test: admins bypass, otherwise an active sub in either env. */
+async function callerIsEntitled(
+  supabase: SupabaseClient<Database>,
+  userId: string,
+): Promise<boolean> {
+  const { data: isAdmin } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
+  if (isAdmin) return true;
+  const [{ data: live }, { data: sandbox }] = await Promise.all([
+    supabase.rpc("has_active_subscription", { user_uuid: userId, check_env: "live" }),
+    supabase.rpc("has_active_subscription", { user_uuid: userId, check_env: "sandbox" }),
+  ]);
+  return !!live || !!sandbox;
+}
+
+/**
+ * Returns the storage paths of an issue's PAID pages, but only to a caller who
+ * is actually entitled to them. Unentitled callers get `entitled: false` and an
+ * empty list, which is indistinguishable from an issue with no paid pages.
+ *
+ * This exists because `getIssueBundle` deliberately blanks `image_path` on paid
+ * pages for every visitor, so the reader has no way to render them even for a
+ * paying subscriber. This is the other half of that transaction.
+ *
+ * Note on threat model: `comic-pages` is currently a PUBLIC bucket, so the
+ * paywall's real protection is path secrecy — anyone holding a path can fetch
+ * the object. Handing paths only to entitled callers preserves exactly the
+ * protection the app has today. Making the bucket private and switching this to
+ * signed URLs (`getSignedComicPages`, below) is the actual hardening step and is
+ * tracked separately; it is not a regression introduced here.
+ */
+export const getEntitledIssuePages = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => IssueInputSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { userId, supabase } = context;
+
+    const entitled = await callerIsEntitled(supabase, userId);
+    if (!entitled)
+      return { entitled: false, pages: [] as Array<{ page_number: number; image_path: string }> };
+
+    const { data: rows, error } = await supabaseAdmin
+      .from("comics")
+      .select("page_number, image_path, published_at")
+      .eq("issue_id", data.issueId)
+      .eq("is_free", false)
+      .order("page_number");
+    if (error) throw new Error(error.message);
+
+    const now = Date.now();
+    const pages = (rows ?? [])
+      .filter((r) => r.published_at && new Date(r.published_at).getTime() <= now && !!r.image_path)
+      .map((r) => ({ page_number: r.page_number, image_path: r.image_path }));
+
+    if (pages.length > 0) {
+      void recordStorageAccess({
+        paths: pages.map((p) => p.image_path),
+        bucket: BUCKET,
+        userId,
+        isFree: false,
+      }).catch(() => {});
+    }
+
+    return { entitled: true, pages };
+  });
 
 type SignedPage = {
   path: string;
