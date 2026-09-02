@@ -5,6 +5,9 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { recordStorageAccess } from "./storage-access.server";
+import type { DropRow } from "./drop-schedule";
+import { releaseMap, tierCanRead, type PageInput } from "./page-access";
+import { tierFromPriceId, tierRank, type Tier } from "./tier";
 
 const BUCKET = "comic-pages";
 const EXPIRES_IN = 60; // seconds
@@ -18,18 +21,81 @@ const IssueInputSchema = z.object({
   issueId: z.string().uuid(),
 });
 
-/** Shared entitlement test: admins bypass, otherwise an active sub in either env. */
-async function callerIsEntitled(
+type CallerAccess = {
+  isAdmin: boolean;
+  /** Effective tier for gating. Admins are treated as `patron`. */
+  tier: Tier;
+  /** Whether any active subscription exists at all, in either environment. */
+  entitled: boolean;
+};
+
+/**
+ * Resolve what the caller is allowed to see.
+ *
+ * `has_active_subscription` stays the sole authority on *whether* a subscription
+ * is live — its status/period predicate is deliberately not restated in JS,
+ * because a second copy would drift from the RLS policy that uses it. Once an
+ * environment answers yes, the tier comes from the newest `subscriptions` row in
+ * that environment, matching `useSubscription`'s newest-row-per-env rule so the
+ * client's badge and the server's gate cannot disagree.
+ *
+ * `subscriptions.price_id` stores Stripe lookup keys ("initiate_monthly"), not
+ * price ids, which is why `tierFromPriceId` works on it directly. Verified
+ * against live rows.
+ */
+async function resolveCallerAccess(
   supabase: SupabaseClient<Database>,
   userId: string,
-): Promise<boolean> {
-  const { data: isAdmin } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
-  if (isAdmin) return true;
-  const [{ data: live }, { data: sandbox }] = await Promise.all([
+): Promise<CallerAccess> {
+  const [{ data: isAdmin }, { data: live }, { data: sandbox }] = await Promise.all([
+    supabase.rpc("has_role", { _user_id: userId, _role: "admin" }),
     supabase.rpc("has_active_subscription", { user_uuid: userId, check_env: "live" }),
     supabase.rpc("has_active_subscription", { user_uuid: userId, check_env: "sandbox" }),
   ]);
-  return !!live || !!sandbox;
+
+  if (isAdmin) return { isAdmin: true, tier: "patron", entitled: true };
+
+  const envs = [live ? "live" : null, sandbox ? "sandbox" : null].filter(
+    (e): e is string => e !== null,
+  );
+  if (envs.length === 0) return { isAdmin: false, tier: "none", entitled: false };
+
+  const { data: rows } = await supabaseAdmin
+    .from("subscriptions")
+    .select("price_id, environment, created_at")
+    .eq("user_id", userId)
+    .in("environment", envs)
+    .order("created_at", { ascending: false });
+
+  // Newest row per entitled environment, then the highest tier across them: a
+  // caller who is Reader in sandbox and Patron in live reads as Patron.
+  const newestPerEnv = new Map<string, string | null>();
+  for (const r of rows ?? []) {
+    if (!newestPerEnv.has(r.environment)) newestPerEnv.set(r.environment, r.price_id);
+  }
+  let tier: Tier = "none";
+  for (const priceId of newestPerEnv.values()) {
+    const t = tierFromPriceId(priceId);
+    if (tierRank(t) > tierRank(tier)) tier = t;
+  }
+
+  // An active subscription whose price_id we cannot map must not read as "none";
+  // that would lock out a paying account over a naming change. Fall back to the
+  // lowest paid tier, which is exactly the pre-stagger behaviour.
+  if (tier === "none") tier = "reader";
+
+  return { isAdmin: false, tier, entitled: true };
+}
+
+/** The issue's drop rows, which define the per-tier stagger. May be empty. */
+async function dropsForIssue(issueId: string): Promise<DropRow[]> {
+  const { data, error } = await supabaseAdmin
+    .from("issue_drops")
+    .select("week, pages, patron_date, initiate_date, reader_date")
+    .eq("issue_id", issueId)
+    .order("week");
+  if (error) throw new Error(error.message);
+  return (data ?? []) as DropRow[];
 }
 
 /**
@@ -40,6 +106,11 @@ async function callerIsEntitled(
  * This exists because `getIssueBundle` deliberately blanks `image_path` on paid
  * pages for every visitor, so the reader has no way to render them even for a
  * paying subscriber. This is the other half of that transaction.
+ *
+ * Release is per-page and per-tier: a page covered by an `issue_drops` row opens
+ * to Patron on `patron_date`, Initiate on `initiate_date`, Reader on
+ * `reader_date`. A paid page with no drop row opens to every active subscriber —
+ * see the rules at the top of `page-access.ts` before changing that.
  *
  * Note on threat model: `comic-pages` is currently a PUBLIC bucket, so the
  * paywall's real protection is path secrecy — anyone holding a path can fetch
@@ -54,22 +125,31 @@ export const getEntitledIssuePages = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { userId, supabase } = context;
 
-    const entitled = await callerIsEntitled(supabase, userId);
-    if (!entitled)
-      return { entitled: false, pages: [] as Array<{ page_number: number; image_path: string }> };
+    const access = await resolveCallerAccess(supabase, userId);
+    if (!access.entitled)
+      return {
+        entitled: false,
+        tier: access.tier,
+        pages: [] as Array<{ page_number: number; image_path: string }>,
+      };
 
-    const { data: rows, error } = await supabaseAdmin
-      .from("comics")
-      .select("page_number, image_path, published_at")
-      .eq("issue_id", data.issueId)
-      .eq("is_free", false)
-      .order("page_number");
+    const [{ data: rows, error }, drops] = await Promise.all([
+      supabaseAdmin
+        .from("comics")
+        .select("page_number, image_path, published_at, is_free")
+        .eq("issue_id", data.issueId)
+        .eq("is_free", false)
+        .order("page_number"),
+      dropsForIssue(data.issueId),
+    ]);
     if (error) throw new Error(error.message);
 
-    const now = Date.now();
-    const pages = (rows ?? [])
-      .filter((r) => r.published_at && new Date(r.published_at).getTime() <= now && !!r.image_path)
-      .map((r) => ({ page_number: r.page_number, image_path: r.image_path }));
+    const byNumber = new Map((rows ?? []).map((r) => [r.page_number, r]));
+    const pages = releaseMap((rows ?? []) as PageInput[], drops)
+      .filter((r) => tierCanRead(r, access.tier))
+      .map((r) => byNumber.get(r.pageNumber))
+      .filter((r): r is NonNullable<typeof r> => !!r && !!r.image_path)
+      .map((r) => ({ page_number: r.page_number, image_path: r.image_path as string }));
 
     if (pages.length > 0) {
       void recordStorageAccess({
@@ -80,7 +160,61 @@ export const getEntitledIssuePages = createServerFn({ method: "POST" })
       }).catch(() => {});
     }
 
-    return { entitled: true, pages };
+    return { entitled: true, tier: access.tier, pages };
+  });
+
+/**
+ * Admin-only. Every `comics` row for an issue with its real `image_path`, plus
+ * the release state the schedule puts it in today.
+ *
+ * This exists because `getIssueBundle` blanks `image_path` on paid pages for
+ * *every* visitor, admins included — which is why the series page shows an admin
+ * a grid of empty locked tiles with no way to tell a Patron-only page from an
+ * unpublished one from a row with no file attached. This is the console view:
+ * what is uploaded, and who can see it right now.
+ *
+ * No `recordStorageAccess` call here on purpose. The burst detector exists to
+ * catch scraping of the paywalled bucket; an admin loading their own dashboard
+ * would trip it every time and drown the real signal.
+ */
+export const getIssuePageMatrix = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => IssueInputSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { userId, supabase } = context;
+
+    const { data: isAdmin } = await supabase.rpc("has_role", {
+      _user_id: userId,
+      _role: "admin",
+    });
+    if (!isAdmin) return { admin: false as const, pages: [], drops: [] as DropRow[] };
+
+    const [{ data: rows, error }, drops] = await Promise.all([
+      supabaseAdmin
+        .from("comics")
+        .select("id, page_number, image_path, alt_text, title, is_free, published_at, drop_at")
+        .eq("issue_id", data.issueId)
+        .order("page_number"),
+      dropsForIssue(data.issueId),
+    ]);
+    if (error) throw new Error(error.message);
+
+    const releases = releaseMap((rows ?? []) as PageInput[], drops);
+    const byNumber = new Map(releases.map((r) => [r.pageNumber, r]));
+
+    const pages = (rows ?? []).map((r) => ({
+      id: r.id,
+      page_number: r.page_number,
+      image_path: r.image_path,
+      alt_text: r.alt_text,
+      title: r.title,
+      is_free: !!r.is_free,
+      published_at: r.published_at,
+      drop_at: r.drop_at,
+      release: byNumber.get(r.page_number) ?? null,
+    }));
+
+    return { admin: true as const, pages, drops };
   });
 
 type SignedPage = {

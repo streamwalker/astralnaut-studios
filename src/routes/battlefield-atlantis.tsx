@@ -4,6 +4,8 @@ import { RightsNotice } from "@/components/rights-notice";
 import { getSeriesBundle, getIssueBundle } from "@/lib/public.functions";
 import { pageUrl } from "@/lib/storage";
 import { deriveSchedule, formatDropDate, formatDropDateLong, dropWeekday, type DropRow } from "@/lib/drop-schedule";
+import { useAdminSession } from "@/hooks/useAdminSession";
+import { IssuePageMatrix } from "@/components/admin/issue-page-matrix";
 import baLogo from "@/assets/battlefield-atlantis-logo.png";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Lock } from "lucide-react";
@@ -68,6 +70,9 @@ function BAPage() {
   // The schedule is data, not a const map. It used to be eleven hardcoded
   // strings, which is why this page still advertised July drops in late August.
   const schedule = deriveSchedule((issueBundle?.drops ?? []) as DropRow[]);
+  // Display-only. The matrix itself is gated server-side by `has_role`.
+  const { data: adminSession } = useAdminSession();
+  const isAdmin = !!adminSession?.isAdmin;
   const characters = bundle.characters;
   const factions = bundle.factions;
   const cover = pageUrl(issue?.cover_path);
@@ -309,6 +314,9 @@ function BAPage() {
             </dl>
           </aside>
         </section>
+
+        {/* ============ ADMIN RELEASE MATRIX ============ */}
+        {isAdmin && issue?.id && <IssuePageMatrix issueId={issue.id} />}
 
         {/* ============ ALL 20 PAGES ============ */}
         <section className="mt-20">

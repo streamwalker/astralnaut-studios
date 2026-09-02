@@ -77,8 +77,13 @@ export function dropWeekday(iso: string): string {
  * The Initiate tier sits between Patron and Reader. issue_drops only stored the
  * outer two until initiate_date was added, so rows written before that fall
  * back to the cadence the site has always advertised: the day after Patron.
+ *
+ * Exported because `page-access.ts` decides real entitlement from the same
+ * three dates. If that fallback existed in two places they would drift, and the
+ * drift would show up as a subscriber being told a page is unlocked on a page
+ * that will not render it.
  */
-function initiateFor(row: DropRow): string {
+export function initiateDateFor(row: DropRow): string {
   if (row.initiate_date) return row.initiate_date;
   const d = new Date(row.patron_date);
   if (Number.isNaN(d.getTime())) return row.patron_date;
@@ -104,7 +109,7 @@ export function deriveSchedule(rows: readonly DropRow[], today: string = todayIS
         week: head.week,
         pages: head.pages ?? [],
         patron: head.patron_date,
-        initiate: initiateFor(head),
+        initiate: initiateDateFor(head),
         reader: head.reader_date,
       }
     : null;
