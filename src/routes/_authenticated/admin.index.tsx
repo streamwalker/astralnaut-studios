@@ -21,6 +21,15 @@ import { PageRow } from "@/components/admin/page-row";
 import { AnalyticsPanel } from "@/components/admin/analytics-panel";
 import { SerialMetadataPanel } from "@/components/admin/serial-metadata-panel";
 import { AccessDenied } from "@/components/access-denied";
+import {
+  auditPageNumbers,
+  describeProblem,
+  guessPageFromFilename,
+  naturalFilenameSort,
+  nextPageNumber,
+  sequentialFrom,
+  type PageNumberSource,
+} from "@/lib/page-number";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   head: () => ({ meta: [{ title: "Admin — Astralnaut Studios" }] }),
@@ -34,20 +43,6 @@ function slugify(s: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
-}
-
-function naturalSort(a: string, b: string) {
-  return a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
-}
-
-function inferPageFromFilename(name: string, fallback: number): number {
-  const base = name.replace(/\.[^.]+$/, "");
-  const matches = base.match(/(\d+)(?!.*\d)/);
-  if (matches) {
-    const n = parseInt(matches[1], 10);
-    if (Number.isFinite(n) && n > 0) return n;
-  }
-  return fallback;
 }
 
 function AdminPage() {
@@ -129,6 +124,22 @@ function AdminPage() {
       return data;
     },
   });
+
+  /**
+   * The fallback list (no issue selected) selects the 30 most recently created
+   * rows, but must not *render* them newest-first: a page uploaded today would
+   * then sit above page 1, which reads as a broken issue order. Select by
+   * recency, display in reading order — grouped by issue, then page number.
+   */
+  const recentInReadingOrder = useMemo(() => {
+    const recent = (comics ?? []).slice(0, 30);
+    return [...recent].sort((a, b) => {
+      const ia = a.issue_id ?? "";
+      const ib = b.issue_id ?? "";
+      if (ia !== ib) return ia.localeCompare(ib);
+      return (a.page_number ?? 0) - (b.page_number ?? 0);
+    });
+  }, [comics]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -283,14 +294,14 @@ function AdminPage() {
           ) : (
             <>
               <p className="mt-6 text-xs text-muted-foreground">
-                {comics?.length ?? 0} page{(comics?.length ?? 0) === 1 ? "" : "s"} total · showing 30 most recent.
+                {comics?.length ?? 0} page{(comics?.length ?? 0) === 1 ? "" : "s"} total · showing 30 most recent, in reading order.
               </p>
               <ul className="mt-3 space-y-3">
-                {comics?.slice(0, 30).map((c, idx) => (
+                {recentInReadingOrder.map((c, idx) => (
                   <PageRow
                     key={c.id}
                     page={c}
-                    siblings={comics.slice(0, 30)}
+                    siblings={recentInReadingOrder}
                     initialIndex={idx}
                     invalidateKeys={[["admin-comics"]]}
                   />
@@ -420,11 +431,16 @@ function SinglePageForm() {
 
 type QueueStatus = "queued" | "uploading" | "done" | "error";
 
+/** Where a queued page number came from. "manual" = the admin typed it. */
+type QueueSource = PageNumberSource | "manual";
+
 type QueueItem = {
   id: string;
   file: File;
   previewUrl: string;
   pageNumber: number;
+  /** How the page number was derived, so a guess can be flagged in the UI. */
+  source: QueueSource;
   title: string;
   status: QueueStatus;
   error?: string;
@@ -474,6 +490,25 @@ function BatchUploadForm() {
     },
   });
 
+  /**
+   * The pages the target issue already has. Needed for two things the old
+   * uploader had no way to know: what page number to start at, and whether a
+   * queued page would land on top of one that already exists.
+   */
+  const { data: existingPages } = useQuery({
+    queryKey: ["admin-existing-pages", issueId],
+    enabled: !!issueId && issueId !== "__new__",
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("comics")
+        .select("page_number, title")
+        .eq("issue_id", issueId)
+        .order("page_number", { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const selectedIssue = useMemo(
     () => issuesList?.find((i) => i.id === issueId),
     [issuesList, issueId],
@@ -483,12 +518,33 @@ function BatchUploadForm() {
     [seriesList, seriesId],
   );
 
+  const existingForAudit = useMemo(
+    () =>
+      (existingPages ?? [])
+        .filter((p) => Number.isInteger(p.page_number))
+        .map((p) => ({ page_number: p.page_number as number, title: p.title })),
+    [existingPages],
+  );
+
   // Populate free pages default when issue changes
   useEffect(() => {
     if (selectedIssue?.free_pages != null) {
       setFreePages(Number(selectedIssue.free_pages));
     }
   }, [selectedIssue]);
+
+  /**
+   * Default the starting page to the first free number in the issue rather than
+   * to 1. Only while the queue is empty, so it never overwrites a deliberate
+   * choice mid-session.
+   */
+  useEffect(() => {
+    if (queue.length > 0) return;
+    if (!issueId || issueId === "__new__") return;
+    if (!existingPages) return;
+    setStartPage(nextPageNumber(existingForAudit));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [issueId, existingPages]);
 
   // Auto-slug for new issue
   useEffect(() => {
@@ -497,29 +553,69 @@ function BatchUploadForm() {
 
   const addFiles = (files: FileList | File[]) => {
     const arr = Array.from(files).filter((f) => f.type.startsWith("image/"));
-    arr.sort((a, b) => naturalSort(a.name, b.name));
+    arr.sort((a, b) => naturalFilenameSort(a.name, b.name));
     setQueue((prev) => {
-      const baseStart = prev.length > 0
-        ? Math.max(...prev.map((q) => q.pageNumber)) + 1
-        : startPage;
-      const next: QueueItem[] = arr.map((file, i) => ({
-        id: `${Date.now()}-${i}-${file.name}`,
-        file,
-        previewUrl: URL.createObjectURL(file),
-        pageNumber: inferPageFromFilename(file.name, baseStart + i),
-        title: file.name.replace(/\.[^.]+$/, ""),
-        status: "queued",
-      }));
+      // The positional fallback has to clear both what is already queued and
+      // what the issue already holds, or it lands on an occupied number.
+      const queuedMax = prev.length > 0 ? Math.max(...prev.map((q) => q.pageNumber)) : 0;
+      const issueMax = existingForAudit.length > 0 ? nextPageNumber(existingForAudit) - 1 : 0;
+      const occupiedMax = Math.max(queuedMax, issueMax);
+      const baseStart = occupiedMax > 0 ? occupiedMax + 1 : startPage;
+      const next: QueueItem[] = arr.map((file, i) => {
+        const guess = guessPageFromFilename(file.name, baseStart + i);
+        return {
+          id: `${Date.now()}-${i}-${file.name}`,
+          file,
+          previewUrl: URL.createObjectURL(file),
+          pageNumber: guess.pageNumber,
+          source: guess.source,
+          title: file.name.replace(/\.[^.]+$/, ""),
+          status: "queued" as QueueStatus,
+        };
+      });
       return [...prev, ...next];
     });
   };
 
   // When startPage changes and no uploads in progress, renumber sequentially from startPage
   const renumberFromStart = () => {
-    setQueue((prev) =>
-      prev.map((q, i) => (q.status === "done" ? q : { ...q, pageNumber: startPage + i })),
-    );
+    setQueue((prev) => {
+      const pending = prev.filter((q) => q.status !== "done");
+      const renumbered = new Map(
+        sequentialFrom(pending, startPage).map((q) => [q.id, q.pageNumber]),
+      );
+      return prev.map((q) =>
+        q.status === "done"
+          ? q
+          : { ...q, pageNumber: renumbered.get(q.id) ?? q.pageNumber, source: "manual" as const },
+      );
+    });
   };
+
+  /**
+   * Checked on every render so problems surface while the queue is being built,
+   * not after twenty rows have already been written. Rows already uploaded are
+   * excluded — they are in `existingForAudit` now, and counting them twice
+   * would report every finished upload as a collision with itself.
+   */
+  const audit = useMemo(
+    () =>
+      auditPageNumbers(
+        queue
+          .filter((q) => q.status !== "done")
+          .map((q) => ({ id: q.id, title: q.title || q.file.name, pageNumber: q.pageNumber })),
+        existingForAudit,
+      ),
+    [queue, existingForAudit],
+  );
+
+  /**
+   * Only shown once the existing-pages query has resolved. An empty string while
+   * it is loading rather than "0 pages", which would read as a fact and be wrong.
+   */
+  const existingSummary = existingPages
+    ? ` · issue already has ${existingForAudit.length} page${existingForAudit.length === 1 ? "" : "s"}`
+    : "";
 
   const removeItem = (id: string) => {
     setQueue((prev) => {
@@ -575,6 +671,20 @@ function BatchUploadForm() {
     if (queue.length === 0) { toast.error("Add files first."); return; }
     if (!selectedSeries) { toast.error("Pick a series."); return; }
 
+    // `comics` has no unique constraint on (issue_id, page_number), so a
+    // duplicate inserts silently and only shows up later as a page rendering
+    // twice or vanishing from the reader. This is the only thing standing
+    // between a bad filename and a broken issue order.
+    if (audit.blocking.length > 0) {
+      toast.error(describeProblem(audit.blocking[0]), {
+        description:
+          audit.blocking.length > 1
+            ? `${audit.blocking.length - 1} more problem${audit.blocking.length === 2 ? "" : "s"} below. Fix the page numbers, or use “Renumber from ${startPage}”.`
+            : `Fix the page number, or use “Renumber from ${startPage}”.`,
+      });
+      return;
+    }
+
     const issue = await ensureIssue();
     if (!issue) return;
 
@@ -622,6 +732,8 @@ function BatchUploadForm() {
     setIsUploading(false);
     qc.invalidateQueries({ queryKey: ["admin-comics"] });
     qc.invalidateQueries({ queryKey: ["admin-issues", seriesId] });
+    qc.invalidateQueries({ queryKey: ["admin-existing-pages", issue.id] });
+    qc.invalidateQueries({ queryKey: ["admin-issue-pages", issue.id] });
     if (fail === 0) toast.success(`Uploaded ${ok} page${ok === 1 ? "" : "s"}.`);
     else toast.warning(`${ok} uploaded, ${fail} failed.`);
   };
@@ -716,21 +828,73 @@ function BatchUploadForm() {
       {queue.length > 0 && (
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>{queue.length} file{queue.length === 1 ? "" : "s"} queued</span>
+            <span>
+              {queue.length} file{queue.length === 1 ? "" : "s"} queued
+              {existingSummary}
+            </span>
             {isUploading && <span>Uploading {progress.done} / {progress.total}…</span>}
           </div>
+
+          {audit.blocking.length > 0 && (
+            <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-xs">
+              <div className="font-medium text-destructive">
+                {audit.blocking.length} problem
+                {audit.blocking.length === 1 ? "" : "s"} — upload is blocked
+              </div>
+              <ul className="mt-2 space-y-1 text-destructive/90">
+                {audit.blocking.map((p, i) => (
+                  <li key={`${p.kind}-${i}`}>{describeProblem(p)}</li>
+                ))}
+              </ul>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="mt-3"
+                disabled={isUploading}
+                onClick={renumberFromStart}
+              >
+                Renumber from {startPage}
+              </Button>
+            </div>
+          )}
+
+          {audit.blocking.length === 0 && audit.warnings.length > 0 && (
+            <div className="rounded-lg border border-border bg-background/40 p-3 text-xs text-muted-foreground">
+              {audit.warnings.map((p, i) => (
+                <div key={`${p.kind}-${i}`}>{describeProblem(p)}</div>
+              ))}
+            </div>
+          )}
           <ul className="space-y-2">
             {queue.map((q, idx) => (
               <li key={q.id} className="flex items-center gap-3 rounded-lg border border-border/60 bg-background/40 p-2">
                 <img src={q.previewUrl} alt="" className="h-12 w-12 rounded object-cover" />
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-xs text-muted-foreground">{q.file.name}</div>
+                  <div className="flex items-center gap-2">
+                    <span className="truncate text-xs text-muted-foreground">{q.file.name}</span>
+                    {q.source === "fallback" && (
+                      <Badge variant="outline" className="shrink-0 text-[10px]">
+                        no page # in filename
+                      </Badge>
+                    )}
+                    {q.source === "trailing" && (
+                      <Badge variant="outline" className="shrink-0 text-[10px]">
+                        page # guessed
+                      </Badge>
+                    )}
+                  </div>
                   <div className="mt-1 grid grid-cols-[80px_1fr] gap-2">
                     <Input
                       type="number"
                       min={1}
                       value={q.pageNumber}
-                      onChange={(e) => updateItem(q.id, { pageNumber: parseInt(e.target.value, 10) || 1 })}
+                      onChange={(e) =>
+                        updateItem(q.id, {
+                          pageNumber: parseInt(e.target.value, 10) || 1,
+                          source: "manual",
+                        })
+                      }
                       className="h-8"
                     />
                     <Input
@@ -758,8 +922,17 @@ function BatchUploadForm() {
       )}
 
       <div className="flex gap-2">
-        <Button type="button" onClick={handleUploadAll} disabled={isUploading || queue.length === 0} className="flex-1">
-          {isUploading ? `Uploading ${progress.done}/${progress.total}…` : `Upload ${queue.filter((q) => q.status !== "done").length} page(s)`}
+        <Button
+          type="button"
+          onClick={handleUploadAll}
+          disabled={isUploading || queue.length === 0 || audit.blocking.length > 0}
+          className="flex-1"
+        >
+          {isUploading
+            ? `Uploading ${progress.done}/${progress.total}…`
+            : audit.blocking.length > 0
+              ? "Fix page numbers to upload"
+              : `Upload ${queue.filter((q) => q.status !== "done").length} page(s)`}
         </Button>
         <Button type="button" variant="outline" disabled={isUploading} onClick={() => {
           queue.forEach((q) => URL.revokeObjectURL(q.previewUrl));
