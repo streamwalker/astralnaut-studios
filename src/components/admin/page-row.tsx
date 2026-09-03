@@ -8,6 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
+  copyStoragePath,
+  normalizeExtension,
+  realignSlug,
+  versionedStoragePath,
+} from "@/lib/page-identity";
+import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
@@ -103,12 +109,19 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
   // ----- Replace image -----
   const onReplace = async (file: File) => {
     setBusy(true);
+    const oldPath = page.image_path;
+    let replaced = false;
+    let newPath = "";
     try {
-      const oldPath = page.image_path;
-      const ext = file.name.split(".").pop()?.toLowerCase() || "png";
-      // Append a version segment so we never collide with the old object.
-      const base = oldPath.replace(/\.[^./]+$/, "");
-      const newPath = `${base}.v${Date.now()}.${ext}`;
+      /* `versionedStoragePath` strips any version segments the path already
+       * carries before appending a fresh one. The previous code stripped only
+       * the extension, so each replace stacked another segment on the last —
+       * production still holds the proof:
+       * `page-003.v1784783810234.v1788116824680.v1788116927267.png`. */
+      newPath = versionedStoragePath(
+        oldPath,
+        normalizeExtension(file.name, file.type),
+      );
 
       const { error: upErr } = await supabase.storage
         .from("comic-pages")
@@ -124,16 +137,35 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
         throw dbErr;
       }
 
-      if (oldPath && oldPath !== newPath) {
-        await supabase.storage.from("comic-pages").remove([oldPath]);
-      }
-      toast.success("Image replaced.");
-      invalidate();
+      replaced = true;
     } catch (err) {
       toast.error((err as Error).message);
     } finally {
       setBusy(false);
     }
+
+    if (!replaced) return;
+
+    /* The row already points at the new object, so the replace has succeeded.
+     * Deleting the superseded object is cleanup, not part of the transaction —
+     * it used to sit inside the success `try`, so a storage permission error
+     * on an old file surfaced as "replace failed" when the replace had in fact
+     * worked. Worst case now is one stale object, which the storage audit
+     * script can sweep. */
+    if (oldPath && oldPath !== newPath) {
+      const { error: rmErr } = await supabase.storage
+        .from("comic-pages")
+        .remove([oldPath]);
+      if (rmErr) {
+        toast.success("Image replaced.", {
+          description: `The old file could not be removed (${rmErr.message}). The page is correct; the leftover file is harmless.`,
+        });
+        invalidate();
+        return;
+      }
+    }
+    toast.success("Image replaced.");
+    invalidate();
   };
 
   // ----- Delete -----
@@ -156,29 +188,89 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
   };
 
   // ----- Reorder (swap page_number with neighbor) -----
+  /**
+   * Exchange two pages' position in the issue.
+   *
+   * Three points that the original version got wrong, all of them visible in
+   * Battlefield Atlantis Issue 1:
+   *
+   *  1. **No rollback.** The swap parks one row at a negative page number and
+   *     then moves the other. Any failure in between — a dropped connection, a
+   *     row-level-security refusal — left a page stranded outside 1..N, where
+   *     no reader and no admin ordering would show it. That is how pages went
+   *     missing from the front of the issue.
+   *  2. **`slug` was left behind.** Only `page_number` moved, so the row now
+   *     sitting at page 15 kept the slug minted for page 16. `comics.slug` is
+   *     globally unique, so the next genuine page 16 upload then died on
+   *     `comics_slug_key`. Slugs move with the page here; nothing routes on a
+   *     `comics.slug` (readers address pages by `?page=N`), so this is an
+   *     internal key exchange, not a URL change.
+   *  3. **`image_path` deliberately does NOT move.** The artwork belongs to the
+   *     row; moving both would cancel the swap out visually.
+   */
   const swapWith = async (other: PageRowData) => {
     setBusy(true);
+
+    const stamp = Date.now().toString(36);
+    const tmpNumber = -Math.abs(page.page_number) - (Date.now() % 100000);
+    const tmpSlug = `${page.slug}--swap-${stamp}`.slice(0, 120);
+
+    // How far we got, so a failure can be undone in reverse.
+    let parked = false;
+    let otherMoved = false;
+
+    const restore = async () => {
+      if (otherMoved) {
+        await supabase
+          .from("comics")
+          .update({ page_number: other.page_number, slug: other.slug })
+          .eq("id", other.id);
+      }
+      if (parked) {
+        await supabase
+          .from("comics")
+          .update({ page_number: page.page_number, slug: page.slug })
+          .eq("id", page.id);
+      }
+    };
+
     try {
-      // 3-step swap in case a unique constraint exists on (issue_id, page_number).
-      const tmp = -Math.abs(page.page_number) - Date.now() % 100000;
+      // 1. Park this row on values nothing else can be holding.
       let { error } = await supabase
         .from("comics")
-        .update({ page_number: tmp })
+        .update({ page_number: tmpNumber, slug: tmpSlug })
         .eq("id", page.id);
       if (error) throw error;
+      parked = true;
+
+      // 2. Move the neighbour into the space just vacated.
       ({ error } = await supabase
         .from("comics")
-        .update({ page_number: page.page_number })
+        .update({ page_number: page.page_number, slug: page.slug })
         .eq("id", other.id));
       if (error) throw error;
+      otherMoved = true;
+
+      // 3. Land this row where the neighbour was.
       ({ error } = await supabase
         .from("comics")
-        .update({ page_number: other.page_number })
+        .update({ page_number: other.page_number, slug: other.slug })
         .eq("id", page.id));
       if (error) throw error;
+
       invalidate();
     } catch (err) {
-      toast.error((err as Error).message);
+      try {
+        await restore();
+        toast.error(`Could not reorder these pages: ${(err as Error).message}`, {
+          description: "Nothing was changed — both pages were put back.",
+        });
+      } catch {
+        toast.error(`Reorder failed partway and could not be undone: ${(err as Error).message}`, {
+          description: `Page "${page.title}" may be parked at ${tmpNumber}. Fix its page number by hand before uploading to this issue.`,
+        });
+      }
+      invalidate();
     } finally {
       setBusy(false);
     }
@@ -189,10 +281,9 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
     const src = previewPage;
     setBusy(true);
     try {
-      // Copy storage object
-      const ext = src.image_path.split(".").pop() || "png";
-      const base = src.image_path.replace(/\.[^./]+$/, "");
-      const newPath = `${base}.copy-${Date.now()}.${ext}`;
+      // Copy storage object. `copyStoragePath` strips any accumulated version
+      // or copy segments first, so a copy of a copy stays one segment long.
+      const newPath = copyStoragePath(src.image_path, normalizeExtension(src.image_path));
       const { error: copyErr } = await supabase.storage
         .from("comic-pages")
         .copy(src.image_path, newPath);
@@ -533,7 +624,6 @@ export function PageRow({ page, neighbors, siblings, initialIndex = 0, invalidat
   );
 }
 
-
 function EditDialog({
   open,
   onOpenChange,
@@ -567,6 +657,14 @@ function EditDialog({
   const save = async () => {
     setSaving(true);
     try {
+      /* Editing the page number here was the last remaining way to create the
+       * slug drift that broke uploads: the row moved to page 15 while its slug
+       * still claimed page 16, so the next real page 16 died on
+       * `comics_slug_key`. Carry the slug along. `realignSlug` returns null for
+       * slugs that carry no `-pNNN` segment, and those are left alone rather
+       * than renamed. */
+      const nextSlug = pageNumber !== page.page_number ? realignSlug(page.slug, pageNumber) : null;
+
       const { error } = await supabase
         .from("comics")
         .update({
@@ -574,9 +672,8 @@ function EditDialog({
           page_number: pageNumber,
           alt_text: altText.trim() || null,
           is_free: isFree,
-          published_at: published
-            ? page.published_at ?? new Date().toISOString()
-            : null,
+          published_at: published ? (page.published_at ?? new Date().toISOString()) : null,
+          ...(nextSlug ? { slug: nextSlug } : {}),
         })
         .eq("id", page.id);
       if (error) throw error;
@@ -584,7 +681,12 @@ function EditDialog({
       onSaved();
       onOpenChange(false);
     } catch (err) {
-      toast.error((err as Error).message);
+      const raw = (err as Error).message;
+      toast.error(
+        /comics_slug_key/i.test(raw)
+          ? `Another page in this issue already occupies page ${pageNumber}'s address. Move that page first.`
+          : raw,
+      );
     } finally {
       setSaving(false);
     }

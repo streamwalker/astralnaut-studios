@@ -6,8 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -31,6 +29,7 @@ import {
   sequentialFrom,
   type PageNumberSource,
 } from "@/lib/page-number";
+import { normalizeExtension, pageIdentity, pageSlug } from "@/lib/page-identity";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   head: () => ({ meta: [{ title: "Admin — Astralnaut Studios" }] }),
@@ -44,6 +43,33 @@ function slugify(s: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
+}
+
+/**
+ * Turn a Postgres/Storage error into something an editor can act on.
+ *
+ * The raw strings are the reason the original page-1-and-2 upload looked
+ * unfixable: `duplicate key value violates unique constraint "comics_slug_key"`
+ * names a constraint, not a cause, and gives no hint that the culprit is a
+ * different page's leftover address. Unrecognised errors pass through verbatim
+ * rather than being flattened into a generic message.
+ */
+function friendlyUploadError(err: unknown): string {
+  const raw = (err as Error)?.message ?? String(err);
+
+  if (/comics_slug_key/i.test(raw)) {
+    return "Another page already uses this page's address. That usually means an earlier renumber left a page holding the wrong address — fix that page first, then re-upload.";
+  }
+  if (/duplicate key value/i.test(raw)) {
+    return `This page conflicts with one that already exists. (${raw})`;
+  }
+  if (/(resource already exists|already exists|409)/i.test(raw)) {
+    return "An image file already exists at this page's location. Use “Replace image” on the existing page instead of re-uploading.";
+  }
+  if (/row-level security|violates row-level/i.test(raw)) {
+    return "You do not have permission to write this page. (Row-level security refused the write.)";
+  }
+  return raw;
 }
 
 function AdminPage() {
@@ -203,23 +229,21 @@ function AdminPage() {
         <section className="rounded-2xl border border-border bg-card p-6">
           <h2 className="text-xl font-bold">Upload comic pages</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Upload one page, or batch-upload an entire issue at once.
+            Add a single page or a whole issue. Every page is filed under its
+            series and issue, so nothing can end up unattached.
           </p>
 
-          <Tabs defaultValue="batch" className="mt-6">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="single">Single page</TabsTrigger>
-              <TabsTrigger value="batch">Batch upload</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="single" className="mt-6">
-              <SinglePageForm />
-            </TabsContent>
-
-            <TabsContent value="batch" className="mt-6">
-              <BatchUploadForm />
-            </TabsContent>
-          </Tabs>
+          {/*
+            There used to be a second "Single page" tab here. It wrote to
+            `comics` without an `issue_id` — the column is nullable, so the row
+            inserted cleanly and then belonged to no issue, appearing in the
+            admin list but in no reader. Both orphan rows deleted from
+            production on 2026-09-03 came from it. Batch upload handles one file
+            just as well, so the safe path is now the only path.
+          */}
+          <div className="mt-6">
+            <BatchUploadForm />
+          </div>
         </section>
 
         <section className="rounded-2xl border border-border bg-card p-6">
@@ -322,122 +346,6 @@ function AdminPage() {
   );
 }
 
-// ---------- Single page form (existing flow) ----------
-
-function SinglePageForm() {
-  const qc = useQueryClient();
-  const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
-  const [pageNumber, setPageNumber] = useState<number>(1);
-  const [altText, setAltText] = useState("");
-  const [transcript, setTranscript] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const [publishNow, setPublishNow] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-
-  const autoSlug = useMemo(() => slugify(title), [title]);
-  useEffect(() => {
-    if (!slug || slug === autoSlug) setSlug(autoSlug);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoSlug]);
-
-  const handleUpload = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!file) { toast.error("Choose an image file."); return; }
-    if (!title.trim()) { toast.error("Title is required."); return; }
-    if (!slug.trim()) { toast.error("Slug is required."); return; }
-    if (!Number.isFinite(pageNumber) || pageNumber < 1) { toast.error("Page number must be ≥ 1."); return; }
-
-    setSubmitting(true);
-    try {
-      const ext = file.name.split(".").pop()?.toLowerCase() || "png";
-      const path = `${slug}/page-${String(pageNumber).padStart(3, "0")}-${Date.now()}.${ext}`;
-
-      const { error: upErr } = await supabase.storage
-        .from("comic-pages")
-        .upload(path, file, { contentType: file.type, upsert: false });
-      if (upErr) throw upErr;
-
-      const { error: insErr } = await supabase.from("comics").insert({
-        title: title.trim(),
-        slug: slug.trim(),
-        page_number: pageNumber,
-        image_path: path,
-        alt_text: altText.trim() || null,
-        transcript: transcript.trim() || null,
-        published_at: publishNow ? new Date().toISOString() : null,
-      });
-      if (insErr) throw insErr;
-
-      toast.success(`Uploaded "${title}" (page ${pageNumber}).`);
-      setTitle(""); setSlug(""); setAltText(""); setTranscript("");
-      setPageNumber((n) => n + 1);
-      setFile(null);
-      const el = document.getElementById("file-input") as HTMLInputElement | null;
-      if (el) el.value = "";
-      qc.invalidateQueries({ queryKey: ["admin-comics"] });
-    } catch (err) {
-      toast.error((err as Error).message);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleUpload} className="space-y-4">
-      <div>
-        <LabelWithHint htmlFor="title" term="title">
-          Title *
-        </LabelWithHint>
-        <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Battlefield Atlantis — Issue #1, Page 5" required />
-      </div>
-
-      <div className="grid grid-cols-[2fr_1fr] gap-3">
-        <div>
-          <LabelWithHint htmlFor="slug" term="slug">
-            Slug *
-          </LabelWithHint>
-          <Input id="slug" value={slug} onChange={(e) => setSlug(slugify(e.target.value))} placeholder="battlefield-atlantis-1-5" required />
-        </div>
-        <div>
-          <LabelWithHint htmlFor="page" term="pageNumber">
-            Page # *
-          </LabelWithHint>
-          <Input id="page" type="number" min={1} value={pageNumber} onChange={(e) => setPageNumber(parseInt(e.target.value, 10) || 1)} required />
-        </div>
-      </div>
-
-      <div>
-        <Label htmlFor="file-input">Image *</Label>
-        <Input id="file-input" type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] ?? null)} required />
-      </div>
-
-      <div>
-        <LabelWithHint htmlFor="alt" term="altText">
-          Alt text
-        </LabelWithHint>
-        <Input id="alt" value={altText} onChange={(e) => setAltText(e.target.value)} placeholder="Orion looks up as Zeus extends a glowing hand." />
-      </div>
-
-      <div>
-        <LabelWithHint htmlFor="transcript" term="transcript">
-          Transcript (optional)
-        </LabelWithHint>
-        <Textarea id="transcript" rows={3} value={transcript} onChange={(e) => setTranscript(e.target.value)} placeholder="Panel 1: …" />
-      </div>
-
-      <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" checked={publishNow} onChange={(e) => setPublishNow(e.target.checked)} />
-        Publish immediately
-      </label>
-
-      <Button type="submit" disabled={submitting} className="w-full">
-        {submitting ? "Uploading…" : "Upload page"}
-      </Button>
-    </form>
-  );
-}
-
 // ---------- Batch upload form ----------
 
 type QueueStatus = "queued" | "uploading" | "done" | "error";
@@ -506,13 +414,16 @@ function BatchUploadForm() {
    * uploader had no way to know: what page number to start at, and whether a
    * queued page would land on top of one that already exists.
    */
-  const { data: existingPages } = useQuery({
+  const { data: existingPages, isLoading: existingPagesLoading } = useQuery({
     queryKey: ["admin-existing-pages", issueId],
     enabled: !!issueId && issueId !== "__new__",
     queryFn: async () => {
       const { data, error } = await supabase
         .from("comics")
-        .select("page_number, title")
+        // `slug` and `id` are here for slug-collision auditing, not for display:
+        // `comics.slug` is globally unique, and a past renumber can leave a row
+        // holding the slug that belongs to a different page number.
+        .select("id, page_number, title, slug")
         .eq("issue_id", issueId)
         .order("page_number", { ascending: true });
       if (error) throw error;
@@ -533,7 +444,7 @@ function BatchUploadForm() {
     () =>
       (existingPages ?? [])
         .filter((p) => Number.isInteger(p.page_number))
-        .map((p) => ({ page_number: p.page_number as number, title: p.title })),
+        .map((p) => ({ page_number: p.page_number as number, title: p.title, slug: p.slug })),
     [existingPages],
   );
 
@@ -609,15 +520,28 @@ function BatchUploadForm() {
    * excluded — they are in `existingForAudit` now, and counting them twice
    * would report every finished upload as a collision with itself.
    */
+  /**
+   * The slug prefix the queue would write under. Known for an existing issue,
+   * and for a new one as soon as the admin has typed a slug. Undefined means
+   * the slug half of the audit is skipped rather than guessed.
+   */
+  const targetIssueSlug =
+    issueId === "__new__" ? newIssueSlug || undefined : selectedIssue?.slug || undefined;
+
   const audit = useMemo(
     () =>
       auditPageNumbers(
         queue
           .filter((q) => q.status !== "done")
-          .map((q) => ({ id: q.id, title: q.title || q.file.name, pageNumber: q.pageNumber })),
+          .map((q) => ({
+            id: q.id,
+            title: q.title || q.file.name,
+            pageNumber: q.pageNumber,
+            slug: targetIssueSlug ? pageSlug(targetIssueSlug, q.pageNumber) : undefined,
+          })),
         existingForAudit,
       ),
-    [queue, existingForAudit],
+    [queue, existingForAudit, targetIssueSlug],
   );
 
   /**
@@ -687,12 +611,26 @@ function BatchUploadForm() {
     // twice or vanishing from the reader. This is the only thing standing
     // between a bad filename and a broken issue order.
     if (audit.blocking.length > 0) {
+      // Renumbering fixes number conflicts but cannot fix a slug that another
+      // row is holding, so only offer it when it would actually help.
+      const renumberHelps = audit.blocking.some((p) => p.kind !== "slugTaken");
+      const remedy = renumberHelps
+        ? ` Fix the page numbers, or use “Renumber from ${startPage}”.`
+        : "";
       toast.error(describeProblem(audit.blocking[0]), {
         description:
           audit.blocking.length > 1
-            ? `${audit.blocking.length - 1} more problem${audit.blocking.length === 2 ? "" : "s"} below. Fix the page numbers, or use “Renumber from ${startPage}”.`
-            : `Fix the page number, or use “Renumber from ${startPage}”.`,
+            ? `${audit.blocking.length - 1} more problem${audit.blocking.length === 2 ? "" : "s"} below.${remedy}`
+            : remedy.trim() || undefined,
       });
+      return;
+    }
+
+    // The audit is only meaningful once we know what the issue already holds.
+    // Uploading against an unresolved query is how a queue lands on top of
+    // pages that were already there.
+    if (issueId && issueId !== "__new__" && !existingPages) {
+      toast.error("Still loading the pages this issue already has. Try again in a moment.");
       return;
     }
 
@@ -708,32 +646,76 @@ function BatchUploadForm() {
 
     for (const item of pending) {
       updateItem(item.id, { status: "uploading", error: undefined });
-      try {
-        const ext = item.file.name.split(".").pop()?.toLowerCase() || "png";
-        const padded = String(item.pageNumber).padStart(3, "0");
-        const path = `${selectedSeries.slug}/issue-${issue.number}/page-${padded}.${ext}`;
 
+      // Identity is derived in exactly one place for every write path.
+      const identity = pageIdentity({
+        seriesSlug: selectedSeries.slug,
+        issueNumber: issue.number,
+        issueSlug: issue.slug,
+        pageNumber: item.pageNumber,
+        freePages,
+        extension: normalizeExtension(item.file.name, item.file.type),
+      });
+
+      /*
+       * Row first, bytes second.
+       *
+       * The old order uploaded the image and then inserted the row. When the
+       * insert hit the global `comics_slug_key` constraint — which is exactly
+       * what happened re-uploading Battlefield Atlantis pages 1 and 2 — the
+       * image was already sitting in the bucket with nothing pointing at it.
+       * That is where the orphaned duplicates in `comic-pages` came from.
+       *
+       * Reserving the row first means the uniqueness check runs before any
+       * bytes move, and the only thing left to roll back is a single row we
+       * know the id of.
+       */
+      let reservedId: string | null = null;
+      try {
+        const { data: inserted, error: insErr } = await supabase
+          .from("comics")
+          .insert({
+            issue_id: issue.id,
+            title: item.title.trim() || `Page ${item.pageNumber}`,
+            slug: identity.slug,
+            page_number: item.pageNumber,
+            image_path: identity.storagePath,
+            is_free: identity.isFree,
+            // Held back until the image exists, so a half-finished upload can
+            // never be visible on the public site.
+            published_at: null,
+          })
+          .select("id")
+          .single();
+        if (insErr) throw insErr;
+        reservedId = inserted.id;
+
+        // `upsert: false` so we fail loudly rather than silently overwriting
+        // artwork that some other row may still reference.
         const { error: upErr } = await supabase.storage
           .from("comic-pages")
-          .upload(path, item.file, { contentType: item.file.type, upsert: true });
+          .upload(identity.storagePath, item.file, {
+            contentType: item.file.type,
+            upsert: false,
+          });
         if (upErr) throw upErr;
 
-        const isFree = item.pageNumber <= freePages;
-        const { error: insErr } = await supabase.from("comics").insert({
-          issue_id: issue.id,
-          title: item.title.trim() || `Page ${item.pageNumber}`,
-          slug: `${issue.slug}-p${padded}`,
-          page_number: item.pageNumber,
-          image_path: path,
-          is_free: isFree,
-          published_at: publishNow ? new Date().toISOString() : null,
-        });
-        if (insErr) throw insErr;
+        if (publishNow) {
+          const { error: pubErr } = await supabase
+            .from("comics")
+            .update({ published_at: new Date().toISOString() })
+            .eq("id", reservedId);
+          if (pubErr) throw pubErr;
+        }
 
         updateItem(item.id, { status: "done" });
         ok++;
       } catch (err) {
-        updateItem(item.id, { status: "error", error: (err as Error).message });
+        // Roll the reservation back so a failure leaves no draft row behind.
+        if (reservedId) {
+          await supabase.from("comics").delete().eq("id", reservedId);
+        }
+        updateItem(item.id, { status: "error", error: friendlyUploadError(err) });
         fail++;
       } finally {
         setProgress((p) => ({ ...p, done: p.done + 1 }));
@@ -857,16 +839,18 @@ function BatchUploadForm() {
                   <li key={`${p.kind}-${i}`}>{describeProblem(p)}</li>
                 ))}
               </ul>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                className="mt-3"
-                disabled={isUploading}
-                onClick={renumberFromStart}
-              >
-                Renumber from {startPage}
-              </Button>
+              {audit.blocking.some((p) => p.kind !== "slugTaken") && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="mt-3"
+                  disabled={isUploading}
+                  onClick={renumberFromStart}
+                >
+                  Renumber from {startPage}
+                </Button>
+              )}
             </div>
           )}
 
@@ -951,14 +935,23 @@ function BatchUploadForm() {
         <Button
           type="button"
           onClick={handleUploadAll}
-          disabled={isUploading || queue.length === 0 || audit.blocking.length > 0}
+          disabled={
+            isUploading ||
+            queue.length === 0 ||
+            audit.blocking.length > 0 ||
+            // Not yet known what the issue already holds — the audit above is
+            // not trustworthy until this resolves.
+            existingPagesLoading
+          }
           className="flex-1"
         >
           {isUploading
             ? `Uploading ${progress.done}/${progress.total}…`
-            : audit.blocking.length > 0
-              ? "Fix page numbers to upload"
-              : `Upload ${queue.filter((q) => q.status !== "done").length} page(s)`}
+            : existingPagesLoading
+              ? "Checking existing pages…"
+              : audit.blocking.length > 0
+                ? "Resolve the problems above to upload"
+                : `Upload ${queue.filter((q) => q.status !== "done").length} page(s)`}
         </Button>
         <Button type="button" variant="outline" disabled={isUploading} onClick={() => {
           queue.forEach((q) => URL.revokeObjectURL(q.previewUrl));

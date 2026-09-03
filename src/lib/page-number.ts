@@ -139,11 +139,19 @@ export type QueuedPage = {
   id: string;
   title: string;
   pageNumber: number;
+  /**
+   * The slug this file would be written with. Optional so existing callers keep
+   * working, but supplying it is what turns a runtime `comics_slug_key`
+   * violation into a pre-flight warning.
+   */
+  slug?: string;
 };
 
 export type ExistingPage = {
   page_number: number;
   title?: string | null;
+  /** `comics.slug` of the row already in the issue. */
+  slug?: string | null;
 };
 
 export type PageNumberProblem =
@@ -151,6 +159,19 @@ export type PageNumberProblem =
   | { kind: "duplicate"; pageNumber: number; titles: string[] }
   /** A queued file claims a page number the issue already has. */
   | { kind: "collision"; pageNumber: number; title: string; existingTitle: string }
+  /**
+   * A queued file's slug is already taken by a row in this issue — typically
+   * because an earlier renumber moved a row's `page_number` but left its slug
+   * behind, so the slug for page N now belongs to the row at page N-1.
+   * `comics.slug` is globally unique, so this fails at insert time.
+   */
+  | {
+      kind: "slugTaken";
+      slug: string;
+      title: string;
+      existingTitle: string;
+      existingPageNumber: number;
+    }
   /** Page number is not a positive integer. */
   | { kind: "invalid"; title: string; pageNumber: number }
   /** Result would leave a hole in the issue's numbering. Warning, not an error. */
@@ -221,6 +242,45 @@ export function auditPageNumbers(
     }
   }
 
+  /*
+   * Slug collisions are a *separate* failure from page-number collisions and
+   * this is not a theoretical distinction — it is the error Battlefield
+   * Atlantis actually threw.
+   *
+   * Slugs are derived from the page number, so in a healthy issue a slug clash
+   * always implies a number clash and this loop finds nothing new. But a
+   * renumber moves `page_number` without rewriting `slug`, and from then on the
+   * row sitting at page 15 owns the slug for page 16. Queue a genuine page 16
+   * and the numbers do not collide, the audit passes, and the insert dies on
+   * the global `comics_slug_key` constraint after the image is already in
+   * storage.
+   *
+   * Skipped where the page number already collided, so one file never reports
+   * the same underlying conflict twice.
+   */
+  const existingBySlug = new Map<string, { title: string; pageNumber: number }>();
+  for (const row of existing) {
+    if (!row.slug) continue;
+    existingBySlug.set(row.slug, {
+      title: row.title ?? `Page ${row.page_number}`,
+      pageNumber: row.page_number,
+    });
+  }
+  for (const item of queue) {
+    if (!item.slug) continue;
+    if (existingByNumber.has(item.pageNumber)) continue;
+    const owner = existingBySlug.get(item.slug);
+    if (owner !== undefined) {
+      blocking.push({
+        kind: "slugTaken",
+        slug: item.slug,
+        title: item.title,
+        existingTitle: owner.title,
+        existingPageNumber: owner.pageNumber,
+      });
+    }
+  }
+
   const resulting = [...new Set([...existingByNumber.keys(), ...queue.map((q) => q.pageNumber)])]
     .filter((n) => Number.isInteger(n) && n > 0)
     .sort((a, b) => a - b);
@@ -254,6 +314,8 @@ export function describeProblem(problem: PageNumberProblem): string {
       return `Page ${problem.pageNumber} is claimed by ${problem.titles.length} files: ${problem.titles.join(", ")}.`;
     case "collision":
       return `Page ${problem.pageNumber} already exists in this issue ("${problem.existingTitle}"); "${problem.title}" would duplicate it.`;
+    case "slugTaken":
+      return `The address "${problem.slug}" is already used by "${problem.existingTitle}" (page ${problem.existingPageNumber}), so "${problem.title}" cannot be saved under it. Renumbering will not help — that page needs its address corrected first.`;
     case "invalid":
       return `"${problem.title}" has an invalid page number (${problem.pageNumber}).`;
     case "gap":

@@ -82,6 +82,15 @@ function BAPage() {
 
   const totalPages = Math.ceil(Number(issue?.total_pages ?? 20));
   const freeCount = Number(issue?.free_pages ?? 9.5);
+  /**
+   * Last whole page that is free. `free_pages` is numeric because a half value
+   * marks the title plate at N.5 as the last free thing, which still leaves
+   * `floor(N.5)` as the last free whole page. This must be derived, never
+   * typed: the page grid below used to hardcode `n <= 9` while the issue row
+   * said `free_pages = 10`, so page 10 was rendered locked on the landing page
+   * and free in the reader.
+   */
+  const freeMax = Math.floor(freeCount);
   const paidCount = Number(issue?.paid_pages ?? 11);
   const titlePageNum = 9.5;
 
@@ -327,7 +336,7 @@ function BAPage() {
             {/* Free + locked pages (1..20, plus a 9.5 title card after 9) */}
             {Array.from({ length: totalPages }).map((_, idx) => {
               const n = idx + 1;
-              const isFree = n <= 9;
+              const isFree = n <= freeMax;
               const found = pages.find((p: typeof pages[number]) => p.page_number === n);
               const thumb = pageUrl(found?.image_path);
               const dropLabel = schedule.labels[n];
@@ -346,8 +355,18 @@ function BAPage() {
                   </div>
                 );
 
+                // The copy above promises "jump straight to it", so carry the
+                // page through — without the search param every free thumbnail
+                // landed the reader back on page 1.
                 return readerLink ? (
-                  <Link key={n} {...readerLink} className="block transition hover:scale-[1.02]">{card}</Link>
+                  <Link
+                    key={n}
+                    {...readerLink}
+                    search={{ page: n }}
+                    className="block transition hover:scale-[1.02]"
+                  >
+                    {card}
+                  </Link>
                 ) : (
                   <div key={n}>{card}</div>
                 );

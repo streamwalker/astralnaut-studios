@@ -25,7 +25,11 @@ function usePrefersReducedMotion() {
 
 export const Route = createFileRoute("/reader/$series/$issue")({
   validateSearch: (s: Record<string, unknown>): { page?: number } => ({
-    page: z.coerce.number().int().min(1).max(50).catch(1).parse(s.page ?? 1),
+    // 0 is the cover. The floor is 0 rather than 1 so the cover is a real,
+    // linkable position in the issue instead of a decoration bolted onto page
+    // 1. Issues with no cover on file collapse `?page=0` back to 1 in the
+    // component, where `issue.cover_path` is actually known.
+    page: z.coerce.number().int().min(0).max(50).catch(1).parse(s.page ?? 1),
   }),
   loader: async ({ params }) => {
     const slug = `${params.series}-issue-${params.issue}`;
@@ -75,7 +79,23 @@ function flashVariantFor(series: string, issueNumber: number | string, page: num
 
 function Reader() {
   const { issue, pages } = Route.useLoaderData();
-  const { page = 1 } = Route.useSearch();
+  const { page: requestedPage = 1 } = Route.useSearch();
+
+  // The cover reads as position 0: ahead of page 1, consuming no page number,
+  // so nothing downstream (page counts, drop schedules, free_pages, the
+  // paywall offset) shifts by one. It is the same object the landing page
+  // already shows in its hero, and it is already public, so it needs no
+  // entitlement check and no signed URL.
+  const coverPath = (issue as { cover_path?: string | null }).cover_path ?? null;
+  const hasCover = !!coverPath;
+  // An issue with no cover on file has nothing at 0. Clamp here rather than in
+  // `validateSearch`, which runs before the loader data exists.
+  const page = hasCover ? requestedPage : Math.max(1, requestedPage);
+  const onCover = page === 0;
+  // Lowest addressable position. Every navigation bound reads this instead of
+  // a literal 1, so an issue without a cover behaves exactly as it did before.
+  const minPage = hasCover ? 0 : 1;
+
   const navigate = useNavigate();
   const [accessOk, setAccessOk] = useState(false);
   const [readerLocation, setReaderLocation] = useState<{ city: string; country: string } | null>(null);
@@ -141,7 +161,7 @@ function Reader() {
   const isFree = page <= freeMax;
   // "Unlocked" is free-by-position OR paid-and-entitled. The FREE/LOCKED badge
   // still reports the page's commercial status; this drives what renders.
-  const currentPath = isFree ? current?.image_path : paidPaths.get(page);
+  const currentPath = onCover ? coverPath : isFree ? current?.image_path : paidPaths.get(page);
   const unlocked = !!currentPath;
   const img = pageUrl(currentPath);
 
@@ -184,6 +204,11 @@ function Reader() {
   // The strip renders contiguously from page 1, so the furthest it can scroll
   // to is the last page before the wall — not the highest readable number.
   const maxScrollable = Math.max(1, firstLockedPage - 1);
+  // Every jump target in reading order, cover included. Both dot rows read
+  // this so they cannot drift apart from each other or from `minPage`.
+  const positions = hasCover
+    ? [0, ...Array.from({ length: total }, (_, i) => i + 1)]
+    : Array.from({ length: total }, (_, i) => i + 1);
   const ZOOM_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2, 3] as const;
   const FIT = 0 as const; // 0 = fit-width mode
   const [zoom, setZoom] = useState<number>(FIT);
@@ -419,12 +444,12 @@ function Reader() {
   // renders with id="rp-N"; anything past the unlocked run has no anchor, so the
   // jump is clamped rather than silently doing nothing.
   const scrollToPage = useCallback((n: number) => {
-    const target = Math.min(Math.max(1, n), maxScrollable);
+    const target = Math.min(Math.max(minPage, n), maxScrollable);
     document.getElementById(`rp-${target}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [maxScrollable]);
+  }, [maxScrollable, minPage]);
 
   function goTo(target: number) {
-    const next = Math.min(total, Math.max(1, target));
+    const next = Math.min(total, Math.max(minPage, target));
     if (mode === "all") { scrollToPage(next); return; }
     navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: next } });
   }
@@ -467,8 +492,8 @@ function Reader() {
   // Keep latest nav/zoom callbacks in a ref so the keydown listener binds ONCE.
   // Previously this effect had no dep array, so it re-added a window listener on every render
   // (every scroll tick, every zoom step) — a real INP regression.
-  const kbRef = useRef({ go, goTo, zoomIn, zoomOut, zoomReset, toggleFullscreen, total, seriesSlug: issue.series.slug, navigate });
-  kbRef.current = { go, goTo, zoomIn, zoomOut, zoomReset, toggleFullscreen, total, seriesSlug: issue.series.slug, navigate };
+  const kbRef = useRef({ go, goTo, zoomIn, zoomOut, zoomReset, toggleFullscreen, total, minPage, seriesSlug: issue.series.slug, navigate });
+  kbRef.current = { go, goTo, zoomIn, zoomOut, zoomReset, toggleFullscreen, total, minPage, seriesSlug: issue.series.slug, navigate };
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       const tag = (e.target as HTMLElement | null)?.tagName;
@@ -476,7 +501,9 @@ function Reader() {
       const k = kbRef.current;
       if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === "n" || e.key === "N") { e.preventDefault(); k.go(1); }
       else if (e.key === "ArrowLeft" || e.key === "PageUp" || e.key === "p" || e.key === "P") { e.preventDefault(); k.go(-1); }
-      else if (e.key === "Home") { e.preventDefault(); k.goTo(1); }
+      // Home goes to the cover when there is one — "the start of the issue" is
+      // the cover, not page 1, exactly as it is with a physical book.
+      else if (e.key === "Home") { e.preventDefault(); k.goTo(k.minPage); }
       else if (e.key === "End") { e.preventDefault(); k.goTo(k.total); }
       else if (e.key === "Escape" && !document.fullscreenElement) k.navigate({ to: `/${k.seriesSlug}` as "/battlefield-atlantis" | "/children-of-aquarius" });
       else if (e.key === "+" || e.key === "=") { e.preventDefault(); k.zoomIn(); }
@@ -499,10 +526,13 @@ function Reader() {
   // `logStorageAccess` validates at most 20 paths. Before subscriber unlock the
   // strip could only ever hold the free run, so this was safe by accident; now
   // a 24-page issue would blow the limit and throw away the whole audit record.
+  // The cover is deliberately excluded. This log exists to audit access to
+  // paywalled art; the cover is public marketing already served from the
+  // landing page, so recording it would only dilute the signal.
   const loggedPaths =
     mode === "all"
       ? readablePages.slice(0, 20).map((p: (typeof pages)[number]) => p.image_path)
-      : currentPath
+      : currentPath && !onCover
         ? [currentPath]
         : [];
   const loggedKey = loggedPaths.join("|");
@@ -549,10 +579,10 @@ function Reader() {
         className="container-wide py-6"
         style={{ ["--reader-ui-scale" as string]: String(uiScale) }}
       >
-        <h1 className="sr-only">{issue.series.name} Issue {issue.issue_number} — Page {page}</h1>
+        <h1 className="sr-only">{issue.series.name} Issue {issue.issue_number} — {onCover ? "Cover" : `Page ${page}`}</h1>
         <div className="flex items-center justify-between" style={{ fontSize: `calc(0.875rem * ${uiScale})` }}>
           <Link to={`/${issue.series.slug}` as "/battlefield-atlantis"} className="text-[var(--mute)] hover:text-[var(--neon)]">← {issue.series.name}</Link>
-          <div className="font-mono text-[var(--mute)]">PAGE <span className="text-[var(--ink)]">{page}</span> / {total} · {isFree ? <span className="text-[var(--neon)]">FREE</span> : unlocked ? <span className="text-[var(--neon)]">UNLOCKED</span> : <span className="text-[var(--gold)]">LOCKED</span>}</div>
+          <div className="font-mono text-[var(--mute)]">{onCover ? <span className="text-[var(--ink)]">COVER</span> : <>PAGE <span className="text-[var(--ink)]">{page}</span> / {total}</>} · {isFree ? <span className="text-[var(--neon)]">FREE</span> : unlocked ? <span className="text-[var(--neon)]">UNLOCKED</span> : <span className="text-[var(--gold)]">LOCKED</span>}</div>
         </div>
         {readerLocation ? (
           <div
@@ -570,7 +600,7 @@ function Reader() {
           </div>
         ) : null}
         <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
-          Page {page} of {total}{isFree ? ", free preview" : unlocked ? ", unlocked by subscription" : ", locked"}
+          {onCover ? "Cover" : `Page ${page} of ${total}`}{isFree ? ", free preview" : unlocked ? ", unlocked by subscription" : ", locked"}
         </div>
 
 
@@ -630,6 +660,8 @@ function Reader() {
         <div className="mt-3 panel relative overflow-hidden">
           {mode === "all" ? (
             <AllPagesStrip
+              coverPath={coverPath}
+              coverAlt={`${issue.series.name} Issue ${issue.issue_number} — cover`}
               pages={readablePages}
               total={total}
               freeMax={freeMax}
@@ -714,7 +746,7 @@ function Reader() {
                 ref={viewerRef}
                 id="comic-page-viewer"
                 role="region"
-                aria-label={`Comic page ${page} of ${total} — scroll to pan, plus and minus to zoom, F for full screen`}
+                aria-label={`${onCover ? "Issue cover" : `Comic page ${page} of ${total}`} — scroll to pan, plus and minus to zoom, F for full screen`}
                 aria-describedby="viewer-toolbar-hint"
                 tabIndex={0}
                 onWheel={(e) => {
@@ -750,7 +782,11 @@ function Reader() {
                 >
                   <img
                     src={img}
-                    alt={current?.alt_text ?? `Page ${page}`}
+                    alt={
+                      onCover
+                        ? `${issue.series.name} Issue ${issue.issue_number} — cover`
+                        : (current?.alt_text ?? `Page ${page}`)
+                    }
                     onClick={onImageClick}
                     onLoad={() => {
                       if (!prefersReducedMotion) setFlashKey((k) => k + 1);
@@ -826,15 +862,14 @@ function Reader() {
           // In the strip there is no "current page" to advance from, so the
           // dots become jump targets and Prev/Next would be meaningless.
           <div className="mt-4 flex items-center justify-between">
-            <button onClick={() => scrollToPage(1)} className="btn-ghost">↑ Top</button>
+            <button onClick={() => scrollToPage(minPage)} className="btn-ghost">↑ Top</button>
             <div className="flex flex-wrap justify-center gap-1">
-              {Array.from({ length: total }).map((_, i) => {
-                const n = i + 1;
+              {positions.map((n) => {
                 const reachable = n <= maxScrollable;
                 return (
                   <button
                     key={n}
-                    aria-label={reachable ? `Jump to page ${n}` : `Page ${n} is locked`}
+                    aria-label={n === 0 ? "Jump to cover" : reachable ? `Jump to page ${n}` : `Page ${n} is locked`}
                     disabled={!reachable}
                     onClick={() => scrollToPage(n)}
                     className="h-2 w-2 rounded-full disabled:cursor-not-allowed"
@@ -847,12 +882,14 @@ function Reader() {
           </div>
         ) : (
           <div className="mt-4 flex items-center justify-between">
-            <button onClick={() => go(-1)} disabled={page <= 1} className="btn-ghost disabled:opacity-30">← Prev</button>
+            <button onClick={() => go(-1)} disabled={page <= minPage} className="btn-ghost disabled:opacity-30">← Prev</button>
             <div className="flex gap-1">
-              {Array.from({ length: total }).map((_, i) => {
-                const n = i + 1;
+              {positions.map((n) => {
+                // The cover is always readable — it is public art, not part of
+                // the free/paid run — so it never renders in the "locked" tone.
+                const readable = n === 0 || readableSet.has(n);
                 return (
-                  <button key={n} aria-label={`Go to page ${n}`} onClick={() => navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: n } })} className="h-2 w-2 rounded-full" style={{ background: n === page ? "var(--neon)" : readableSet.has(n) ? "rgba(34,211,255,0.3)" : "rgba(255,255,255,0.1)" }} />
+                  <button key={n} aria-label={n === 0 ? "Go to cover" : `Go to page ${n}`} onClick={() => navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: n } })} className="h-2 w-2 rounded-full" style={{ background: n === page ? "var(--neon)" : readable ? "rgba(34,211,255,0.3)" : "rgba(255,255,255,0.1)" }} />
                 );
               })}
             </div>
@@ -929,6 +966,8 @@ function ModeButton({
  * contiguously and terminates at the first page still without one.
  */
 function AllPagesStrip({
+  coverPath,
+  coverAlt,
   pages,
   total,
   freeMax,
@@ -937,6 +976,8 @@ function AllPagesStrip({
   seriesSlug,
   dropAt,
 }: {
+  coverPath?: string | null;
+  coverAlt: string;
   pages: ReadonlyArray<{ id?: string | null; page_number: number; image_path: string; alt_text?: string | null }>;
   total: number;
   freeMax: number;
@@ -945,7 +986,10 @@ function AllPagesStrip({
   seriesSlug: string;
   dropAt?: string | null;
 }) {
-  if (pages.length === 0) {
+  const coverUrl = pageUrl(coverPath);
+  // "Page art forthcoming" is only true if there is nothing at all to show.
+  // An issue with a cover and no pages yet should still open on its cover.
+  if (pages.length === 0 && !coverUrl) {
     return (
       <div className="aspect-[1054/1491] flex items-center justify-center p-10 text-center text-[var(--mute)]">
         Page art forthcoming
@@ -954,6 +998,24 @@ function AllPagesStrip({
   }
   return (
     <div className="bg-black/35">
+      {coverUrl ? (
+        // id="rp-0" so `scrollToPage(0)` and the cover dot have an anchor.
+        // Eager, because in this mode the cover is the top of the document and
+        // therefore the LCP element — lazy-loading it would delay first paint.
+        <figure id="rp-0" className="relative scroll-mt-4">
+          <img
+            src={coverUrl}
+            alt={coverAlt}
+            loading="eager"
+            decoding="async"
+            draggable={false}
+            className="block h-auto w-full select-none"
+          />
+          <figcaption className="pointer-events-none absolute right-2 top-2 rounded-sm bg-black/70 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[2px] text-[var(--mute)]">
+            Cover
+          </figcaption>
+        </figure>
+      ) : null}
       {pages.map((p, i) => (
         <figure key={p.page_number} id={`rp-${p.page_number}`} className="relative scroll-mt-4">
           <img
