@@ -29,7 +29,7 @@ export function LeadCaptureInterstitial({ seriesSlug, lastPage, onDismiss, onPla
           We just sent a confirmation link. Click it and we'll notify you the second the next pages drop.
         </p>
         <div className="mt-6 flex justify-center gap-3">
-          <button onClick={onPlans} className="btn-ghost">See plans →</button>
+          <button onClick={onPlans} className="btn-ghost">Continue the story →</button>
         </div>
       </div>
     );
@@ -39,10 +39,10 @@ export function LeadCaptureInterstitial({ seriesSlug, lastPage, onDismiss, onPla
     <div className="card-rwc mx-auto my-8 max-w-xl p-6 md:p-8" role="region" aria-labelledby="lead-capture-headline">
       <div className="eyebrow" style={{ color: "var(--neon)" }}>You hit the end of the free act</div>
       <h3 id="lead-capture-headline" className="mt-2 text-2xl font-black md:text-3xl">
-        Want to know the second the next pages drop?
+        Get notified when the next issue releases.
       </h3>
       <p className="mt-3 text-sm text-[var(--ink2)]">
-        Weekly drop alerts. No spam. Unsubscribe anytime.
+        New issue alerts. No spam. Unsubscribe anytime.
       </p>
 
       <form
@@ -102,7 +102,7 @@ export function LeadCaptureInterstitial({ seriesSlug, lastPage, onDismiss, onPla
           }}
           className="underline hover:text-[var(--neon)]"
         >
-          Show me plans →
+          Continue the story →
         </button>
       </div>
     </div>
