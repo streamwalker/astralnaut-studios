@@ -150,7 +150,7 @@ I18N.en = {
   "community.cta.free":  "Free sweepstakes entry",
   "community.cta.rules": "Official rules",
   // Footer
-  "footer.tagline": "The next page only drops here. Built for readers, not pirates.",
+  "footer.tagline": "Original worlds. Unforgettable stories.",
   "footer.series":   "Series",
   "footer.platform": "Platform",
   "footer.learn":    "Learn",
