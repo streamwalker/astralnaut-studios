@@ -85,7 +85,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" },
       { title: "Real World Comics — The next page only drops here" },
-      { name: "description", content: "Five new pages a week. Motion-enhanced art. Subscriber-only votes that change the canon. Read the first act free." },
+      { name: "description", content: "Read the opening free without an account. Motion-enhanced original comics. Reader membership $4.99/month." },
       { name: "author", content: "Phil Russell — Streamwalkers Corporation (Astralnaut Studios)" },
       { name: "copyright", content: "© 2026 Streamwalkers Corporation. All rights reserved." },
       { name: "rights", content: "© 2026 Streamwalkers Corporation. Unauthorized reproduction or AI-training use prohibited." },
