@@ -1,3 +1,4 @@
+import { safeReaderReturn } from "@/lib/reader-return";
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -67,7 +68,8 @@ export const Route = createFileRoute("/_authenticated/account")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  validateSearch: (s: Record<string, unknown>): { checkout?: string; session_id?: string } => ({
+  validateSearch: (s: Record<string, unknown>): { checkout?: string; session_id?: string; next?: string } => ({
+    next: safeReaderReturn(s.next),
     checkout: typeof s.checkout === "string" ? s.checkout : undefined,
     session_id: typeof s.session_id === "string" ? s.session_id : undefined,
   }),
@@ -81,7 +83,7 @@ export const Route = createFileRoute("/_authenticated/account")({
 });
 
 function AccountPage() {
-  const { checkout, session_id } = Route.useSearch();
+  const { checkout, session_id, next } = Route.useSearch();
   const navigate = useNavigate();
   const portal = useServerFn(createPortalSession);
   const saveShipping = useServerFn(updateShippingAddress);
@@ -156,6 +158,12 @@ function AccountPage() {
       { eventID: session_id },
     );
   }, [checkout, loading, sub, session_id]);
+
+  useEffect(() => {
+    if (checkout === "success" && !loading && sub && next) {
+      window.location.replace(next);
+    }
+  }, [checkout, loading, sub, next]);
 
   const openPortal = async () => {
     setPortalLoading(true);
