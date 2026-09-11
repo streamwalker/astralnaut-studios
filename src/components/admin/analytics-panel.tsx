@@ -10,6 +10,7 @@ type Row = {
   target: string | null;
   duration_ms: number | null;
   created_at: string;
+  metadata?: { device?: string; utm_campaign?: string };
 };
 
 const RANGES = [
@@ -31,6 +32,8 @@ function fmtDuration(ms: number): string {
 
 export function AnalyticsPanel() {
   const [rangeKey, setRangeKey] = useState<typeof RANGES[number]["key"]>("7d");
+  const [device, setDevice] = useState("all");
+  const [campaign, setCampaign] = useState("all");
   const range = RANGES.find((r) => r.key === rangeKey)!;
 
   const { data, isLoading, error } = useQuery({
@@ -39,7 +42,7 @@ export function AnalyticsPanel() {
       const since = new Date(Date.now() - range.days * 86400000).toISOString();
       const { data, error } = await supabase
         .from("analytics_events")
-        .select("session_id,user_id,event_type,path,target,duration_ms,created_at")
+        .select("session_id,user_id,event_type,path,target,duration_ms,created_at,metadata")
         .gte("created_at", since)
         .order("created_at", { ascending: false })
         .limit(10000);
@@ -49,7 +52,15 @@ export function AnalyticsPanel() {
   });
 
   const stats = useMemo(() => {
-    const rows = data ?? [];
+    const campaignSessions = campaign === "all" ? null : new Set((data ?? []).filter((r) => r.metadata?.utm_campaign === campaign).map((r) => r.session_id));
+    const rows = (data ?? []).filter((r) => (device === "all" || r.metadata?.device === device) && (!campaignSessions || campaignSessions.has(r.session_id)));
+    const funnel = [
+      ["preview_started", "Preview started"],
+      ["preview_last_page_viewed", "Last free page viewed"],
+      ["paywall_viewed", "Subscription offer viewed"],
+      ["subscribe_clicked", "Subscribe clicked"],
+      ["checkout_started", "Stripe checkout started"],
+    ].map(([event, label]) => ({ label, count: new Set(rows.filter((r) => r.target === event).map((r) => r.session_id)).size }));
     const sessions = new Set<string>();
     const users = new Set<string>();
     let pageviews = 0;
@@ -112,6 +123,7 @@ export function AnalyticsPanel() {
       .slice(0, 15);
 
     return {
+      funnel,
       visitors: sessions.size,
       signedIn: users.size,
       pageviews,
@@ -121,7 +133,7 @@ export function AnalyticsPanel() {
       topPages,
       comicPages,
     };
-  }, [data]);
+  }, [data, device, campaign]);
 
   return (
     <section className="lg:col-span-2 rounded-2xl border border-border bg-card p-6">
@@ -160,13 +172,22 @@ export function AnalyticsPanel() {
       ) : (
         <>
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
-            <Stat label="Unique visitors" value={stats.visitors.toLocaleString()} />
+            <Stat label="Recorded sessions" value={stats.visitors.toLocaleString()} />
             <Stat label="Signed-in" value={stats.signedIn.toLocaleString()} />
             <Stat label="Pageviews" value={stats.pageviews.toLocaleString()} />
             <Stat label="Avg session" value={fmtDuration(stats.avgSession)} />
             <Stat label="Avg time/page" value={fmtDuration(stats.avgTimeOnPage)} />
           </div>
 
+          <div className="mt-8 rounded-lg border border-border p-4">
+            <h3 className="font-bold">Reading to subscription</h3>
+            <div className="my-3 flex flex-wrap gap-3">
+              <label>Device <select className="bg-card" value={device} onChange={(e) => setDevice(e.target.value)}><option value="all">All</option><option value="mobile">Mobile</option><option value="desktop">Desktop</option></select></label>
+              <label>Campaign <select className="bg-card" value={campaign} onChange={(e) => setCampaign(e.target.value)}><option value="all">All</option>{Array.from(new Set((data ?? []).map((r) => r.metadata?.utm_campaign).filter((v): v is string => !!v))).map((v) => <option key={v} value={v}>{v}</option>)}</select></label>
+            </div>
+            <table className="w-full text-left text-sm"><thead><tr><th>Stage</th><th>Sessions</th></tr></thead><tbody>{stats.funnel.map((stage) => <tr key={stage.label}><td className="py-2">{stage.label}</td><td>{stage.count}</td></tr>)}</tbody></table>
+            <p className="mt-3 text-xs text-muted-foreground">Consent-based session counts from the loaded event sample, not unique people or verified sales. A last-page view does not prove reading completion. Confirm paid subscriptions in Stripe; checkout starts are not purchases.</p>
+          </div>
           <div className="mt-8 grid gap-6 lg:grid-cols-2">
             <Block title="Most-visited pages">
               <PageTable rows={stats.topPages} />
