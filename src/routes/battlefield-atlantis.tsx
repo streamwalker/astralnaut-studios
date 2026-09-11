@@ -23,9 +23,9 @@ export const Route = createFileRoute("/battlefield-atlantis")({
   head: () => ({
     meta: [
       { title: "Battlefield Atlantis — Issue 1 · Real World Comics" },
-      { name: "description", content: "Twenty-five thousand years before the present, Saantris Station is destroyed. The Tri-Planetary Coalition splits. Read the first 9.5 pages free." },
+      { name: "description", content: "Twenty-five thousand years before the present, Saantris Station is destroyed. The Tri-Planetary Coalition splits. Read the opening free without an account." },
       { property: "og:title", content: "Battlefield Atlantis — Issue 1" },
-      { property: "og:description", content: "Hard sci-fi space opera. First 9.5 pages free." },
+      { property: "og:description", content: "Hard sci-fi space opera. Read the opening free without an account." },
       { property: "og:type", content: "article" },
       { property: "og:url", content: "https://astralnautstudios.com/battlefield-atlantis" },
       { property: "og:site_name", content: "Real World Comics — Astralnaut Studios" },
@@ -132,7 +132,7 @@ function BAPage() {
 
             {/* Top-right: 9.5 PAGES FREE pill */}
             <div className="ba-pill-free absolute right-3 top-3 rounded-md bg-gradient-to-r from-emerald-300 to-cyan-300 px-3 py-1.5 text-[11px] font-black tracking-wider text-emerald-950 shadow-lg">
-              9.5 PAGES · FREE
+              FREE OPENING
             </div>
 
             {/* Left edge: "1ST EXPLOSIVE ISSUE" sticker + character mini-portraits */}
@@ -171,11 +171,11 @@ function BAPage() {
                   {...readerLink}
                   className="ba-cta-glow block w-full rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 px-4 py-2.5 text-center text-sm font-black tracking-wider text-white shadow-xl transition hover:brightness-110"
                 >
-                  ▶ READ 9.5 PAGES FREE
+                  ▶ READ THE OPENING FREE
                 </Link>
               )}
               <div className="mt-2 text-center font-mono text-[10px] font-bold uppercase tracking-[2px] text-white/80">
-                Full first act + title page · Free · Pages 10–20 subscribe
+                Free opening · No account or card needed
               </div>
             </div>
           </div>
@@ -196,21 +196,21 @@ function BAPage() {
             <p className="mt-4 max-w-xl leading-relaxed text-[var(--ink2)]">
               25,000 years ago, Saantris Station was destroyed. Vrenoa City fell hours later.
               The <strong className="text-white">Tri-Planetary Coalition</strong> demands restraint.{" "}
-              <strong className="text-white">Poseidon, King of Alympia</strong>, demands annihilation.
+              <strong className="text-white">Poseidon, ruler of Neptuna</strong>, demands annihilation.
               And between them stands <strong className="text-white">Zeus</strong> — and the Alympian Guard he never asked to lead.
             </p>
 
             <div className="mt-7 grid grid-cols-4 gap-4">
               <Stat value={String(freeCount)} label="Pages free for all" />
               <Stat value={String(paidCount)} label="Subscriber pages" />
-              <Stat value="4 wks" label="To complete issue" />
+              <Stat value={String(issueBundle?.availability.readerPages.length ?? 0)} label="Paid pages available now" />
               <Stat value={String(totalPages)} label="Total story pages" />
             </div>
 
             <div className="mt-6 flex flex-wrap gap-3">
               {readerLink && (
                 <Link {...readerLink} className="ba-cta-glow rounded-md bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 px-5 py-3 text-sm font-black text-white shadow-lg transition hover:brightness-110">
-                  ▶ Read 9.5 pages free
+                  ▶ Read the opening free
                 </Link>
               )}
               <Link to="/pricing" className="rounded-md bg-gradient-to-r from-amber-300 to-yellow-500 px-5 py-3 text-sm font-black text-amber-950 shadow-lg transition hover:brightness-110">
@@ -222,12 +222,12 @@ function BAPage() {
               <div className="text-[var(--ink2)]">
                 <span className="mr-2">📺</span>
                 <span className="font-black uppercase tracking-wider text-[var(--neon)]">TV-Style Structure:</span>{" "}
-                Pages 1–9 the full first act · Page 9.5 title · Pages 10–20 episode body
+                Read the free opening, then continue with Reader membership.
               </div>
               <div className="text-[var(--ink2)]">
                 <span className="mr-2">⚡</span>
                 <span className="font-black uppercase tracking-wider text-[var(--gold)]">Early Access:</span>{" "}
-                Patron Tuesdays · Initiate Wednesdays · Reader Thursdays
+                Supporter access follows the dates listed for this issue.
                 {/* The tier order is a standing product promise and stays. The
                     completion date is a claim about a specific issue, so it is
                     only made when a scheduled drop backs it up. */}
@@ -246,22 +246,20 @@ function BAPage() {
             {/* Green callout */}
             <div className="mt-8 rounded-md border-l-4 border-emerald-400 bg-emerald-500/5 p-5">
               <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[2px] text-emerald-300">
-                <span>📺</span> Structured like TV · 9.5 free pages
+                <span>📺</span> Start reading free
               </div>
               <p className="mt-2 text-sm leading-relaxed text-[var(--ink2)]">
-                Pages 1–9 comprise the complete first act and are free for everyone. Page 9.5 is the title page and is also free.
-                Pages 10–20 continue the episode for subscribers
-                {schedule.next
-                  ? `, beginning ${formatDropDateLong(schedule.next.patron)} for Patrons.`
-                  : ", released on a weekly tier-staggered schedule."}
+                {issueBundle?.availability.freePages.length ?? 0} free pages are available without an account.
+                {" "}{issueBundle?.availability.readerPages.length ?? 0} subscriber pages are available now with Reader membership.
+                The studio is moving to complete monthly issues; only published pages are included in the available-now count.
               </p>
             </div>
 
             <div className="mt-8 space-y-5 text-sm leading-relaxed text-[var(--ink2)]">
               <p>
                 <span className="font-black uppercase tracking-wider text-emerald-400">First Act · Pages 1–9.</span>{" "}
-                Twenty-five thousand years ago, <strong className="text-[var(--gold)]">Santee Station</strong> suddenly explodes in high orbit over Mars.
-                Debris from the orbital station rains down upon <strong className="text-[var(--gold)]">Renoa City</strong>, devastating the Martian surface and killing millions.
+                Twenty-five thousand years ago, <strong className="text-[var(--gold)]">Saantris Station</strong> suddenly explodes in high orbit over Mars.
+                Debris from the orbital station rains down upon <strong className="text-[var(--gold)]">Vrenoa City</strong>, devastating the Martian surface and killing millions.
                 In the aftermath, the <strong className="text-[var(--gold)]">Tri-Planetary Coalition</strong> convenes an emergency council and urges restraint
                 while investigators work to determine who destroyed the station. But <strong className="text-[var(--gold)]">Poseidon, ruler of Neptuna</strong>, has already reached his verdict.
                 Convinced the catastrophe was an act of war, he demands the annihilation of those he holds responsible and threatens to unleash the most destructive weapon in the known galaxy.
@@ -276,7 +274,7 @@ function BAPage() {
               </p>
               <p>
                 <span className="font-black uppercase tracking-wider text-cyan-400">Episode Body · Pages 10–20.</span>{" "}
-                The subscriber-exclusive pages explore the political and military consequences of the destruction of Santee Station and Renoa City 25,000 years in our past.
+                The subscriber-exclusive pages explore the political and military consequences of the destruction of Saantris Station and Vrenoa City 25,000 years in our past.
                 The Tri-Planetary Coalition struggles to contain the crisis. Poseidon prepares Neptuna for retaliation.
                 The Allies are drawn into a rapidly escalating confrontation while evidence begins to suggest that the truth may be far more dangerous than anyone realizes.
                 With the three worlds moving closer to war, the Allies must determine who caused the catastrophe — and why — before Poseidon carries out his threat.
@@ -296,9 +294,9 @@ function BAPage() {
               <DetailRow label="Writer" value="Phil" />
               <DetailRow label="Studio" value="Astralnaut" />
               <DetailRow label="Total pages" value="20 + title" />
-              <DetailRow label="Pages 1–9" value={<span className="text-emerald-400">FREE · the full first act</span>} />
+              <DetailRow label="Free opening" value={<span className="text-emerald-400">FREE · the full first act</span>} />
               <DetailRow label="Page 9.5" value={<span className="text-[var(--gold)]">FREE · title page</span>} />
-              <DetailRow label="Pages 10–20" value={<span className="text-cyan-400">Subscribers</span>} />
+              <DetailRow label="Continuation" value={<span className="text-cyan-400">Subscribers</span>} />
             </dl>
 
             {/* Next drop sub-card — rendered only when a drop is actually
@@ -330,7 +328,7 @@ function BAPage() {
         {/* ============ ALL 20 PAGES ============ */}
         <section className="mt-20">
           <h2 className="text-4xl font-black md:text-5xl">All {totalPages} pages</h2>
-          <p className="mt-2 max-w-xl text-[var(--ink2)]">Click any unlocked page to jump straight to it. Locked pages drop weekly on Thursdays.</p>
+          <p className="mt-2 max-w-xl text-[var(--ink2)]">Choose a free page to start reading. Subscriber access and release dates follow the issue schedule.</p>
 
           <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             {/* Free + locked pages (1..20, plus a 9.5 title card after 9) */}

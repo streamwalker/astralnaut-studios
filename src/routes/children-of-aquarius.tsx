@@ -234,7 +234,7 @@ function COAPage() {
               <div className="text-[var(--ink2)]">
                 <span className="mr-2">⚡</span>
                 <span className="font-black uppercase tracking-wider text-[var(--gold)]">Early Access:</span>{" "}
-                Patron Tuesdays · Reader Thursdays · 3 pages/week · 5-week run
+                Release dates are listed below. Supporter early access applies when scheduled.
               </div>
             </div>
           </div>
@@ -253,7 +253,7 @@ function COAPage() {
               </div>
               <p className="mt-2 text-sm leading-relaxed text-[var(--ink2)]">
                 Pages 1–{freeCount} are the full first act — free for everyone.
-                Pages {freeCount + 1}–{totalPages} are the episode body, releasing three per week to subscribers across five weeks.
+                {issueBundle?.availability.readerPages.length ?? 0} subscriber pages are available now. New complete issues are planned monthly across the studio.
               </p>
             </div>
 
@@ -304,7 +304,7 @@ function COAPage() {
 
             <dl className="mt-5 divide-y divide-white/5 text-sm">
               <DetailRow label="Issue completes" value={schedule.completes ?? "Schedule to be announced"} />
-              <DetailRow label="Cadence" value="3 pages / week" />
+              <DetailRow label="Subscriber pages available now" value={String(issueBundle?.availability.readerPages.length ?? 0)} />
             </dl>
           </aside>
         </section>
@@ -312,7 +312,7 @@ function COAPage() {
         {/* ============ ALL PAGES ============ */}
         <section className="mt-20">
           <h2 className="text-4xl font-black md:text-5xl">All {totalPages} pages</h2>
-          <p className="mt-2 max-w-xl text-[var(--ink2)]">Click any unlocked page to jump straight to it. Locked pages drop weekly on Thursdays.</p>
+          <p className="mt-2 max-w-xl text-[var(--ink2)]">Choose a free page to start reading without an account. Scheduled subscriber releases are shown below.</p>
 
           <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             {Array.from({ length: totalPages }).map((_, idx) => {

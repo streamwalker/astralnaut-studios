@@ -484,7 +484,7 @@ function ReleaseSchedule() {
             </select>
           </div>
           <div>
-            <Label>Week *</Label>
+            <Label>Release sequence *</Label>
             <Input
               type="number"
               min={1}
@@ -494,6 +494,18 @@ function ReleaseSchedule() {
             />
           </div>
           <div className="md:col-span-2">
+            <Button type="button" variant="outline" className="mb-3" disabled={!draft.issue_id} onClick={() => {
+              const issue = issues.find((i) => i.id === draft.issue_id);
+              if (!issue) return;
+              const first = Math.floor(Number(issue.free_pages)) + 1;
+              const last = Math.ceil(Number(issue.total_pages));
+              if (!Number.isFinite(first) || !Number.isFinite(last) || first < 1 || last < first || last > 100) {
+                toast.error("Set valid free-page and total-page counts on the issue first.");
+                return;
+              }
+              setDraft({ ...draft, pages: Array.from({ length: last - first + 1 }, (_, i) => first + i).join(", ") });
+            }}>Prepare complete issue release</Button>
+            <p className="mb-3 text-xs text-muted-foreground">Includes every subscriber page in one release. Set the monthly release date below; upload and publish the finished artwork before release. Review any existing page schedules for overlaps before saving.</p>
             <Label>Pages *</Label>
             <Input
               value={draft.pages}

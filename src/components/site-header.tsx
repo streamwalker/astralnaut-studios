@@ -180,7 +180,7 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-7xl gap-8 px-6 md:grid-cols-4">
         <div>
           <div className="text-[10px] font-bold uppercase tracking-[3px]" style={{ color: "var(--gold)" }}>Astralnaut Studios</div>
-          <p className="mt-2 text-sm text-[var(--mute)]">The next page only drops here. Built for readers, not pirates.</p>
+          <p className="mt-2 text-sm text-[var(--mute)]">Original worlds. Unforgettable stories.</p>
         </div>
         <FooterCol title="Series" links={[
           { to: "/battlefield-atlantis", label: "Battlefield Atlantis" },

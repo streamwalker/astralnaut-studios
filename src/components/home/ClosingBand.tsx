@@ -48,7 +48,7 @@ export function ClosingBand() {
           </div>
 
           <p className="mt-6 text-xs text-[var(--mute)]">
-            Reader $4.99 · Initiate $9.99 · Patron $24.99 — cancel anytime.
+            Reader $4.99/month · All released subscriber pages · Cancel anytime.
           </p>
         </div>
       </div>

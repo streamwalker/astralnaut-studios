@@ -1,3 +1,4 @@
+import { safeReaderReturn } from "@/lib/reader-return";
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -6,8 +7,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CountryInput } from "@/components/ui/country-input";
-import { isValidCountry } from "@/lib/countries";
 
 import { LEGAL_CONFIG } from "@/config/legal";
 import { recordSignupConsent } from "@/lib/consent.functions";
@@ -78,9 +77,6 @@ function LoginPage() {
   );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [busy, setBusy] = useState(false);
   // Set when a Sign-in-tab Google click provisioned a brand-new account. Holds
@@ -98,6 +94,7 @@ function LoginPage() {
         plan: search.plan,
         ...(search.interval ? { interval: search.interval } : {}),
         autocheckout: "1",
+        ...(safeReaderReturn(search.next) ? { next: search.next } : {}),
       });
       return `/pricing?${params.toString()}`;
     }
@@ -133,15 +130,6 @@ function LoginPage() {
       toast.error("Please review and accept the account terms to continue.");
       return;
     }
-    if (mode === "signup" && (!fullName.trim() || !city.trim() || !country.trim())) {
-      toast.error("Please provide your full name, city, and country.");
-      return;
-    }
-    if (mode === "signup" && !isValidCountry(country)) {
-      toast.error("Please select a country from the list.");
-      return;
-    }
-
     setBusy(true);
     try {
       if (mode === "signup") {
@@ -154,9 +142,7 @@ function LoginPage() {
           options: {
             emailRedirectTo: window.location.origin + verifyUrl,
             data: {
-              full_name: fullName.trim(),
-              city: city.trim(),
-              country: country.trim(),
+
             },
           },
         });
@@ -172,11 +158,14 @@ function LoginPage() {
             await supabase.from("profiles").upsert({
               id: data.session.user.id,
               email,
-              full_name: fullName.trim(),
-              city: city.trim(),
-              country: country.trim(),
+
             });
           } catch { /* non-fatal */ }
+        }
+        if (data.session?.user.email_confirmed_at) {
+          clearReturnTo();
+          window.location.assign(dest);
+          return;
         }
         toast.success("Check your email to confirm your account.");
         clearReturnTo();
@@ -399,7 +388,7 @@ function LoginPage() {
           <>
             <h1 className="text-2xl font-bold">{mode === "signin" ? "Sign in" : "Create account"}</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Sign in to read free previews, track your standing, and unlock subscriber perks.
+              Sign in to continue your subscription and manage your account. Free previews need no account.
             </p>
             {(search.next || peekReturnTo()) && !search.oauth && (
               <p className="mt-3 flex items-center gap-2 rounded-lg border border-[var(--neon)]/20 bg-[var(--neon)]/5 px-3 py-2 text-xs text-[var(--neon)]">
@@ -419,24 +408,6 @@ function LoginPage() {
         </div>
 
         <form onSubmit={handleEmail} className="space-y-3">
-          {mode === "signup" && (
-            <>
-              <div>
-                <Label htmlFor="full_name">Full name</Label>
-                <Input id="full_name" type="text" required autoComplete="name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label htmlFor="city">City</Label>
-                  <Input id="city" type="text" required autoComplete="address-level2" value={city} onChange={(e) => setCity(e.target.value)} />
-                </div>
-                <div>
-                  <Label htmlFor="country">Country</Label>
-                  <CountryInput id="country" required value={country} onChange={(e) => setCountry(e.target.value)} />
-                </div>
-              </div>
-            </>
-          )}
           <div>
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />

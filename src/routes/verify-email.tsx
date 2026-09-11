@@ -36,7 +36,7 @@ export const Route = createFileRoute("/verify-email")({
   head: () => ({
     meta: [
       { title: "Verify your email — Astralnaut Studios" },
-      { name: "description", content: "Confirm your email address to unlock free comic previews on Astralnaut Studios." },
+      { name: "description", content: "Confirm your email address to finish setting up your Astralnaut Studios account." },
       { name: "robots", content: "noindex" },
     ],
   }),

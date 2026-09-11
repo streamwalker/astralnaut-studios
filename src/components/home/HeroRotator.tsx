@@ -42,7 +42,7 @@ const HERO_SLOTS: HeroSlot[] = [
     titleImage: baLogo,
     titleAlt: "Battlefield Atlantis",
     tagline:
-      "The world before our world began. Meet the heroes of old who paved the way for our world today. The First Act is Free.",
+      "A station destroyed. Millions dead. Twenty-five thousand years ago, Zeus and the Allies must uncover the truth before retaliation becomes interplanetary war. Read the opening free — no account needed.",
     primary: {
       label: "Read the first act free",
       to: "/reader/$series/$issue",
@@ -84,19 +84,7 @@ const HERO_SLOTS: HeroSlot[] = [
       "linear-gradient(90deg, rgba(2,18,30,0.94) 0%, rgba(2,18,30,0.7) 40%, rgba(2,18,30,0.3) 80%, rgba(2,18,30,0.1) 100%)",
     accent: "#22d3ee",
   },
-  {
-    id: "ps5-milestone",
-    tab: "PS5 Milestone",
-    eyebrow: "Subscriber unlock · 1,000",
-    titleText: "A PlayStation 5 unlocks at 1,000 subscribers.",
-    tagline:
-      "Patron tier unlocks cameo eligibility. Sweepstakes windows open every 10,000-subscriber milestone. No purchase necessary.",
-    primary: { label: "See the milestone", to: "/pricing" },
-    secondary: { label: "Browse the slate", to: "/" },
-    overlay:
-      "radial-gradient(120% 80% at 20% 30%, rgba(160,64,255,0.45), transparent 60%), radial-gradient(120% 80% at 100% 100%, rgba(34,211,255,0.35), transparent 55%), linear-gradient(180deg, #02000c, #06051a)",
-    accent: "#f4c95d",
-  },
+
 ];
 
 const AUTOPLAY_MS = 15000;

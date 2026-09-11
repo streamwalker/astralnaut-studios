@@ -3,11 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { SeriesCard } from "@/components/series-card";
-import { MilestoneStrip } from "@/components/milestone-strip";
 import { ClosingBand } from "@/components/home/ClosingBand";
 import { HeroRotator } from "@/components/home/HeroRotator";
 import { HomePricingStrip } from "@/components/home/PricingStrip";
-import { listSeries, getMilestone, getSiteCopy } from "@/lib/public.functions";
+import { listSeries, getSiteCopy } from "@/lib/public.functions";
 import { useSubscriberCount } from "@/hooks/useSubscriberCount";
 import { useInView } from "@/hooks/useInView";
 import { CoverFan } from "@/components/cover-fan";
@@ -22,7 +21,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Real World Comics — The next page only drops here" },
-      { name: "description", content: "Three serialized comic properties from Astralnaut Studios. Motion-enhanced art, weekly drops, subscriber-only canon voting, real prizes." },
+      { name: "description", content: "Three serialized comic properties from Astralnaut Studios. Read free previews without an account. Unlock released subscriber content for $4.99/month." },
       { property: "og:title", content: "Astralnaut Studios" },
       { property: "og:description", content: "Astralnaut Studios and Real World Comics are imprints of Streamwalkers Corporation" },
       { property: "og:type", content: "website" },
@@ -56,10 +55,8 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const seriesFn = useServerFn(listSeries);
-  const milestoneFn = useServerFn(getMilestone);
   const copyFn = useServerFn(getSiteCopy);
   const { data: series = [] } = useQuery({ queryKey: ["series"], queryFn: () => seriesFn({}) });
-  const { data: milestone } = useQuery({ queryKey: ["milestone"], queryFn: () => milestoneFn({}) });
   const { data: copy = {} } = useQuery({ queryKey: ["copy"], queryFn: () => copyFn({}) });
   const { displayCount, pagesPublished, seriesLive } = useSubscriberCount();
 
@@ -78,14 +75,13 @@ function Home() {
             <div>
               <div className="eyebrow flex items-center gap-2">
                 <span aria-hidden>⚡</span>
-                {copy["home.hero.eyebrow"] ?? "New episodes every week · Netflix for comics"}
+                Original comics · Read the opening free
               </div>
               <h2 className="mt-5 text-fluid-h1 font-black tracking-tight">
-                {copy["home.hero.title"] ?? "The next page only drops here."}
+                Discover your next story.
               </h2>
               <p className="mt-5 max-w-xl text-lg text-[var(--ink2)]">
-                Five new pages a week. Motion-enhanced art. Creator commentary. Subscriber-only votes that change the canon. Real prizes for real readers —{" "}
-                <span style={{ color: "var(--gold)" }} className="font-semibold">PlayStation 5 unlocks at 1,000 subscribers.</span>
+                Explore the free openings, then unlock all released subscriber pages for $4.99/month. Our publishing plan is one complete issue monthly across the studio, with previews and creator updates between releases.
               </p>
 
               <div
@@ -95,7 +91,7 @@ function Home() {
                 <span className="text-2xl" aria-hidden>📺</span>
                 <div>
                   <div className="text-xs font-black uppercase tracking-[3px]" style={{ color: "var(--neon)" }}>
-                    9.5 pages of every issue · free
+                    Start reading · free
                   </div>
                   <div className="mt-0.5 text-xs text-[var(--ink2)]">
                     The full first act + title page · free for everyone · no signup required.
@@ -131,7 +127,7 @@ function Home() {
                   <>
                     <Stat label="Pages published" value={String(pagesPublished)} />
                     <Stat label="Series live" value={String(seriesLive)} />
-                    <Stat label="New pages / week" value="5" />
+                    <Stat label="Reader / month" value="$4.99" />
                   </>
                 )}
               </div>
@@ -142,15 +138,6 @@ function Home() {
             </div>
           </div>
         </RevealSection>
-
-        {/* Milestone */}
-        {milestone && (
-          <MilestoneStrip
-            name={milestone.name}
-            ends_at={milestone.ends_at}
-            rewards={(milestone.rewards as { at: number; reward: string }[]) ?? []}
-          />
-        )}
 
         {/* Series shelf — banded section. */}
         <section
@@ -192,12 +179,12 @@ function Home() {
         >
           <div className="mx-auto max-w-7xl px-6 py-16">
             <div className="eyebrow">Why subscribe</div>
-            <h2 className="mt-3 text-3xl font-black md:text-4xl">Pirated PNGs can't give you this.</h2>
+            <h2 className="mt-3 text-3xl font-black md:text-4xl">Stories worth coming back for.</h2>
             <div className="mt-8 grid gap-4 md:grid-cols-4">
-              <Pillar title="Motion + sound" body="Per-page CSS animations layered onto the static art. Lightning pulses, hologram glow, debris fields." />
-              <Pillar title="Tier-staggered drops" body="Patron Tuesday. Initiate Wednesday. Reader Thursday. Always 48 hours ahead at the top tier." />
-              <Pillar title="Canon voting" body="Subscribers vote on canon-altering decisions. Your read literally changes the story." />
-              <Pillar title="Sweepstakes + cameos" body="Sweepstakes windows open every 10,000-subscriber milestone (14-day entry window). Free entry always available. Patron tier unlocks cameo eligibility." />
+              <Pillar title="Experience the art" body="Lightning pulses, holograms glow, and the story comes alive in the motion-enhanced reader." />
+              <Pillar title="Read across the studio" body="One Reader membership includes every series' released subscriber content." />
+              <Pillar title="Complete chapters" body="A monthly issue publishing plan, with actual availability shown on each issue." />
+              <Pillar title="Meet the creators" body="Discover the worlds, characters, and creative work behind the stories." />
             </div>
           </div>
         </section>

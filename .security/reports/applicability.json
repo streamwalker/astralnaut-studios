@@ -1,0 +1,1762 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-11T01:49:57Z",
+  "project_name": "Astralnaut Studios",
+  "profile_issues": [
+    "facts.jurisdictions is unknown",
+    "facts.customer_types is unknown",
+    "facts.customer_requirements is unknown",
+    "facts_confirmed must be true after review",
+    "owners.scope is required",
+    "owners.security is required",
+    "owners.release is required"
+  ],
+  "decision_errors": [],
+  "profiles": [
+    {
+      "id": "soc2",
+      "name": "SOC 2 Trust Services Criteria",
+      "version": "2017 Trust Services Criteria with revised points of focus 2022",
+      "status": "targeted",
+      "reason": "Mandatory readiness baseline requested for every platform build",
+      "reviewed": true,
+      "source_url": "https://www.aicpa-cima.com/resources/download/2017-trust-services-criteria-with-revised-points-of-focus-2022",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "SOC 2 report issued by a licensed CPA firm"
+    },
+    {
+      "id": "iso27001",
+      "name": "ISO/IEC 27001 Information Security Management Systems",
+      "version": "ISO/IEC 27001:2022 plus Amendment 1:2024",
+      "status": "targeted",
+      "reason": "Mandatory readiness baseline requested for every platform build",
+      "reviewed": true,
+      "source_url": "https://www.iso.org/standard/27001",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": true,
+      "external_result": "Certificate issued through an authorized certification process"
+    },
+    {
+      "id": "nist-csf",
+      "name": "NIST Cybersecurity Framework",
+      "version": "CSF 2.0, 2024-02-26",
+      "status": "recommended",
+      "reason": "Mandatory baseline mapping selected by this skill",
+      "reviewed": true,
+      "source_url": "https://csrc.nist.gov/pubs/cswp/29/the-nist-cybersecurity-framework-csf-20/final",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "none"
+    },
+    {
+      "id": "nist-800-53",
+      "name": "NIST SP 800-53 Security and Privacy Controls",
+      "version": "Revision 5, Release 5.2.0, 2025-08-27",
+      "status": "pending_review",
+      "reason": "One or more applicability facts are unknown",
+      "reviewed": true,
+      "source_url": "https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "System-specific assessment or authorization result"
+    },
+    {
+      "id": "cis-controls",
+      "name": "CIS Critical Security Controls",
+      "version": "v8.1, 2024-06-24",
+      "status": "recommended",
+      "reason": "Mandatory baseline mapping selected by this skill",
+      "reviewed": true,
+      "source_url": "https://www.cisecurity.org/controls/v8-1",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "none"
+    },
+    {
+      "id": "csa-ccm",
+      "name": "Cloud Security Alliance Cloud Controls Matrix",
+      "version": "CCM v4.1, 2026-01-28",
+      "status": "not_applicable",
+      "reason": "Deterministic applicability trigger did not match confirmed facts",
+      "reviewed": true,
+      "source_url": "https://cloudsecurityalliance.org/artifacts/cloud-controls-matrix-v4-1",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "CSA STAR result when separately pursued"
+    },
+    {
+      "id": "nist-ssdf",
+      "name": "NIST Secure Software Development Framework",
+      "version": "SP 800-218 SSDF v1.1, 2022-02-03",
+      "status": "required",
+      "reason": "Mandatory secure-development baseline",
+      "reviewed": true,
+      "source_url": "https://csrc.nist.gov/pubs/sp/800/218/final",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "none"
+    },
+    {
+      "id": "owasp-asvs",
+      "name": "OWASP Application Security Verification Standard",
+      "version": "ASVS 5.0.0, 2025-05-30",
+      "status": "required",
+      "reason": "Deterministic applicability trigger matched",
+      "reviewed": true,
+      "source_url": "https://owasp.org/www-project-application-security-verification-standard/",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "Scope-specific verification result"
+    },
+    {
+      "id": "owasp-masvs",
+      "name": "OWASP Mobile Application Security Verification Standard",
+      "version": "MASVS 2.1.0, 2024-01-18",
+      "status": "not_applicable",
+      "reason": "Deterministic applicability trigger did not match confirmed facts",
+      "reviewed": true,
+      "source_url": "https://mas.owasp.org/news/2024/01/18/masvs-v210-release--masvs-privacy/",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "Scope-specific mobile verification result"
+    },
+    {
+      "id": "iso27701",
+      "name": "ISO/IEC 27701 Privacy Information Management Systems",
+      "version": "ISO/IEC 27701:2025, 2025-10-14",
+      "status": "pending_review",
+      "reason": "Trigger matched; assurance_target confirmation is required",
+      "reviewed": false,
+      "source_url": "https://www.iso.org/standard/27701",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": true,
+      "external_result": "Certificate issued through an authorized certification process"
+    },
+    {
+      "id": "iso27017",
+      "name": "ISO/IEC 27017 Cloud Security Controls",
+      "version": "ISO/IEC 27017:2026, 2026-07-27",
+      "status": "not_applicable",
+      "reason": "Deterministic applicability trigger did not match confirmed facts",
+      "reviewed": true,
+      "source_url": "https://www.iso.org/standard/27017",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": true,
+      "external_result": "Scope-specific assurance result when separately pursued"
+    },
+    {
+      "id": "iso27018",
+      "name": "ISO/IEC 27018 Protection of PII in Public Clouds",
+      "version": "ISO/IEC 27018:2025, 2025-08-26",
+      "status": "not_applicable",
+      "reason": "Deterministic applicability trigger did not match confirmed facts",
+      "reviewed": true,
+      "source_url": "https://www.iso.org/standard/27018",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": true,
+      "external_result": "Scope-specific assurance result when separately pursued"
+    },
+    {
+      "id": "nist-ai-rmf",
+      "name": "NIST Artificial Intelligence Risk Management Framework",
+      "version": "AI RMF 1.0, 2023-01-26",
+      "status": "not_applicable",
+      "reason": "Deterministic applicability trigger did not match confirmed facts",
+      "reviewed": true,
+      "source_url": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-ai-rmf-10",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "none"
+    },
+    {
+      "id": "fips-140-3",
+      "name": "FIPS 140-3 Cryptographic Module Validation",
+      "version": "FIPS 140-3, 2019-03-22; current CMVP guidance",
+      "status": "pending_review",
+      "reason": "One or more applicability facts are unknown",
+      "reviewed": false,
+      "source_url": "https://csrc.nist.gov/pubs/fips/140-3/final",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "Exact module/version/configuration listed on a valid CMVP certificate"
+    },
+    {
+      "id": "pci-dss",
+      "name": "Payment Card Industry Data Security Standard",
+      "version": "PCI DSS v4.0.1, 2024-06",
+      "status": "required",
+      "reason": "Deterministic applicability trigger matched",
+      "reviewed": true,
+      "source_url": "https://www.pcisecuritystandards.org/document_library/?class=pcidss&doc=pci_dss",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "Applicable SAQ, ROC, AOC, or acquirer-determined validation"
+    },
+    {
+      "id": "hipaa",
+      "name": "HIPAA Privacy, Security, and Breach Notification Rules",
+      "version": "Current 45 CFR Parts 160 and 164 as of 2026-08-06",
+      "status": "not_applicable",
+      "reason": "Deterministic applicability trigger did not match confirmed facts",
+      "reviewed": false,
+      "source_url": "https://www.hhs.gov/hipaa/for-professionals/security/index.html",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "Scope-specific legal and assurance result"
+    },
+    {
+      "id": "hitrust",
+      "name": "HITRUST CSF",
+      "version": "v11.8.0, available 2026-05-08",
+      "status": "pending_review",
+      "reason": "One or more applicability facts are unknown",
+      "reviewed": false,
+      "source_url": "https://hitrustalliance.net/advisories/haa-2026-002-csf-version-11-8-0-release",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": true,
+      "external_result": "HITRUST assessment or certification result"
+    },
+    {
+      "id": "glba",
+      "name": "FTC Safeguards Rule",
+      "version": "16 CFR Part 314 current through the 2023 amendment",
+      "status": "pending_review",
+      "reason": "One or more applicability facts are unknown",
+      "reviewed": false,
+      "source_url": "https://www.ftc.gov/legal-library/browse/rules/safeguards-rule",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "Scope-specific legal and assurance result"
+    },
+    {
+      "id": "ferpa",
+      "name": "Family Educational Rights and Privacy Act",
+      "version": "34 CFR Part 99 current as of 2026-08-06",
+      "status": "not_applicable",
+      "reason": "Deterministic applicability trigger did not match confirmed facts",
+      "reviewed": false,
+      "source_url": "https://studentprivacy.ed.gov/ferpa",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "Scope-specific legal and contractual result"
+    },
+    {
+      "id": "coppa",
+      "name": "Children's Online Privacy Protection Rule",
+      "version": "16 CFR Part 312, amended 2025-04-22",
+      "status": "not_applicable",
+      "reason": "Deterministic applicability trigger did not match confirmed facts",
+      "reviewed": false,
+      "source_url": "https://www.ftc.gov/legal-library/browse/federal-register-notices/16-cfr-part-312-coppa-final-rule-amendments",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "Scope-specific legal and assurance result"
+    },
+    {
+      "id": "fbi-cjis",
+      "name": "FBI Criminal Justice Information Services Security Policy",
+      "version": "v6.0, 2024-12-27",
+      "status": "pending_review",
+      "reason": "One or more applicability facts are unknown",
+      "reviewed": false,
+      "source_url": "https://le.fbi.gov/file-repository/cjis_security_policy_v6-0_20241227.pdf",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "Agency-specific assessment or approval"
+    },
+    {
+      "id": "nist-800-171",
+      "name": "NIST SP 800-171 Protecting CUI in Nonfederal Systems",
+      "version": "Revision 3, 2024-05",
+      "status": "pending_review",
+      "reason": "One or more applicability facts are unknown",
+      "reviewed": false,
+      "source_url": "https://csrc.nist.gov/pubs/sp/800/171/r3/final",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "Contract- or agency-specific assessment result"
+    },
+    {
+      "id": "cmmc",
+      "name": "Cybersecurity Maturity Model Certification Program",
+      "version": "32 CFR Part 170 effective 2024-12-16; DFARS implementation effective 2025-11-10",
+      "status": "pending_review",
+      "reason": "One or more applicability facts are unknown",
+      "reviewed": false,
+      "source_url": "https://www.federalregister.gov/documents/2024/10/15/2024-22905/cybersecurity-maturity-model-certification-cmmc-program",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "Required self-assessment or C3PAO/DCMA assessment status for the contract level"
+    },
+    {
+      "id": "fedramp",
+      "name": "Federal Risk and Authorization Management Program",
+      "version": "FedRAMP Consolidated Rules for 2026, effective 2026-07-04",
+      "status": "not_applicable",
+      "reason": "Deterministic applicability trigger did not match confirmed facts",
+      "reviewed": false,
+      "source_url": "https://www.fedramp.gov/2026/",
+      "source_verified_on": "2026-08-06",
+      "source_stale": true,
+      "licensed_source_required": false,
+      "external_result": "FedRAMP certification/authorization and agency authorization as applicable"
+    },
+    {
+      "id": "gdpr",
+      "name": "EU General Data Protection Regulation",
+      "version": "Regulation (EU) 2016/679, current consolidated text",
+      "status": "pending_review",
+      "reason": "One or more applicability facts are unknown",
+      "reviewed": false,
+      "source_url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "Scope-specific legal and regulatory result"
+    },
+    {
+      "id": "ccpa-cpra",
+      "name": "California Consumer Privacy Act and CPRA Regulations",
+      "version": "Regulations effective 2026-01-01",
+      "status": "pending_review",
+      "reason": "One or more applicability facts are unknown",
+      "reviewed": false,
+      "source_url": "https://cppa.ca.gov/regulations/",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "Scope-specific legal and regulatory result"
+    },
+    {
+      "id": "nis2",
+      "name": "EU Network and Information Systems Directive 2",
+      "version": "Directive (EU) 2022/2555; national rules applicable from 2024-10-18",
+      "status": "pending_review",
+      "reason": "One or more applicability facts are unknown",
+      "reviewed": false,
+      "source_url": "https://eur-lex.europa.eu/eli/dir/2022/2555/oj/eng",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "Applicable member-state regulatory result"
+    },
+    {
+      "id": "dora",
+      "name": "EU Digital Operational Resilience Act",
+      "version": "Regulation (EU) 2022/2554, applicable 2025-01-17",
+      "status": "pending_review",
+      "reason": "One or more applicability facts are unknown",
+      "reviewed": false,
+      "source_url": "https://eur-lex.europa.eu/eli/reg/2022/2554/oj/eng",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "Scope-specific regulatory and contractual result"
+    },
+    {
+      "id": "eu-cra",
+      "name": "EU Cyber Resilience Act",
+      "version": "Regulation (EU) 2024/2847",
+      "status": "not_applicable",
+      "reason": "Deterministic applicability trigger did not match confirmed facts",
+      "reviewed": false,
+      "source_url": "https://eur-lex.europa.eu/eli/reg/2024/2847/oj/eng",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "Applicable conformity and market-surveillance result"
+    },
+    {
+      "id": "eu-ai-act",
+      "name": "EU Artificial Intelligence Act",
+      "version": "Regulation (EU) 2024/1689",
+      "status": "not_applicable",
+      "reason": "Deterministic applicability trigger did not match confirmed facts",
+      "reviewed": false,
+      "source_url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng",
+      "source_verified_on": "2026-08-06",
+      "source_stale": false,
+      "licensed_source_required": false,
+      "external_result": "Role- and risk-specific conformity or regulatory result"
+    }
+  ],
+  "controls": [
+    {
+      "id": "GOV-001",
+      "title": "Define scope, boundary, owners, and release authority",
+      "gate": "both",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "manual",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Approved scope and authorization boundary",
+        "Named security and release owners",
+        "Repository and environment inventory"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "nist-ssdf",
+        "csa-ccm"
+      ]
+    },
+    {
+      "id": "GOV-002",
+      "title": "Complete applicability decisions and pin sources",
+      "gate": "both",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Applicability Decision Record",
+        "Catalog lock and SHA-256 digest",
+        "Reviewed pending and not-applicable rationales"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "csa-ccm",
+        "nist-ssdf"
+      ]
+    },
+    {
+      "id": "GOV-003",
+      "title": "Operate policies, roles, reviews, and temporary exceptions",
+      "gate": "assurance",
+      "severity": "high",
+      "blocking": true,
+      "verification": "manual",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Approved policies",
+        "Role and approval matrix",
+        "Management review records",
+        "Exception register"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "csa-ccm",
+        "nis2",
+        "dora"
+      ]
+    },
+    {
+      "id": "RSK-001",
+      "title": "Maintain threat model and risk treatment",
+      "gate": "both",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "manual",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Current data-flow diagram",
+        "Threat model tied to release",
+        "Risk treatment and accepted residual risk"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "nist-ssdf",
+        "owasp-asvs",
+        "owasp-masvs",
+        "csa-ccm",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "AST-001",
+      "title": "Inventory assets, data, dependencies, vendors, and subprocessors",
+      "gate": "both",
+      "severity": "high",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Asset and data inventory",
+        "Vendor and subprocessor register",
+        "Dependency and service inventory"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "csa-ccm",
+        "gdpr",
+        "ccpa-cpra",
+        "nis2",
+        "dora",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "PRIV-001",
+      "title": "Minimize data and enforce its lifecycle",
+      "gate": "both",
+      "severity": "high",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Data inventory and purpose map",
+        "Retention and deletion tests",
+        "Rights-request or user-control tests where applicable"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-800-53",
+        "iso27701",
+        "iso27018",
+        "gdpr",
+        "ccpa-cpra",
+        "hipaa",
+        "glba",
+        "ferpa",
+        "coppa",
+        "eu-ai-act"
+      ]
+    },
+    {
+      "id": "PRIV-002",
+      "title": "Align behavior, consent, disclosures, and third parties",
+      "gate": "both",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Disclosure-to-implementation traceability",
+        "Consent state tests",
+        "Observed third-party traffic assessment"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "iso27701",
+        "iso27018",
+        "owasp-masvs",
+        "gdpr",
+        "ccpa-cpra",
+        "coppa",
+        "eu-ai-act"
+      ]
+    },
+    {
+      "id": "IAM-001",
+      "title": "Implement secure identity, authentication, enrollment, and recovery",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Authentication architecture decision",
+        "Automated positive and negative authentication tests",
+        "Recovery and revocation tests"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "owasp-asvs",
+        "owasp-masvs",
+        "csa-ccm",
+        "pci-dss",
+        "hipaa",
+        "glba",
+        "fbi-cjis",
+        "nist-800-171",
+        "cmmc",
+        "fedramp"
+      ]
+    },
+    {
+      "id": "IAM-002",
+      "title": "Protect privileged access and workforce identity",
+      "gate": "both",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Privileged access inventory",
+        "MFA configuration evidence",
+        "Access review and lifecycle records"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "csa-ccm",
+        "pci-dss",
+        "hipaa",
+        "hitrust",
+        "glba",
+        "fbi-cjis",
+        "nist-800-171",
+        "cmmc",
+        "fedramp",
+        "nis2",
+        "dora"
+      ]
+    },
+    {
+      "id": "AUTHZ-001",
+      "title": "Enforce server-side authorization and tenant isolation",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "automated",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Authorization matrix",
+        "Negative and cross-tenant test results",
+        "Server enforcement review"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-800-53",
+        "owasp-asvs",
+        "owasp-masvs",
+        "csa-ccm",
+        "pci-dss",
+        "hipaa",
+        "hitrust",
+        "glba",
+        "ferpa",
+        "fbi-cjis",
+        "nist-800-171",
+        "cmmc",
+        "fedramp"
+      ]
+    },
+    {
+      "id": "SES-001",
+      "title": "Protect sessions, tokens, and critical actions",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "automated",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Session and token tests",
+        "Revocation and replay tests",
+        "Critical-action step-up tests"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "owasp-asvs",
+        "owasp-masvs",
+        "pci-dss",
+        "hipaa",
+        "glba"
+      ]
+    },
+    {
+      "id": "SEC-001",
+      "title": "Eliminate embedded and exposed secrets",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "automated",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Pinned secret-scan result",
+        "Credential inventory and rotation evidence for any finding",
+        "Binary and bundle secret scan where applicable"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "nist-ssdf",
+        "owasp-asvs",
+        "owasp-masvs",
+        "csa-ccm",
+        "pci-dss",
+        "hipaa",
+        "glba",
+        "fbi-cjis",
+        "nist-800-171",
+        "cmmc",
+        "fedramp",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "CRY-001",
+      "title": "Use approved cryptography and managed key lifecycles",
+      "gate": "both",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Cryptographic design and inventory",
+        "Key-management configuration",
+        "Rotation and recovery test",
+        "Exact validation evidence when FIPS is required"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-800-53",
+        "owasp-asvs",
+        "owasp-masvs",
+        "csa-ccm",
+        "fips-140-3",
+        "pci-dss",
+        "hipaa",
+        "hitrust",
+        "glba",
+        "fbi-cjis",
+        "nist-800-171",
+        "cmmc",
+        "fedramp"
+      ]
+    },
+    {
+      "id": "NET-001",
+      "title": "Secure network communication and trust validation",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "TLS and trust configuration assessment",
+        "Negative certificate tests",
+        "Header, CORS, and CSRF tests where applicable"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-800-53",
+        "owasp-asvs",
+        "owasp-masvs",
+        "csa-ccm",
+        "pci-dss",
+        "hipaa",
+        "fbi-cjis",
+        "nist-800-171",
+        "cmmc",
+        "fedramp"
+      ]
+    },
+    {
+      "id": "APP-001",
+      "title": "Validate untrusted input and encode output",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "automated",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Unit and integration negative tests",
+        "SAST result",
+        "Fuzz or malformed-input tests for exposed parsers"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-ssdf",
+        "owasp-asvs",
+        "owasp-masvs",
+        "pci-dss",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "APP-002",
+      "title": "Defend business logic and resource use",
+      "gate": "release",
+      "severity": "high",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Abuse-case tests",
+        "Rate-limit and quota tests",
+        "Fraud and replay assessment where applicable"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "owasp-asvs",
+        "owasp-masvs",
+        "pci-dss",
+        "dora",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "APP-003",
+      "title": "Fail safely without debug or sensitive errors",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Release configuration inspection",
+        "Error-handling tests",
+        "Debug and bypass scan"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-ssdf",
+        "owasp-asvs",
+        "owasp-masvs",
+        "csa-ccm",
+        "pci-dss",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "SDLC-001",
+      "title": "Require protected changes, review, and security impact declarations",
+      "gate": "both",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Protected branch and required-review configuration",
+        "PR review metadata",
+        "Security impact record",
+        "Test-to-change traceability"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "nist-ssdf",
+        "csa-ccm",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "TST-001",
+      "title": "Run automated code, dependency, secret, and infrastructure checks",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "automated",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Tool and ruleset lock",
+        "Machine-readable scan reports",
+        "Finding disposition and remediation evidence"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "nist-ssdf",
+        "owasp-asvs",
+        "owasp-masvs",
+        "csa-ccm",
+        "pci-dss",
+        "hitrust",
+        "nist-800-171",
+        "cmmc",
+        "fedramp",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "TST-002",
+      "title": "Run dynamic, API, authorization, and fuzz testing",
+      "gate": "release",
+      "severity": "high",
+      "blocking": true,
+      "verification": "automated",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Authorized target and test scope",
+        "DAST/API/fuzz reports",
+        "Authorization and tenant-isolation results"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-ssdf",
+        "owasp-asvs",
+        "owasp-masvs",
+        "pci-dss",
+        "hitrust",
+        "fedramp",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "TST-003",
+      "title": "Obtain independent security testing for high assurance",
+      "gate": "assurance",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "external",
+      "applicability": "not_applicable",
+      "evidence_required": [
+        "Independent test scope and report locator",
+        "Assessor identity",
+        "Remediation and retest evidence"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-800-53",
+        "owasp-asvs",
+        "owasp-masvs",
+        "pci-dss",
+        "hitrust",
+        "fbi-cjis",
+        "cmmc",
+        "fedramp",
+        "dora",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "SUP-001",
+      "title": "Pin dependencies and produce complete SBOM and provenance",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "automated",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Dependency locks",
+        "Complete SBOM",
+        "SLSA-compatible provenance",
+        "Component vulnerability and origin assessment"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "nist-ssdf",
+        "owasp-asvs",
+        "owasp-masvs",
+        "csa-ccm",
+        "pci-dss",
+        "nist-800-171",
+        "cmmc",
+        "fedramp",
+        "nis2",
+        "dora",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "SUP-002",
+      "title": "Build, sign, and deploy only through controlled identities",
+      "gate": "both",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "CI identity and workflow configuration",
+        "Artifact signature and digest",
+        "Build provenance",
+        "Deployment attestation"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-800-53",
+        "nist-ssdf",
+        "csa-ccm",
+        "pci-dss",
+        "nist-800-171",
+        "cmmc",
+        "fedramp",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "CFG-001",
+      "title": "Harden infrastructure and detect drift",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Infrastructure-as-code source and scan",
+        "IAM and network review",
+        "Hardened baseline and drift report"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "csa-ccm",
+        "iso27017",
+        "pci-dss",
+        "hipaa",
+        "hitrust",
+        "glba",
+        "fbi-cjis",
+        "nist-800-171",
+        "cmmc",
+        "fedramp",
+        "nis2",
+        "dora"
+      ]
+    },
+    {
+      "id": "LOG-001",
+      "title": "Create authoritative, privacy-safe security logging",
+      "gate": "both",
+      "severity": "high",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Security event catalog",
+        "Sensitive-log tests",
+        "Audit-log integrity and access configuration",
+        "Retention configuration"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "owasp-asvs",
+        "owasp-masvs",
+        "csa-ccm",
+        "pci-dss",
+        "hipaa",
+        "hitrust",
+        "glba",
+        "fbi-cjis",
+        "nist-800-171",
+        "cmmc",
+        "fedramp",
+        "nis2",
+        "dora"
+      ]
+    },
+    {
+      "id": "MON-001",
+      "title": "Monitor, alert, and respond to security signals",
+      "gate": "both",
+      "severity": "high",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Monitoring coverage map",
+        "Alert configuration and owners",
+        "Alert test or exercise results"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "csa-ccm",
+        "pci-dss",
+        "hipaa",
+        "hitrust",
+        "glba",
+        "fbi-cjis",
+        "nist-800-171",
+        "cmmc",
+        "fedramp",
+        "nis2",
+        "dora"
+      ]
+    },
+    {
+      "id": "VUL-001",
+      "title": "Operate vulnerability intake, triage, remediation, and disclosure",
+      "gate": "both",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Vulnerability register",
+        "SLA and exploitability decisions",
+        "Remediation commits and retest results",
+        "Disclosure channel"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "nist-ssdf",
+        "csa-ccm",
+        "pci-dss",
+        "hitrust",
+        "nist-800-171",
+        "cmmc",
+        "fedramp",
+        "nis2",
+        "dora",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "IR-001",
+      "title": "Maintain and exercise incident response",
+      "gate": "assurance",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "manual",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Approved incident plan",
+        "Exercise results",
+        "Contact and notification matrix",
+        "Corrective actions"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "csa-ccm",
+        "pci-dss",
+        "hipaa",
+        "hitrust",
+        "glba",
+        "fbi-cjis",
+        "nist-800-171",
+        "cmmc",
+        "fedramp",
+        "nis2",
+        "dora",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "RES-001",
+      "title": "Engineer availability, backups, restoration, and continuity",
+      "gate": "both",
+      "severity": "high",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "RTO/RPO decision",
+        "Backup and restore results",
+        "Dependency failure tests",
+        "Continuity exercise where required"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "csa-ccm",
+        "pci-dss",
+        "hipaa",
+        "hitrust",
+        "glba",
+        "fbi-cjis",
+        "fedramp",
+        "nis2",
+        "dora"
+      ]
+    },
+    {
+      "id": "TPR-001",
+      "title": "Assess vendors, SDKs, subprocessors, and shared responsibility",
+      "gate": "assurance",
+      "severity": "high",
+      "blocking": true,
+      "verification": "manual",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Vendor register and risk tier",
+        "Security/privacy contract terms",
+        "Current third-party evidence",
+        "Shared-responsibility and exit plan"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "csa-ccm",
+        "iso27017",
+        "iso27018",
+        "gdpr",
+        "ccpa-cpra",
+        "hipaa",
+        "hitrust",
+        "glba",
+        "ferpa",
+        "coppa",
+        "fbi-cjis",
+        "nist-800-171",
+        "cmmc",
+        "fedramp",
+        "nis2",
+        "dora",
+        "eu-ai-act"
+      ]
+    },
+    {
+      "id": "HR-001",
+      "title": "Operate personnel security and role-based training",
+      "gate": "assurance",
+      "severity": "high",
+      "blocking": true,
+      "verification": "manual",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Training completion",
+        "Confidentiality and acceptable-use acknowledgement",
+        "Onboarding/offboarding records"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-800-53",
+        "cis-controls",
+        "csa-ccm",
+        "pci-dss",
+        "hipaa",
+        "hitrust",
+        "glba",
+        "fbi-cjis",
+        "nist-800-171",
+        "cmmc",
+        "fedramp",
+        "nis2",
+        "dora"
+      ]
+    },
+    {
+      "id": "PHY-001",
+      "title": "Document physical and environmental control inheritance",
+      "gate": "assurance",
+      "severity": "medium",
+      "blocking": true,
+      "verification": "external",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Physical scope record",
+        "Provider or facility evidence",
+        "Inheritance review"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-800-53",
+        "csa-ccm",
+        "pci-dss",
+        "hipaa",
+        "hitrust",
+        "glba",
+        "fbi-cjis",
+        "nist-800-171",
+        "cmmc",
+        "fedramp"
+      ]
+    },
+    {
+      "id": "IOS-001",
+      "title": "Pin and satisfy current Apple submission requirements",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "manual",
+      "applicability": "not_applicable",
+      "evidence_required": [
+        "Dated Apple requirements snapshot or locator",
+        "Xcode and SDK version report",
+        "Archive build metadata"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-ssdf",
+        "owasp-masvs",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "IOS-002",
+      "title": "Verify final archive identity, signing, entitlements, and release configuration",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "not_applicable",
+      "evidence_required": [
+        "Code-signature and provisioning report",
+        "Entitlement allowlist comparison",
+        "Release binary/configuration inspection"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-ssdf",
+        "owasp-masvs",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "IOS-003",
+      "title": "Verify iOS dependency and SDK supply chain",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "automated",
+      "applicability": "not_applicable",
+      "evidence_required": [
+        "Package.resolved/Podfile.lock or equivalent",
+        "iOS dependency SBOM",
+        "SDK signature, origin, vulnerability, and privacy review"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-ssdf",
+        "owasp-masvs",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "IOS-004",
+      "title": "Make privacy manifests, labels, consent, ATT, and behavior consistent",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "not_applicable",
+      "evidence_required": [
+        "Aggregated privacy report",
+        "Manifest and required-reason review",
+        "ATT/consent network tests",
+        "Privacy label and policy comparison"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "iso27701",
+        "owasp-masvs",
+        "gdpr",
+        "ccpa-cpra",
+        "coppa",
+        "eu-ai-act"
+      ]
+    },
+    {
+      "id": "IOS-005",
+      "title": "Protect iOS secrets and local data",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "not_applicable",
+      "evidence_required": [
+        "Keychain and file-protection review",
+        "Backup/restore test",
+        "Logout, deletion, and reinstall cleanup tests",
+        "Local storage inspection"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "owasp-masvs",
+        "pci-dss",
+        "hipaa",
+        "glba",
+        "ferpa",
+        "coppa",
+        "fbi-cjis"
+      ]
+    },
+    {
+      "id": "IOS-006",
+      "title": "Secure iOS network, deep links, WebViews, and entry points",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "not_applicable",
+      "evidence_required": [
+        "ATS and certificate tests",
+        "Deep-link and malformed-input tests",
+        "WebView bridge/origin review",
+        "Push payload review"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "owasp-masvs",
+        "pci-dss",
+        "hipaa",
+        "fbi-cjis",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "IOS-007",
+      "title": "Secure iOS authentication, biometrics, and account lifecycle",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "not_applicable",
+      "evidence_required": [
+        "OIDC/OAuth protocol tests",
+        "Biometric state-change tests",
+        "Token revocation and lost-device tests",
+        "Account deletion test"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "owasp-masvs",
+        "gdpr",
+        "ccpa-cpra",
+        "coppa"
+      ]
+    },
+    {
+      "id": "IOS-008",
+      "title": "Protect sensitive iOS UI, logging, diagnostics, and accessibility paths",
+      "gate": "release",
+      "severity": "high",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "not_applicable",
+      "evidence_required": [
+        "Sensitive UI and capture tests",
+        "Logging/diagnostic scan",
+        "Notification/pasteboard review",
+        "Assistive-technology security-flow tests"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "owasp-masvs",
+        "hipaa",
+        "glba",
+        "ferpa",
+        "coppa"
+      ]
+    },
+    {
+      "id": "IOS-009",
+      "title": "Inspect and dynamically test the final iOS release on real devices",
+      "gate": "release",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "not_applicable",
+      "evidence_required": [
+        "IPA inspection report",
+        "Pinned MASVS/MASTG test matrix",
+        "Real-device test results",
+        "Minimum/current OS results"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-ssdf",
+        "owasp-masvs",
+        "pci-dss",
+        "hipaa",
+        "fbi-cjis",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "IOS-010",
+      "title": "Apply threat-driven app integrity and fraud controls",
+      "gate": "release",
+      "severity": "high",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "not_applicable",
+      "evidence_required": [
+        "Integrity/fraud threat decision",
+        "Server attestation validation tests",
+        "Replay, unsupported-device, rotation, and failure tests"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "owasp-masvs",
+        "pci-dss",
+        "fbi-cjis",
+        "eu-cra"
+      ]
+    },
+    {
+      "id": "AI-001",
+      "title": "Inventory and govern AI systems, models, data, and vendors",
+      "gate": "both",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "not_applicable",
+      "evidence_required": [
+        "AI system and model inventory",
+        "Data/vendor terms review",
+        "Role and risk classification",
+        "User disclosure and consent evidence"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-csf",
+        "nist-ai-rmf",
+        "gdpr",
+        "ccpa-cpra",
+        "eu-ai-act"
+      ]
+    },
+    {
+      "id": "AI-002",
+      "title": "Test and monitor AI security, safety, and decision risks",
+      "gate": "both",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "not_applicable",
+      "evidence_required": [
+        "AI threat model and evaluations",
+        "Abuse and red-team results",
+        "Human-oversight and appeal tests",
+        "Production quality/risk monitoring"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-ai-rmf",
+        "gdpr",
+        "ccpa-cpra",
+        "eu-ai-act",
+        "nis2",
+        "dora"
+      ]
+    },
+    {
+      "id": "PAY-001",
+      "title": "Minimize and isolate payment-card scope",
+      "gate": "both",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "applicable",
+      "evidence_required": [
+        "Card-data flow and scope decision",
+        "Provider validation evidence",
+        "Payment tampering and authorization tests",
+        "Applicable SAQ/ROC/AOC path"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "pci-dss"
+      ]
+    },
+    {
+      "id": "HLTH-001",
+      "title": "Confirm regulated-health scope and protect ePHI",
+      "gate": "both",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "not_applicable",
+      "evidence_required": [
+        "Legal scope and role decision",
+        "ePHI data-flow and access matrix",
+        "BAA/vendor evidence",
+        "Audit and breach-response tests"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "hipaa",
+        "hitrust"
+      ]
+    },
+    {
+      "id": "FIN-001",
+      "title": "Confirm regulated-finance scope and customer-information safeguards",
+      "gate": "both",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "pending",
+      "evidence_required": [
+        "Legal/entity scope decision",
+        "Customer-information flow",
+        "Service-provider oversight",
+        "Incident and resilience test evidence"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "glba",
+        "dora"
+      ]
+    },
+    {
+      "id": "CHLD-001",
+      "title": "Protect children and verify parental controls where required",
+      "gate": "both",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "not_applicable",
+      "evidence_required": [
+        "COPPA scope decision",
+        "Age and parental-consent tests",
+        "Collection/advertising separation",
+        "Deletion and disclosure evidence"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "coppa",
+        "gdpr",
+        "ccpa-cpra"
+      ]
+    },
+    {
+      "id": "EDU-001",
+      "title": "Protect covered education records and institutional control",
+      "gate": "both",
+      "severity": "high",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "not_applicable",
+      "evidence_required": [
+        "Education-record scope decision",
+        "Institutional contract/control evidence",
+        "Access and lifecycle tests"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "ferpa"
+      ]
+    },
+    {
+      "id": "GOVT-001",
+      "title": "Define federal, defense, and CUI authorization boundaries",
+      "gate": "both",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "mixed",
+      "applicability": "not_applicable",
+      "evidence_required": [
+        "Contract and clause matrix",
+        "System/security authorization boundary",
+        "Data-flow and inheritance record",
+        "Required assessment/authorization evidence"
+      ],
+      "framework_profiles": [
+        "soc2",
+        "iso27001",
+        "nist-800-53",
+        "fips-140-3",
+        "fbi-cjis",
+        "nist-800-171",
+        "cmmc",
+        "fedramp"
+      ]
+    },
+    {
+      "id": "EU-001",
+      "title": "Confirm EU cybersecurity and market-access obligations",
+      "gate": "assurance",
+      "severity": "blocker",
+      "blocking": true,
+      "verification": "manual",
+      "applicability": "pending",
+      "evidence_required": [
+        "Role and territorial-scope decision",
+        "Member-state and reporting matrix",
+        "Conformity/market-access plan",
+        "Legal review"
+      ],
+      "framework_profiles": [
+        "gdpr",
+        "nis2",
+        "dora",
+        "eu-cra",
+        "eu-ai-act"
+      ]
+    }
+  ]
+}

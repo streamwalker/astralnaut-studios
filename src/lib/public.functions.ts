@@ -1,3 +1,6 @@
+import { publicPreviewPage } from "./public-preview";
+import { releaseMap, tierCanRead, type PageInput } from "./page-access";
+import type { DropRow } from "./drop-schedule";
 import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { z } from "zod";
@@ -71,7 +74,11 @@ export const getIssueBundle = createServerFn({ method: "GET" })
     // checks server-side. Returning raw paths here would let any visitor
     // bypass the paywall via the hydrated loader state + public CDN.
     const safePages = (pages ?? []).map((p) =>
-      p.is_free ? p : { ...p, image_path: "" },
+      publicPreviewPage(p),
     );
-    return { issue, pages: safePages, drops: drops ?? [] };
+    const availability = releaseMap((pages ?? []) as PageInput[], (drops ?? []) as DropRow[]);
+    return { issue, pages: safePages, drops: drops ?? [], availability: {
+      freePages: safePages.filter((p) => p.is_free && p.image_path).map((p) => p.page_number),
+      readerPages: availability.filter((p) => p.kind !== "free" && tierCanRead(p, "reader")).map((p) => p.pageNumber),
+    } };
   });

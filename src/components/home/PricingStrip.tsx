@@ -11,21 +11,22 @@ export function HomePricingStrip({ interval = "monthly" }: Props) {
     <section className="mx-auto max-w-7xl px-6 py-12" aria-labelledby="home-pricing-heading">
       <div className="flex items-baseline justify-between">
         <h2 id="home-pricing-heading" className="text-3xl font-black md:text-4xl">
-          Simple pricing.
+          Keep reading for $4.99/month.
         </h2>
         <Link
           to="/pricing"
           className="text-xs font-bold uppercase tracking-[2px] text-[var(--ink2)] hover:text-[var(--neon)]"
         >
-          Compare all plans →
+          Reader membership →
         </Link>
       </div>
 
-      <div className="mt-6 grid gap-5 md:grid-cols-3">
-        {pricingTiers.map((t) => (
+      <div className="mt-6 grid gap-5 md:grid-cols-1">
+        {pricingTiers.filter((t) => t.key === "reader").map((t) => (
           <TierCard key={t.key} tier={t} interval={interval} />
         ))}
       </div>
+      <p className="mt-4 text-sm text-[var(--ink2)]">Billed monthly. Cancel anytime. <Link to="/pricing" hash="supporters" className="underline">Explore optional creator support plans</Link>.</p>
     </section>
   );
 }
@@ -45,7 +46,7 @@ function TierCard({ tier, interval }: { tier: PricingTier; interval: "monthly" |
           className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[2px]"
           style={{ background: "var(--neon)", color: "#02000c" }}
         >
-          Most popular
+          For readers
         </div>
       )}
       <h3 className="eyebrow" style={{ color: tier.accent }}>{tier.name}</h3>
@@ -74,8 +75,8 @@ function TierCard({ tier, interval }: { tier: PricingTier; interval: "monthly" |
       )}
       <div className="mt-6">
         <Link
-          to="/login"
-          search={{ next: "/pricing", plan: tier.key, interval } as never}
+          to="/pricing"
+          search={{ plan: tier.key, interval, autocheckout: 1 } as never}
           className="btn-cta w-full justify-center"
           onClick={() => track("home_pricing_strip_click", { tier: tier.key, interval })}
         >

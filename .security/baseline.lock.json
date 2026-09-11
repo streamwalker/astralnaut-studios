@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "locked_at": "2026-09-11T01:47:24Z",
+  "catalog_id": "platform-assurance-profiles-2026-08-06",
+  "catalog_verified_on": "2026-08-06",
+  "catalog_sha256": "96195aec716c150618186b908f8bb8bed558d75129eda3c29efb8c0d9b38fc5f",
+  "baseline_id": "unified-platform-controls-2026-08-06",
+  "baseline_sha256": "85c0f66bf7fb826937ba5744181f0ede1a08ff0aeae71da954a8216ab05c21b9",
+  "gate_sha256": "bf5cfb84ce1951d91d0063350880db20065b08cc7b66d3707e98919f25193c1b"
+}

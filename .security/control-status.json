@@ -1,0 +1,415 @@
+{
+  "schema_version": 1,
+  "project_name": "Astralnaut Studios",
+  "updated_at": "2026-09-11T01:47:24Z",
+  "controls": {
+    "GOV-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "GOV-002": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "GOV-003": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "RSK-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "AST-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "PRIV-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "PRIV-002": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "IAM-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "IAM-002": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "AUTHZ-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "SES-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "SEC-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "CRY-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "NET-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "APP-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "APP-002": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "APP-003": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "SDLC-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "TST-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "TST-002": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "TST-003": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "SUP-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "SUP-002": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "CFG-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "LOG-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "MON-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "VUL-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "IR-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "RES-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "TPR-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "HR-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "PHY-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "IOS-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "IOS-002": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "IOS-003": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "IOS-004": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "IOS-005": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "IOS-006": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "IOS-007": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "IOS-008": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "IOS-009": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "IOS-010": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "AI-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "AI-002": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "PAY-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "HLTH-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "FIN-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "CHLD-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "EDU-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "GOVT-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    },
+    "EU-001": {
+      "status": "not_assessed",
+      "owner": null,
+      "reviewer": null,
+      "rationale": null,
+      "notes": null,
+      "evidence": []
+    }
+  }
+}
