@@ -30,6 +30,12 @@ async function logEvent(payload: {
   try {
     const session_id = getSessionId();
     const { data: userData } = await supabase.auth.getUser();
+    const campaign: Record<string, string> = {};
+    const query = new URLSearchParams(window.location.search);
+    for (const key of ["utm_source", "utm_medium", "utm_campaign", "utm_content"]) {
+      const value = query.get(key)?.slice(0, 120);
+      if (value) campaign[key] = value;
+    }
     const row = {
       session_id,
       user_id: userData.user?.id ?? null,
@@ -39,7 +45,7 @@ async function logEvent(payload: {
       duration_ms: payload.duration_ms ?? null,
       referrer: typeof document !== "undefined" ? document.referrer.slice(0, 500) || null : null,
       user_agent: typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 500) : null,
-      metadata: payload.metadata ?? {},
+      metadata: { ...campaign, device: window.matchMedia("(max-width: 767px)").matches ? "mobile" : "desktop", ...payload.metadata },
     };
     await supabase.from("analytics_events").insert(row as never);
   } catch {
