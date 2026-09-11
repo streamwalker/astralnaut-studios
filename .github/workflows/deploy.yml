@@ -40,8 +40,14 @@ jobs:
       # Blocking. The 33 pre-existing TanStack Router `search` prop errors were
       # cleared during the Lovable migration, so `tsc --noEmit` is at zero and
       # any new type error should stop the deploy rather than warn.
+      - name: Preview and checkout access checks
+        run: node scripts/check-conversion-access.mjs
+
       - name: Typecheck
         run: npm run typecheck
+
+      - name: Security release gate
+        run: python3 .security/tooling/compliance_gate.py gate --root . --mode release
 
       - name: Verify deploy bundle
         run: npm run deploy:dry
