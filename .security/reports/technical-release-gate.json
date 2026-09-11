@@ -1,0 +1,364 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-11T01:52:09Z",
+  "project_name": "Astralnaut Studios",
+  "repository": "streamwalker/astralnaut-studios",
+  "commit": null,
+  "release_id": null,
+  "artifact_sha256": null,
+  "mode": "release",
+  "technical_release_gate": "not_assessed",
+  "external_status": "none",
+  "applicable_controls": 27,
+  "passed_controls": 0,
+  "blockers": [
+    {
+      "category": "assessment",
+      "subject": "profile",
+      "message": "facts.jurisdictions is unknown"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile",
+      "message": "facts.customer_types is unknown"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile",
+      "message": "facts.customer_requirements is unknown"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile",
+      "message": "facts_confirmed must be true after review"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile",
+      "message": "owners.scope is required"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile",
+      "message": "owners.security is required"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile",
+      "message": "owners.release is required"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile",
+      "message": "release_id is required for gating"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile",
+      "message": "commit must be a full 40-64 character hexadecimal digest"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile",
+      "message": "artifact_sha256 must be a 64-character SHA-256 digest"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile:nist-800-53",
+      "message": "One or more applicability facts are unknown"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile:iso27701",
+      "message": "Trigger matched; assurance_target confirmation is required"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile:fips-140-3",
+      "message": "One or more applicability facts are unknown"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile:hitrust",
+      "message": "One or more applicability facts are unknown"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile:glba",
+      "message": "One or more applicability facts are unknown"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile:fbi-cjis",
+      "message": "One or more applicability facts are unknown"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile:nist-800-171",
+      "message": "One or more applicability facts are unknown"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile:cmmc",
+      "message": "One or more applicability facts are unknown"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile:gdpr",
+      "message": "One or more applicability facts are unknown"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile:ccpa-cpra",
+      "message": "One or more applicability facts are unknown"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile:nis2",
+      "message": "One or more applicability facts are unknown"
+    },
+    {
+      "category": "assessment",
+      "subject": "profile:dora",
+      "message": "One or more applicability facts are unknown"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:GOV-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:GOV-002",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:RSK-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:AST-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:PRIV-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:PRIV-002",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:IAM-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:IAM-002",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:AUTHZ-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:SES-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:SEC-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:CRY-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:NET-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:APP-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:APP-002",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:APP-003",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:SDLC-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:TST-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:TST-002",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:SUP-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:SUP-002",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:CFG-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:LOG-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:MON-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:VUL-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:RES-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:PAY-001",
+      "message": "Control is not assessed"
+    },
+    {
+      "category": "assessment",
+      "subject": "control:FIN-001",
+      "message": "Control applicability is unresolved"
+    }
+  ],
+  "warnings": [],
+  "selected_profiles": [
+    {
+      "id": "soc2",
+      "version": "2017 Trust Services Criteria with revised points of focus 2022",
+      "status": "targeted"
+    },
+    {
+      "id": "iso27001",
+      "version": "ISO/IEC 27001:2022 plus Amendment 1:2024",
+      "status": "targeted"
+    },
+    {
+      "id": "nist-csf",
+      "version": "CSF 2.0, 2024-02-26",
+      "status": "recommended"
+    },
+    {
+      "id": "nist-800-53",
+      "version": "Revision 5, Release 5.2.0, 2025-08-27",
+      "status": "pending_review"
+    },
+    {
+      "id": "cis-controls",
+      "version": "v8.1, 2024-06-24",
+      "status": "recommended"
+    },
+    {
+      "id": "nist-ssdf",
+      "version": "SP 800-218 SSDF v1.1, 2022-02-03",
+      "status": "required"
+    },
+    {
+      "id": "owasp-asvs",
+      "version": "ASVS 5.0.0, 2025-05-30",
+      "status": "required"
+    },
+    {
+      "id": "iso27701",
+      "version": "ISO/IEC 27701:2025, 2025-10-14",
+      "status": "pending_review"
+    },
+    {
+      "id": "fips-140-3",
+      "version": "FIPS 140-3, 2019-03-22; current CMVP guidance",
+      "status": "pending_review"
+    },
+    {
+      "id": "pci-dss",
+      "version": "PCI DSS v4.0.1, 2024-06",
+      "status": "required"
+    },
+    {
+      "id": "hitrust",
+      "version": "v11.8.0, available 2026-05-08",
+      "status": "pending_review"
+    },
+    {
+      "id": "glba",
+      "version": "16 CFR Part 314 current through the 2023 amendment",
+      "status": "pending_review"
+    },
+    {
+      "id": "fbi-cjis",
+      "version": "v6.0, 2024-12-27",
+      "status": "pending_review"
+    },
+    {
+      "id": "nist-800-171",
+      "version": "Revision 3, 2024-05",
+      "status": "pending_review"
+    },
+    {
+      "id": "cmmc",
+      "version": "32 CFR Part 170 effective 2024-12-16; DFARS implementation effective 2025-11-10",
+      "status": "pending_review"
+    },
+    {
+      "id": "gdpr",
+      "version": "Regulation (EU) 2016/679, current consolidated text",
+      "status": "pending_review"
+    },
+    {
+      "id": "ccpa-cpra",
+      "version": "Regulations effective 2026-01-01",
+      "status": "pending_review"
+    },
+    {
+      "id": "nis2",
+      "version": "Directive (EU) 2022/2555; national rules applicable from 2024-10-18",
+      "status": "pending_review"
+    },
+    {
+      "id": "dora",
+      "version": "Regulation (EU) 2022/2554, applicable 2025-01-17",
+      "status": "pending_review"
+    }
+  ]
+}
