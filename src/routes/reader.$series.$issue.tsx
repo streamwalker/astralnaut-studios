@@ -1,3 +1,4 @@
+import { useFunnelView } from "@/hooks/useFunnelView";
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SiteHeader } from "@/components/site-header";
@@ -10,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { pageUrl } from "@/lib/storage";
 import { LeadCaptureInterstitial } from "@/components/reader/LeadCaptureInterstitial";
 import { z } from "zod";
+import { track } from "@/lib/analytics";
 
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
@@ -97,37 +99,20 @@ function Reader() {
   const minPage = hasCover ? 0 : 1;
 
   const navigate = useNavigate();
-  const [accessOk, setAccessOk] = useState(false);
-  const [readerLocation, setReaderLocation] = useState<{ city: string; country: string } | null>(null);
+  // Public previews render immediately. Only the server can grant paid access.
+  const [authUserId, setAuthUserId] = useState<string | null>(null);
+  const accessOk = !!authUserId;
+  const readerLocation = null as { city: string; country: string } | null;
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      const next = `/reader/${issue.series.slug}/${issue.issue_number}?page=${page}`;
-      const { data: userRes } = await supabase.auth.getUser();
-      if (cancelled) return;
-      if (!userRes.user) {
-        window.location.assign(`/login?next=${encodeURIComponent(next)}`);
-        return;
-      }
-      if (!userRes.user.email_confirmed_at) {
-        window.location.assign(`/verify-email?next=${encodeURIComponent(next)}`);
-        return;
-      }
-      const { data: prof } = await supabase
-        .from("profiles")
-        .select("full_name, city, country")
-        .eq("id", userRes.user.id)
-        .maybeSingle();
-      if (cancelled) return;
-      if (!prof || !prof.full_name || !prof.city || !prof.country) {
-        window.location.assign(`/complete-profile?next=${encodeURIComponent(next)}`);
-        return;
-      }
-      setReaderLocation({ city: prof.city, country: prof.country });
-      setAccessOk(true);
-    })();
-    return () => { cancelled = true; };
-  }, [issue.series.slug, issue.issue_number, page]);
+    supabase.auth.getSession().then(({ data }) => {
+      if (!cancelled) setAuthUserId(data.session?.user.id ?? null);
+    }).catch(() => {});
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      setAuthUserId(session?.user.id ?? null);
+    });
+    return () => { cancelled = true; data.subscription.unsubscribe(); };
+  }, []);
 
   // Paid pages arrive from the loader with image_path blanked for everyone, so
   // the reader has to ask the server for them separately. The server hands them
@@ -136,6 +121,8 @@ function Reader() {
   const [paidPaths, setPaidPaths] = useState<ReadonlyMap<number, string>>(() => new Map());
   const [entitled, setEntitled] = useState(false);
   useEffect(() => {
+    setEntitled(false);
+    setPaidPaths(new Map());
     if (!accessOk) return;
     let cancelled = false;
     (async () => {
@@ -153,17 +140,18 @@ function Reader() {
     return () => {
       cancelled = true;
     };
-  }, [accessOk, issue.id]);
+  }, [accessOk, authUserId, issue.id]);
 
   const total = Math.ceil(Number(issue.total_pages));
   const freeMax = Math.floor(Number(issue.free_pages));
   const current = pages.find((p: typeof pages[number]) => p.page_number === page);
-  const isFree = page <= freeMax;
+  const isFree = onCover || !!current?.is_free;
   // "Unlocked" is free-by-position OR paid-and-entitled. The FREE/LOCKED badge
   // still reports the page's commercial status; this drives what renders.
   const currentPath = onCover ? coverPath : isFree ? current?.image_path : paidPaths.get(page);
   const unlocked = !!currentPath;
   const img = pageUrl(currentPath);
+
 
   // Two ways to read, because they suit different moments. "All pages" is a
   // continuous vertical strip that scrolls with the document — the way people
@@ -175,6 +163,10 @@ function Reader() {
   // annoyance.
   const READ_MODE_KEY = "reader:mode:v1";
   const [mode, setMode] = useState<ReadMode>("single");
+  useEffect(() => {
+    if (mode !== "single" || !isFree || onCover || !currentPath) return;
+    track(page === 1 ? "preview_started" : page === freeMax ? "preview_last_page_viewed" : "preview_page_viewed", { series: issue.series.slug, issue: issue.issue_number, page });
+  }, [mode, page, freeMax, isFree, onCover, currentPath, issue.series.slug, issue.issue_number]);
   useEffect(() => {
     try {
       const raw = localStorage.getItem(READ_MODE_KEY);
@@ -192,7 +184,7 @@ function Reader() {
   // reader's `paidPaths` stays empty and this collapses to the free run.
   const readablePages = pages
     .map((p: (typeof pages)[number]) =>
-      p.page_number <= freeMax ? p : { ...p, image_path: paidPaths.get(p.page_number) ?? "" },
+      p.is_free ? p : { ...p, image_path: paidPaths.get(p.page_number) ?? "" },
     )
     .filter((p: (typeof pages)[number]) => !!p.image_path);
   const readableSet = new Set(readablePages.map((p: (typeof pages)[number]) => p.page_number));
@@ -559,17 +551,6 @@ function Reader() {
     // matters in single-page mode, where it moves in lockstep with it.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedKey, mode, isFree]);
-
-  if (!accessOk) {
-    return (
-      <>
-        <SiteHeader />
-        <div className="container-wide py-16 text-center text-sm text-[var(--mute)]">
-          Verifying access…
-        </div>
-      </>
-    );
-  }
 
   return (
     <>
@@ -1030,6 +1011,7 @@ function AllPagesStrip({
             draggable={false}
             className="block h-auto w-full select-none"
           />
+          {p.page_number <= freeMax && <ReadingMarker series={seriesSlug} page={p.page_number} freeMax={freeMax} />}
           <figcaption className="pointer-events-none absolute right-2 top-2 rounded-sm bg-black/70 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[2px] text-[var(--mute)]">
             {p.page_number} / {total}
           </figcaption>
@@ -1068,58 +1050,31 @@ function PaywallWithCapture({
   seriesSlug: string;
 }) {
   const navigate = useNavigate();
-  // Show the soft email capture only on the FIRST locked page of the issue,
-  // and remember dismissal/submission per series in sessionStorage so it
-  // doesn't repeatedly nag readers paging through paywalled content.
-  const storageKey = `lead-capture-dismissed:${seriesSlug}`;
-  const [dismissed, setDismissed] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return window.sessionStorage.getItem(storageKey) === "1";
-  });
-  const isFirstLockedPage = page === freeMax + 1;
-
-  useEffect(() => {
-    if (isFirstLockedPage && !dismissed && typeof window !== "undefined") {
-      import("@/lib/analytics").then(({ track }) =>
-        track("lead_capture_shown", { source: "free_act_wall", series_slug: seriesSlug, last_page: freeMax }),
-      );
-    }
-  }, [isFirstLockedPage, dismissed, seriesSlug, freeMax]);
-
-  const dismiss = () => {
-    if (typeof window !== "undefined") window.sessionStorage.setItem(storageKey, "1");
-    setDismissed(true);
+  const params = Route.useParams();
+  const { availability } = Route.useLoaderData();
+  const next = `/reader/${seriesSlug}/${params.issue}?page=${page}`;
+  const subscribe = () => {
+    track("subscribe_clicked", { series: seriesSlug, page });
+    navigate({ to: "/pricing", search: { plan: "reader", interval: "monthly", autocheckout: 1, next } as never });
   };
-
-  if (isFirstLockedPage && !dismissed) {
-    return (
-      <LeadCaptureInterstitial
-        seriesSlug={seriesSlug}
-        lastPage={freeMax}
-        onDismiss={dismiss}
-        onPlans={() => {
-          dismiss();
-          navigate({ to: "/pricing" });
-        }}
-      />
-    );
+  const wallRef = useFunnelView("paywall_viewed", { series: seriesSlug, page });
+  if (!availability.readerPages.length) {
+    return <LeadCaptureInterstitial seriesSlug={seriesSlug} lastPage={freeMax} onDismiss={() => {}} onPlans={() => navigate({ to: "/" })} />;
   }
-  return <Paywall page={page} freeMax={freeMax} dropAt={dropAt} />;
-}
-
-function Paywall({ page, freeMax, dropAt }: { page: number; freeMax: number; dropAt?: string | null }) {
   return (
-    <div className="mx-auto max-w-xl p-10 text-center" style={{ background: "var(--gradient-panel)" }}>
-      <div className="eyebrow">Subscriber unlock</div>
-      <h2 className="text-fluid-h2 mt-3 font-black">Page {page} drops to subscribers.</h2>
-      <p className="text-fluid-body measure mx-auto mt-3 text-[var(--ink2)]">You're reading the free first act (pages 1–{freeMax}). The rest of this issue releases on the tier-staggered weekly cadence.</p>
-      {dropAt && <p className="mt-2 font-mono text-sm text-[var(--gold)]">Reader drop · {new Date(dropAt).toLocaleDateString()}</p>}
-      <div className="mt-6 grid grid-cols-3 gap-3 text-center">
-        <Stat label="Reader" price="$4.99" />
-        <Stat label="Initiate" price="$9.99" />
-        <Stat label="Patron" price="$24.99" />
+    <div ref={wallRef} className="mx-auto max-w-xl py-8">
+      <div className="card-rwc p-8 text-center">
+        <div className="eyebrow">Keep reading</div>
+        <h2 className="mt-3 text-3xl font-black">The story continues.</h2>
+        <p className="mt-4 text-[var(--ink2)]">{availability.readerPages.length} subscriber pages of this issue are available now. Reader membership includes all released subscriber pages across every series. New complete issues are planned monthly across the studio; each issue lists its availability.</p>
+        {dropAt && new Date(dropAt).getTime() > Date.now() && <p className="mt-3 text-[var(--gold)]">This page releases {new Date(dropAt).toLocaleDateString()}.</p>}
+        <button onClick={subscribe} className="btn-cta mt-6">Continue the story — $4.99/month</button>
+        <p className="mt-3 text-xs text-[var(--mute)]">Billed monthly. Renews until canceled. Cancel from your account.</p>
       </div>
-      <Link to="/pricing" className="btn-cta mt-8 inline-flex">▶ Choose a tier</Link>
+      <details className="mt-6">
+        <summary className="cursor-pointer text-center text-sm text-[var(--ink2)]">Not ready? Get free release alerts</summary>
+        <LeadCaptureInterstitial seriesSlug={seriesSlug} lastPage={freeMax} onDismiss={() => {}} onPlans={subscribe} />
+      </details>
     </div>
   );
 }
@@ -1151,4 +1106,9 @@ function CaughtUpWall({ page, dropAt }: { page: number; dropAt?: string | null }
 
 function Stat({ label, price }: { label: string; price: string }) {
   return (<div className="card-rwc p-3"><div className="font-mono text-lg font-black text-[var(--neon)]">{price}</div><div className="text-[10px] font-bold uppercase tracking-[2px] text-[var(--mute)]">{label}</div></div>);
+}
+
+function ReadingMarker({ series, page, freeMax }: { series: string; page: number; freeMax: number }) {
+  const ref = useFunnelView(page === 1 ? "preview_started" : page === freeMax ? "preview_last_page_viewed" : "preview_page_viewed", { series, page });
+  return <div ref={ref} aria-hidden="true" className="h-px" />;
 }
