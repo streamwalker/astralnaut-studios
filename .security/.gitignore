@@ -1,0 +1,4 @@
+evidence/*
+!evidence/manifest.json
+*.secret
+*.unredacted
