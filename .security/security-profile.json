@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "project_name": "Astralnaut Studios",
+  "repository": "streamwalker/astralnaut-studios",
+  "release_id": null,
+  "commit": null,
+  "artifact_sha256": null,
+  "risk_tier": "elevated",
+  "facts_confirmed": false,
+  "owners": {
+    "scope": null,
+    "security": null,
+    "release": null
+  },
+  "facts": {
+    "platforms": [
+      "api",
+      "web"
+    ],
+    "product_models": [
+      "subscription_content"
+    ],
+    "data_types": [
+      "personal"
+    ],
+    "activities": [
+      "payment_processing"
+    ],
+    "jurisdictions": null,
+    "customer_types": null,
+    "customer_requirements": null,
+    "assurance_targets": []
+  },
+  "framework_decisions": {},
+  "licensed_sources": {},
+  "external_status": "none"
+}
