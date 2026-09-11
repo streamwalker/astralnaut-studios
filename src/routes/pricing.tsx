@@ -1,3 +1,4 @@
+import { safeReaderReturn } from "@/lib/reader-return";
 import { useState, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -31,10 +32,10 @@ export const Route = createFileRoute("/pricing")({
       {
         name: "description",
         content:
-          "Three subscription tiers, monthly or annual. Reader $4.99, Initiate $9.99, Patron $24.99. Tier-staggered weekly drops, sweepstakes, canon voting. Free no-purchase sweepstakes entry available.",
+          "Three subscription tiers, monthly or annual. Reader $4.99, Initiate $9.99, Patron $24.99. Read all released subscriber pages. Free no-purchase sweepstakes entry available.",
       },
       { property: "og:title", content: "Real World Comics — Pricing" },
-      { property: "og:description", content: "Three tiers. Monthly or annual. Tier-staggered weekly drops, sweepstakes, canon voting." },
+      { property: "og:description", content: "Three tiers. Monthly or annual. Read all released subscriber pages." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${SITE_URL}/pricing` },
       { property: "og:image", content: OG_DEFAULT_IMAGE },
@@ -51,7 +52,9 @@ export const Route = createFileRoute("/pricing")({
     plan?: "reader" | "initiate" | "patron";
     interval?: "monthly" | "yearly";
     autocheckout?: 1;
+    next?: string;
   } => ({
+    next: safeReaderReturn(s.next),
     plan: z.enum(["reader", "initiate", "patron"]).optional().catch(undefined).parse(s.plan),
     interval: z.enum(["monthly", "yearly"]).optional().catch(undefined).parse(s.interval),
     autocheckout: s.autocheckout === "1" || s.autocheckout === 1 || s.autocheckout === true ? 1 : undefined,
@@ -116,6 +119,7 @@ function Pricing() {
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) setUser({ id: data.user.id, email: data.user.email ?? undefined });
+      setAuthReady(true);
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ? { id: session.user.id, email: session.user.email ?? undefined } : null);
@@ -130,6 +134,10 @@ function Pricing() {
    * return from login — so an existing subscriber cannot buy a second
    * subscription by either route.
    */
+  const [authReady, setAuthReady] = useState(false);
+  const [readerReturn] = useState(() => safeReaderReturn(search.next));
+  const [showSupporters, setShowSupporters] = useState(() => search.plan === "initiate" || search.plan === "patron");
+
   const beginCheckout = (tier: PricingTier, intv: "monthly" | "yearly") => {
     if (!user) return;
     if (sub.isLoading) return;
@@ -169,7 +177,7 @@ function Pricing() {
         priceId,
         customerEmail: user.email,
         userId: user.id,
-        returnUrl: `${window.location.origin}/account?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+        returnUrl: `${window.location.origin}/account?checkout=success&session_id={CHECKOUT_SESSION_ID}${readerReturn ? `&next=${encodeURIComponent(readerReturn)}` : ""}`,
         consentToken,
       });
     } catch (err) {
@@ -189,7 +197,7 @@ function Pricing() {
     if (!isLoggedIn) {
       navigate({
         to: "/login",
-        search: { next: "/pricing", plan: tier.key, interval } as never,
+        search: { next: readerReturn ?? "/pricing", plan: tier.key, interval } as never,
       });
       return;
     }
@@ -204,14 +212,18 @@ function Pricing() {
 
   // Auto-open the consent panel when arriving from login with a plan param.
   useEffect(() => {
-    if (!user || !search.autocheckout || !search.plan) return;
+    if (!authReady || !search.autocheckout || !search.plan || sub.isLoading) return;
+    if (!user) {
+      navigate({ to: "/login", search: { next: readerReturn ?? "/pricing", plan: search.plan, interval: search.interval ?? "monthly" } as never });
+      return;
+    }
     const tier = pricingTiers.find((t) => t.key === search.plan);
     if (!tier) return;
     const intv = search.interval ?? interval;
     beginCheckout(tier, intv);
     navigate({ to: "/pricing", search: {} as never, replace: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, search.autocheckout, search.plan]);
+  }, [authReady, user, sub.isLoading, search.autocheckout, search.plan]);
 
 
   return (
@@ -219,10 +231,10 @@ function Pricing() {
       <SiteHeader />
       <main className="mx-auto max-w-7xl px-6 py-20">
         <div className="text-center">
-          <div className="eyebrow">Three tiers · Cancel anytime</div>
+          <div className="eyebrow">Reader membership · Cancel anytime</div>
           <h1 className="mt-4 text-5xl font-black tracking-tight md:text-6xl">Subscribe to read every page.</h1>
           <p className="mx-auto mt-4 max-w-2xl text-[var(--ink2)]">
-            Free first-act pages always remain free. Pages 10+ of every issue release on a tier-staggered weekly cadence.
+            Read the opening free without an account. Reader membership unlocks all released subscriber pages. Our plan is one complete issue monthly across the studio; check each issue for confirmed availability.
           </p>
 
           <div className="mt-8 inline-flex items-center gap-2">
@@ -293,8 +305,11 @@ function Pricing() {
           </div>
         )}
 
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {pricingTiers.map((t) => {
+        <div id="supporters" className="mt-8">
+          <button className="btn-ghost" onClick={() => setShowSupporters(!showSupporters)} aria-expanded={showSupporters} aria-controls="plan-cards">{showSupporters ? "Show Reader membership only" : "Explore optional creator support plans"}</button>
+        </div>
+        <div id="plan-cards" className={`mt-8 grid gap-6 ${showSupporters ? "md:grid-cols-3" : "mx-auto max-w-2xl"}`}>
+          {pricingTiers.filter((t) => t.key === "reader" || showSupporters || t.key === sub.tier).map((t) => {
             const price = priceForInterval(t, interval);
             const suffix = interval === "monthly" ? "/mo" : "/yr";
             const monthlyEquiv = interval === "yearly" ? t.priceYearly / 12 : null;
@@ -327,7 +342,7 @@ function Pricing() {
                     className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[2px]"
                     style={{ background: "var(--neon)", color: "#02000c" }}
                   >
-                    Most popular
+                    For readers
                   </div>
                 )}
                 <h2 className="eyebrow" style={{ color: t.accent }}>{t.name}</h2>
@@ -354,7 +369,7 @@ function Pricing() {
                 )}
                 {t.popular && siteConfig.SHOW_ANNUAL_NUDGE && (
                   <p className="mt-2 text-[11px] font-bold uppercase tracking-[2px]" style={{ color: "var(--gold)" }}>
-                    Most readers save with annual
+                    Annual billing saves two months
                   </p>
                 )}
                 <ul className="mt-6 space-y-2 text-sm text-[var(--ink2)]">
@@ -394,7 +409,7 @@ function Pricing() {
         </div>
 
         <p className="mt-12 text-center text-xs text-[var(--mute)]">
-          Tier-staggered drops: Patron Tuesday · Initiate Wednesday · Reader Thursday. Cancel anytime from your account.
+          Monthly billing renews until canceled. Cancel anytime from your account. Supporter early access applies where a release is scheduled.
         </p>
         <p className="mt-3 text-center text-xs text-[var(--mute)]">
           Milestone Sweepstakes windows open every 10,000-subscriber milestone and run for 14 days.
