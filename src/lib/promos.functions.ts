@@ -181,7 +181,7 @@ export const adminListIssueDrops = createServerFn({ method: "GET" })
     const [{ data: issues, error: issErr }, { data: drops, error: dropErr }] = await Promise.all([
       supabaseAdmin
         .from("issues")
-        .select("id, slug, title, issue_number, series:series(slug, name)")
+        .select("id, slug, title, issue_number, total_pages, free_pages, series:series(slug, name)")
         .order("slug"),
       supabaseAdmin.from("issue_drops").select("*").order("week"),
     ]);
