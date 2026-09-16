@@ -1,5 +1,5 @@
 {
-  "name": "Real World Comics — Astralnaut Studios",
+  "name": "Real World Comics \u2014 Astralnaut Studios",
   "short_name": "Astralnaut",
   "start_url": "/",
   "scope": "/",
@@ -8,15 +8,16 @@
   "theme_color": "#0a0a0a",
   "icons": [
     {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
+      "src": "/share/v1/astralnaut-icon-192-v1.png",
+      "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/apple-touch-icon.png",
-      "sizes": "180x180",
-      "type": "image/png"
+      "src": "/share/v1/astralnaut-icon-512-v1.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

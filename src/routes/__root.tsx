@@ -122,11 +122,10 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="Astralnaut" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        {/* Served from public/ at stable paths so the webmanifest can reference
-            the same files. Favicons must not be content-hashed. */}
-        <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48" href="https://astralnautstudios.com/share/v1/astralnaut-favicon-v1.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="https://astralnautstudios.com/share/v1/astralnaut-icon-32-v1.png" />
+        <link rel="icon" type="image/svg+xml" sizes="any" href="https://astralnautstudios.com/share/v1/astralnaut-mark-v1.svg" />
+        <link rel="apple-touch-icon" sizes="180x180" href="https://astralnautstudios.com/share/v1/astralnaut-icon-180-v1.png" />
         <link rel="manifest" href="/manifest.webmanifest" />
       </head>
       <body>

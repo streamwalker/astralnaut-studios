@@ -11,7 +11,7 @@ import { AuthorBioAB } from "@/components/author-bio-ab";
 import { AuthorFaq, FAQ_FALLBACK } from "@/components/author-faq";
 import { listActiveAuthorFaq } from "@/lib/author-faq.functions";
 
-const OG_IMAGE = pageUrl("comic-pages/children-of-aquarius/issue-1/main-cover.png")!;
+import { COA_SHARE, coaShareMeta } from "@/lib/coa-share";
 
 
 
@@ -28,21 +28,9 @@ export const Route = createFileRoute("/children-of-aquarius")({
   head: ({ loaderData }) => ({
     meta: [
       { title: "Children of Aquarius — Issue 1 · Real World Comics" },
-      { name: "description", content: "A priest gifts three young humans the powers of Christ to find and protect the Christ child of the Aquarian Age. First 9 pages free." },
-      { property: "og:title", content: "Children of Aquarius — Issue 1" },
-      { property: "og:description", content: "Esoteric thriller. The Age Begins · The Child Awakens." },
-      { property: "og:type", content: "article" },
-      { property: "og:url", content: "https://astralnautstudios.com/children-of-aquarius" },
-      { property: "og:site_name", content: "Real World Comics — Astralnaut Studios" },
-      { property: "article:author", content: "Phil Russell" },
-      { property: "article:publisher", content: "Streamwalkers Corporation" },
-      { property: "og:image", content: OG_IMAGE },
-      { property: "og:image:alt", content: "Children of Aquarius Issue 1 cover — Real World Comics" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: OG_IMAGE },
-      { name: "twitter:image:alt", content: "Children of Aquarius Issue 1 cover — Real World Comics" },
+      ...coaShareMeta,
     ],
-    links: [{ rel: "canonical", href: "https://astralnautstudios.com/children-of-aquarius" }],
+    links: [{ rel: "canonical", href: COA_SHARE.url }],
     scripts: [
       {
         type: "application/ld+json",
@@ -61,7 +49,7 @@ export const Route = createFileRoute("/children-of-aquarius")({
           inLanguage: "en",
           isAccessibleForFree: true,
           creativeWorkStatus: "Published",
-          image: OG_IMAGE,
+          image: COA_SHARE.image,
           url: "https://astralnautstudios.com/children-of-aquarius",
         }),
       },
@@ -206,6 +194,20 @@ function COAPage() {
               Across centuries, <strong className="text-white">Father Alistaire Blaire</strong> has been waiting for him —
               and so have the operatives sent to bury the prophecy before it begins.
             </p>
+
+            <aside className="mt-6 rounded-xl border border-violet-400/25 bg-violet-400/5 p-5" aria-labelledby="coa-author-background">
+              <h2 id="coa-author-background" className="text-lg font-bold text-white">Fiction. Informed by experience.</h2>
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ink2)]">
+                Author Phil Russell is a former U.S. Air Force intelligence operator who held
+                Top Secret/SCI clearance for over three decades.
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ink2)]">
+                Concerning any direct or indirect knowledge of alleged U.S. Air Force UAP
+                crash-retrieval and recovery efforts, he can neither officially confirm nor deny.
+                These claims remain unconfirmed. <em>Children of Aquarius</em> is fiction,
+                not evidence of any program or a government-endorsed disclosure.
+              </p>
+            </aside>
 
             <div className="mt-7 grid grid-cols-4 gap-4">
               <Stat value={String(freeCount)} label="Pages free for all" />
