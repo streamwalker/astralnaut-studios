@@ -43,6 +43,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Verify share video ranges
+        run: npm run test:share-video
+
       - name: Verify deploy bundle
         run: npm run deploy:dry
 

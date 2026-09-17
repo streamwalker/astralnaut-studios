@@ -55,6 +55,7 @@ import { Route as ArchiveWalletRouteImport } from './routes/archive.wallet'
 import { Route as DsarVerifyRouteImport } from './routes/dsar.verify'
 import { Route as HelpSlugRouteImport } from './routes/help.$slug'
 import { Route as LearnModuleIdRouteImport } from './routes/learn.$moduleId'
+import { Route as MediaBattlefieldAtlantisPreviewV2Dotmp4RouteImport } from './routes/media/battlefield-atlantis-preview-v2[.]mp4'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
 import { Route as RaffleFreeEntryRouteImport } from './routes/raffle.free-entry'
 import { Route as RaffleRulesRouteImport } from './routes/raffle.rules'
@@ -319,6 +320,12 @@ const LearnModuleIdRoute = LearnModuleIdRouteImport.update({
   path: '/$moduleId',
   getParentRoute: () => LearnRoute,
 } as any)
+const MediaBattlefieldAtlantisPreviewV2Dotmp4Route =
+  MediaBattlefieldAtlantisPreviewV2Dotmp4RouteImport.update({
+    id: '/media/battlefield-atlantis-preview-v2.mp4',
+    path: '/media/battlefield-atlantis-preview-v2.mp4',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ProductHandleRoute = ProductHandleRouteImport.update({
   id: '/product/$handle',
   path: '/product/$handle',
@@ -549,6 +556,7 @@ export interface FileRoutesByFullPath {
   '/dsar/verify': typeof DsarVerifyRoute
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
+  '/media/battlefield-atlantis-preview-v2.mp4': typeof MediaBattlefieldAtlantisPreviewV2Dotmp4Route
   '/product/$handle': typeof ProductHandleRoute
   '/raffle/free-entry': typeof RaffleFreeEntryRoute
   '/raffle/rules': typeof RaffleRulesRoute
@@ -629,6 +637,7 @@ export interface FileRoutesByTo {
   '/dsar/verify': typeof DsarVerifyRoute
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
+  '/media/battlefield-atlantis-preview-v2.mp4': typeof MediaBattlefieldAtlantisPreviewV2Dotmp4Route
   '/product/$handle': typeof ProductHandleRoute
   '/raffle/free-entry': typeof RaffleFreeEntryRoute
   '/raffle/rules': typeof RaffleRulesRoute
@@ -711,6 +720,7 @@ export interface FileRoutesById {
   '/dsar/verify': typeof DsarVerifyRoute
   '/help/$slug': typeof HelpSlugRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
+  '/media/battlefield-atlantis-preview-v2.mp4': typeof MediaBattlefieldAtlantisPreviewV2Dotmp4Route
   '/product/$handle': typeof ProductHandleRoute
   '/raffle/free-entry': typeof RaffleFreeEntryRoute
   '/raffle/rules': typeof RaffleRulesRoute
@@ -793,6 +803,7 @@ export interface FileRouteTypes {
     | '/dsar/verify'
     | '/help/$slug'
     | '/learn/$moduleId'
+    | '/media/battlefield-atlantis-preview-v2.mp4'
     | '/product/$handle'
     | '/raffle/free-entry'
     | '/raffle/rules'
@@ -873,6 +884,7 @@ export interface FileRouteTypes {
     | '/dsar/verify'
     | '/help/$slug'
     | '/learn/$moduleId'
+    | '/media/battlefield-atlantis-preview-v2.mp4'
     | '/product/$handle'
     | '/raffle/free-entry'
     | '/raffle/rules'
@@ -954,6 +966,7 @@ export interface FileRouteTypes {
     | '/dsar/verify'
     | '/help/$slug'
     | '/learn/$moduleId'
+    | '/media/battlefield-atlantis-preview-v2.mp4'
     | '/product/$handle'
     | '/raffle/free-entry'
     | '/raffle/rules'
@@ -1021,6 +1034,7 @@ export interface RootRouteChildren {
   TrustRoute: typeof TrustRoute
   UnsolicitedSubmissionsRoute: typeof UnsolicitedSubmissionsRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
+  MediaBattlefieldAtlantisPreviewV2Dotmp4Route: typeof MediaBattlefieldAtlantisPreviewV2Dotmp4Route
   ProductHandleRoute: typeof ProductHandleRoute
   RaffleFreeEntryRoute: typeof RaffleFreeEntryRoute
   RaffleRulesRoute: typeof RaffleRulesRoute
@@ -1360,6 +1374,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/learn/$moduleId'
       preLoaderRoute: typeof LearnModuleIdRouteImport
       parentRoute: typeof LearnRoute
+    }
+    '/media/battlefield-atlantis-preview-v2.mp4': {
+      id: '/media/battlefield-atlantis-preview-v2.mp4'
+      path: '/media/battlefield-atlantis-preview-v2.mp4'
+      fullPath: '/media/battlefield-atlantis-preview-v2.mp4'
+      preLoaderRoute: typeof MediaBattlefieldAtlantisPreviewV2Dotmp4RouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/product/$handle': {
       id: '/product/$handle'
@@ -1765,6 +1786,8 @@ const rootRouteChildren: RootRouteChildren = {
   TrustRoute: TrustRoute,
   UnsolicitedSubmissionsRoute: UnsolicitedSubmissionsRoute,
   VerifyEmailRoute: VerifyEmailRoute,
+  MediaBattlefieldAtlantisPreviewV2Dotmp4Route:
+    MediaBattlefieldAtlantisPreviewV2Dotmp4Route,
   ProductHandleRoute: ProductHandleRoute,
   RaffleFreeEntryRoute: RaffleFreeEntryRoute,
   RaffleRulesRoute: RaffleRulesRoute,
