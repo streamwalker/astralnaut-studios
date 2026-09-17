@@ -10,7 +10,7 @@ import baLogo from "@/assets/battlefield-atlantis-logo.png";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Lock } from "lucide-react";
 
-const OG_IMAGE = pageUrl("comic-pages/battlefield-atlantis/issue-1/variant-cover-m.png")!;
+import { BA_SHARE, baShareMeta } from "@/lib/ba-share";
 
 export const Route = createFileRoute("/battlefield-atlantis")({
   loader: async () => {
@@ -23,21 +23,9 @@ export const Route = createFileRoute("/battlefield-atlantis")({
   head: () => ({
     meta: [
       { title: "Battlefield Atlantis — Issue 1 · Real World Comics" },
-      { name: "description", content: "Twenty-five thousand years before the present, Saantris Station is destroyed. The Tri-Planetary Coalition splits. Read the first 9.5 pages free." },
-      { property: "og:title", content: "Battlefield Atlantis — Issue 1" },
-      { property: "og:description", content: "Hard sci-fi space opera. First 9.5 pages free." },
-      { property: "og:type", content: "article" },
-      { property: "og:url", content: "https://astralnautstudios.com/battlefield-atlantis" },
-      { property: "og:site_name", content: "Real World Comics — Astralnaut Studios" },
-      { property: "article:author", content: "Phil Russell" },
-      { property: "article:publisher", content: "Streamwalkers Corporation" },
-      { property: "og:image", content: OG_IMAGE },
-      { property: "og:image:alt", content: "Battlefield Atlantis Issue 1 cover — Real World Comics" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: OG_IMAGE },
-      { name: "twitter:image:alt", content: "Battlefield Atlantis Issue 1 cover — Real World Comics" },
+      ...baShareMeta,
     ],
-    links: [{ rel: "canonical", href: "https://astralnautstudios.com/battlefield-atlantis" }],
+    links: [{ rel: "canonical", href: BA_SHARE.url }],
     scripts: [{
       type: "application/ld+json",
       children: JSON.stringify({
@@ -55,7 +43,7 @@ export const Route = createFileRoute("/battlefield-atlantis")({
         inLanguage: "en",
         isAccessibleForFree: true,
         creativeWorkStatus: "Published",
-        image: OG_IMAGE,
+        image: BA_SHARE.image,
         url: "https://astralnautstudios.com/battlefield-atlantis",
       }),
     }],
@@ -199,6 +187,20 @@ function BAPage() {
               <strong className="text-white">Poseidon, King of Alympia</strong>, demands annihilation.
               And between them stands <strong className="text-white">Zeus</strong> — and the Alympian Guard he never asked to lead.
             </p>
+
+            <aside className="mt-6 rounded-xl border border-cyan-400/25 bg-cyan-400/5 p-5" aria-labelledby="ba-author-background">
+              <h2 id="ba-author-background" className="text-lg font-bold text-white">Fiction. Informed by experience.</h2>
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ink2)]">
+                Author Phil Russell is a former U.S. Air Force intelligence operator who held
+                Top Secret/SCI clearance for over three decades.
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ink2)]">
+                Concerning any direct or indirect knowledge of alleged U.S. Air Force UAP
+                crash-retrieval and recovery efforts, he can neither officially confirm nor deny.
+                These claims remain unconfirmed. <em>Battlefield Atlantis</em> is fiction,
+                not evidence of any program or a government-endorsed disclosure.
+              </p>
+            </aside>
 
             <div className="mt-7 grid grid-cols-4 gap-4">
               <Stat value={String(freeCount)} label="Pages free for all" />
