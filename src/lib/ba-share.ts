@@ -9,7 +9,7 @@ export const BA_SHARE = {
   image: `${SITE_URL}/share/v1/battlefield-atlantis-share-v1.jpg`,
   imageAlt:
     "Battlefield Atlantis's red metallic logo above three fictional heroes from its existing cover, with the lines: Only One Will Rule. From former U.S. Air Force intelligence operator Phil Russell. Fiction. Informed by experience.",
-  video: `${SITE_URL}/share/v2/battlefield-atlantis-preview-v2.mp4`,
+  video: `${SITE_URL}/media/battlefield-atlantis-preview-v2.mp4`,
 };
 
 export const baShareMeta = [

@@ -13,6 +13,7 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
+    "test:share-video": "node --experimental-strip-types scripts/test-share-video.mjs",
     "deploy": "wrangler deploy --config .output/server/wrangler.json",
     "deploy:dry": "wrangler deploy --config .output/server/wrangler.json --dry-run",
     "lint": "eslint .",
@@ -62,6 +63,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260917.1",
     "@eslint/js": "^9.32.0",
     "@types/node": "^22.16.5",
     "@types/react": "^19.2.0",
