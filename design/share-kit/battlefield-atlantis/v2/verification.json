@@ -1,0 +1,20 @@
+{
+  "file": "battlefield-atlantis-preview-v2.mp4",
+  "bytes": 1632177,
+  "sha256": "ee9fd6f15243692a986eab7340e5001174462be62c59974a039fbbf9b01c61ef",
+  "dimensions": [
+    1200,
+    630
+  ],
+  "seconds": 12,
+  "fps": 24,
+  "frames": 288,
+  "format": "H.264/yuv420p, silent",
+  "full_decode": "passed",
+  "faststart": true,
+  "first_last_mean_rgb_difference": 0.0,
+  "production_build": "passed",
+  "typecheck": "passed",
+  "deployment_dry_run": "passed",
+  "recipient_app_playback": "not tested"
+}

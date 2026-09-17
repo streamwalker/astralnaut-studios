@@ -1,0 +1,28 @@
+{
+  "original_filename": "copy_A517B3BD-B565-4B55-BA36-8B434CEBA75D.mov",
+  "sha256": "856a5d69bf5f9c5c52cb14300d5fffbdd811141f007a1a93e76d3e7ba388be02",
+  "source": "User-attached video",
+  "shots": [
+    {
+      "name": "fleet",
+      "source_start_seconds": 4.15,
+      "duration_seconds": 1.75
+    },
+    {
+      "name": "flyby",
+      "source_start_seconds": 8.4,
+      "duration_seconds": 1.75
+    },
+    {
+      "name": "ocean",
+      "source_start_seconds": 11.15,
+      "duration_seconds": 3
+    },
+    {
+      "name": "energy",
+      "source_start_seconds": 16.7,
+      "duration_seconds": 1.5
+    }
+  ],
+  "source_processing": "Silent, metadata stripped, 1200x536, 24fps selected intervals; no synthetic motion or reversed footage."
+}
