@@ -36,9 +36,13 @@ const SCRIPT_ID = "meta-pixel-sdk";
  * Local traffic must not pollute the ad account's optimization data.
  */
 export const META_PIXEL_ID: string = String(import.meta.env.VITE_META_PIXEL_ID ?? "").trim();
+const META_PIXEL_IDS = [...new Set([
+  META_PIXEL_ID,
+  ...String(import.meta.env.VITE_META_ADDITIONAL_PIXEL_IDS ?? "").split(","),
+].map((id) => id.trim()).filter((id) => /^\d+$/.test(id)))];
 
 export function isMetaPixelConfigured(): boolean {
-  return META_PIXEL_ID.length > 0;
+  return META_PIXEL_IDS.length > 0;
 }
 
 /** Standard events Meta recognizes for optimization and attribution. */
@@ -129,7 +133,7 @@ export function loadMetaPixel(): void {
 
   const fbq = installStub();
   injectScript();
-  fbq("init", META_PIXEL_ID);
+  for (const pixelId of META_PIXEL_IDS) fbq("init", pixelId);
   fbq("track", "PageView");
 }
 
