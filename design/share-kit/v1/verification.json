@@ -1,0 +1,104 @@
+{
+  "date": "2026-09-16",
+  "environment": "Local Vite preview; not deployed",
+  "crawler": "Twitterbot/1.0; no cookies",
+  "metadata_fields_checked": [
+    "og:title",
+    "og:description",
+    "og:type",
+    "og:url",
+    "og:site_name",
+    "og:image",
+    "og:image:secure_url",
+    "og:image:type",
+    "og:image:width",
+    "og:image:height",
+    "og:image:alt",
+    "og:video",
+    "og:video:secure_url",
+    "og:video:type",
+    "og:video:width",
+    "og:video:height",
+    "twitter:card",
+    "twitter:title",
+    "twitter:description",
+    "twitter:image",
+    "twitter:image:alt"
+  ],
+  "page_status": 200,
+  "author_copy_in_initial_html": true,
+  "single_canonical": true,
+  "range": "bytes 0-1/481698",
+  "assets": [
+    {
+      "file": "astralnaut-favicon-v1.ico",
+      "status": 200,
+      "type": "image/x-icon",
+      "bytes": 3308,
+      "sha256": "0221054abefa7a0d8010626c0d1fedceeb06f300b14718581a8af4dea33f6161"
+    },
+    {
+      "file": "astralnaut-icon-16-v1.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 563,
+      "sha256": "67ab77278210c7162a779d7d7470bed08fd7668df1624a08e0cbaf049f6feadc"
+    },
+    {
+      "file": "astralnaut-icon-180-v1.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 7745,
+      "sha256": "e896ce9d76c524dc654f060227198ca5d0877e15ecc29ad72a4de7b4d3f4c94b"
+    },
+    {
+      "file": "astralnaut-icon-192-v1.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 5418,
+      "sha256": "314278bd8cfdf53ca4dd3ee1670d2128888a716dad2dc97bb6a79a2c2bc76a43"
+    },
+    {
+      "file": "astralnaut-icon-32-v1.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1085,
+      "sha256": "567e1d6c00256702444a5e3c1099357489948b7f66ed4bea58ffcbe5ae540878"
+    },
+    {
+      "file": "astralnaut-icon-48-v1.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1609,
+      "sha256": "c03e09fe8dfe1aa226d053f90fa42d333f32d38012769f1737a6cb969d6e3fcd"
+    },
+    {
+      "file": "astralnaut-icon-512-v1.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4404,
+      "sha256": "13be922d2ce97b9c6525e4591a4a6b00e787abfabfa494bf3058b4aeff7b7ca8"
+    },
+    {
+      "file": "astralnaut-mark-v1.svg",
+      "status": 200,
+      "type": "image/svg+xml",
+      "bytes": 286,
+      "sha256": "e1175a5a6e288c7bc0f081ae75ded880f990b2c7912db1da0e66505bf02de3b9"
+    },
+    {
+      "file": "children-of-aquarius-preview-v1.mp4",
+      "status": 200,
+      "type": "video/mp4",
+      "bytes": 481698,
+      "sha256": "e2217695646e202d4d50949164365840df0b81430a138ca1b8f23b11389991d8"
+    },
+    {
+      "file": "children-of-aquarius-share-v1.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "bytes": 205362,
+      "sha256": "8b23be1beeb67b29d4245bc88a5b4aeee7d7c6cc740c0dd7c4d69769e19671c4"
+    }
+  ]
+}
