@@ -1,12 +1,13 @@
-import { useState } from "react";
 import { ConfirmButton } from "@/components/admin/confirm-button";
-import { Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminSession } from "@/hooks/useAdminSession";
 import { TierBadge } from "@/components/TierGate";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { CartDrawer } from "@/components/cart-drawer";
 import { PromoBar } from "@/components/promo-bar";
+import { UserRound, ChevronDown } from "lucide-react";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import astralnautLogo from "@/assets/astralnaut-studios-logo.png";
 import rwcLogo from "@/assets/real-world-comics-logo-transparent.png";
 
@@ -21,25 +22,10 @@ const nav: NavItem[] = [
   { to: "/industry", label: "For Industry", accent: true },
 ];
 
-function SignInStatus({ user }: { user: { last_sign_in_at?: string | null; email?: string | null } | null }) {
-  if (!user) return null;
-  const last = user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "just now";
-  return (
-    <div className="hidden items-center gap-2 sm:flex" title={`Signed in as ${user.email ?? "reader"}`}>
-      <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: "var(--neon)", boxShadow: "0 0 8px var(--neon)" }} />
-      <span className="text-xs text-[var(--ink2)]">
-        Signed in <span className="text-[var(--mute)]">· {last}</span>
-      </span>
-    </div>
-  );
-}
-
 export function SiteHeader() {
   const { data } = useAdminSession();
   const isAdmin = !!data?.isAdmin;
   const nav_ = useNavigate();
-  const router = useRouter();
-  const isHome = router.state.location.pathname === "/";
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -74,13 +60,8 @@ export function SiteHeader() {
               style={{ filter: "drop-shadow(0 0 10px rgba(34,211,255,0.3))" }}
             />
           </Link>
-          {!isHome && (
-            <Link to="/" className="hidden shrink-0 whitespace-nowrap text-sm text-[var(--ink2)] hover:text-[var(--neon)] sm:block">
-              ← Home
-            </Link>
-          )}
         </div>
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav aria-label="Main navigation" className="hidden items-center gap-1 lg:flex">
           {nav.map((n, i) => {
             const linkProps = n.params
               ? { to: n.to as "/reader/$series/$issue", params: n.params as { series: string; issue: string } }
@@ -90,7 +71,7 @@ export function SiteHeader() {
                 key={`${n.label}-${i}`}
                 {...(linkProps as { to: string })}
                 data-tour={n.tour}
-                className={`rounded-md px-3 py-2 text-sm font-medium hover:bg-white/5 hover:text-[var(--neon)] ${n.accent ? "text-[var(--gold)]" : "text-[var(--ink2)]"}`}
+                className={`whitespace-nowrap rounded-md px-2 py-2 text-sm font-medium hover:bg-white/5 hover:text-[var(--neon)] ${n.accent ? "text-[var(--gold)]" : "text-[var(--ink2)]"}`}
                 activeProps={{ className: "!text-[var(--neon)]" }}
                 activeOptions={n.exact ? { exact: true } : undefined}
               >
@@ -99,75 +80,42 @@ export function SiteHeader() {
             );
           })}
         </nav>
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2">
           <LanguageSwitcher />
           <CartDrawer />
           <TierBadge />
-          {isAdmin ? (
-            <>
-              <Link
-                to="/admin"
-                className="flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[2px]"
-                style={{
-                  color: "var(--gold)",
-                  border: "1px solid var(--gold)",
-                  background: "rgba(201, 168, 76, 0.08)",
-                  boxShadow: "0 0 14px rgba(201, 168, 76, 0.25)",
-                }}
-                title="You are signed in as an admin"
-              >
-                <span
-                  className="inline-block h-1.5 w-1.5 animate-pulse rounded-full"
-                  style={{ background: "var(--gold)", boxShadow: "0 0 8px var(--gold)" }}
+          {data?.user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button type="button" aria-label={isAdmin ? "Open admin account menu" : "Open account menu"}
+                  className="flex min-h-11 items-center gap-2 rounded-lg border border-[var(--border-line)] px-3 text-sm font-semibold hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-[var(--neon)]">
+                  <UserRound className="h-4 w-4" aria-hidden />
+                  <span className="hidden xl:inline">{isAdmin ? "Admin" : "Account"}</span>
+                  <ChevronDown className="h-3 w-3" aria-hidden />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-60">
+                <DropdownMenuLabel>{isAdmin ? "Admin account" : "Your account"}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild><Link to="/account" data-tour="nav-account" className="min-h-11">Account & subscription</Link></DropdownMenuItem>
+                {isAdmin && <DropdownMenuItem asChild><Link to="/admin" className="min-h-11">Admin dashboard</Link></DropdownMenuItem>}
+                <DropdownMenuItem asChild><Link to="/perks" className="min-h-11">Your perks</Link></DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <ConfirmButton
+                  trigger={<DropdownMenuItem className="min-h-11" onSelect={(event) => event.preventDefault()}>Sign out</DropdownMenuItem>}
+                  title="Sign out?"
+                  description="You'll leave your session and return to the library."
+                  confirmLabel="Sign out"
+                  onConfirm={signOut}
                 />
-                Admin Mode
-              </Link>
-              <SignInStatus user={data.user} />
-              <ConfirmButton
-                trigger={
-                  <button className="whitespace-nowrap text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">
-                    Sign out
-                  </button>
-                }
-                title="Sign out?"
-                description="You'll leave your session and return to the library."
-                confirmLabel="Sign out"
-                onConfirm={signOut}
-              />
-            </>
-          ) : data?.user ? (
-            <>
-              <Link to="/account" data-tour="nav-account" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Account</Link>
-              <SignInStatus user={data.user} />
-              <ConfirmButton
-                trigger={
-                  <button className="whitespace-nowrap text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">
-                    Sign out
-                  </button>
-                }
-                title="Sign out?"
-                description="You'll leave your session and return to the library."
-                confirmLabel="Sign out"
-                onConfirm={signOut}
-              />
-            </>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
-            <Link to="/login" data-tour="nav-account" className="text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Sign in</Link>
+            <Link to="/login" data-tour="nav-account" className="inline-flex min-h-11 items-center whitespace-nowrap px-2 text-sm font-semibold text-[var(--ink2)] hover:text-[var(--neon)]">Sign in</Link>
           )}
-          {isHome ? (
-            <a
-              href="#slate"
-              onClick={(e) => {
-                e.preventDefault();
-                document.getElementById("slate")?.scrollIntoView({ behavior: "smooth", block: "start" });
-              }}
-              className="btn-cta hidden text-sm sm:inline-flex"
-            >
-              Start reading →
-            </a>
-          ) : (
-            <Link to="/" hash="slate" className="btn-cta hidden text-sm sm:inline-flex">Start reading →</Link>
-          )}
+          <Link to="/reader/$series/$issue" params={{ series: "battlefield-atlantis", issue: "1" }} className="btn-cta hidden whitespace-nowrap text-sm xl:inline-flex">
+            Start reading →
+          </Link>
         </div>
       </div>
     </header>

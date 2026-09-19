@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { BookOpen, ShoppingBag, Sparkles, Menu, BookMarked, User, X, DollarSign, HelpCircle, GraduationCap, Newspaper } from "lucide-react";
+import { BookOpen, ShoppingBag, Sparkles, Menu, BookMarked, User, DollarSign, HelpCircle, GraduationCap, Newspaper } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -9,7 +9,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetClose,
+  SheetDescription,
 } from "@/components/ui/sheet";
 
 /**
@@ -121,23 +121,16 @@ export function MobileBottomNav() {
               </SheetTrigger>
               <SheetContent
                 side="right"
-                className="w-[85vw] max-w-sm border-l p-0"
+                className="w-[85vw] max-w-sm overflow-y-auto border-l p-0"
                 style={{ background: "var(--bg2)", borderColor: "var(--border-line)" }}
               >
                 <SheetHeader className="flex flex-row items-center justify-between border-b px-5 py-4" style={{ borderColor: "var(--border-line)" }}>
                   <SheetTitle className="text-sm font-black uppercase tracking-[3px] text-[var(--ink)]">
                     Navigation
                   </SheetTitle>
-                  <SheetClose asChild>
-                    <button
-                      type="button"
-                      aria-label="Close menu"
-                      className="grid h-9 w-9 place-items-center rounded-md text-[var(--ink2)] hover:bg-white/5 hover:text-[var(--ink)]"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </SheetClose>
+
                 </SheetHeader>
+                <SheetDescription className="sr-only">Browse comics, manage your account, and find help.</SheetDescription>
                 <ul className="flex flex-col py-2">
                   {drawerLinks.map((l) => {
                     const Icon = l.icon;
