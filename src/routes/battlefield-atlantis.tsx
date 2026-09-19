@@ -82,9 +82,6 @@ function BAPage() {
   const paidCount = Number(issue?.paid_pages ?? 11);
   const titlePageNum = 9.5;
 
-  // Up to 3 character thumbs for the cover sticker.
-  const heroThumbs = characters.slice(0, 3).map((c: typeof characters[number]) => pageUrl(c.portrait_path)).filter(Boolean) as string[];
-
   return (
     <>
       <SiteHeader />
@@ -94,12 +91,12 @@ function BAPage() {
         {/* ============ HERO ============ */}
         <section className="mt-6 grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-center">
           {/* Cover plate */}
-          <div className="relative aspect-[1054/1491] overflow-hidden rounded-2xl ring-1 ring-white/10" style={{ background: "var(--gradient-panel)", boxShadow: "var(--shadow-hero)" }}>
+          <div className="overflow-hidden rounded-2xl ring-1 ring-white/10" style={{ background: "var(--gradient-panel)", boxShadow: "var(--shadow-hero)" }}>
             {cover ? (
-              <img src={cover} alt="Battlefield Atlantis cover" className="h-full w-full object-cover" />
+              <img src={cover} alt="Battlefield Atlantis issue 1 cover" className="block h-auto w-full" />
 
             ) : (
-              <div className="flex h-full items-center justify-center p-10 text-center">
+              <div className="flex aspect-[1054/1491] items-center justify-center p-10 text-center">
                 <div>
                   <div className="eyebrow">Cover forthcoming</div>
                   <div className="mt-3 text-3xl font-black">Battlefield Atlantis</div>
@@ -108,64 +105,6 @@ function BAPage() {
               </div>
             )}
 
-            {/* Top-left: $4.99 / ISSUE #1 comic price box */}
-
-            <div className="absolute left-3 top-3 overflow-hidden rounded-sm border border-black/40 bg-[#f5e9c8] font-mono text-black shadow-md">
-              <div className="flex border-b border-black/30 text-[10px] font-black">
-                <div className="border-r border-black/30 px-2 py-0.5">$4.99</div>
-                <div className="px-2 py-0.5">1</div>
-              </div>
-              <div className="px-2 py-1 text-[11px] font-black tracking-wider">ISSUE #1</div>
-            </div>
-
-            {/* Top-right: 9.5 PAGES FREE pill */}
-            <div className="ba-pill-free absolute right-3 top-3 rounded-md bg-gradient-to-r from-emerald-300 to-cyan-300 px-3 py-1.5 text-[11px] font-black tracking-wider text-emerald-950 shadow-lg">
-              9.5 PAGES · FREE
-            </div>
-
-            {/* Left edge: "1ST EXPLOSIVE ISSUE" sticker + character mini-portraits */}
-            <div className="absolute left-3 top-24 flex flex-col items-center gap-1">
-              <div
-                className="ba-burst-yellow flex h-14 w-14 items-center justify-center text-center text-[8px] font-black leading-tight text-red-950"
-                style={{
-                  background: "radial-gradient(circle, #fde047 0%, #facc15 70%, #ca8a04 100%)",
-                  clipPath: "polygon(50% 0%, 61% 20%, 80% 12%, 75% 33%, 95% 38%, 80% 50%, 95% 62%, 75% 67%, 80% 88%, 61% 80%, 50% 100%, 39% 80%, 20% 88%, 25% 67%, 5% 62%, 20% 50%, 5% 38%, 25% 33%, 20% 12%, 39% 20%)",
-                }}
-              >
-                1ST<br />EXPLOSIVE<br />ISSUE!
-              </div>
-              {heroThumbs.map((src, i) => (
-                <div key={i} className="h-10 w-10 overflow-hidden rounded-sm border-2 border-black/70 shadow">
-                  <img src={src} alt="" className="h-full w-full object-cover" />
-                </div>
-              ))}
-            </div>
-
-            {/* Bottom-left: WAR OF THE WORLDS starburst */}
-            <div
-              className="ba-burst-red absolute -left-2 bottom-16 flex h-28 w-28 items-center justify-center text-center text-[11px] font-black leading-tight text-yellow-300 drop-shadow-[2px_2px_0_rgba(0,0,0,0.8)]"
-              style={{
-                background: "radial-gradient(circle, #dc2626 0%, #991b1b 80%)",
-                clipPath: "polygon(50% 0%, 58% 18%, 78% 8%, 72% 30%, 96% 28%, 80% 47%, 100% 60%, 78% 65%, 88% 88%, 65% 78%, 60% 100%, 45% 82%, 30% 100%, 25% 78%, 5% 88%, 15% 65%, 0% 55%, 18% 45%, 0% 28%, 22% 30%, 18% 8%, 38% 18%)",
-              }}
-            >
-              WAR<br />OF THE<br />WORLDS<br />BEGINS!
-            </div>
-
-            {/* Bottom CTA + caption strip */}
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-4 pb-3 pt-12">
-              {readerLink && (
-                <Link
-                  {...readerLink}
-                  className="ba-cta-glow block w-full rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 px-4 py-2.5 text-center text-sm font-black tracking-wider text-white shadow-xl transition hover:brightness-110"
-                >
-                  ▶ READ 9.5 PAGES FREE
-                </Link>
-              )}
-              <div className="mt-2 text-center font-mono text-[10px] font-bold uppercase tracking-[2px] text-white/80">
-                Full first act + title page · Free · Pages 10–20 subscribe
-              </div>
-            </div>
           </div>
 
           {/* Copy column */}
