@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
+import { Pause, Play } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { track } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
@@ -115,6 +116,7 @@ const VIDEO_STALL_MS = 70000;
 export function HeroRotator() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [userPaused, setUserPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [saveData, setSaveData] = useState(false);
   const [videoUnplayable, setVideoUnplayable] = useState(false);
@@ -201,12 +203,12 @@ export function HeroRotator() {
 
   // Autoplay.
   useEffect(() => {
-    if (paused || reducedMotion) return;
+    if (paused || userPaused || reducedMotion) return;
     // When the video owns the pacing this timeout is only a stall guard — a
     // healthy playthrough fires `ended` well before VIDEO_STALL_MS elapses.
     const t = window.setTimeout(advance, videoDrivesAdvance ? VIDEO_STALL_MS : AUTOPLAY_MS);
     return () => window.clearTimeout(t);
-  }, [active, paused, reducedMotion, videoDrivesAdvance, advance]);
+  }, [active, paused, userPaused, reducedMotion, videoDrivesAdvance, advance]);
 
   // Fire view event per slot.
   useEffect(() => {
@@ -262,14 +264,27 @@ export function HeroRotator() {
           isActive={i === active}
           shouldRender={i === active || i === nextIdx}
           allowVideo={!reducedMotion && !saveData}
-          paused={paused}
+          paused={paused || userPaused}
           onEnded={advance}
           onUnplayable={markVideoUnplayable}
         />
       ))}
 
+      {!reducedMotion && (
+        <button
+          type="button"
+          onClick={() => setUserPaused((value) => !value)}
+          aria-label={userPaused ? "Resume featured stories" : "Pause featured stories"}
+          aria-pressed={userPaused}
+          className="absolute right-4 top-4 z-30 flex min-h-11 items-center gap-2 rounded-full border border-white/25 bg-black/65 px-4 text-xs font-semibold text-white backdrop-blur hover:bg-black/85 focus-visible:outline-2 focus-visible:outline-white"
+        >
+          {userPaused ? <Play className="h-4 w-4" aria-hidden /> : <Pause className="h-4 w-4" aria-hidden />}
+          {userPaused ? "Resume" : "Pause"}
+        </button>
+      )}
+
       {/* Content rendered over the active background. */}
-      <div className="container-wide pointer-events-none relative z-20 flex min-h-[480px] items-center pb-16 pt-6 sm:min-h-[560px] sm:pb-20 sm:pt-10 md:min-h-[640px] md:pb-24 md:pt-16">
+      <div className="container-wide pointer-events-none relative z-20 flex min-h-[480px] items-center pb-16 pt-20 sm:min-h-[560px] sm:pb-20 sm:pt-10 md:min-h-[640px] md:pb-24 md:pt-16">
         <div className="pointer-events-auto max-w-2xl">
           <SlotContent slot={HERO_SLOTS[active]!} glow={glowMap.get(HERO_SLOTS[active]!.id)} />
         </div>
