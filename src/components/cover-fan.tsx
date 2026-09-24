@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { listCarouselSlides } from "@/lib/media-admin.functions";
 import { pageUrl } from "@/lib/storage";
+import { carouselThumbnail } from "@/lib/carousel-images";
 
 type Slot = {
   x: string;
@@ -112,14 +113,7 @@ export function CoverFan() {
                 border: "none",
               }}
             >
-              <img
-                src={c.src}
-                alt={c.alt}
-                className="block h-full w-full object-cover pointer-events-none"
-                loading="lazy"
-                decoding="async"
-                draggable={false}
-              />
+              <CoverThumbnail key={c.src} originalSrc={c.src} alt={c.alt} />
             </button>
           );
         })}
@@ -162,6 +156,34 @@ export function CoverFan() {
         </div>
       )}
     </>
+  );
+}
+
+function CoverThumbnail({ originalSrc, alt }: { originalSrc: string; alt: string }) {
+  const [failed, setFailed] = useState(false);
+  const thumbnail = carouselThumbnail(originalSrc, import.meta.env.VITE_SUPABASE_URL);
+
+  // Do not silently fetch the large original if resizing is unavailable.
+  // The enclosing card still opens the original through the existing lightbox.
+  if (failed || !thumbnail) {
+    return (
+      <span className="flex h-full w-full flex-col items-center justify-center gap-3 bg-slate-950 p-4 text-center text-white">
+        <span>{alt}</span>
+        <span className="text-xs text-slate-300">Open full-size cover</span>
+      </span>
+    );
+  }
+
+  return (
+    <img
+      {...thumbnail}
+      alt={alt}
+      className="block h-full w-full object-cover pointer-events-none"
+      loading="lazy"
+      decoding="async"
+      draggable={false}
+      onError={() => setFailed(true)}
+    />
   );
 }
 
