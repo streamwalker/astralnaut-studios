@@ -13,6 +13,7 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
+    "test:carousel-images": "node --experimental-strip-types scripts/test-carousel-images.mjs",
     "test:share-video": "node --experimental-strip-types scripts/test-share-video.mjs",
     "deploy": "wrangler deploy --config .output/server/wrangler.json",
     "deploy:dry": "wrangler deploy --config .output/server/wrangler.json --dry-run",

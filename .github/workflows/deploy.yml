@@ -43,6 +43,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Verify carousel thumbnail URLs
+        run: npm run test:carousel-images
+
       - name: Verify share video ranges
         run: npm run test:share-video
 
