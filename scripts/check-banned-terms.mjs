@@ -65,9 +65,9 @@ function isExcluded(relPath) {
   return EXCLUDED_DIRS.some((dir) => relPath === dir || relPath.startsWith(`${dir}/`));
 }
 
-/** A NUL byte in the first 8 KiB means binary — images, video, fonts. */
+/** Skip binary media; ASCII-encoded PDF streams may not contain any NUL bytes. */
 function isBinary(buffer) {
-  return buffer.subarray(0, 8192).includes(0);
+  return buffer.subarray(0, 5).toString("ascii") === "%PDF-" || buffer.subarray(0, 8192).includes(0);
 }
 
 function* walk(dir) {

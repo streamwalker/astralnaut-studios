@@ -159,6 +159,10 @@ function BAPage() {
               </Link>
             </div>
 
+            <Link to="/kickstarter/battlefield-atlantis" className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[var(--neon)] hover:text-white">
+              Explore the campaign artwork & suit progressions <span aria-hidden>↗</span>
+            </Link>
+
             <div className="mt-6 space-y-2 text-xs">
               <div className="text-[var(--ink2)]">
                 <span className="mr-2">📺</span>

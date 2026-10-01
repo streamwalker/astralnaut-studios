@@ -1,0 +1,59 @@
+.ba-intro {
+  --intro-ink: #eff4f5;
+  --intro-mute: #95a9b1;
+  --intro-accent: #b6efff;
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  box-sizing: border-box;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  color: var(--intro-ink);
+  background: radial-gradient(ellipse at 50% 65%, #11232e 0%, #05090d 74%);
+  font: 400 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  isolation: isolate;
+}
+.ba-intro *, .ba-intro *::before, .ba-intro *::after { box-sizing: border-box; }
+.ba-intro button { color: inherit; font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.ba-intro button:focus-visible { outline: 2px solid var(--intro-accent); outline-offset: 5px; }
+.ba-intro button:disabled { opacity: .3; cursor: default; }
+.ba-intro__header, .ba-intro__footer { position: absolute; z-index: 3; right: max(24px, env(safe-area-inset-right)); display: flex; align-items: center; }
+.ba-intro__header { top: max(20px, env(safe-area-inset-top)); }
+.ba-intro__skip { border: 1px solid #b6d9e324; border-radius: 30px; background: #061017b8; backdrop-filter: blur(10px); padding: 11px 16px; font-size: 12px !important; }
+.ba-intro__skip span { margin-left: 12px; color: var(--intro-accent); }
+.ba-intro__stage { position: absolute; inset: 0; touch-action: pan-y; }
+.ba-intro__scene { --motion-progress: 0; position: absolute; inset: 0; margin: 0; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 1000ms ease; }
+.ba-intro__scene.is-active { opacity: 1; z-index: 1; pointer-events: auto; }
+.ba-intro__image { display: block; width: 100%; height: 100%; object-fit: contain; object-position: center; user-select: none; transform: scale(calc(.975 + var(--motion-progress) * .025)); }
+.ba-intro__image[hidden] { display: none; }
+.ba-intro__footer { bottom: max(20px, env(safe-area-inset-bottom)); }
+.ba-intro__count { font-size: 11px; font-variant-numeric: tabular-nums; letter-spacing: .12em; color: var(--intro-mute); white-space: nowrap; }
+.ba-intro__navigation { display: flex; align-items: center; gap: 8px; padding: 5px 7px 5px 16px; border: 1px solid #b6d9e324; border-radius: 36px; background: #061017cc; backdrop-filter: blur(10px); }
+.ba-intro__steps { display: flex; align-items: center; gap: 8px; }
+.ba-intro__step { --progress: 0; position: relative; width: 30px; height: 44px; padding: 0; border: 0; background: transparent; }
+.ba-intro__step::before, .ba-intro__step::after { content: ''; position: absolute; left: 0; top: 21px; height: 2px; width: 100%; background: #3b4a53; }
+.ba-intro__step::after { transform: scaleX(var(--progress)); transform-origin: left; background: var(--intro-accent); }
+.ba-intro__step.is-active::before { background: #77929d; }
+.ba-intro__icon { border: 0; padding: 0; width: 44px; height: 44px; background: transparent; font-size: 22px !important; }
+.ba-intro__play { border: 1px solid #34464f; border-radius: 30px; padding: 10px 16px; min-width: 70px; min-height: 44px; background: #0c161e; font-size: 12px !important; }
+.ba-intro__play:hover, .ba-intro__play:focus-visible { background: #172d3a; }
+.ba-intro__image-error { text-align: center; padding: 24px; max-width: 360px; }
+.ba-intro__error-hint { color: var(--intro-mute); font-size: 13px; }
+.ba-intro__sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.ba-intro--reduced-motion .ba-intro__scene { transition: none; }
+.ba-intro--reduced-motion .ba-intro__image { transform: none; }
+@media (max-width: 680px) {
+  .ba-intro__header, .ba-intro__footer { right: max(14px, env(safe-area-inset-right)); }
+  .ba-intro__header { top: max(14px, env(safe-area-inset-top)); }
+  .ba-intro__footer { bottom: max(14px, env(safe-area-inset-bottom)); }
+  .ba-intro__navigation { gap: 3px; padding-left: 12px; }
+  .ba-intro__steps { gap: 5px; }
+  .ba-intro__step { width: 22px; }
+  .ba-intro__count { font-size: 10px; }
+  .ba-intro__play { padding: 10px 13px; min-width: 62px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ba-intro__scene { transition: none; }
+  .ba-intro__image { transform: none; }
+}

@@ -54,6 +54,7 @@ import { Route as ArchiveTimelineRouteImport } from './routes/archive.timeline'
 import { Route as ArchiveWalletRouteImport } from './routes/archive.wallet'
 import { Route as DsarVerifyRouteImport } from './routes/dsar.verify'
 import { Route as HelpSlugRouteImport } from './routes/help.$slug'
+import { Route as KickstarterBattlefieldAtlantisRouteImport } from './routes/kickstarter.battlefield-atlantis'
 import { Route as LearnModuleIdRouteImport } from './routes/learn.$moduleId'
 import { Route as MediaBattlefieldAtlantisPreviewV2Dotmp4RouteImport } from './routes/media/battlefield-atlantis-preview-v2[.]mp4'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
@@ -315,6 +316,12 @@ const HelpSlugRoute = HelpSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => HelpRoute,
 } as any)
+const KickstarterBattlefieldAtlantisRoute =
+  KickstarterBattlefieldAtlantisRouteImport.update({
+    id: '/kickstarter/battlefield-atlantis',
+    path: '/kickstarter/battlefield-atlantis',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LearnModuleIdRoute = LearnModuleIdRouteImport.update({
   id: '/$moduleId',
   path: '/$moduleId',
@@ -555,6 +562,7 @@ export interface FileRoutesByFullPath {
   '/archive/wallet': typeof ArchiveWalletRoute
   '/dsar/verify': typeof DsarVerifyRoute
   '/help/$slug': typeof HelpSlugRoute
+  '/kickstarter/battlefield-atlantis': typeof KickstarterBattlefieldAtlantisRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
   '/media/battlefield-atlantis-preview-v2.mp4': typeof MediaBattlefieldAtlantisPreviewV2Dotmp4Route
   '/product/$handle': typeof ProductHandleRoute
@@ -636,6 +644,7 @@ export interface FileRoutesByTo {
   '/archive/wallet': typeof ArchiveWalletRoute
   '/dsar/verify': typeof DsarVerifyRoute
   '/help/$slug': typeof HelpSlugRoute
+  '/kickstarter/battlefield-atlantis': typeof KickstarterBattlefieldAtlantisRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
   '/media/battlefield-atlantis-preview-v2.mp4': typeof MediaBattlefieldAtlantisPreviewV2Dotmp4Route
   '/product/$handle': typeof ProductHandleRoute
@@ -719,6 +728,7 @@ export interface FileRoutesById {
   '/archive/wallet': typeof ArchiveWalletRoute
   '/dsar/verify': typeof DsarVerifyRoute
   '/help/$slug': typeof HelpSlugRoute
+  '/kickstarter/battlefield-atlantis': typeof KickstarterBattlefieldAtlantisRoute
   '/learn/$moduleId': typeof LearnModuleIdRoute
   '/media/battlefield-atlantis-preview-v2.mp4': typeof MediaBattlefieldAtlantisPreviewV2Dotmp4Route
   '/product/$handle': typeof ProductHandleRoute
@@ -802,6 +812,7 @@ export interface FileRouteTypes {
     | '/archive/wallet'
     | '/dsar/verify'
     | '/help/$slug'
+    | '/kickstarter/battlefield-atlantis'
     | '/learn/$moduleId'
     | '/media/battlefield-atlantis-preview-v2.mp4'
     | '/product/$handle'
@@ -883,6 +894,7 @@ export interface FileRouteTypes {
     | '/archive/wallet'
     | '/dsar/verify'
     | '/help/$slug'
+    | '/kickstarter/battlefield-atlantis'
     | '/learn/$moduleId'
     | '/media/battlefield-atlantis-preview-v2.mp4'
     | '/product/$handle'
@@ -965,6 +977,7 @@ export interface FileRouteTypes {
     | '/archive/wallet'
     | '/dsar/verify'
     | '/help/$slug'
+    | '/kickstarter/battlefield-atlantis'
     | '/learn/$moduleId'
     | '/media/battlefield-atlantis-preview-v2.mp4'
     | '/product/$handle'
@@ -1034,6 +1047,7 @@ export interface RootRouteChildren {
   TrustRoute: typeof TrustRoute
   UnsolicitedSubmissionsRoute: typeof UnsolicitedSubmissionsRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
+  KickstarterBattlefieldAtlantisRoute: typeof KickstarterBattlefieldAtlantisRoute
   MediaBattlefieldAtlantisPreviewV2Dotmp4Route: typeof MediaBattlefieldAtlantisPreviewV2Dotmp4Route
   ProductHandleRoute: typeof ProductHandleRoute
   RaffleFreeEntryRoute: typeof RaffleFreeEntryRoute
@@ -1367,6 +1381,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/help/$slug'
       preLoaderRoute: typeof HelpSlugRouteImport
       parentRoute: typeof HelpRoute
+    }
+    '/kickstarter/battlefield-atlantis': {
+      id: '/kickstarter/battlefield-atlantis'
+      path: '/kickstarter/battlefield-atlantis'
+      fullPath: '/kickstarter/battlefield-atlantis'
+      preLoaderRoute: typeof KickstarterBattlefieldAtlantisRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/learn/$moduleId': {
       id: '/learn/$moduleId'
@@ -1786,6 +1807,7 @@ const rootRouteChildren: RootRouteChildren = {
   TrustRoute: TrustRoute,
   UnsolicitedSubmissionsRoute: UnsolicitedSubmissionsRoute,
   VerifyEmailRoute: VerifyEmailRoute,
+  KickstarterBattlefieldAtlantisRoute: KickstarterBattlefieldAtlantisRoute,
   MediaBattlefieldAtlantisPreviewV2Dotmp4Route:
     MediaBattlefieldAtlantisPreviewV2Dotmp4Route,
   ProductHandleRoute: ProductHandleRoute,
