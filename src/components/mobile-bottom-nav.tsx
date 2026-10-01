@@ -60,6 +60,8 @@ export function MobileBottomNav() {
 
   const drawerLinks: { to: string; label: string; icon: React.ComponentType<{ className?: string }>; params?: Record<string, string> }[] = [
     { to: "/", label: "Library", icon: BookOpen },
+    { to: "/battlefield-atlantis", label: "Battlefield Atlantis — Series", icon: BookMarked },
+    { to: "/kickstarter/battlefield-atlantis", label: "Battlefield Atlantis — Kickstarter", icon: Sparkles },
     { to: "/reader/$series/$issue", label: "Reader", icon: BookMarked, params: { series: "battlefield-atlantis", issue: "1" } },
     { to: "/shop", label: "Shop", icon: ShoppingBag },
     { to: "/perks", label: "Perks", icon: Sparkles },

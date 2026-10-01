@@ -1,5 +1,5 @@
 import { ConfirmButton } from "@/components/admin/confirm-button";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminSession } from "@/hooks/useAdminSession";
 import { TierBadge } from "@/components/TierGate";
@@ -26,6 +26,8 @@ export function SiteHeader() {
   const { data } = useAdminSession();
   const isAdmin = !!data?.isAdmin;
   const nav_ = useNavigate();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const showBattlefieldNav = pathname.replace(/\/$/, "") === "/battlefield-atlantis" || pathname.replace(/\/$/, "") === "/kickstarter/battlefield-atlantis";
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -118,6 +120,15 @@ export function SiteHeader() {
           </Link>
         </div>
       </div>
+      {showBattlefieldNav && (
+        <nav aria-label="Battlefield Atlantis navigation" className="border-t border-cyan-300/20 bg-slate-950/95">
+          <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-2 sm:px-6">
+            <span className="mr-auto hidden text-xs font-bold uppercase tracking-widest text-white/70 sm:block">Battlefield Atlantis</span>
+            <Link to="/battlefield-atlantis" activeOptions={{ exact: true }} activeProps={{ "aria-current": "page", className: "!bg-cyan-300 !text-slate-950" }} className="flex min-h-11 flex-1 items-center justify-center rounded-md border border-cyan-300/60 px-4 py-2 text-sm font-bold text-cyan-100 hover:bg-cyan-300/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200 sm:flex-none">Series Home</Link>
+            <Link to="/kickstarter/battlefield-atlantis" activeOptions={{ exact: true }} activeProps={{ "aria-current": "page", className: "!bg-cyan-300 !text-slate-950" }} className="flex min-h-11 flex-1 items-center justify-center rounded-md border border-cyan-300/60 px-4 py-2 text-sm font-bold text-cyan-100 hover:bg-cyan-300/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200 sm:flex-none">Kickstarter Campaign</Link>
+          </div>
+        </nav>
+      )}
     </header>
   );
 }
