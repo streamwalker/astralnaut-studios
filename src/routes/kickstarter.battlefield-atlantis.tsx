@@ -1,7 +1,7 @@
 import { useState, type CSSProperties } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowDown, ArrowUpRight, Download, Expand, Play, RotateCcw } from "lucide-react";
-import { SiteHeader, SiteFooter } from "@/components/site-header";
+import { SiteHeader, SiteFooter, BATTLEFIELD_REDDIT_URL } from "@/components/site-header";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { BattlefieldIntro } from "@/components/battlefield-campaign/BattlefieldIntro";
 import campaignCss from "@/components/battlefield-campaign/campaign.css?url";
@@ -245,6 +245,7 @@ function CampaignPage() {
           <div><div className="ba-campaign__eyebrow">Continue the story</div><h2 id="campaign-cta-title">The world is waiting.</h2></div>
           <div className="ba-campaign__actions">
             <a href={KICKSTARTER_URL} target="_blank" rel="noopener noreferrer" className="ba-campaign__button ba-campaign__button--primary">View Kickstarter campaign <ArrowUpRight size={17} aria-hidden /></a>
+            <a href={BATTLEFIELD_REDDIT_URL} target="_blank" rel="noopener noreferrer" className="ba-campaign__button">Join the Reddit community <ArrowUpRight size={17} aria-hidden /></a>
             <Link to="/battlefield-atlantis" className="ba-campaign__text-link">Explore the series <ArrowUpRight size={16} aria-hidden /></Link>
           </div>
         </section>

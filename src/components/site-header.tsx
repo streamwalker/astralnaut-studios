@@ -11,6 +11,8 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLab
 import astralnautLogo from "@/assets/astralnaut-studios-logo.png";
 import rwcLogo from "@/assets/real-world-comics-logo-transparent.png";
 
+export const BATTLEFIELD_REDDIT_URL = "https://www.reddit.com/r/BattlefieldAtlantis/";
+
 type NavItem = { to: string; label: string; exact?: boolean; accent?: boolean; params?: Record<string, string>; tour?: string };
 const nav: NavItem[] = [
   { to: "/", label: "Library", exact: true, tour: "nav-library" },
@@ -140,6 +142,7 @@ export function SiteFooter() {
         <div>
           <div className="text-[10px] font-bold uppercase tracking-[3px]" style={{ color: "var(--gold)" }}>Astralnaut Studios</div>
           <p className="mt-2 text-sm text-[var(--mute)]">The next page only drops here. Built for readers, not pirates.</p>
+          <a href={BATTLEFIELD_REDDIT_URL} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex min-h-11 items-center text-sm text-[var(--ink2)] underline underline-offset-4 hover:text-[var(--neon)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--neon)]">Battlefield Atlantis on Reddit</a>
         </div>
         <FooterCol title="Series" links={[
           { to: "/battlefield-atlantis", label: "Battlefield Atlantis" },
