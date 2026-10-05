@@ -149,6 +149,7 @@ function CampaignPage() {
           <nav className="ba-campaign__section-nav" aria-label="Campaign companion sections">
             <a href="#transmedium-suits">Suit progressions <ArrowDown size={13} aria-hidden /></a>
             <a href="#zeus-dossier">Zeus dossier <ArrowDown size={13} aria-hidden /></a>
+            <a href="#faction-insignia">Faction insignia <ArrowDown size={13} aria-hidden /></a>
             <a href="#campaign-artwork">Campaign artwork <ArrowDown size={13} aria-hidden /></a>
           </nav>
         </section>
@@ -208,9 +209,25 @@ function CampaignPage() {
           </div>
         </section>
 
+        <section id="faction-insignia" className="ba-campaign__section ba-campaign__wrap" aria-labelledby="insignia-title">
+          <div className="ba-campaign__section-heading">
+            <div><div className="ba-campaign__eyebrow">03 / Faction insignia</div><h2 id="insignia-title">NDF &amp; TPC</h2></div>
+          </div>
+          <div className="ba-campaign__insignia-stack">
+            <figure className="ba-campaign__insignia ba-campaign__insignia--ndf">
+              <img src={`${ASSETS}/ndf-seal.png`} alt="Nerrian Defense Force seal." width={898} height={772} loading="lazy" decoding="async" />
+              <figcaption>Nerrian Defense Force</figcaption>
+            </figure>
+            <figure className="ba-campaign__insignia">
+              <img src={`${ASSETS}/tpc-logo.png`} alt="Tri-Planetary Coalition identity board with its emblem, horizontal logo, monogram and badge." width={1254} height={1254} loading="lazy" decoding="async" />
+              <figcaption>Tri-Planetary Coalition</figcaption>
+            </figure>
+          </div>
+        </section>
+
         <section id="campaign-artwork" className="ba-campaign__section ba-campaign__wrap" aria-labelledby="artwork-title">
           <div className="ba-campaign__section-heading">
-            <div><div className="ba-campaign__eyebrow">03 / Campaign artwork</div><h2 id="artwork-title">Inside the conflict.</h2></div>
+            <div><div className="ba-campaign__eyebrow">04 / Campaign artwork</div><h2 id="artwork-title">Inside the conflict.</h2></div>
             <button className="ba-campaign__text-link" type="button" onClick={() => setIntroOpen(true)}><RotateCcw size={15} aria-hidden /> Replay the montage</button>
           </div>
           <div className="ba-campaign__gallery">

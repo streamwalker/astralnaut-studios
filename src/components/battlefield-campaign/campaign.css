@@ -67,6 +67,11 @@
 .ba-campaign__dossier-copy p { color: var(--ink2); font-size: 15px; line-height: 1.8; margin: 24px 0 28px; }
 .ba-campaign__dossier-art { display: block; position: relative; max-height: 660px; width: 100%; border: 1px solid var(--campaign-border); background: #050911; padding: 0; overflow: hidden; }
 .ba-campaign__dossier-art img { width: 100%; height: 100%; max-height: 660px; object-fit: contain; display: block; }
+.ba-campaign__insignia-stack { display: grid; justify-items: center; gap: 32px; max-width: 840px; margin-inline: auto; }
+.ba-campaign__insignia { width: 100%; margin: 0; }
+.ba-campaign__insignia--ndf { max-width: 360px; }
+.ba-campaign__insignia img { display: block; width: 100%; height: auto; }
+.ba-campaign__insignia figcaption { margin-top: 12px; color: var(--ink2); font-size: 12px; line-height: 1.6; text-align: center; }
 .ba-campaign__gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 .ba-campaign__gallery-art { position: relative; display: block; padding: 0; border: 1px solid var(--campaign-border); width: 100%; aspect-ratio: 3/2; background: #040811; }
 .ba-campaign__gallery-art img { display: block; width: 100%; height: 100%; object-fit: contain; }
