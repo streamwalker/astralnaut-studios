@@ -10,6 +10,7 @@ if (existing.status !== 0) throw new Error('Could not verify existing deployment
 if (JSON.parse(existing.stdout).some(secret => secret.name === 'GRIDIRON_LIBRARY_KEY_V1')) throw new Error('Version 1 already exists. Use a new versioned key and payload; never replace the live key.');
 let html = await readFile(process.argv[2], 'utf8');
 const replacements = [
+  ["if(location.hash!==hash)history.pushState(null,'',hash)", "if(window.parent.location.hash!==hash)window.parent.history.pushState(window.parent.history.state,'',hash)"],
   ["decodeURIComponent(location.hash.slice(1))", "decodeURIComponent(window.parent.location.hash.slice(1))"],
   ["if(location.hash!==hash)history.replaceState(null,'',hash)", "if(window.parent.location.hash!==hash)window.parent.history.replaceState(window.parent.history.state,'',hash)"],
   ["location.href.split('#')[0]", "window.parent.location.href.split('#')[0]"],

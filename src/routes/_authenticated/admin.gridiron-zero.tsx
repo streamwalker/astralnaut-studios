@@ -36,7 +36,11 @@ function GridironLibrary() {
         if (!active) return;
         // Isolate browser notes between admin accounts on shared computers.
         const scoped = document.replace("const storageKey='gridiron-zero-review-v1';", `const storageKey=${JSON.stringify('gridiron-zero-review-v1:' + data.session.user.id)};`);
-        setHtml(scoped);
+        const hosted = scoped.replace(
+          "if(location.hash!==hash)history.pushState(null,'',hash)",
+          "if(window.parent.location.hash!==hash)window.parent.history.pushState(window.parent.history.state,'',hash)",
+        );
+        setHtml(hosted);
         setStatus('ready');
       } catch {
         if (active) setStatus('error');
