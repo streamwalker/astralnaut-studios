@@ -18,7 +18,10 @@
     "deploy": "wrangler deploy --config .output/server/wrangler.json",
     "deploy:dry": "wrangler deploy --config .output/server/wrangler.json --dry-run",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "postbuild": "node scripts/package-gridiron-library.mjs",
+    "postbuild:dev": "node scripts/package-gridiron-library.mjs",
+    "test:gridiron": "node --test scripts/test-gridiron-gate.mjs"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.42.2",

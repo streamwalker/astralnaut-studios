@@ -225,6 +225,12 @@ function AdminPage() {
       </header>
 
       <main className="mx-auto grid max-w-6xl gap-10 px-6 py-12 lg:grid-cols-[1fr_1.1fr]">
+        <section className="rounded-2xl border border-[var(--gold)]/40 bg-card p-6 lg:col-span-2">
+          <p className="text-xs font-bold uppercase tracking-widest text-[var(--gold)]">Private production library</p>
+          <h2 className="mt-2 text-xl font-bold">Gridiron Zero</h2>
+          <p className="mt-2 text-sm text-muted-foreground">Story Bible, character dossiers, visual references, opening scripts, and review notes.</p>
+          <Link to="/admin/gridiron-zero" className="mt-4 inline-flex rounded-md border border-[var(--gold)]/50 px-4 py-3 font-semibold hover:bg-[var(--gold)]/10">Open the interactive Story Bible →</Link>
+        </section>
         <AnalyticsPanel />
         <section className="rounded-2xl border border-border bg-card p-6">
           <h2 className="text-xl font-bold">Upload comic pages</h2>

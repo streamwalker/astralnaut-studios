@@ -66,6 +66,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminAuthorBioRouteImport } from './routes/_authenticated/admin.author-bio'
 import { Route as AuthenticatedAdminAuthorFaqRouteImport } from './routes/_authenticated/admin.author-faq'
 import { Route as AuthenticatedAdminComplianceChangelogRouteImport } from './routes/_authenticated/admin.compliance-changelog'
+import { Route as AuthenticatedAdminGridironZeroRouteImport } from './routes/_authenticated/admin.gridiron-zero'
 import { Route as AuthenticatedAdminHelpRouteImport } from './routes/_authenticated/admin.help'
 import { Route as AuthenticatedAdminLearnRouteImport } from './routes/_authenticated/admin.learn'
 import { Route as AuthenticatedAdminLettersRouteImport } from './routes/_authenticated/admin.letters'
@@ -381,6 +382,12 @@ const AuthenticatedAdminComplianceChangelogRoute =
     path: '/admin/compliance-changelog',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAdminGridironZeroRoute =
+  AuthenticatedAdminGridironZeroRouteImport.update({
+    id: '/admin/gridiron-zero',
+    path: '/admin/gridiron-zero',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAdminHelpRoute = AuthenticatedAdminHelpRouteImport.update({
   id: '/admin/help',
   path: '/admin/help',
@@ -573,6 +580,7 @@ export interface FileRoutesByFullPath {
   '/admin/author-bio': typeof AuthenticatedAdminAuthorBioRoute
   '/admin/author-faq': typeof AuthenticatedAdminAuthorFaqRoute
   '/admin/compliance-changelog': typeof AuthenticatedAdminComplianceChangelogRoute
+  '/admin/gridiron-zero': typeof AuthenticatedAdminGridironZeroRoute
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/admin/letters': typeof AuthenticatedAdminLettersRoute
@@ -655,6 +663,7 @@ export interface FileRoutesByTo {
   '/admin/author-bio': typeof AuthenticatedAdminAuthorBioRoute
   '/admin/author-faq': typeof AuthenticatedAdminAuthorFaqRoute
   '/admin/compliance-changelog': typeof AuthenticatedAdminComplianceChangelogRoute
+  '/admin/gridiron-zero': typeof AuthenticatedAdminGridironZeroRoute
   '/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/admin/letters': typeof AuthenticatedAdminLettersRoute
@@ -739,6 +748,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/author-bio': typeof AuthenticatedAdminAuthorBioRoute
   '/_authenticated/admin/author-faq': typeof AuthenticatedAdminAuthorFaqRoute
   '/_authenticated/admin/compliance-changelog': typeof AuthenticatedAdminComplianceChangelogRoute
+  '/_authenticated/admin/gridiron-zero': typeof AuthenticatedAdminGridironZeroRoute
   '/_authenticated/admin/help': typeof AuthenticatedAdminHelpRouteWithChildren
   '/_authenticated/admin/learn': typeof AuthenticatedAdminLearnRouteWithChildren
   '/_authenticated/admin/letters': typeof AuthenticatedAdminLettersRoute
@@ -823,6 +833,7 @@ export interface FileRouteTypes {
     | '/admin/author-bio'
     | '/admin/author-faq'
     | '/admin/compliance-changelog'
+    | '/admin/gridiron-zero'
     | '/admin/help'
     | '/admin/learn'
     | '/admin/letters'
@@ -905,6 +916,7 @@ export interface FileRouteTypes {
     | '/admin/author-bio'
     | '/admin/author-faq'
     | '/admin/compliance-changelog'
+    | '/admin/gridiron-zero'
     | '/admin/help'
     | '/admin/learn'
     | '/admin/letters'
@@ -988,6 +1000,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/author-bio'
     | '/_authenticated/admin/author-faq'
     | '/_authenticated/admin/compliance-changelog'
+    | '/_authenticated/admin/gridiron-zero'
     | '/_authenticated/admin/help'
     | '/_authenticated/admin/learn'
     | '/_authenticated/admin/letters'
@@ -1466,6 +1479,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminComplianceChangelogRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin/gridiron-zero': {
+      id: '/_authenticated/admin/gridiron-zero'
+      path: '/admin/gridiron-zero'
+      fullPath: '/admin/gridiron-zero'
+      preLoaderRoute: typeof AuthenticatedAdminGridironZeroRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/admin/help': {
       id: '/_authenticated/admin/help'
       path: '/admin/help'
@@ -1672,6 +1692,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAdminAuthorBioRoute: typeof AuthenticatedAdminAuthorBioRoute
   AuthenticatedAdminAuthorFaqRoute: typeof AuthenticatedAdminAuthorFaqRoute
   AuthenticatedAdminComplianceChangelogRoute: typeof AuthenticatedAdminComplianceChangelogRoute
+  AuthenticatedAdminGridironZeroRoute: typeof AuthenticatedAdminGridironZeroRoute
   AuthenticatedAdminHelpRoute: typeof AuthenticatedAdminHelpRouteWithChildren
   AuthenticatedAdminLearnRoute: typeof AuthenticatedAdminLearnRouteWithChildren
   AuthenticatedAdminLettersRoute: typeof AuthenticatedAdminLettersRoute
@@ -1696,6 +1717,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminAuthorFaqRoute: AuthenticatedAdminAuthorFaqRoute,
   AuthenticatedAdminComplianceChangelogRoute:
     AuthenticatedAdminComplianceChangelogRoute,
+  AuthenticatedAdminGridironZeroRoute: AuthenticatedAdminGridironZeroRoute,
   AuthenticatedAdminHelpRoute: AuthenticatedAdminHelpRouteWithChildren,
   AuthenticatedAdminLearnRoute: AuthenticatedAdminLearnRouteWithChildren,
   AuthenticatedAdminLettersRoute: AuthenticatedAdminLettersRoute,
