@@ -71,7 +71,7 @@ export const getIssueBundle = createServerFn({ method: "GET" })
     // checks server-side. Returning raw paths here would let any visitor
     // bypass the paywall via the hydrated loader state + public CDN.
     const safePages = (pages ?? []).map((p) =>
-      p.is_free ? p : { ...p, image_path: "" },
+      p.is_free && p.published_at && new Date(p.published_at).getTime() <= Date.now() ? p : { ...p, image_path: "" },
     );
     return { issue, pages: safePages, drops: drops ?? [] };
   });

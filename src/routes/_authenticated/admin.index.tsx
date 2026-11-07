@@ -230,6 +230,7 @@ function AdminPage() {
           <h2 className="mt-2 text-xl font-bold">Gridiron Zero</h2>
           <p className="mt-2 text-sm text-muted-foreground">Story Bible, character dossiers, visual references, opening scripts, and review notes.</p>
           <Link to="/admin/gridiron-zero" className="mt-4 inline-flex rounded-md border border-[var(--gold)]/50 px-4 py-3 font-semibold hover:bg-[var(--gold)]/10">Open the interactive Story Bible →</Link>
+          <Link to="/admin/gridiron-comics" className="mt-4 ml-3 inline-flex rounded-md border border-[var(--gold)]/50 px-4 py-3 font-semibold hover:bg-[var(--gold)]/10">Open the comic library →</Link>
         </section>
         <AnalyticsPanel />
         <section className="rounded-2xl border border-border bg-card p-6">

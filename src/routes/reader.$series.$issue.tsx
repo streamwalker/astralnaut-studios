@@ -10,6 +10,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { pageUrl } from "@/lib/storage";
 import { LeadCaptureInterstitial } from "@/components/reader/LeadCaptureInterstitial";
 import { z } from "zod";
+import {ReaderShelf} from "@/components/reader/ReaderShelf";
+import {ComicImage} from "@/components/reader/ComicImage";
 
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
@@ -39,7 +41,7 @@ export const Route = createFileRoute("/reader/$series/$issue")({
   },
   head: ({ params }) => ({
     meta: [
-      { title: `Reader — ${params.series} Issue ${params.issue} · Real World Comics` },
+      { title: `Reader — ${params.series} Issue ${params.issue} · Astralnaut Studios` },
       { name: "description", content: "Free first-act reader. Subscribe to unlock the rest." },
       { name: "robots", content: "noindex" },
     ],
@@ -98,6 +100,8 @@ function Reader() {
 
   const navigate = useNavigate();
   const [accessOk, setAccessOk] = useState(false);
+  const [readerUserId, setReaderUserId] = useState("");
+  const [stripPage, setStripPage] = useState(page);
   const [readerLocation, setReaderLocation] = useState<{ city: string; country: string } | null>(null);
   useEffect(() => {
     let cancelled = false;
@@ -124,10 +128,11 @@ function Reader() {
         return;
       }
       setReaderLocation({ city: prof.city, country: prof.country });
+      setReaderUserId(userRes.user.id);
       setAccessOk(true);
     })();
     return () => { cancelled = true; };
-  }, [issue.series.slug, issue.issue_number, page]);
+  }, [issue.series.slug, issue.issue_number]);
 
   // Paid pages arrive from the loader with image_path blanked for everyone, so
   // the reader has to ask the server for them separately. The server hands them
@@ -194,7 +199,7 @@ function Reader() {
     .map((p: (typeof pages)[number]) =>
       p.page_number <= freeMax ? p : { ...p, image_path: paidPaths.get(p.page_number) ?? "" },
     )
-    .filter((p: (typeof pages)[number]) => !!p.image_path);
+    .filter((p: (typeof pages)[number]) => p.page_number > 0 && p.page_number <= total && !!p.image_path);
   const readableSet = new Set(readablePages.map((p: (typeof pages)[number]) => p.page_number));
   // The wall goes at the first page the reader cannot open, not at a fixed
   // offset — otherwise a subscriber sees a paywall stapled to the middle of
@@ -240,12 +245,11 @@ function Reader() {
   const atMaxUi = uiScale >= UI_SCALE_STEPS[UI_SCALE_STEPS.length - 1];
   const viewerRef = useRef<HTMLDivElement>(null);
   const [flashKey, setFlashKey] = useState(0);
-  const [debugOpen, setDebugOpen] = useState(false);
-  const [debugVariant, setDebugVariant] = useState<FlashVariant | "reduced" | null>(null);
+  const [effectsOn, setEffectsOn] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
   const rawVariant = flashVariantFor(issue.series.slug, issue.issue_number, page);
   const mappedVariant: FlashVariant | "reduced" | null = prefersReducedMotion ? (rawVariant ? "reduced" : null) : rawVariant;
-  const flashVariant = debugVariant ?? mappedVariant;
+  const flashVariant = effectsOn ? mappedVariant : null;
 
   // Per-page persistence of zoom + scroll position (session-scoped).
   const stateKey = `reader:${issue.series.slug}:${issue.issue_number}:${page}:v1`;
@@ -433,13 +437,6 @@ function Reader() {
     setZoom((z) => (z === FIT ? lastZoomIn : FIT));
   }, [lastZoomIn]);
 
-  function playFlash(v: FlashVariant | "reduced" | null) {
-    setDebugVariant(v);
-    setFlashKey((k) => k + 1);
-  }
-
-
-
   // In the strip, "go to page N" is a scroll, not a navigation. Each page
   // renders with id="rp-N"; anything past the unlocked run has no anchor, so the
   // jump is clamped rather than silently doing nothing.
@@ -450,11 +447,14 @@ function Reader() {
 
   function goTo(target: number) {
     const next = Math.min(total, Math.max(minPage, target));
-    if (mode === "all") { scrollToPage(next); return; }
+    if (mode === "all") {
+      if (next <= maxScrollable) { scrollToPage(next); setStripPage(next); return; }
+      chooseMode("single");
+    }
     navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: next } });
   }
   function go(delta: number) {
-    goTo(page + delta);
+    goTo((mode === "all" ? stripPage : page) + delta);
   }
 
 
@@ -497,7 +497,7 @@ function Reader() {
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       const tag = (e.target as HTMLElement | null)?.tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "BUTTON" || (e.target as HTMLElement | null)?.isContentEditable) return;
       const k = kbRef.current;
       if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === "n" || e.key === "N") { e.preventDefault(); k.go(1); }
       else if (e.key === "ArrowLeft" || e.key === "PageUp" || e.key === "p" || e.key === "P") { e.preventDefault(); k.go(-1); }
@@ -560,6 +560,16 @@ function Reader() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedKey, mode, isFree]);
 
+  useEffect(() => {
+    if (mode !== 'all' || !accessOk) return;
+    const observer = new IntersectionObserver(entries => {
+      const visible = entries.filter(e => e.isIntersecting).sort((a,b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top));
+      if (visible[0]) setStripPage(Number(visible[0].target.id.replace('rp-','')));
+    }, {rootMargin: '-5% 0px -55% 0px', threshold: 0});
+    document.querySelectorAll('[id^="rp-"]').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, [mode, accessOk, loggedKey]);
+
   if (!accessOk) {
     return (
       <>
@@ -579,6 +589,7 @@ function Reader() {
         className="container-wide py-6"
         style={{ ["--reader-ui-scale" as string]: String(uiScale) }}
       >
+        <ReaderShelf series={issue.series.slug} title={issue.series.name} issue={Number(issue.issue_number)} accountId={readerUserId} current={mode==='all'?stripPage:page} onSelect={goTo} pages={positions.map(n=>({number:n,label:n===0?'Cover':`Page ${n}`,url:pageUrl(n===0?coverPath:readablePages.find(p=>p.page_number===n)?.image_path),locked:n>freeMax&&!readableSet.has(n)&&!entitled}))}/>
         <h1 className="sr-only">{issue.series.name} Issue {issue.issue_number} — {onCover ? "Cover" : `Page ${page}`}</h1>
         <div className="flex items-center justify-between" style={{ fontSize: `calc(0.875rem * ${uiScale})` }}>
           <Link to={`/${issue.series.slug}` as "/battlefield-atlantis"} className="text-[var(--mute)] hover:text-[var(--neon)]">← {issue.series.name}</Link>
@@ -780,7 +791,8 @@ function Reader() {
                     margin: "0 auto",
                   }}
                 >
-                  <img
+                  <ComicImage
+                    key={img}
                     src={img}
                     alt={
                       onCover
@@ -815,87 +827,12 @@ function Reader() {
           )}
         </div>
 
-        <div className="mt-3 flex justify-end">
-          <button
-            type="button"
-            onClick={() => setDebugOpen((o) => !o)}
-            className="font-mono text-[10px] uppercase tracking-[2px] text-[var(--mute)] hover:text-[var(--neon)]"
-            aria-expanded={debugOpen}
-          >
-            {debugOpen ? "× Close FX debug" : "⚙ FX debug"}
-          </button>
-        </div>
-        {debugOpen && (
-          <div className="mt-2 card-rwc flex flex-wrap items-center gap-2 p-3 text-xs">
-            <span className="font-mono uppercase tracking-[2px] text-[var(--mute)]">
-              Mapped: <span className="text-[var(--ink)]">{mappedVariant ?? "none"}</span>
-            </span>
-            <span className="ml-2 font-mono uppercase tracking-[2px] text-[var(--mute)]">Preview:</span>
-            {(["lightning", "explosion", "pulse", "ember", "reduced"] as const).map((v) => (
-              <button
-                key={v}
-                type="button"
-                onClick={() => playFlash(v)}
-                className="btn-ghost px-2 py-1 text-[10px] uppercase tracking-[2px]"
-              >
-                {v}
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={() => { setDebugVariant(null); setFlashKey((k) => k + 1); }}
-              className="btn-ghost px-2 py-1 text-[10px] uppercase tracking-[2px]"
-            >
-              Replay mapped
-            </button>
-            <button
-              type="button"
-              onClick={() => setDebugVariant(null)}
-              className="btn-ghost px-2 py-1 text-[10px] uppercase tracking-[2px]"
-            >
-              Reset
-            </button>
-          </div>
-        )}
+        <div className="mt-4 flex justify-end"><button type="button" className="btn-ghost min-h-11 rounded-lg px-3 text-xs" aria-pressed={effectsOn} onClick={()=>setEffectsOn(v=>!v)}>Page effects: {effectsOn?'on':'off'}</button></div>
 
-        {mode === "all" ? (
-          // In the strip there is no "current page" to advance from, so the
-          // dots become jump targets and Prev/Next would be meaningless.
-          <div className="mt-4 flex items-center justify-between">
-            <button onClick={() => scrollToPage(minPage)} className="btn-ghost">↑ Top</button>
-            <div className="flex flex-wrap justify-center gap-1">
-              {positions.map((n) => {
-                const reachable = n <= maxScrollable;
-                return (
-                  <button
-                    key={n}
-                    aria-label={n === 0 ? "Jump to cover" : reachable ? `Jump to page ${n}` : `Page ${n} is locked`}
-                    disabled={!reachable}
-                    onClick={() => scrollToPage(n)}
-                    className="h-2 w-2 rounded-full disabled:cursor-not-allowed"
-                    style={{ background: reachable ? "rgba(34,211,255,0.5)" : "rgba(255,255,255,0.1)" }}
-                  />
-                );
-              })}
-            </div>
-            <button onClick={() => scrollToPage(maxScrollable)} className="btn-ghost">↓ End</button>
-          </div>
-        ) : (
-          <div className="mt-4 flex items-center justify-between">
-            <button onClick={() => go(-1)} disabled={page <= minPage} className="btn-ghost disabled:opacity-30">← Prev</button>
-            <div className="flex gap-1">
-              {positions.map((n) => {
-                // The cover is always readable — it is public art, not part of
-                // the free/paid run — so it never renders in the "locked" tone.
-                const readable = n === 0 || readableSet.has(n);
-                return (
-                  <button key={n} aria-label={n === 0 ? "Go to cover" : `Go to page ${n}`} onClick={() => navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: n } })} className="h-2 w-2 rounded-full" style={{ background: n === page ? "var(--neon)" : readable ? "rgba(34,211,255,0.3)" : "rgba(255,255,255,0.1)" }} />
-                );
-              })}
-            </div>
-            <button onClick={() => go(1)} disabled={page >= total} className="btn-ghost disabled:opacity-30">Next →</button>
-          </div>
-        )}
+        <div className="mt-5 flex flex-wrap justify-center gap-3">
+          <button onClick={()=>go(-1)} disabled={(mode==='all'?stripPage:page)<=minPage} className="btn-ghost min-h-11 rounded-lg border border-white/15 px-5 disabled:opacity-30">← Previous page</button>
+          <button onClick={()=>go(1)} disabled={(mode==='all'?stripPage:page)>=total} className="btn-ghost min-h-11 rounded-lg border border-white/15 px-5 disabled:opacity-30">Next page →</button>
+        </div>
 
         <div className="mt-6 text-center">
           <Link
@@ -1003,7 +940,8 @@ function AllPagesStrip({
         // Eager, because in this mode the cover is the top of the document and
         // therefore the LCP element — lazy-loading it would delay first paint.
         <figure id="rp-0" className="relative scroll-mt-4">
-          <img
+          <ComicImage
+            key={coverUrl}
             src={coverUrl}
             alt={coverAlt}
             loading="eager"
@@ -1018,7 +956,8 @@ function AllPagesStrip({
       ) : null}
       {pages.map((p, i) => (
         <figure key={p.page_number} id={`rp-${p.page_number}`} className="relative scroll-mt-4">
-          <img
+          <ComicImage
+            key={p.image_path}
             src={pageUrl(p.image_path) ?? undefined}
             alt={p.alt_text ?? `Page ${p.page_number}`}
             // The first page is what the reader is waiting on, so it loads

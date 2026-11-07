@@ -55,6 +55,7 @@ function GridironLibrary() {
       <header className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
         <div><h1 className="font-bold">Gridiron Zero <span className="text-sm font-normal text-muted-foreground">· Private production library</span></h1>
           <p className="text-xs text-muted-foreground">Review notes save to this browser. Use Export to back them up.</p></div>
+        <Link to="/admin/gridiron-comics" className="rounded-md border border-border px-3 py-2 text-sm hover:bg-accent">Comic library →</Link>
         <Link to="/admin" className="rounded-md border border-border px-3 py-2 text-sm hover:bg-accent">← Admin dashboard</Link>
       </header>
       {status === 'loading' && <p role="status" className="p-8 text-center text-muted-foreground">Verifying admin access and loading the illustrated Bible…</p>}

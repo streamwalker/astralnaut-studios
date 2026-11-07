@@ -17,10 +17,19 @@ const buildEnv = loadEnv('production', process.cwd(), 'VITE_');
 const publicConfig = { url: buildEnv.VITE_SUPABASE_URL, key: buildEnv.VITE_SUPABASE_PUBLISHABLE_KEY };
 if (!publicConfig.url || !publicConfig.key) throw new Error('Missing public Supabase configuration');
 const originalMain = config.main === 'gridiron-entry.mjs' ? 'index.mjs' : config.main;
-await writeFile('.output/server/gridiron-entry.mjs', `import app from './${originalMain}';\nimport { LIBRARY_ENDPOINT, serveLibrary } from './gridiron-gate.mjs';\nconst publicConfig = ${JSON.stringify(publicConfig)};\nexport default { ...app, fetch(request, env, ctx) {\n  if (new URL(request.url).pathname.replace(/\\/$/, '') === LIBRARY_ENDPOINT) return serveLibrary(request, env, publicConfig);\n  return app.fetch(request, env, ctx);\n}};\n`);
+await writeFile('.output/server/gridiron-entry.mjs', `import app from './${originalMain}';\nimport { LIBRARY_ENDPOINT, serveLibrary, COMICS_ENDPOINT, serveComics } from './gridiron-gate.mjs';\nconst publicConfig = ${JSON.stringify(publicConfig)};\nexport default { ...app, fetch(request, env, ctx) {\n  if (new URL(request.url).pathname.replace(/\\/$/, '') === LIBRARY_ENDPOINT) return serveLibrary(request, env, publicConfig);\n  if (new URL(request.url).pathname === COMICS_ENDPOINT || new URL(request.url).pathname.startsWith(COMICS_ENDPOINT + '/')) return serveComics(request, env, publicConfig);\n  return app.fetch(request, env, ctx);\n}};\n`);
 config.main = 'gridiron-entry.mjs';
 // Always execute the API gate even if a future build introduces a colliding asset.
 const previous = config.assets.run_worker_first;
 config.assets.run_worker_first = previous === true ? true : [...new Set([...(Array.isArray(previous) ? previous : []), '/api/admin/gridiron-zero/*'])];
 await writeFile(configPath, JSON.stringify(config, null, 2) + '\n');
 console.log(`Packaged encrypted Gridiron Zero library (${encrypted.length} bytes); admin API gate enabled.`);
+
+const comicManifest = JSON.parse(await readFile('private-content/gridiron-zero/comics-v1/manifest.json','utf8'));
+await mkdir('.output/public/assets/gridiron-zero/comics-v1',{recursive:true});
+for(const file of comicManifest.files){
+ const bytes=await readFile('private-content/gridiron-zero/comics-v1/'+file.name);
+ if(createHash('sha256').update(bytes).digest('hex')!==file.sha256 || bytes.length!==file.bytes || bytes.length>25*1024*1024)throw new Error('Invalid encrypted comic asset');
+ await copyFile('private-content/gridiron-zero/comics-v1/'+file.name,'.output/public/assets/gridiron-zero/comics-v1/'+file.name);
+}
+console.log('Packaged '+comicManifest.counts.total+' private comic pages; no plaintext art included.');
