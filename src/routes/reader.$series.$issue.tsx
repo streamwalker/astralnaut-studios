@@ -105,6 +105,10 @@ function Reader() {
   const [readerLocation, setReaderLocation] = useState<{ city: string; country: string } | null>(null);
   useEffect(() => {
     let cancelled = false;
+    setAccessOk(false);
+    const authSubscription = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") { setAccessOk(false); setReaderUserId(""); }
+    }).data.subscription;
     (async () => {
       const next = `/reader/${issue.series.slug}/${issue.issue_number}?page=${page}`;
       const { data: userRes } = await supabase.auth.getUser();
@@ -131,7 +135,7 @@ function Reader() {
       setReaderUserId(userRes.user.id);
       setAccessOk(true);
     })();
-    return () => { cancelled = true; };
+    return () => { cancelled = true; authSubscription.unsubscribe(); };
   }, [issue.series.slug, issue.issue_number]);
 
   // Paid pages arrive from the loader with image_path blanked for everyone, so
@@ -141,6 +145,8 @@ function Reader() {
   const [paidPaths, setPaidPaths] = useState<ReadonlyMap<number, string>>(() => new Map());
   const [entitled, setEntitled] = useState(false);
   useEffect(() => {
+    setPaidPaths(new Map());
+    setEntitled(false);
     if (!accessOk) return;
     let cancelled = false;
     (async () => {
@@ -206,9 +212,8 @@ function Reader() {
   // pages they just unlocked.
   const firstLockedPage =
     Array.from({ length: total }, (_, i) => i + 1).find((n) => !readableSet.has(n)) ?? total + 1;
-  // The strip renders contiguously from page 1, so the furthest it can scroll
-  // to is the last page before the wall — not the highest readable number.
-  const maxScrollable = Math.max(1, firstLockedPage - 1);
+  // A missing middle page must not hide later pages that are already released.
+  const maxScrollable = Math.max(minPage, ...readablePages.map(p => p.page_number));
   // Every jump target in reading order, cover included. Both dot rows read
   // this so they cannot drift apart from each other or from `minPage`.
   const positions = hasCover
@@ -448,7 +453,7 @@ function Reader() {
   function goTo(target: number) {
     const next = Math.min(total, Math.max(minPage, target));
     if (mode === "all") {
-      if (next <= maxScrollable) { scrollToPage(next); setStripPage(next); return; }
+      if ((next === 0 && hasCover) || readableSet.has(next)) { scrollToPage(next); setStripPage(next); return; }
       chooseMode("single");
     }
     navigate({ to: "/reader/$series/$issue", params: { series: issue.series.slug, issue: String(issue.issue_number) }, search: { page: next } });
