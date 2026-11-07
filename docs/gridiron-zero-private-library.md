@@ -31,3 +31,7 @@ The catalog and each JPEG viewing image are separately encrypted under `GRIDIRON
 `node scripts/prepare-gridiron-comics.mjs /absolute/private/path/to/comic-reader` is the one-time v1 import. It encrypts in memory, verifies every round trip, and provisions the key through stdin to GitHub Secrets without exposing it. Subsequent publication batches require a new versioned payload/key and matching gate, packaging, and CI binding changes. Keep old keys for rollback. Never place the offline HTML, plaintext catalog, JPEGs, original PNGs, or private source paths into this public repository.
 
 Local production updates are not automatically public deployments. Rebuild the private local reader, import the new version, run the gate tests/build/typecheck/deploy dry run, and publish through the normal production workflow. Verify the new page count in a signed-in admin browser and reject anonymous catalog/image requests before reporting it published.
+
+## Season 2 opening-block publication (v2)
+
+The current comic catalog uses `comics-v2` and `GRIDIRON_COMICS_KEY_V2`: 62 images, comprising 47 current pages and 15 earlier published versions. Season 2 Episodes 1–5 each contain three current pages. Twelve new finished pages were added for Episodes 2–5; rejected generation attempts remain in the private production workspace and are not reader editions. The original v1 ciphertext and secret are retained for rollback. The importer now targets v2 and refuses an existing v2 secret; use a new version for the next batch.
