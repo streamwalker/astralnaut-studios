@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-for (const binding of ["GRIDIRON_LIBRARY_KEY_V2", "GRIDIRON_COMICS_KEY_V4"]) {
+for (const binding of ["GRIDIRON_LIBRARY_KEY_V3", "GRIDIRON_COMICS_KEY_V5"]) {
   const key = process.env[binding];
   if (!key || Buffer.from(key, "base64").length !== 32)
     throw new Error("Required private content key is missing");
