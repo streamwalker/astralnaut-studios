@@ -34,4 +34,10 @@ Local production updates are not automatically public deployments. Rebuild the p
 
 ## Season 2 opening-block publication (v2)
 
-The current comic catalog uses `comics-v2` and `GRIDIRON_COMICS_KEY_V2`: 62 images, comprising 47 current pages and 15 earlier published versions. Season 2 Episodes 1–5 each contain three current pages. Twelve new finished pages were added for Episodes 2–5; rejected generation attempts remain in the private production workspace and are not reader editions. The original v1 ciphertext and secret are retained for rollback. The importer now targets v2 and refuses an existing v2 secret; use a new version for the next batch.
+The v2 catalog used `comics-v2` and `GRIDIRON_COMICS_KEY_V2`: 62 images, comprising 47 current pages and 15 earlier published versions. Season 2 Episodes 1–5 each contain three current pages. Twelve new finished pages were added for Episodes 2–5; rejected generation attempts remain in the private production workspace and are not reader editions.
+
+## Season 3 opening-block publication (v3)
+
+The current catalog uses `comics-v3` and `GRIDIRON_COMICS_KEY_V3`: 77 images, comprising 62 current pages and 15 earlier versions. Season 3 Episodes 1–5 each add three current pages, for 15 new pages. The v1 and v2 ciphertext and secrets remain available for rollback. The importer targets v3 and refuses an existing v3 secret; introduce another version for a future batch.
+
+The private source reader embeds all 77 viewing images in one portable HTML file. Its source art, adaptation scripts, generation prompts, continuity corrections and verification records remain in the private creative workspace. The public repository receives only the encrypted catalog and 77 encrypted images; the existing admin role checks apply to every new page.
