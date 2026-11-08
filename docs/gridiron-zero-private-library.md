@@ -41,3 +41,10 @@ The v2 catalog used `comics-v2` and `GRIDIRON_COMICS_KEY_V2`: 62 images, compris
 The current catalog uses `comics-v3` and `GRIDIRON_COMICS_KEY_V3`: 77 images, comprising 62 current pages and 15 earlier versions. Season 3 Episodes 1–5 each add three current pages, for 15 new pages. The v1 and v2 ciphertext and secrets remain available for rollback. The importer targets v3 and refuses an existing v3 secret; introduce another version for a future batch.
 
 The private source reader embeds all 77 viewing images in one portable HTML file. Its source art, adaptation scripts, generation prompts, continuity corrections and verification records remain in the private creative workspace. The public repository receives only the encrypted catalog and 77 encrypted images; the existing admin role checks apply to every new page.
+
+
+## Official visual continuity publication (November 8, 2026)
+
+Current editions: Story Bible `library-v2.enc` / `GRIDIRON_LIBRARY_KEY_V2`; comics `comics-v4` / `GRIDIRON_COMICS_KEY_V4`. The Bible retains 52 character dossiers and 58 reference sheets. The reader contains 105 images: 62 current pages and 43 earlier editions. This batch adds 28 visual continuity revisions across three seasons; their source pages remain clearly marked as earlier appearances.
+
+Old payloads and versioned secrets are retained for rollback. Use new payload/key versions for future publication. The latest counts and bindings supersede historical sections above. All artwork and manuscripts remain encrypted in this public repository.
