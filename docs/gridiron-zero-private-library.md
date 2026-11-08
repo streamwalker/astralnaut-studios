@@ -56,3 +56,7 @@ Current editions: Story Bible `library-v3.enc` / `GRIDIRON_LIBRARY_KEY_V3`; comi
 The protected Bible adds the five continuation scripts and their timing/continuity notes, including a Fountain export. Character and reference counts remain 52 and 58. The established visual continuity is retained. Prior payloads, keys, and earlier reader editions remain available for rollback and comparison.
 
 The new publication contains 121 encrypted comic files (catalog plus 120 viewing images) and the encrypted Bible. All source scripts, artwork, prompts, offline HTML and production records remain in the private creative workspace. These bindings and counts supersede the historical publication sections above.
+
+## Relationship revision publication (Bible v4 / comics v6)
+
+Current editions: Story Bible `library-v4.enc` / `GRIDIRON_LIBRARY_KEY_V4`; comics `comics-v6` / `GRIDIRON_COMICS_KEY_V6`. The reader contains 129 images: 77 current pages and 52 earlier editions. Nine new page revisions replace current selections across three seasons; all prior images remain available. Four complete screenplay packets are accessible and exportable from the authenticated Story Bible. The 52 dossiers and 58 reference sheets remain intact. Prior versioned ciphertext and keys are retained for rollback. Plaintext creative material stays out of this public repository.

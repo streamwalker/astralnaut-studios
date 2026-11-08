@@ -1,11 +1,11 @@
 {
-  "version": 3,
+  "version": 4,
   "edition": "2026-11-08",
   "format": "12-byte IV + AES-256-GCM(gzip(HTML)) + 16-byte tag",
-  "keyBinding": "GRIDIRON_LIBRARY_KEY_V3",
-  "encryptedSha256": "a0968ebfbf953a3cd26f493da5ac5d4597326b858453165b3427813e2fc869df",
-  "htmlSha256": "e93ced14c492fb7eaebf8581f977b7a594c4409e901b9cf6d66afbf168f9fdf3",
-  "sourceSha256": "cca17f9c26b73eb771749b2fa41b3569a3f55e0bd162b2dce8896c0d96db6c20",
-  "htmlBytes": 26338370,
-  "encryptedBytes": 19622943
+  "keyBinding": "GRIDIRON_LIBRARY_KEY_V4",
+  "encryptedSha256": "6961c3d154cb87f23c5f472bfef799345628a7cbd3efb548a6499ff767b141e1",
+  "htmlSha256": "cacf71e7db9b8255968ccd5598275090484e7ada7be7f6a525735a81b7b4ec7b",
+  "sourceSha256": "eeebd82cbaa1aad9645e8c33a164b7e073d8a0e48fc775e310eba6288f50cb81",
+  "htmlBytes": 26371292,
+  "encryptedBytes": 19634087
 }
