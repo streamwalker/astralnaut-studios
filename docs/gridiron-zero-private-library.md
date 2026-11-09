@@ -60,3 +60,7 @@ The new publication contains 121 encrypted comic files (catalog plus 120 viewing
 ## Relationship revision publication (Bible v4 / comics v6)
 
 Current editions: Story Bible `library-v4.enc` / `GRIDIRON_LIBRARY_KEY_V4`; comics `comics-v6` / `GRIDIRON_COMICS_KEY_V6`. The reader contains 129 images: 77 current pages and 52 earlier editions. Nine new page revisions replace current selections across three seasons; all prior images remain available. Four complete screenplay packets are accessible and exportable from the authenticated Story Bible. The 52 dossiers and 58 reference sheets remain intact. Prior versioned ciphertext and keys are retained for rollback. Plaintext creative material stays out of this public repository.
+
+## Continuation release — November 8, 2026
+
+This release uses library-v5 with GRIDIRON_LIBRARY_KEY_V5 and comics-v7 with GRIDIRON_COMICS_KEY_V7. It includes 144 page images (92 current, 52 earlier) and five screenplay packets in the private library. The comic batch contains 145 encrypted objects including its catalog. Previous versioned payloads and keys remain available for rollback; keys are never rotated in place. Creative text and images remain outside this public repository. Local round-trip, asset-integrity, authorization and authenticated UI checks are recorded in the private production workspace.
