@@ -12,7 +12,7 @@ function fixture({ role = 'admin', expired = false, roleError = false, tamper = 
   const payload = Buffer.concat([iv, cipher.update(gzipSync(text)), cipher.final(), cipher.getAuthTag()]);
   if (tamper) payload[payload.length - 1] ^= 1;
   let assetCalls = 0, authCalls = 0;
-  const env = { GRIDIRON_LIBRARY_KEY_V5: key.toString('base64'), GRIDIRON_COMICS_KEY_V7: key.toString('base64'), ASSETS: { fetch: async request => {
+  const env = { GRIDIRON_LIBRARY_KEY_V5: key.toString('base64'), GRIDIRON_COMICS_KEY_V8: key.toString('base64'), ASSETS: { fetch: async request => {
     assetCalls++; assert.equal(new URL(request.url).pathname, assetPath);
     assert.equal(request.headers.get('authorization'), null);
     return new Response(payload);
@@ -95,7 +95,7 @@ test('comic requests reject invalid asset paths and missing keys without disclos
   assert.equal(r.status,404);
  }
  assert.equal(f.counts().assetCalls,0);
- delete f.env.GRIDIRON_COMICS_KEY_V7;
+ delete f.env.GRIDIRON_COMICS_KEY_V8;
  const r=await serveComics(new Request('https://studio.example'+COMICS_ENDPOINT,{headers:{authorization:'Bearer test-token'}}),f.env,config,f.fetcher);assert.equal(r.status,503);
 });
 test('comic ciphertext integrity is enforced',async()=>{
@@ -103,8 +103,8 @@ test('comic ciphertext integrity is enforced',async()=>{
  const r=await serveComics(new Request('https://studio.example'+COMICS_ENDPOINT,{headers:{authorization:'Bearer test-token'}}),f.env,config,f.fetcher);assert.equal(r.status,503);
 });
 test('all private comic assets and the API dispatcher are packaged',async()=>{
- const manifest=JSON.parse(await readFile('private-content/gridiron-zero/comics-v7/manifest.json','utf8'));
- assert.deepEqual(manifest.counts,{total:144,current:92,earlier:52});assert.equal(manifest.files.length,145);
- for(const f of manifest.files)assert.deepEqual(await readFile('.output/public'+COMICS_ASSET_ROOT+'/'+f.name),await readFile('private-content/gridiron-zero/comics-v7/'+f.name));
+ const manifest=JSON.parse(await readFile('private-content/gridiron-zero/comics-v8/manifest.json','utf8'));
+ assert.deepEqual(manifest.counts,{total:236,current:92,earlier:144});assert.equal(manifest.files.length,237);
+ for(const f of manifest.files)assert.deepEqual(await readFile('.output/public'+COMICS_ASSET_ROOT+'/'+f.name),await readFile('private-content/gridiron-zero/comics-v8/'+f.name));
  const entry=await readFile('.output/server/gridiron-entry.mjs','utf8');assert.match(entry,/serveComics/);assert.match(entry,/startsWith\(COMICS_ENDPOINT/);
 });

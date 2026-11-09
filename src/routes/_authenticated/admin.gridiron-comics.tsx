@@ -87,13 +87,16 @@ function PrivateComicLibrary() {
           saved = localStorage.getItem("gridiron-comic-position:" + data.session.user.id) || "";
         } catch {}
         const hash = window.location.hash.replace("#page=", "");
-        const page =
+        const requestedPage =
           next.pages.find((p) => p.id === hash) ||
           next.pages.find((p) => p.id === saved) ||
           next.pages.find((p) => p.current);
+        const page = requestedPage && next.pages.find((p) => p.current &&
+          p.season === requestedPage.season && p.episode === requestedPage.episode &&
+          p.page === requestedPage.page);
         if (page) {
           setSelected(page.id);
-          setEdition(page.current ? "current" : "earlier");
+          setEdition("current");
         }
       } catch (e) {
         if (active) setStatus(e instanceof Error && e.message === "access" ? "denied" : "error");
@@ -140,7 +143,7 @@ function PrivateComicLibrary() {
         (p) =>
           (season === "all" || String(p.season) === season) &&
           (episode === "all" || `${p.season}-${p.episode}` === episode) &&
-          (edition === "all" || (edition === "current" ? p.current : !p.current)),
+          (edition === "current" ? p.current : !p.current),
       ),
     [catalog, season, episode, edition],
   );
@@ -192,7 +195,7 @@ function PrivateComicLibrary() {
           </h1>
           <p className="mt-2 text-sm text-slate-400">
             {catalog
-              ? `${catalog.counts.total} produced pages · ${catalog.counts.current} latest pages · ${catalog.counts.earlier} earlier versions`
+              ? `${catalog.counts.current} final-cut pages · ${catalog.counts.earlier} outtakes`
               : "Private comic production library"}
           </p>
         </div>
@@ -221,7 +224,12 @@ function PrivateComicLibrary() {
       {status === "ready" && catalog && (
         <div className="mx-auto grid max-w-[1800px] lg:grid-cols-[280px_minmax(0,1fr)]">
           <aside className="border-b border-white/10 p-5 lg:border-r">
-            <h2 className="text-lg font-semibold">Your library</h2>
+            <h2 className="text-lg font-semibold">{edition === "current" ? "Final Cut" : "Outtakes"}</h2>
+            <p className="mt-2 text-xs text-slate-400">{edition === "current" ? "Latest imagery and lettering, in story order." : "Superseded editions and earlier proofs."}</p>
+            <nav className="mt-4 flex gap-2" aria-label="Library sections">
+              <button className={control} aria-pressed={edition === "current"} onClick={() => setEdition("current")}>Final Cut</button>
+              <button className={control} aria-pressed={edition === "earlier"} onClick={() => setEdition("earlier")}>Outtakes</button>
+            </nav>
             <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-1">
               <label className="text-xs text-slate-400">
                 Season
@@ -256,18 +264,7 @@ function PrivateComicLibrary() {
                   ))}
                 </select>
               </label>
-              <label className="col-span-2 text-xs text-slate-400 lg:col-span-1">
-                Edition
-                <select
-                  className={control + " mt-1 w-full bg-slate-900 text-slate-100"}
-                  value={edition}
-                  onChange={(e) => setEdition(e.target.value)}
-                >
-                  <option value="current">Latest produced pages</option>
-                  <option value="earlier">Earlier versions & storyboards</option>
-                  <option value="all">Every produced page</option>
-                </select>
-              </label>
+
             </div>
             <p className="my-4 text-xs text-slate-400">{visible.length} pages in this selection</p>
             <div
@@ -288,7 +285,7 @@ function PrivateComicLibrary() {
                   <PrivateImage page={p} load={loadImage} thumbnail />
                   <span className="block p-2 text-[10px]">
                     S{p.season} E{p.episode} · P{p.page}
-                    {p.current ? "" : " · Earlier"}
+                    {p.current ? "" : " · Outtake"}
                   </span>
                 </button>
               ))}
@@ -329,7 +326,7 @@ function PrivateComicLibrary() {
                   <h2 className="mt-2 text-2xl font-bold">{current.title}</h2>
                   <p className="mt-2 text-xs text-slate-400">
                     Page {current.page} · {current.edition} ·{" "}
-                    {current.current ? "latest produced" : "earlier version"}
+                    {current.current ? "Final Cut" : "Outtake"}
                   </p>
                   {current.note && (
                     <p className="mt-3 border-l-2 border-amber-300 bg-amber-300/10 p-3 text-xs text-amber-100">

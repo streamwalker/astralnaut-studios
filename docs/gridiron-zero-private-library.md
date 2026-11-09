@@ -64,3 +64,11 @@ Current editions: Story Bible `library-v4.enc` / `GRIDIRON_LIBRARY_KEY_V4`; comi
 ## Continuation release — November 8, 2026
 
 This release uses library-v5 with GRIDIRON_LIBRARY_KEY_V5 and comics-v7 with GRIDIRON_COMICS_KEY_V7. It includes 144 page images (92 current, 52 earlier) and five screenplay packets in the private library. The comic batch contains 145 encrypted objects including its catalog. Previous versioned payloads and keys remain available for rollback; keys are never rotated in place. Creative text and images remain outside this public repository. Local round-trip, asset-integrity, authorization and authenticated UI checks are recorded in the private production workspace.
+
+## November 9, 2026 — lettering release v8
+
+The comic reader opens in **Final Cut**, containing one latest lettering revision for each of 92 story pages across three seasons. **Outtakes** separately retains all 144 superseded editions. Season and episode filters apply within the selected section; there is no combined view. Saved positions and old page links resolve to the corresponding final-cut page on initial load.
+
+The v8 comic payload includes 237 authenticated-encryption objects (catalog plus 236 images), with `GRIDIRON_COMICS_KEY_V8` supplied through the existing deployment secret flow. The Story Bible remains v5. Previous encrypted versions remain available for rollback. No plaintext artwork or offline reader is committed.
+
+Validation: offline reader tests; exact encryption/decryption round trips for every object; TypeScript; production build; 15 private-library gate tests; carousel and video tests; deployment dry run. Live verification is performed after deployment against astralnautstudios.com.
