@@ -78,3 +78,9 @@ Validation: offline reader tests; exact encryption/decryption round trips for ev
 This continuation adds 15 current pages, three for each episode. Final Cut now contains 107 pages (32 Season 1, 15 Season 2, 60 Season 3), while Outtakes retains 144 earlier editions. The 251-image catalog and its catalog object use `comics-v9` / `GRIDIRON_COMICS_KEY_V9`. The protected Story Bible uses `library-v6.enc` / `GRIDIRON_LIBRARY_KEY_V6` and adds the new five-episode screenplay and continuity notes with a Fountain download. It retains 52 dossiers and 58 reference sheets. The portable offline reader embeds all 251 images and six screenplay downloads.
 
 Source art was reviewed for the approved character appearance, wardrobe by story day, injured-arm continuity, balloon speakers and dialogue order. Scripts target two to three minutes; runtimes have not been validated by a performed read. Only encrypted creative content is committed. Previous payloads and keys remain available for rollback; prior reader editions remain in Outtakes.
+
+## Continuation release — November 10, 2026
+
+Current payloads: library-v7 / GRIDIRON_LIBRARY_KEY_V7 and comics-v10 / GRIDIRON_COMICS_KEY_V10. The catalog contains 266 images: 122 Final Cut and 144 Outtakes. Fifteen new finished pages extend Season Three through Episode 25; the protected Story Bible adds the corresponding screenplay packet and production notes. It retains 52 dossiers and 58 reference sheets.
+
+There are 267 encrypted comic objects plus the encrypted Bible. Previous payloads and versioned keys remain available for rollback. Creative source files and the portable offline HTML remain outside this public repository. New content passes encryption round-trip, offline image decoding, authorization tests and authenticated reader inspection before completion is reported.
