@@ -4,14 +4,14 @@ import { loadEnv } from 'vite';
 const configPath = '.output/server/wrangler.json';
 const config = JSON.parse(await readFile(configPath, 'utf8'));
 if (!config.assets?.binding || config.assets.binding !== 'ASSETS') throw new Error('Expected ASSETS binding');
-const source = 'private-content/gridiron-zero/library-v5.enc';
+const source = 'private-content/gridiron-zero/library-v6.enc';
 const manifest = JSON.parse(await readFile('private-content/gridiron-zero/manifest.json', 'utf8'));
 const { createHash } = await import('node:crypto');
 const encrypted = await readFile(source);
 if (createHash('sha256').update(encrypted).digest('hex') !== manifest.encryptedSha256) throw new Error('Encrypted library checksum mismatch');
 if (encrypted.length > 25 * 1024 * 1024) throw new Error('Library exceeds asset size limit');
 await mkdir('.output/public/assets/gridiron-zero', { recursive: true });
-await copyFile(source, '.output/public/assets/gridiron-zero/library-v5.enc');
+await copyFile(source, '.output/public/assets/gridiron-zero/library-v6.enc');
 await copyFile('server/gridiron-zero/gate.mjs', '.output/server/gridiron-gate.mjs');
 const buildEnv = loadEnv('production', process.cwd(), 'VITE_');
 const publicConfig = { url: buildEnv.VITE_SUPABASE_URL, key: buildEnv.VITE_SUPABASE_PUBLISHABLE_KEY };
@@ -25,11 +25,11 @@ config.assets.run_worker_first = previous === true ? true : [...new Set([...(Arr
 await writeFile(configPath, JSON.stringify(config, null, 2) + '\n');
 console.log(`Packaged encrypted Gridiron Zero library (${encrypted.length} bytes); admin API gate enabled.`);
 
-const comicManifest = JSON.parse(await readFile('private-content/gridiron-zero/comics-v8/manifest.json','utf8'));
-await mkdir('.output/public/assets/gridiron-zero/comics-v8',{recursive:true});
+const comicManifest = JSON.parse(await readFile('private-content/gridiron-zero/comics-v9/manifest.json','utf8'));
+await mkdir('.output/public/assets/gridiron-zero/comics-v9',{recursive:true});
 for(const file of comicManifest.files){
- const bytes=await readFile('private-content/gridiron-zero/comics-v8/'+file.name);
+ const bytes=await readFile('private-content/gridiron-zero/comics-v9/'+file.name);
  if(createHash('sha256').update(bytes).digest('hex')!==file.sha256 || bytes.length!==file.bytes || bytes.length>25*1024*1024)throw new Error('Invalid encrypted comic asset');
- await copyFile('private-content/gridiron-zero/comics-v8/'+file.name,'.output/public/assets/gridiron-zero/comics-v8/'+file.name);
+ await copyFile('private-content/gridiron-zero/comics-v9/'+file.name,'.output/public/assets/gridiron-zero/comics-v9/'+file.name);
 }
 console.log('Packaged '+comicManifest.counts.total+' private comic pages; no plaintext art included.');

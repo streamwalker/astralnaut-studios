@@ -72,3 +72,9 @@ The comic reader opens in **Final Cut**, containing one latest lettering revisio
 The v8 comic payload includes 237 authenticated-encryption objects (catalog plus 236 images), with `GRIDIRON_COMICS_KEY_V8` supplied through the existing deployment secret flow. The Story Bible remains v5. Previous encrypted versions remain available for rollback. No plaintext artwork or offline reader is committed.
 
 Validation: offline reader tests; exact encryption/decryption round trips for every object; TypeScript; production build; 15 private-library gate tests; carousel and video tests; deployment dry run. Live verification is performed after deployment against astralnautstudios.com.
+
+## November 9, 2026 — Season 3 Episodes 16–20 (comics v9 / Bible v6)
+
+This continuation adds 15 current pages, three for each episode. Final Cut now contains 107 pages (32 Season 1, 15 Season 2, 60 Season 3), while Outtakes retains 144 earlier editions. The 251-image catalog and its catalog object use `comics-v9` / `GRIDIRON_COMICS_KEY_V9`. The protected Story Bible uses `library-v6.enc` / `GRIDIRON_LIBRARY_KEY_V6` and adds the new five-episode screenplay and continuity notes with a Fountain download. It retains 52 dossiers and 58 reference sheets. The portable offline reader embeds all 251 images and six screenplay downloads.
+
+Source art was reviewed for the approved character appearance, wardrobe by story day, injured-arm continuity, balloon speakers and dialogue order. Scripts target two to three minutes; runtimes have not been validated by a performed read. Only encrypted creative content is committed. Previous payloads and keys remain available for rollback; prior reader editions remain in Outtakes.
