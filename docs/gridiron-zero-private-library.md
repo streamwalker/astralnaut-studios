@@ -84,3 +84,10 @@ Source art was reviewed for the approved character appearance, wardrobe by story
 Current payloads: library-v7 / GRIDIRON_LIBRARY_KEY_V7 and comics-v10 / GRIDIRON_COMICS_KEY_V10. The catalog contains 266 images: 122 Final Cut and 144 Outtakes. Fifteen new finished pages extend Season Three through Episode 25; the protected Story Bible adds the corresponding screenplay packet and production notes. It retains 52 dossiers and 58 reference sheets.
 
 There are 267 encrypted comic objects plus the encrypted Bible. Previous payloads and versioned keys remain available for rollback. Creative source files and the portable offline HTML remain outside this public repository. New content passes encryption round-trip, offline image decoding, authorization tests and authenticated reader inspection before completion is reported.
+
+
+## Season 3 screenplay rewrite release — November 12, 2026
+
+The current comic payload is comics-v11 / GRIDIRON_COMICS_KEY_V11: 326 images, comprising 152 Final Cut pages and 174 Outtakes. Sixty finished pages adapt revised Episodes 16–35, three pages per episode. Thirty replace earlier published editions, which remain in Outtakes; thirty extend the reader through Episode 35. The Story Bible remains library-v7.
+
+All 327 encrypted objects (catalog plus images) pass exact encryption round-trip verification. The portable offline reader embeds all 326 viewing images and nine screenplay downloads. Source artwork, manuscripts, visual-review records and offline HTML remain in the private workspace. Previous versioned ciphertext and secrets remain available for rollback. The existing admin authentication and private/no-store responses protect each new page.

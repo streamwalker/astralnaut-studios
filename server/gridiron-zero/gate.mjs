@@ -2,7 +2,7 @@
 export const LIBRARY_ENDPOINT = "/api/admin/gridiron-zero/library";
 export const ENCRYPTED_ASSET = "/assets/gridiron-zero/library-v7.enc";
 export const COMICS_ENDPOINT = "/api/admin/gridiron-zero/comics";
-export const COMICS_ASSET_ROOT = "/assets/gridiron-zero/comics-v10";
+export const COMICS_ASSET_ROOT = "/assets/gridiron-zero/comics-v11";
 const PRIVATE_HEADERS = {
   "Cache-Control": "private, no-store, max-age=0",
   "CDN-Cache-Control": "no-store",
@@ -83,7 +83,7 @@ export async function serveComics(request, env, publicConfig, fetcher = fetch) {
     return await decryptResponse(
       request,
       env,
-      env.GRIDIRON_COMICS_KEY_V10,
+      env.GRIDIRON_COMICS_KEY_V11,
       `${COMICS_ASSET_ROOT}/${id}.enc`,
       id === "catalog" ? "application/json; charset=utf-8" : "image/jpeg",
     );

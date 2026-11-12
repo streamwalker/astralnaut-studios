@@ -25,11 +25,11 @@ config.assets.run_worker_first = previous === true ? true : [...new Set([...(Arr
 await writeFile(configPath, JSON.stringify(config, null, 2) + '\n');
 console.log(`Packaged encrypted Gridiron Zero library (${encrypted.length} bytes); admin API gate enabled.`);
 
-const comicManifest = JSON.parse(await readFile('private-content/gridiron-zero/comics-v10/manifest.json','utf8'));
-await mkdir('.output/public/assets/gridiron-zero/comics-v10',{recursive:true});
+const comicManifest = JSON.parse(await readFile('private-content/gridiron-zero/comics-v11/manifest.json','utf8'));
+await mkdir('.output/public/assets/gridiron-zero/comics-v11',{recursive:true});
 for(const file of comicManifest.files){
- const bytes=await readFile('private-content/gridiron-zero/comics-v10/'+file.name);
+ const bytes=await readFile('private-content/gridiron-zero/comics-v11/'+file.name);
  if(createHash('sha256').update(bytes).digest('hex')!==file.sha256 || bytes.length!==file.bytes || bytes.length>25*1024*1024)throw new Error('Invalid encrypted comic asset');
- await copyFile('private-content/gridiron-zero/comics-v10/'+file.name,'.output/public/assets/gridiron-zero/comics-v10/'+file.name);
+ await copyFile('private-content/gridiron-zero/comics-v11/'+file.name,'.output/public/assets/gridiron-zero/comics-v11/'+file.name);
 }
 console.log('Packaged '+comicManifest.counts.total+' private comic pages; no plaintext art included.');
