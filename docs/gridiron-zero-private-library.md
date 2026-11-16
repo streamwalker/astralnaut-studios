@@ -91,3 +91,10 @@ There are 267 encrypted comic objects plus the encrypted Bible. Previous payload
 The current comic payload is comics-v11 / GRIDIRON_COMICS_KEY_V11: 326 images, comprising 152 Final Cut pages and 174 Outtakes. Sixty finished pages adapt revised Episodes 16–35, three pages per episode. Thirty replace earlier published editions, which remain in Outtakes; thirty extend the reader through Episode 35. The Story Bible remains library-v7.
 
 All 327 encrypted objects (catalog plus images) pass exact encryption round-trip verification. The portable offline reader embeds all 326 viewing images and nine screenplay downloads. Source artwork, manuscripts, visual-review records and offline HTML remain in the private workspace. Previous versioned ciphertext and secrets remain available for rollback. The existing admin authentication and private/no-store responses protect each new page.
+
+
+## Season 3 continuation release — November 15, 2026
+
+Current comic payload: comics-v12 / GRIDIRON_COMICS_KEY_V12, with 341 images: 167 Final Cut and 174 Outtakes. Fifteen finished pages extend Season 3 through Episode 40, three pages per episode. The Story Bible remains library-v7; prior ciphertext and versioned keys remain available for rollback.
+
+The offline reader embeds all 341 viewing images and ten screenplay downloads. The public repository receives only 342 encrypted objects, including the catalog. Artwork, script sources, panel plans, visual-review records and the portable HTML remain in the private workspace. Each new image remains behind the existing administrator authorization gate. Local, deployment and signed-in live verification are recorded privately before publication is reported complete.
