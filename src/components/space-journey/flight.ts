@@ -24,4 +24,4 @@ export const gaze = new CatmullRomCurve3(
   "catmullrom",
   0.3,
 );
-export const chapterIds = ["departure", "nebula", "slate", "world", "invitation"];
+export { chapterIds } from "./chapter-ids";

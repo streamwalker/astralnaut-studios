@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { chapterIds } from "./flight";
+import { chapterIds } from "./chapter-ids";
 
 /** Original canon artwork anchors the photographic look; WebGL adds the moving fleet. */
 const plates = ["orbit", "city", "santee", "orbit", "ryuken"];
