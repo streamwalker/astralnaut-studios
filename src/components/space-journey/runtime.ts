@@ -96,12 +96,14 @@ export async function mountSpace(
     pointer = new T.Vector2();
   let touch: number | null = null;
   const move = (e: PointerEvent) => {
+    if (e.target instanceof Element && e.target.closest(".vessel-viewer")) return;
     if (e.pointerType === "touch" && touch !== e.pointerId) return;
     target.set((e.clientX / innerWidth - 0.5) * 2, (e.clientY / innerHeight - 0.5) * 2);
     document.documentElement.style.setProperty("--cursor-x", e.clientX + "px");
     document.documentElement.style.setProperty("--cursor-y", e.clientY + "px");
   };
   const down = (e: PointerEvent) => {
+    if (e.target instanceof Element && e.target.closest(".vessel-viewer")) return;
     if (e.isPrimary && e.pointerType === "touch") touch = e.pointerId;
   };
   const reset = () => {

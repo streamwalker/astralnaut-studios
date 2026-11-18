@@ -1,0 +1,23 @@
+{
+  "file": "santee-v2.glb",
+  "bytes": 1808744,
+  "triangles": 320544,
+  "meshes": 7,
+  "blenderDimensionsXYZ": [
+    19.372008323669434,
+    19.36772060394287,
+    28.022869110107422
+  ],
+  "gltfDimensionsXYZ": [
+    19.372008323669434,
+    28.022869110107422,
+    19.36772060394287
+  ],
+  "imagePlanes": 0,
+  "reviewCameraGltf": [
+    28,
+    2,
+    42
+  ],
+  "modelUp": "Y in exported GLB"
+}

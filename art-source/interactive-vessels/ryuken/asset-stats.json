@@ -1,0 +1,26 @@
+{
+  "bytes": 977380,
+  "meshes": 8,
+  "triangles": 105400,
+  "blenderDimensionsXYZ": [
+    10.760000228881836,
+    20.101959228515625,
+    6.829999923706055
+  ],
+  "gltfDimensionsXYZ": [
+    10.760000228881836,
+    6.829999923706055,
+    20.101959228515625
+  ],
+  "gltfBowAxis": "+Z",
+  "referenceViewCameraGltf": [
+    -17,
+    23,
+    28
+  ],
+  "centerOffsetBlender": [
+    0.0,
+    -1.4509797096252441,
+    1.9850001335144043
+  ]
+}

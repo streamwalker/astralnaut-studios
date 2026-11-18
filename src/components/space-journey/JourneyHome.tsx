@@ -10,6 +10,7 @@ import { HomePricingStrip } from "@/components/home/PricingStrip";
 import { HeroRotator } from "@/components/home/HeroRotator";
 import { logoFor } from "@/lib/series-logos";
 import { pageUrl } from "@/lib/storage";
+import { VesselViewer } from "./VesselViewer";
 
 const chapters = [
   ["departure", "Departure"],
@@ -157,7 +158,7 @@ export function JourneyHome() {
           </div>
         </section>
         <section id="slate" data-chapter className="flight-section slate-section">
-          <div className="cinematic-clearance" aria-hidden="true"><span>SANTEE STATION / ORBITAL APPROACH</span></div>
+          <VesselViewer vessel="santee" />
           <div className="flight-copy">
             <div className="chapter-heading">
               <div>
@@ -251,6 +252,7 @@ export function JourneyHome() {
           </div>
         </section>
         <section id="invitation" data-chapter className="flight-section invitation-section">
+          <VesselViewer vessel="ryuken" />
           <div className="flight-copy">
             <span className="space-eyebrow">04 / You are cleared for arrival</span>
             <h2>
@@ -288,10 +290,6 @@ export function JourneyHome() {
             </div>
           </div>
         </section>
-        <div className="canon-vessels">
-          <figure><img src="/space-journey/reference-art/santee.webp" alt="Santee Station, with stacked orbital decks and its long central spire above the planet" loading="lazy" width="736" height="1104" /><figcaption>Santee Station</figcaption></figure>
-          <figure><img src="/space-journey/reference-art/ryuken.webp" alt="The Ryuken, an armored capital ship with twin cylindrical engines" loading="lazy" width="500" height="745" /><figcaption>The Ryuken</figcaption></figure>
-        </div>
         <figure className="bridge-panorama"><img src="/space-journey/reference-art/bridge.webp" alt="The Ryuken battle bridge crew with the fleet visible beyond the observation windows" loading="lazy" width="1536" height="1024" /><figcaption>ABOARD THE RYUKEN</figcaption></figure>
         <section className="journey-transmissions" aria-label="Trailers and announcements">
           <details onToggle={(event) => setTransmissionsOpen(event.currentTarget.open)}>
