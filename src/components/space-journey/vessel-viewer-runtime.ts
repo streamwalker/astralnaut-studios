@@ -92,7 +92,9 @@ export async function mountVessel(host: HTMLElement, vessel: "santee" | "ryuken"
   function render() {
     frame = 0;
     if (dead || !ready || !visible || document.hidden) return;
-    camera.position.set(0, 0, frameDistance() / zoom);
+    // The loaded model is normalized inside a unit sphere. Even an end-on
+    // maximum zoom must leave the near plane outside the physical hull.
+    camera.position.set(0, 0, Math.max(1 + camera.near + .08, frameDistance() / zoom));
     camera.lookAt(0, 0, 0);
     renderer.render(scene, camera);
     // These values are taken from the rendered model, after the actual GPU draw.
