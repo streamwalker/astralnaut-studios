@@ -5,7 +5,7 @@ Rebuilt in Blender 5.2.1 from the user's Santee Station 2.jpg and Ryuken One.jpg
 - **Santee**: upright axial station; broad central docking ring; smaller upper and lower ring decks; long descending keel; upper city spires; metallic radial paneling, service blocks and amber windows.
 - **Ryuken**: elongated broad armored hull, rounded/tapered bow, layered command bridge, antenna masts, twin cylindrical lateral nacelles and cyan annular emitters.
 
-`build_reference_fleet.py` deterministically builds both models, exports Draco GLBs, renders inspection PNGs and writes the editable `Santee-and-Ryuken.blend`. Run using `/Applications/Blender.app/Contents/MacOS/Blender --background --python assets/reference-fleet/build_reference_fleet.py` from the repository root.
+`build_reference_fleet.py` deterministically builds both models, exports Draco GLBs, renders inspection PNGs and writes the editable `Santee-and-Ryuken.blend`. Run using `/Applications/Blender.app/Contents/MacOS/Blender --background --python art-source/reference-fleet/build_reference_fleet.py` from the repository root.
 
 Exports in `public/space-journey/reference-fleet/` are at canonical origin with glTF +Y up. Ryuken's bow points +Z. The two models are separated horizontally only in the editable Blender scene for convenient inspection. Meshes are merged per material to limit draw calls; materials use glTF-compatible PBR and emissive colors without texture dependencies. The public GLBs require the existing Draco decoder.
 

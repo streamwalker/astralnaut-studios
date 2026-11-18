@@ -1,6 +1,6 @@
 """Reference-driven Santee and Ryuken reconstruction; no source artwork altered.
 Blender 5.2.1, deterministic geometry, merged by material for browser use.
-Run: Blender --background --python assets/reference-fleet/build_reference_fleet.py
+Run: Blender --background --python art-source/reference-fleet/build_reference_fleet.py
 """
 import bpy, math, random, json, os
 from mathutils import Vector
