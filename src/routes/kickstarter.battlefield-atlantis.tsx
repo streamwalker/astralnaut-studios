@@ -1,9 +1,11 @@
 import { useState, type CSSProperties } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowDown, ArrowUpRight, Download, Expand, Play, RotateCcw } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Download, Expand, RotateCcw } from "lucide-react";
 import { SiteHeader, SiteFooter, BATTLEFIELD_REDDIT_URL } from "@/components/site-header";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { BattlefieldIntro } from "@/components/battlefield-campaign/BattlefieldIntro";
+import { CinematicCampaign, CINEMATIC_ASSETS } from "@/components/battlefield-campaign/CinematicCampaign";
+import cinematicCss from "@/components/battlefield-campaign/cinematic.css?url";
 import campaignCss from "@/components/battlefield-campaign/campaign.css?url";
 import introCss from "@/components/battlefield-campaign/intro-carousel.css?url";
 
@@ -80,7 +82,8 @@ export const Route = createFileRoute("/kickstarter/battlefield-atlantis")({
       { rel: "canonical", href: PAGE_URL },
       { rel: "stylesheet", href: campaignCss },
       { rel: "stylesheet", href: introCss },
-      { rel: "preload", as: "image", href: SCENES[0].src, fetchpriority: "high" },
+      { rel: "stylesheet", href: cinematicCss },
+      { rel: "preload", as: "image", href: `${CINEMATIC_ASSETS}/edition-fallback.webp`, fetchPriority: "high" },
     ],
     scripts: [{
       type: "application/ld+json",
@@ -100,7 +103,7 @@ export const Route = createFileRoute("/kickstarter/battlefield-atlantis")({
 });
 
 function CampaignPage() {
-  const [introOpen, setIntroOpen] = useState(true);
+  const [introOpen, setIntroOpen] = useState(false);
   const [characterIndex, setCharacterIndex] = useState(0);
   const [stageIndex, setStageIndex] = useState(0);
   const [artwork, setArtwork] = useState<Artwork | null>(null);
@@ -123,40 +126,19 @@ function CampaignPage() {
     <>
       <SiteHeader />
       <main className="ba-campaign">
-        <section className="ba-campaign__hero ba-campaign__wrap" aria-labelledby="campaign-title">
-          <div className="ba-campaign__eyebrow">Astralnaut Studios / Campaign companion</div>
-          <div className="ba-campaign__hero-heading">
-            <div>
-              <h1 id="campaign-title" tabIndex={-1}>Battlefield<br /><span>Atlantis</span></h1>
-              <p className="ba-campaign__tagline">Only one will rule.</p>
-            </div>
-            <div className="ba-campaign__hero-copy">
-              <p>Step inside the world of Battlefield Atlantis through its campaign artwork, character dossier, and evolving transmedium suits.</p>
-              <div className="ba-campaign__actions">
-                <a href={KICKSTARTER_URL} target="_blank" rel="noopener noreferrer" className="ba-campaign__button ba-campaign__button--primary">View Kickstarter campaign <ArrowUpRight aria-hidden size={17} /></a>
-                <Link to="/reader/$series/$issue" params={{ series: "battlefield-atlantis", issue: "1" }} className="ba-campaign__text-link">Read the first issue <ArrowUpRight aria-hidden size={16} /></Link>
-              </div>
-            </div>
-          </div>
-
-          <div className="ba-campaign__hero-art">
-            <button type="button" onClick={() => openScene(2)} aria-label="Enlarge Battle for Atlantis artwork">
-              <img src={SCENES[2].src} alt={SCENES[2].alt} width={1672} height={941} decoding="async" />
-            </button>
-            <button className="ba-campaign__replay" type="button" onClick={() => setIntroOpen(true)}><Play size={14} aria-hidden /> Replay intro</button>
-          </div>
-
+        <CinematicCampaign campaignUrl={KICKSTARTER_URL} onPlay={() => setIntroOpen(true)} />
+        <div className="ba-campaign__wrap">
           <nav className="ba-campaign__section-nav" aria-label="Campaign companion sections">
             <a href="#transmedium-suits">Suit progressions <ArrowDown size={13} aria-hidden /></a>
             <a href="#zeus-dossier">Zeus dossier <ArrowDown size={13} aria-hidden /></a>
             <a href="#faction-insignia">Faction insignia <ArrowDown size={13} aria-hidden /></a>
             <a href="#campaign-artwork">Campaign artwork <ArrowDown size={13} aria-hidden /></a>
           </nav>
-        </section>
+        </div>
 
         <section id="transmedium-suits" className="ba-campaign__section ba-campaign__wrap" aria-labelledby="suits-title">
           <div className="ba-campaign__section-heading">
-            <div><div className="ba-campaign__eyebrow">01 / Suit studies</div><h2 id="suits-title">Built to adapt.</h2></div>
+            <div><div className="ba-campaign__eyebrow">03 / Suit studies</div><h2 id="suits-title">Built to adapt.</h2></div>
             <p>The modular transmedium suit builds on itself to meet the wearer’s needs. Explore four stages for Zeus, Astra and Orion, from the streamlined base to reinforced protection.</p>
           </div>
 
@@ -168,7 +150,7 @@ function CampaignPage() {
             <div className="ba-campaign__suit-body">
               <div className="ba-campaign__suit-image-wrap">
                 <button className="ba-campaign__suit-image" type="button" aria-label={`Enlarge ${character.name}: ${stage.name}`} onClick={() => setArtwork({ src: suitSrc, original: suitOriginal, title: `${character.name} / ${stage.name}`, alt: `${character.name}'s transmedium suit at stage ${stage.number}: ${stage.name}.` })}>
-                  <img src={suitSrc} alt={`${character.name}'s transmedium suit at stage ${stage.number}: ${stage.name}.`} decoding="async" />
+                  <img src={suitSrc} loading="lazy" alt={`${character.name}'s transmedium suit at stage ${stage.number}: ${stage.name}.`} decoding="async" />
                   <span className="ba-campaign__enlarge"><Expand size={15} aria-hidden /> Enlarge</span>
                 </button>
               </div>
@@ -197,7 +179,7 @@ function CampaignPage() {
         <section id="zeus-dossier" className="ba-campaign__section ba-campaign__wrap" aria-labelledby="dossier-title">
           <div className="ba-campaign__dossier">
             <div className="ba-campaign__dossier-copy">
-              <div className="ba-campaign__eyebrow">02 / Character dossier</div>
+              <div className="ba-campaign__eyebrow">04 / Character dossier</div>
               <h2 id="dossier-title">Meet Zeus.</h2>
               <p>Front, three-quarter, back and action studies of Zeus in his adaptive modular transmedium suit.</p>
               <a href={`${ASSETS}/zeus-dossier.pdf`} target="_blank" rel="noopener noreferrer" className="ba-campaign__button">Open Zeus dossier <ArrowUpRight size={17} aria-hidden /></a>
@@ -211,7 +193,7 @@ function CampaignPage() {
 
         <section id="faction-insignia" className="ba-campaign__section ba-campaign__wrap" aria-labelledby="insignia-title">
           <div className="ba-campaign__section-heading">
-            <div><div className="ba-campaign__eyebrow">03 / Faction insignia</div><h2 id="insignia-title">NDF &amp; TPC</h2></div>
+            <div><div className="ba-campaign__eyebrow">05 / Faction insignia</div><h2 id="insignia-title">NDF &amp; TPC</h2></div>
           </div>
           <div className="ba-campaign__insignia-stack">
             <figure className="ba-campaign__insignia ba-campaign__insignia--ndf">
@@ -227,7 +209,7 @@ function CampaignPage() {
 
         <section id="campaign-artwork" className="ba-campaign__section ba-campaign__wrap" aria-labelledby="artwork-title">
           <div className="ba-campaign__section-heading">
-            <div><div className="ba-campaign__eyebrow">04 / Campaign artwork</div><h2 id="artwork-title">Inside the conflict.</h2></div>
+            <div><div className="ba-campaign__eyebrow">06 / Campaign artwork</div><h2 id="artwork-title">Inside the conflict.</h2></div>
             <button className="ba-campaign__text-link" type="button" onClick={() => setIntroOpen(true)}><RotateCcw size={15} aria-hidden /> Replay the montage</button>
           </div>
           <div className="ba-campaign__gallery">
