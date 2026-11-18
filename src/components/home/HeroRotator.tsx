@@ -113,7 +113,7 @@ const AUTOPLAY_MS = 15000;
  */
 const VIDEO_STALL_MS = 70000;
 
-export function HeroRotator() {
+export function HeroRotator({ enabled = true }: { enabled?: boolean } = {}) {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const [userPaused, setUserPaused] = useState(false);
@@ -203,17 +203,17 @@ export function HeroRotator() {
 
   // Autoplay.
   useEffect(() => {
-    if (paused || userPaused || reducedMotion) return;
+    if (!enabled || paused || userPaused || reducedMotion) return;
     // When the video owns the pacing this timeout is only a stall guard — a
     // healthy playthrough fires `ended` well before VIDEO_STALL_MS elapses.
     const t = window.setTimeout(advance, videoDrivesAdvance ? VIDEO_STALL_MS : AUTOPLAY_MS);
     return () => window.clearTimeout(t);
-  }, [active, paused, userPaused, reducedMotion, videoDrivesAdvance, advance]);
+  }, [active, paused, userPaused, reducedMotion, videoDrivesAdvance, advance, enabled]);
 
   // Fire view event per slot.
   useEffect(() => {
-    track("hero_slot_view", { slot: HERO_SLOTS[active]?.id });
-  }, [active]);
+    if (enabled) track("hero_slot_view", { slot: HERO_SLOTS[active]?.id });
+  }, [active, enabled]);
 
   // Keyboard nav.
   const onKey = useCallback((e: React.KeyboardEvent) => {
@@ -263,7 +263,7 @@ export function HeroRotator() {
           slot={slot}
           isActive={i === active}
           shouldRender={i === active || i === nextIdx}
-          allowVideo={!reducedMotion && !saveData}
+          allowVideo={enabled && !reducedMotion && !saveData}
           paused={paused || userPaused}
           onEnded={advance}
           onUnplayable={markVideoUnplayable}

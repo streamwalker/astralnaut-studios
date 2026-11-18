@@ -107,7 +107,7 @@ export function TourOverlay() {
     const candidate = [...TOURS]
       .sort((a, b) => b.pathPrefix.length - a.pathPrefix.length)
       .find((t) => {
-        if (t.pathPrefix === "/") return pathname === "/";
+        if (t.pathPrefix === "/") return pathname === "/" && new URLSearchParams(window.location.search).has("tour");
         return pathname.startsWith(t.pathPrefix);
       });
     if (!candidate) {

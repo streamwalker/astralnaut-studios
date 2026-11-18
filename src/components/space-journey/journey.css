@@ -1,0 +1,1142 @@
+/* A single shared visual language, with restrained utility/reader surfaces. */
+:root {
+  --space-ice: #daf4f4;
+  --space-soft: #aebacb;
+  --space-line: rgba(201, 225, 245, 0.2);
+}
+html[data-space-page] {
+  background: #03060d;
+  scroll-padding-top: 110px;
+}
+html[data-space-page] body {
+  background: #03060d;
+  color: #edf3f5;
+}
+html[data-space-page="interior"] #main-content {
+  position: relative;
+  z-index: 1;
+}
+.space-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: #03060d;
+}
+.space-canvas,
+.space-fallback,
+.space-vignette {
+  position: absolute;
+  inset: 0;
+}
+.space-fallback {
+  background:
+    radial-gradient(ellipse at 80% 35%, #16434b88, transparent 52%),
+    radial-gradient(ellipse at 20% 50%, #37225488, transparent 54%), #03060d;
+  background-image: url("/space-journey/journey-fallback.png");
+  background-size: cover;
+  background-position: center;
+}
+.space-vignette {
+  background:
+    radial-gradient(ellipse at 65% 45%, transparent 10%, #02050c55 80%),
+    linear-gradient(90deg, #02050c55, transparent 65%);
+}
+.space-vignette:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' opacity='.5' d='M0 0h160v160H0z'/%3E%3C/svg%3E");
+}
+.space-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.8s;
+}
+.space-canvas[data-ready="true"] canvas {
+  opacity: 1;
+}
+.space-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+  background: #03060d;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  color: #c2d6e3;
+}
+.space-loading img {
+  width: 250px;
+  max-width: 65vw;
+  mix-blend-mode: screen;
+}
+.space-loading p {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.space-loading progress {
+  width: 230px;
+  height: 2px;
+  accent-color: #8df5e7;
+}
+.space-loading span {
+  font: 11px monospace;
+}
+.space-loading button {
+  font-size: 12px;
+  text-decoration: underline;
+  margin-top: 30px;
+  min-height: 44px;
+  color: #bcc8d8;
+}
+.space-journey {
+  position: relative;
+  z-index: 1;
+}
+.flight-section {
+  position: relative;
+  min-height: 125svh;
+  display: flex;
+  align-items: center;
+  padding: 15vh max(7.5vw, 24px);
+  scroll-margin-top: 0;
+}
+.flight-copy {
+  width: 100%;
+  max-width: 1250px;
+  margin: auto;
+}
+.flight-section h2 {
+  font-size: clamp(2.8rem, 5.5vw, 6rem);
+  font-weight: 400;
+  letter-spacing: -0.055em;
+  line-height: 1.03;
+  margin: 24px 0 30px;
+  max-width: 1000px;
+  text-wrap: balance;
+}
+.flight-section h2 em {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  color: #c4d8e2;
+}
+.flight-section p {
+  font-size: clamp(1rem, 1.15vw, 1.2rem);
+  line-height: 1.7;
+  color: #d3dde8;
+  max-width: 570px;
+}
+.space-eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #a7d3d8;
+  line-height: 1.6;
+}
+.flight-hero {
+  height: 100svh;
+  min-height: 740px;
+  padding-top: 150px;
+  padding-bottom: 120px;
+}
+.flight-hero .flight-copy {
+  max-width: 1250px;
+}
+.flight-hero h1 {
+  width: min(800px, 78vw);
+  margin: 28px 0 0 -24px;
+}
+.flight-hero h1 img {
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  object-position: left center;
+  mix-blend-mode: screen;
+}
+.flight-hero .hero-tagline {
+  font-size: clamp(1.3rem, 2vw, 2rem);
+  font-weight: 300;
+  color: #ecf6fa;
+  letter-spacing: -0.02em;
+  margin-top: 15px;
+}
+.flight-actions {
+  display: flex;
+  gap: 34px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 35px;
+}
+.space-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 35px;
+  min-height: 56px;
+  border: 1px solid #caeff45c;
+  border-radius: 2px;
+  padding: 16px 24px;
+  background: #8bd6e80d;
+  color: #effdff;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  backdrop-filter: blur(14px);
+  transition:
+    background 0.3s,
+    border-color 0.3s,
+    transform 0.3s;
+}
+.space-button:hover {
+  background: #c0eff31c;
+  border-color: #c8f5f1;
+  transform: translateY(-2px);
+}
+.space-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 35px;
+  font-size: 12px;
+  min-height: 44px;
+  color: #d4e5ef;
+  border-bottom: 1px solid #c0d5e733;
+  padding-bottom: 3px;
+}
+.space-text-link:hover {
+  color: white;
+  border-color: white;
+}
+.space-button:focus-visible,
+.space-text-link:focus-visible,
+.holo-panel:focus-visible,
+.journey-dots a:focus-visible {
+  outline: 2px solid #b1f4f0;
+  outline-offset: 6px;
+}
+.scroll-invitation {
+  position: absolute;
+  bottom: 48px;
+  left: 7.5vw;
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #bbd4df;
+  min-height: 44px;
+}
+.scroll-invitation i {
+  font-style: normal;
+  border: 1px solid #b4d2e03d;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  animation: space-scroll 3s ease-in-out infinite;
+}
+@keyframes space-scroll {
+  50% {
+    transform: translateY(8px);
+  }
+}
+.hero-coordinate {
+  position: absolute;
+  right: 7.5vw;
+  bottom: 65px;
+  font: 9px monospace;
+  letter-spacing: 0.15em;
+  color: #9eb5c6;
+}
+.story-copy {
+  margin-left: 0;
+  max-width: 740px;
+}
+.story-copy h2 {
+  max-width: 800px;
+}
+.story-copy .space-secondary {
+  font-size: 14px;
+  max-width: 590px;
+  margin-top: 25px;
+  color: #aebdce;
+}
+.flight-stats {
+  display: flex;
+  gap: 55px;
+  margin: 40px 0;
+  flex-wrap: wrap;
+}
+.flight-stats strong {
+  display: block;
+  font-size: 40px;
+  font-weight: 300;
+  letter-spacing: -0.06em;
+  color: #e6f8ff;
+}
+.flight-stats span {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: #b4c3d5;
+  margin-top: 7px;
+}
+.flight-section .space-caption {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #a1b5c7;
+  margin: 22px 0;
+}
+.journey-dots {
+  position: fixed;
+  right: 28px;
+  top: 42%;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.journey-dots a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 34px;
+}
+.journey-dots i {
+  width: 5px;
+  height: 5px;
+  background: #8196ad;
+  border-radius: 50%;
+  transition: all 0.4s;
+}
+.journey-dots a[aria-current] i {
+  background: #dcfffd;
+  box-shadow: 0 0 0 6px #a9edeb18;
+}
+.journey-dots span {
+  position: absolute;
+  right: 38px;
+  white-space: nowrap;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #cee1ea;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.journey-dots a:hover span,
+.journey-dots a:focus-visible span {
+  opacity: 1;
+}
+.chapter-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+.chapter-heading p {
+  font-size: 11px;
+  letter-spacing: 0.09em;
+  max-width: 230px;
+  margin-bottom: 35px;
+}
+.slate-section {
+  min-height: 140svh;
+}
+.holographic-slate {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  align-items: stretch;
+  perspective: 1000px;
+}
+.holo-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid #95c1dd3b;
+  background: linear-gradient(140deg, #28445b44, #080f1dc9);
+  backdrop-filter: blur(16px);
+  padding: 24px;
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition:
+    transform 0.2s,
+    border-color 0.3s;
+  box-shadow: 0 25px 70px #0004;
+  min-width: 0;
+}
+.holo-panel:hover {
+  border-color: #b4edf1aa;
+}
+.slate-index {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #a5cbd5;
+  min-height: 24px;
+}
+.slate-art {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  margin: 0 -24px;
+}
+.slate-cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.32;
+  filter: saturate(0.6);
+  mask-image: linear-gradient(transparent, black 25%, black 60%, transparent);
+}
+.slate-logo {
+  position: relative;
+  width: 90%;
+  height: 100%;
+  object-fit: contain;
+  margin: auto;
+  mix-blend-mode: screen;
+  padding: 28px 0;
+}
+.holo-panel h3 {
+  font-size: 22px;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+}
+.holo-panel p {
+  font-size: 13px;
+  line-height: 1.65;
+  color: #b6c3d4;
+}
+.slate-link {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid #abc7db30;
+  min-height: 44px;
+  color: #dcf6fa;
+}
+.world-section {
+  min-height: 145svh;
+  align-items: flex-end;
+  padding-top: 30vh;
+}
+.world-section h2 {
+  font-size: clamp(2.5rem, 4.7vw, 5rem);
+}
+.world-section .world-caption {
+  font-size: 14px;
+}
+.world-section section {
+  padding: 65px 0 0;
+}
+.world-section section > div:first-child h2 {
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 400;
+  margin: 0;
+}
+.world-section section > div:first-child a {
+  font-size: 9px;
+}
+.world-section .card-rwc {
+  background: #06101ac9;
+  border: 1px solid #a3c3de44;
+  border-radius: 2px;
+  box-shadow: none;
+  backdrop-filter: blur(15px);
+}
+.world-section .btn-cta {
+  background: #d7efee;
+  color: #07101c;
+  clip-path: none;
+  border-radius: 2px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+  font-size: 12px;
+  min-height: 48px;
+}
+.world-section .card-rwc > div:nth-child(2) {
+  font-weight: 400;
+}
+.invitation-section {
+  min-height: 150svh;
+}
+.invitation-section .flight-copy {
+  max-width: 1050px;
+  margin-left: 0;
+}
+.invitation-section .invitation-line {
+  font-size: 24px;
+  color: #ecfaff;
+  margin-bottom: 12px;
+}
+.journey-benefits {
+  margin-top: 90px;
+  max-width: 680px;
+}
+.journey-benefits > div {
+  margin-bottom: 25px;
+}
+.journey-benefits details {
+  border-top: 1px solid #a5c0d938;
+}
+.journey-benefits summary {
+  min-height: 75px;
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  font-size: 18px;
+  cursor: pointer;
+  list-style: none;
+}
+.journey-benefits summary::-webkit-details-marker {
+  display: none;
+}
+.journey-benefits summary span {
+  font: 10px monospace;
+  color: #91acbd;
+}
+.journey-benefits summary i {
+  margin-left: auto;
+  font-style: normal;
+  color: #c4edef;
+  font-weight: 300;
+}
+.journey-benefits details[open] summary i {
+  transform: rotate(45deg);
+}
+.journey-benefits details p {
+  font-size: 14px;
+  padding: 0 35px 25px 42px;
+}
+.journey-transmissions {
+  padding: 0 7.5vw 70px;
+}
+.journey-transmissions > details > summary {
+  cursor: pointer;
+  min-height: 70px;
+  border-block: 1px solid #abc3d935;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  letter-spacing: 0.07em;
+}
+.journey-transmissions > details:not([open]) > *:not(summary) {
+  display: none;
+}
+.orbital-header {
+  transition: background 0.4s;
+  border-bottom: 1px solid #bdd9eb18 !important;
+  background: #040913b3 !important;
+}
+.orbital-header > div.mx-auto {
+  max-width: none;
+  padding: 18px 5vw;
+}
+.orbital-header nav[aria-label="Main navigation"] {
+  display: none;
+}
+.orbital-header img {
+  filter: none !important;
+}
+.orbital-header a[aria-label="Astralnaut Studios — Real World Comics"] > img:first-child {
+  height: 40px;
+}
+.orbital-header a[aria-label="Astralnaut Studios — Real World Comics"] > img:not(:first-child),
+.orbital-header a[aria-label="Astralnaut Studios — Real World Comics"] > span {
+  display: none;
+}
+.orbital-header .btn-cta {
+  background: transparent;
+  border: 1px solid #bbdce742;
+  color: #d3e9f0;
+  clip-path: none;
+  font-size: 11px;
+  text-transform: none;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  min-height: 44px;
+  border-radius: 2px;
+}
+html[data-space-page="home"] .orbital-header {
+  position: fixed;
+  inset: 0 0 auto;
+  background: linear-gradient(#03060d99, transparent) !important;
+  backdrop-filter: none;
+  border: 0 !important;
+}
+.journey-menu-button {
+  min-width: 90px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 10px;
+  margin-right: 15px;
+}
+.journey-menu-button span {
+  font-size: 16px;
+}
+.journey-menu {
+  background: #07101cf5 !important;
+  border: 1px solid #bcd9e244 !important;
+  width: min(800px, 90vw) !important;
+  max-width: 800px !important;
+  max-height: 85dvh;
+  overflow: auto;
+  padding: 45px !important;
+  backdrop-filter: blur(25px);
+}
+.journey-menu > h2 {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #bbdce5;
+}
+.journey-menu nav {
+  display: grid;
+  gap: 0;
+  margin: 18px 0;
+}
+.journey-menu nav a {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  border-bottom: 1px solid #aac1d024;
+  padding: 16px 0;
+  font-size: clamp(18px, 2.2vw, 30px);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+}
+.journey-menu nav a:hover {
+  color: #96ddd5;
+}
+.journey-menu nav small {
+  font: 9px monospace;
+  color: #88a3b9;
+}
+.journey-menu nav a > span {
+  margin-left: auto;
+  font-size: 17px;
+}
+.journey-menu-secondary {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+.journey-menu-secondary a {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.space-motion {
+  position: fixed;
+  bottom: 18px;
+  right: 28px;
+  z-index: 24;
+  min-height: 44px;
+  padding: 8px 12px;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  color: #a3bbc9;
+  background: #02060b77;
+  border-radius: 3px;
+  border: 1px solid #bbd9e21a;
+  backdrop-filter: blur(10px);
+}
+.orbital-footer {
+  position: relative;
+  z-index: 2;
+  background: #030810dd !important;
+  border-top: 1px solid #acc5dd30 !important;
+  padding-top: 65px !important;
+}
+.orbital-footer a {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+.orbital-footer h3 {
+  color: #b3d9df;
+}
+.orbital-footer p {
+  line-height: 1.8;
+}
+.orbital-footer .text-\[10px\] {
+  color: #b6dbe7 !important;
+}
+.subpage-arrival {
+  position: relative;
+  overflow: hidden;
+  min-height: 64svh;
+  padding: 100px 8vw 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 22px;
+  border-bottom: 1px solid #accde71c;
+}
+.arrival-title {
+  font-size: clamp(3.2rem, 7vw, 7.5rem);
+  font-weight: 300;
+  letter-spacing: -0.055em;
+  line-height: 1.03;
+  max-width: 980px;
+  text-wrap: balance;
+  position: relative;
+  z-index: 1;
+}
+.subpage-arrival > p:not(.arrival-title) {
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  color: #c4d6e4;
+}
+.subpage-arrival .space-text-link {
+  width: 120px;
+}
+.arrival-orbit {
+  position: absolute;
+  right: -6vw;
+  top: 5%;
+  width: 48vw;
+  height: 48vw;
+  border: 1px solid #93cbe526;
+  border-radius: 50%;
+  box-shadow:
+    0 0 100px #6c75d50a,
+    inset 0 0 100px #74a3d50a;
+  pointer-events: none;
+}
+.page-arrival-anchor {
+  scroll-margin-top: 140px;
+}
+html[data-space-page="interior"] main {
+  position: relative;
+  background: linear-gradient(180deg, #040b14b3, #040b14ee);
+  border-radius: 2px;
+  margin-top: 0;
+  padding-top: 70px;
+  padding-bottom: 90px;
+}
+html[data-space-page="interior"] .card-rwc {
+  background: #101c2ca6;
+  border-color: #accbe633;
+  border-radius: 3px;
+  box-shadow: none;
+  backdrop-filter: blur(12px);
+}
+html[data-space-page="interior"] main h1 {
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+html[data-space-page="interior"] main h2 {
+  letter-spacing: -0.025em;
+}
+html[data-space-page="interior"] .legal-doc {
+  padding: 30px 0;
+}
+.legal-body {
+  color: #bccbd9 !important;
+}
+.legal-body h2 {
+  color: #b7dee2 !important;
+}
+.legal-space-shell {
+  position: relative;
+  z-index: 1;
+}
+@media (pointer: fine) {
+  .space-journey a {
+    cursor: crosshair;
+  }
+}
+@media (max-width: 900px) {
+  .flight-section {
+    padding: 110px 7vw;
+    min-height: 110svh;
+  }
+  .flight-hero {
+    min-height: 680px;
+    height: 100svh;
+    padding-bottom: 130px;
+  }
+  .flight-hero h1 {
+    width: 88vw;
+    margin-left: -18px;
+  }
+  .flight-hero h1 img {
+    max-height: 220px;
+  }
+  .hero-coordinate {
+    display: none;
+  }
+  .journey-dots {
+    right: 7px;
+  }
+  .journey-dots a {
+    width: 25px;
+  }
+  .holographic-slate {
+    gap: 15px;
+  }
+  .holo-panel {
+    padding: 18px;
+  }
+  .slate-art {
+    margin: 0 -18px;
+    height: 140px;
+  }
+  .holo-panel h3 {
+    font-size: 19px;
+  }
+  .holo-panel p {
+    font-size: 12px;
+  }
+  .chapter-heading {
+    display: block;
+  }
+  .chapter-heading > p {
+    max-width: none;
+  }
+  .flight-section h2 {
+    font-size: clamp(2.5rem, 7vw, 4rem);
+  }
+  .world-section section {
+    padding-top: 40px;
+  }
+  .world-section {
+    min-height: 140svh;
+  }
+  .subpage-arrival {
+    min-height: 55svh;
+  }
+  .orbital-header > div.mx-auto {
+    padding: 13px 5vw;
+  }
+  .orbital-header .btn-cta {
+    display: none;
+  }
+  .space-motion {
+    bottom: 80px;
+    right: 10px;
+  }
+  .journey-menu-button {
+    margin-right: 3px;
+    min-width: 70px;
+    gap: 12px;
+  }
+  .orbital-header a[aria-label="Astralnaut Studios — Real World Comics"] > img:first-child {
+    height: 34px;
+  }
+}
+@media (max-width: 600px) {
+  .flight-section {
+    padding: 105px 24px;
+  }
+  .flight-hero {
+    padding-top: 140px;
+    min-height: 680px;
+  }
+  .flight-hero h1 {
+    width: calc(100vw - 25px);
+    margin-left: -12px;
+  }
+  .flight-hero h1 img {
+    max-height: 180px;
+  }
+  .flight-hero .hero-tagline {
+    font-size: 22px;
+  }
+  .space-eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+  }
+  .flight-actions {
+    gap: 15px;
+    margin-top: 28px;
+  }
+  .space-button {
+    width: 100%;
+    max-width: 325px;
+  }
+  .flight-actions .space-text-link {
+    font-size: 11px;
+  }
+  .scroll-invitation {
+    left: 24px;
+    bottom: 100px;
+  }
+  .journey-dots {
+    display: none;
+  }
+  .flight-stats {
+    gap: 28px;
+    margin: 35px 0;
+  }
+  .flight-stats strong {
+    font-size: 35px;
+  }
+  .flight-stats span {
+    font-size: 8px;
+  }
+  .holographic-slate {
+    grid-template-columns: 1fr;
+  }
+  .holo-panel {
+    padding: 24px;
+    gap: 12px;
+  }
+  .slate-art {
+    height: 170px;
+    margin: 0 -24px;
+  }
+  .holo-panel p {
+    font-size: 13px;
+  }
+  .holo-panel h3 {
+    font-size: 24px;
+  }
+  .slate-index {
+    min-height: 0;
+  }
+  .world-section {
+    padding-top: 140px;
+  }
+  .world-section h2 {
+    font-size: 38px;
+  }
+  .world-section section > div:first-child {
+    gap: 20px;
+    align-items: center;
+  }
+  .world-section section > div:first-child a {
+    font-size: 8px;
+    max-width: 95px;
+    text-align: right;
+  }
+  .world-section section > div:nth-child(2) {
+    gap: 24px;
+  }
+  .invitation-section {
+    min-height: 100svh;
+  }
+  .invitation-section h2 {
+    font-size: 48px;
+  }
+  .journey-benefits {
+    margin-top: 65px;
+  }
+  .journey-benefits summary {
+    font-size: 16px;
+    gap: 17px;
+  }
+  .journey-benefits details p {
+    padding-left: 28px;
+  }
+  .journey-transmissions {
+    padding: 0 24px 55px;
+  }
+  .space-motion {
+    bottom: 79px;
+    font-size: 8px;
+    min-height: 34px;
+    padding: 7px;
+    opacity: 0.85;
+  }
+  .journey-menu {
+    padding: 32px 24px !important;
+  }
+  .journey-menu nav a {
+    font-size: 21px;
+  }
+  .subpage-arrival {
+    padding: 80px 24px;
+    min-height: 60svh;
+  }
+  .arrival-title {
+    font-size: 48px;
+  }
+  .arrival-orbit {
+    width: 90vw;
+    height: 90vw;
+    right: -30vw;
+  }
+  .orbital-header > div.mx-auto {
+    padding: 12px 16px;
+  }
+  .orbital-header .journey-menu-button {
+    font-size: 9px;
+  }
+  .orbital-footer {
+    padding-bottom: 110px !important;
+  }
+  html[data-space-page="interior"] main {
+    padding-top: 45px;
+  }
+  .space-loading img {
+    width: 220px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flight-copy {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  .scroll-invitation i {
+    animation: none;
+  }
+  .space-canvas {
+    display: none;
+  }
+  .flight-section {
+    min-height: auto;
+    padding-block: 100px;
+  }
+  .flight-hero {
+    min-height: 80svh;
+    height: auto;
+  }
+  .holo-panel {
+    transform: none !important;
+  }
+  .space-canvas canvas {
+    transition: none;
+  }
+  .journey-dots {
+    display: none;
+  }
+}
+@media print {
+  .space-backdrop,
+  .journey-dots,
+  .space-motion,
+  .space-loading,
+  .subpage-arrival {
+    display: none;
+  }
+  .flight-section {
+    min-height: 0;
+    padding: 30px;
+  }
+  .flight-copy {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
+.space-vignette {
+  background:
+    radial-gradient(ellipse at 65% 40%, transparent 10%, #02050c88 90%),
+    linear-gradient(90deg, #02050caa, transparent 80%);
+}
+.flight-hero h1.hero-wordmark {
+  margin: 28px 0 30px;
+  width: auto;
+  font-size: clamp(48px, 7.5vw, 118px);
+  font-weight: 300;
+  letter-spacing: 0.025em;
+  line-height: 1.1;
+  color: #f0f8fa;
+  text-shadow: 0 3px 35px #061523;
+}
+.hero-wordmark > span {
+  display: block;
+  font-size: 0.25em;
+  letter-spacing: 0.65em;
+  margin: 18px 0 0 5px;
+  font-weight: 300;
+  color: #c7dfe5;
+}
+.space-cursor {
+  position: fixed;
+  z-index: 220;
+  top: 0;
+  left: 0;
+  transform: translate(calc(var(--cursor-x, -100px) - 3px), calc(var(--cursor-y, -100px) - 3px));
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #bdfaf5;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  box-shadow: 0 0 15px #bdfaf533;
+}
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .space-cursor {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .flight-hero h1.hero-wordmark {
+    font-size: clamp(32px, 9vw, 55px);
+    letter-spacing: 0.01em;
+  }
+  .hero-wordmark > span {
+    margin-top: 14px;
+    letter-spacing: 0.55em;
+  }
+  .flight-hero .flight-copy {
+    padding-top: 0;
+  }
+}
+.flight-copy:focus-within {
+  opacity: 1 !important;
+  filter: none !important;
+}
+html[data-space-page="home"] nav[aria-label="Primary"] {
+  display: none;
+}
+html[data-space-page="home"] .pb-safe-nav {
+  padding-bottom: 0;
+}
+@media (max-width: 900px) {
+  html[data-space-page="home"] .space-motion {
+    bottom: 16px;
+  }
+}
+@media (max-width: 600px) {
+  html[data-space-page="home"] .scroll-invitation {
+    bottom: 35px;
+  }
+}
+.journey-menu[data-state="open"] {
+  background: #07101c !important;
+  color: #ecf4fa;
+}
+/* Let horizontal touch movement steer while preserving vertical scroll and pinch zoom. */
+.space-journey,
+.subpage-arrival {
+  touch-action: pan-y pinch-zoom;
+}

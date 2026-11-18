@@ -1,0 +1,36 @@
+name: Astralnaut space preview
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/components/space-journey/**'
+      - 'src/components/site-header.tsx'
+      - 'src/routes/index.tsx'
+      - 'src/routes/__root.tsx'
+      - 'src/styles.css'
+      - 'public/space-journey/**'
+      - '.github/workflows/space-preview.yml'
+permissions:
+  contents: read
+concurrency:
+  group: astralnaut-space-preview
+  cancel-in-progress: true
+jobs:
+  preview:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run typecheck
+      - run: npm run test:gridiron
+      - run: npx wrangler versions upload --config .output/server/wrangler.json --preview-alias astralnaut-space --keep-vars --message "Astralnaut space journey review"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

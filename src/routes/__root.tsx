@@ -1,3 +1,4 @@
+import { SpaceExperience } from "@/components/space-journey/SpaceExperience";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -177,6 +178,7 @@ function RootComponent() {
         >
           Skip to main content
         </a>
+        <SpaceExperience />
         <PaymentTestModeBanner />
         <div id="main-content" tabIndex={-1} className="pb-safe-nav lg:pb-0">
           <Outlet />
