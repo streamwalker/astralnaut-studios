@@ -1,0 +1,32 @@
+{
+  "station.glb": {
+    "bytes": 1810912,
+    "meshes": 6,
+    "triangles": 335848,
+    "blenderDimensionsXYZ": [
+      19.25,
+      19.25,
+      27.28059959411621
+    ],
+    "gltfDimensionsXYZ": [
+      19.25,
+      27.28059959411621,
+      19.25
+    ]
+  },
+  "ryuken.glb": {
+    "bytes": 128408,
+    "meshes": 7,
+    "triangles": 32824,
+    "blenderDimensionsXYZ": [
+      11.0,
+      20.25999927520752,
+      6.2749998569488525
+    ],
+    "gltfDimensionsXYZ": [
+      11.0,
+      6.2749998569488525,
+      20.25999927520752
+    ]
+  }
+}

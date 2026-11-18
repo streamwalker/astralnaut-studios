@@ -11,6 +11,10 @@ fs.mkdirSync(out, { recursive: true });
     headless: true,
   });
   const checks = [];
+  async function dismissConsent(page) {
+    const reject = page.getByRole("button", {name: /^Reject all$/i});
+    try { await reject.click({timeout:1200}); } catch {}
+  }
   async function context(options = {}) {
     const c = await b.newContext(options);
     await c.addInitScript(() =>
@@ -23,10 +27,17 @@ fs.mkdirSync(out, { recursive: true });
     errors = [];
   p.on("pageerror", (e) => errors.push(e.message));
   await p.goto(base, { waitUntil: "domcontentloaded" });
+  await dismissConsent(p);
   await p.locator('.space-canvas[data-ready="true"]').waitFor({ timeout: 25000 });
   await p.waitForTimeout(1200);
   assert.equal(await p.locator(".space-canvas canvas").count(), 1);
   assert.equal(await p.locator(".space-loading").count(), 0);
+  await p.waitForFunction(() => Number(document.querySelector(".space-canvas")?.getAttribute("data-fleet-count")) > 0);
+  const fleetStart = await p.locator(".space-canvas").getAttribute("data-fleet-time");
+  await p.waitForTimeout(700);
+  assert.notEqual(await p.locator(".space-canvas").getAttribute("data-fleet-time"), fleetStart);
+  assert((await p.locator(".space-canvas").getAttribute("data-fleet-assets")).includes('"ryuken":"ready"'));
+  checks.push("Blender Ryuken loaded and orbital fleet advancing");
   await p.screenshot({ path: out + "/desktop.png" });
   await p.mouse.move(1200, 200);
   await p.waitForTimeout(700);
@@ -101,6 +112,7 @@ fs.mkdirSync(out, { recursive: true });
       }),
       p = await c.newPage();
     await p.goto(base);
+    await dismissConsent(p);
     await p.locator('.space-canvas[data-ready="true"]').waitFor({ timeout: 25000 });
     await p.waitForTimeout(600);
     assert.equal(await p.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
@@ -190,12 +202,14 @@ fs.mkdirSync(out, { recursive: true });
           return String(type).startsWith("webgl") ? null : get.call(this, type, ...args);
         };
       });
-    if (mode === "asset-failure") await c.route("**/space-journey/nebula-*.png", (r) => r.abort());
+    if (mode === "asset-failure") await c.route("**/space-journey/reference-fleet/*.glb", (r) => r.abort());
     const p = await c.newPage();
     await p.goto(base);
+    await dismissConsent(p);
     await p.waitForTimeout(2500);
     assert.equal(await p.locator(".space-loading").count(), 0, mode + " loader exit");
-    assert.equal(await p.locator(".space-canvas canvas").count(), 0, mode + " canvas disposal");
+    assert.equal(await p.locator(".space-canvas canvas").count(), mode === "asset-failure" ? 1 : 0, mode + " graceful rendering");
+    if (mode === "asset-failure") assert((await p.locator(".space-canvas").getAttribute("data-fleet-assets")).includes("unavailable"));
     assert(await p.locator(".hero-wordmark").isVisible());
     assert.equal(await p.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
     await p.screenshot({ path: `${out}/${mode}.png` });
