@@ -1,4 +1,5 @@
 import { JourneyMenu, SubpageArrival } from "@/components/space-journey/SpaceExperience";
+import { useEffect, useState } from "react";
 import { ConfirmButton } from "@/components/admin/confirm-button";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
@@ -30,7 +31,29 @@ export function SiteHeader() {
   const isAdmin = !!data?.isAdmin;
   const nav_ = useNavigate();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const [isCompact, setIsCompact] = useState(false);
   const showBattlefieldNav = pathname.replace(/\/$/, "") === "/battlefield-atlantis" || pathname.replace(/\/$/, "") === "/kickstarter/battlefield-atlantis";
+
+  useEffect(() => {
+    let frame: number | undefined;
+    const update = () => {
+      frame = undefined;
+      // Separate thresholds prevent bouncing when a sticky header changes height.
+      const top = Math.max(0, window.scrollY);
+      setIsCompact((compact) => top > 96 ? true : top < 24 ? false : compact);
+    };
+    const schedule = () => {
+      if (frame === undefined) frame = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("pageshow", schedule);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("pageshow", schedule);
+      if (frame !== undefined) window.cancelAnimationFrame(frame);
+    };
+  }, [pathname]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -39,7 +62,7 @@ export function SiteHeader() {
 
   return (
     <>
-    <header className="orbital-header sticky top-0 z-40 backdrop-blur-md" style={{ background: "rgba(2,0,12,0.7)", borderBottom: "1px solid var(--border-line)", paddingTop: "env(safe-area-inset-top)", paddingLeft: "env(safe-area-inset-left)", paddingRight: "env(safe-area-inset-right)" }}>
+    <header data-compact={isCompact} className="orbital-header sticky top-0 z-40 backdrop-blur-md" style={{ background: "rgba(2,0,12,0.7)", borderBottom: "1px solid var(--border-line)", paddingTop: "env(safe-area-inset-top)", paddingLeft: "env(safe-area-inset-left)", paddingRight: "env(safe-area-inset-right)" }}>
       {pathname !== "/" && <PromoBar />}
       <div className="orbital-header-row mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5 sm:gap-6 sm:px-6 sm:py-3">
         <div className="orbital-brand flex min-w-0 items-center gap-3 sm:gap-4">

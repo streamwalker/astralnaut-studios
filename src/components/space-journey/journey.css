@@ -1199,3 +1199,36 @@ html[data-space-page="home"] .pb-safe-nav {
   .orbital-header .journey-menu-button { margin-right: 0; min-width: 70px; }
   .orbital-header-actions > button { min-width: 44px; min-height: 44px; }
 }
+
+/* Keep the full wordmark at the top, then free space for the interactive models. */
+.orbital-header > div.orbital-header-row {
+  transition: padding-block 220ms ease, gap 220ms ease;
+}
+.orbital-header a[aria-label="Astralnaut Studios — Real World Comics"] {
+  min-height: 44px;
+}
+.orbital-header a[aria-label="Astralnaut Studios — Real World Comics"] > img:first-child {
+  transition: width 220ms ease;
+}
+.orbital-header[data-compact="true"] > div.orbital-header-row {
+  padding-block: 8px;
+}
+.orbital-header[data-compact="true"] a[aria-label="Astralnaut Studios — Real World Comics"] > img:first-child {
+  width: 160px;
+}
+@media (max-width: 760px) {
+  .orbital-header[data-compact="true"] > div.orbital-header-row {
+    padding-block: 4px;
+    gap: 2px;
+  }
+  .orbital-header[data-compact="true"] a[aria-label="Astralnaut Studios — Real World Comics"] > img:first-child {
+    width: 120px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbital-header,
+  .orbital-header > div.orbital-header-row,
+  .orbital-header a[aria-label="Astralnaut Studios — Real World Comics"] > img:first-child {
+    transition: none;
+  }
+}
