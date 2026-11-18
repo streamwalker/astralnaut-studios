@@ -14,7 +14,8 @@ export function mountCinematic(root: HTMLDivElement) {
   const frames: Array<(time: number) => void> = [];
   let disposed = false;
   const headerHeight = () => document.querySelector("header")?.getBoundingClientRect().height ?? 130;
-  const lenis = new Lenis({ duration: 1.05, smoothWheel: true, anchors: { offset: -headerHeight() - 20 }, prevent: node => !!node.closest('[role="dialog"], [data-lenis-prevent], .ba-intro') });
+  // Lenis includes the existing CSS scroll-margin and scroll-padding in anchor offsets.
+  const lenis = new Lenis({ duration: 1.05, smoothWheel: true, anchors: true, prevent: node => !!node.closest('[role="dialog"], [data-lenis-prevent], .ba-intro') });
   lenis.on("scroll", ScrollTrigger.update);
   const tick = (time: number) => {
     lenis.raf(time * 1000);
