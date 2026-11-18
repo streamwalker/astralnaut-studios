@@ -37,6 +37,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Verify Worker server rendering
+        run: node scripts/test-worker-render.mjs
+
       # Blocking. The 33 pre-existing TanStack Router `search` prop errors were
       # cleared during the Lovable migration, so `tsc --noEmit` is at zero and
       # any new type error should stop the deploy rather than warn.

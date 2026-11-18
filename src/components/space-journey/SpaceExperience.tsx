@@ -1,3 +1,4 @@
+import { ReferenceBackdrop } from "./ReferenceBackdrop";
 import { useEffect, useRef, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import {
@@ -131,6 +132,7 @@ export function SpaceExperience() {
       <div className="space-cursor" aria-hidden="true" />
       <div className="space-backdrop" aria-hidden="true">
         <div className="space-fallback" />
+        <ReferenceBackdrop home={home} path={path} />
         <div className="space-canvas" ref={host} />
         <div className="space-vignette" />
       </div>

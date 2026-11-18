@@ -1,13 +1,9 @@
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import * as T from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
-import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
-import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { stars } from "./beats/stars";
-import { nebula } from "./beats/nebula";
 import { worlds, dispose } from "./beats/worlds";
 import { flight, gaze, chapterIds } from "./flight";
 export async function mountSpace(
@@ -23,7 +19,7 @@ export async function mountSpace(
   try {
     renderer = new T.WebGLRenderer({
       alpha: true,
-      antialias: false,
+      antialias: true,
       powerPreference: "high-performance",
     });
   } catch {
@@ -42,10 +38,21 @@ export async function mountSpace(
   renderer.toneMappingExposure = 1.05;
   host.appendChild(renderer.domElement);
   const scene = new T.Scene();
-  scene.background = new T.Color("#03060d");
+  scene.background = null;
+  renderer.setClearColor(0x000000, 0);
+  const environmentGenerator = new T.PMREMGenerator(renderer);
+  const environmentRoom = new RoomEnvironment();
+  const environment = environmentGenerator.fromScene(environmentRoom, 0.04);
+  scene.environment = environment.texture;
+  scene.environmentIntensity = 0.35;
+  environmentRoom.dispose();
+  environmentGenerator.dispose();
   const camera = new T.PerspectiveCamera(52, innerWidth / innerHeight, 0.1, 900);
-  scene.add(new T.HemisphereLight(0xa9cfff, 0x261738, 0.45));
-  const sun = new T.DirectionalLight(0xe1f5ff, 3);
+  scene.add(new T.HemisphereLight(0xbdd9f3, 0x18202b, 0.7));
+  const sun = new T.DirectionalLight(0xe1f5ff, 2.5);
+  const rim = new T.DirectionalLight(0x6dbdff, 2.2);
+  rim.position.set(-50, 5, -100);
+  scene.add(rim);
   sun.position.set(80, 45, 90);
   scene.add(sun);
   const manager = new T.LoadingManager();
@@ -56,8 +63,6 @@ export async function mountSpace(
   let dead = false,
     animation = 0,
     paused = false;
-  let bloom: UnrealBloomPass | undefined;
-  let composer: EffectComposer | undefined;
   const cleanups: Array<() => void> = [];
   const triggers: ScrollTrigger[] = [];
   function cleanup() {
@@ -68,8 +73,7 @@ export async function mountSpace(
     triggers.forEach((t) => t.kill());
     objects.dispose();
     dispose(scene);
-    composer?.dispose();
-    bloom?.dispose();
+    environment.dispose();
     renderer.dispose();
     renderer.forceContextLoss();
     renderer.domElement.remove();
@@ -77,7 +81,8 @@ export async function mountSpace(
   }
   signal.addEventListener("abort", cleanup, { once: true });
   try {
-    updateNebula = await nebula(scene, manager, low);
+    // Canon reference plates supply the environment; retain the readiness callback.
+    updateNebula = () => {};
   } catch {
     cleanup();
     onReady();
@@ -86,13 +91,6 @@ export async function mountSpace(
   if (dead || signal.aborted) {
     dispose(scene);
     return cleanup;
-  }
-  if (!low) {
-    composer = new EffectComposer(renderer);
-    composer.addPass(new RenderPass(scene, camera));
-    bloom = new UnrealBloomPass(new T.Vector2(innerWidth, innerHeight), 0.25, 0.5, 1.2);
-    composer.addPass(bloom);
-    composer.addPass(new OutputPass());
   }
   const target = new T.Vector2(),
     pointer = new T.Vector2();
@@ -163,11 +161,10 @@ export async function mountSpace(
         if (i)
           gsap.fromTo(
             el,
-            { opacity: 0.15, y: 55, filter: "blur(5px)" },
+            { opacity: 0.7, y: 24 },
             {
               opacity: 1,
               y: 0,
-              filter: "blur(0px)",
               ease: "none",
               scrollTrigger: { trigger: el, start: "top 95%", end: "top 65%", scrub: 0.5 },
             },
@@ -199,7 +196,6 @@ export async function mountSpace(
     camera.aspect = innerWidth / innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(innerWidth, innerHeight);
-    composer?.setSize(innerWidth, innerHeight);
     ScrollTrigger.refresh();
   };
   window.addEventListener("resize", resize);
@@ -227,6 +223,8 @@ export async function mountSpace(
     lenis?.raf(ms);
     if (!paused) time += dt;
     pointer.lerp(target, 1 - Math.exp(-dt * 3));
+    host.parentElement?.style.setProperty("--scene-x", `${pointer.x * 10}px`);
+    host.parentElement?.style.setProperty("--scene-y", `${pointer.y * 7}px`);
     camera.position.copy(flight.getPoint(progress));
     camera.position.x += pointer.x * 1.8;
     camera.position.y -= pointer.y * 1.2;
@@ -234,25 +232,24 @@ export async function mountSpace(
     camera.lookAt(aim);
     updateStars(time, camera);
     updateNebula(time);
-    objects.update(time);
-    if (progress > 0.12 || !home) void objects.load();
+    objects.update(time, progress);
+    void objects.load();
     renderer.info.reset();
-    if (composer) composer.render();
-    else renderer.render(scene, camera);
+    renderer.render(scene, camera);
     if (++count % 20 === 0) {
+      const fleetStatus = objects.getStatus();
+      host.dataset.fleetAssets = JSON.stringify(fleetStatus.assets);
+      host.dataset.fleetCount = String(fleetStatus.trafficCount);
+      host.dataset.fleetTime = String(fleetStatus.trafficTime);
       host.dataset.progress = progress.toFixed(3);
       host.dataset.drawCalls = String(renderer.info.render.calls);
-      host.dataset.quality = low ? "mobile" : composer ? "full" : "adaptive";
+      host.dataset.quality = low ? "mobile" : "full";
       host.dataset.pointer = `${pointer.x.toFixed(3)},${pointer.y.toFixed(3)}`;
       host.dataset.ambientTime = time.toFixed(3);
     }
     if (dt > 0.029 && !low && count > 100) slow++;
-    if (slow > 70 && composer) {
-      composer.dispose();
-      composer = undefined;
-      bloom?.dispose();
+    if (slow > 70) {
       renderer.setPixelRatio(1);
-      host.dataset.quality = "adaptive";
       slow = 0;
     }
   };
