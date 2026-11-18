@@ -6,7 +6,7 @@
 }
 html[data-space-page] {
   background: #03060d;
-  scroll-padding-top: 110px;
+  scroll-padding-top: calc(130px + env(safe-area-inset-top));
 }
 html[data-space-page] body {
   background: #03060d;
@@ -76,7 +76,6 @@ html[data-space-page="interior"] #main-content {
 .space-loading img {
   width: 250px;
   max-width: 65vw;
-  mix-blend-mode: screen;
 }
 .space-loading p {
   font-size: 11px;
@@ -566,7 +565,9 @@ html[data-space-page="interior"] #main-content {
   filter: none !important;
 }
 .orbital-header a[aria-label="Astralnaut Studios — Real World Comics"] > img:first-child {
-  height: 40px;
+  width: 260px;
+  height: auto;
+  object-fit: contain;
 }
 .orbital-header a[aria-label="Astralnaut Studios — Real World Comics"] > img:not(:first-child),
 .orbital-header a[aria-label="Astralnaut Studios — Real World Comics"] > span {
@@ -857,7 +858,8 @@ html[data-space-page="interior"] .legal-doc {
     gap: 12px;
   }
   .orbital-header a[aria-label="Astralnaut Studios — Real World Comics"] > img:first-child {
-    height: 34px;
+    width: 220px;
+    height: auto;
   }
 }
 @media (max-width: 600px) {
@@ -1175,3 +1177,13 @@ html[data-space-page="home"] .pb-safe-nav {
   .bridge-panorama img { min-height: 50svh; object-position: center; }
 }
 @media(prefers-reduced-motion:reduce){.reference-backdrop{transform:none}}
+
+/* Give the supplied transparent wordmark its own row on narrow screens. */
+@media (max-width: 760px) {
+  html[data-space-page] { scroll-padding-top: calc(168px + env(safe-area-inset-top)); }
+  .orbital-header > div.orbital-header-row { flex-direction: column; gap: 10px; padding: 12px 16px; }
+  .orbital-header .orbital-brand { justify-content: center; width: 100%; }
+  .orbital-header .orbital-header-actions { width: 100%; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
+  .orbital-header .journey-menu-button { margin-right: 0; min-width: 70px; }
+  .orbital-header-actions > button { min-width: 44px; min-height: 44px; }
+}

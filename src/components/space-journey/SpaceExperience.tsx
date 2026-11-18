@@ -8,7 +8,7 @@ import {
   DialogDescription,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import mark from "@/assets/astralnaut-studios-logo.png";
+import mark from "@/assets/astralnaut-studios-logo-v3-transparent.webp";
 const navigation = [
   ["The journey", "/"],
   ["The studio", "/astralnaut-studios"],
