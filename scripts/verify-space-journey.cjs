@@ -136,6 +136,43 @@ fs.mkdirSync(out, { recursive: true });
       .split(",")
       .map(Number);
     assert(ptr.every((v) => Math.abs(v) < 0.025));
+    if (width === 390) {
+      const session = await p.context().newCDPSession(p);
+      await session.send("Input.dispatchTouchEvent", {
+        type: "touchStart",
+        touchPoints: [{ x: 70, y: 230 }],
+      });
+      for (let x = 100; x <= 300; x += 40) {
+        await session.send("Input.dispatchTouchEvent", {
+          type: "touchMove",
+          touchPoints: [{ x, y: 230 }],
+        });
+        await p.waitForTimeout(100);
+      }
+      await p.waitForTimeout(400);
+      assert(
+        Number((await p.locator(".space-canvas").getAttribute("data-pointer")).split(",")[0]) > 0.1,
+        "Browser must not cancel a horizontal drag",
+      );
+      await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+      await session.send("Input.dispatchTouchEvent", {
+        type: "touchStart",
+        touchPoints: [{ x: 200, y: 600 }],
+      });
+      for (let y = 580; y >= 320; y -= 20) {
+        await session.send("Input.dispatchTouchEvent", {
+          type: "touchMove",
+          touchPoints: [{ x: 200, y }],
+        });
+        await p.waitForTimeout(60);
+      }
+      await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+      await p.waitForTimeout(500);
+      assert((await p.evaluate(() => scrollY)) > 100, "Native vertical swipes must still scroll");
+      await p.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
+      checks.push("Native browser horizontal touch steering and vertical swipe scrolling");
+    }
+
     await p.screenshot({ path: `${out}/mobile-${width}.png` });
     await c.close();
   }

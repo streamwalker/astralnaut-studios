@@ -71,6 +71,7 @@ export async function mountSpace(
     composer?.dispose();
     bloom?.dispose();
     renderer.dispose();
+    renderer.forceContextLoss();
     renderer.domElement.remove();
     host.dataset.ready = "false";
   }

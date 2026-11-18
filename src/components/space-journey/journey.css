@@ -1135,3 +1135,8 @@ html[data-space-page="home"] .pb-safe-nav {
   background: #07101c !important;
   color: #ecf4fa;
 }
+/* Let horizontal touch movement steer while preserving vertical scroll and pinch zoom. */
+.space-journey,
+.subpage-arrival {
+  touch-action: pan-y pinch-zoom;
+}
