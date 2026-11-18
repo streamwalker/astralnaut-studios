@@ -1133,6 +1133,11 @@ html[data-space-page="home"] .pb-safe-nav {
     bottom: 35px;
   }
 }
+@media (max-width: 360px) {
+  html[data-space-page="home"] .scroll-invitation {
+    bottom: 64px;
+  }
+}
 .journey-menu[data-state="open"] {
   background: #07101c !important;
   color: #ecf4fa;
@@ -1170,7 +1175,14 @@ html[data-space-page="home"] .pb-safe-nav {
   .reference-orbit { background-position: 58% center; }
   .space-vignette { background: linear-gradient(0deg,#02050cef, #02050c6b 55%, #02050c36); }
   .flight-hero .flight-copy, .invitation-section .flight-copy { max-width: 100%; }
-  .flight-hero { align-items: flex-end; padding-top: 48svh; padding-bottom: 150px; }
+  /* Let wrapped hero copy retain the clearance above the scroll invitation. */
+  .flight-hero {
+    height: auto;
+    min-height: max(100svh, 680px);
+    align-items: flex-end;
+    padding-top: 48svh;
+    padding-bottom: 150px;
+  }
   .hero-wordmark { font-size: clamp(2.7rem, 10vw, 5.6rem); }
   .cinematic-clearance { height: 58svh; min-height: 320px; }
   .slate-section .flight-copy, .world-section .flight-copy { padding: 24px 18px; }
