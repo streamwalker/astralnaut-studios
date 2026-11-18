@@ -1115,8 +1115,23 @@ html[data-space-page="interior"] .legal-doc {
   opacity: 1 !important;
   filter: none !important;
 }
-html[data-space-page="home"] nav[aria-label="Primary"]{display:none}
-html[data-space-page="home"] .pb-safe-nav{padding-bottom:0}
-@media(max-width:900px){html[data-space-page="home"] .space-motion{bottom:16px}}
-@media(max-width:600px){html[data-space-page="home"] .scroll-invitation{bottom:35px}}
-.journey-menu[data-state="open"]{background:#07101c!important;color:#ecf4fa}
+html[data-space-page="home"] nav[aria-label="Primary"] {
+  display: none;
+}
+html[data-space-page="home"] .pb-safe-nav {
+  padding-bottom: 0;
+}
+@media (max-width: 900px) {
+  html[data-space-page="home"] .space-motion {
+    bottom: 16px;
+  }
+}
+@media (max-width: 600px) {
+  html[data-space-page="home"] .scroll-invitation {
+    bottom: 35px;
+  }
+}
+.journey-menu[data-state="open"] {
+  background: #07101c !important;
+  color: #ecf4fa;
+}

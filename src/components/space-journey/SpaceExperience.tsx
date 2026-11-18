@@ -68,11 +68,13 @@ export function SpaceExperience() {
       ? "home"
       : operational
         ? "utility"
-        : "interior";
+        : ownScene
+          ? "campaign"
+          : "interior";
     return () => {
       delete document.documentElement.dataset.spacePage;
     };
-  }, [path, home, operational]);
+  }, [path, home, operational, ownScene]);
   useEffect(() => {
     if (operational || ownScene) return;
     const mq = matchMedia("(prefers-reduced-motion: reduce)");
@@ -141,7 +143,7 @@ export function SpaceExperience() {
           <button onClick={() => setReady(true)}>Continue to the stories</button>
         </div>
       )}
-      {home && !reduced && (
+      {!reduced && (
         <button
           className="space-motion"
           aria-pressed={paused}
