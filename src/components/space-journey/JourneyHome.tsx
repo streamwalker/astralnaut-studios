@@ -45,6 +45,7 @@ export function JourneyHome() {
   const { data: copy = {} } = useQuery({ queryKey: ["copy"], queryFn: () => copyFn({}) });
   const { displayCount, pagesPublished, seriesLive } = useSubscriberCount();
   const [active, setActive] = useState("departure");
+  const [transmissionsOpen, setTransmissionsOpen] = useState(false);
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -286,11 +287,11 @@ export function JourneyHome() {
           </div>
         </section>
         <section className="journey-transmissions" aria-label="Trailers and announcements">
-          <details>
+          <details onToggle={(event) => setTransmissionsOpen(event.currentTarget.open)}>
             <summary>
               Watch the transmissions <span aria-hidden>↗</span>
             </summary>
-            <HeroRotator />
+            <HeroRotator enabled={transmissionsOpen} />
           </details>
           {milestone && (
             <MilestoneStrip
