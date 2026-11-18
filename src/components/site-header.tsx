@@ -1,3 +1,4 @@
+import { JourneyMenu, SubpageArrival } from "@/components/space-journey/SpaceExperience";
 import { ConfirmButton } from "@/components/admin/confirm-button";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
@@ -37,8 +38,9 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-md" style={{ background: "rgba(2,0,12,0.7)", borderBottom: "1px solid var(--border-line)", paddingTop: "env(safe-area-inset-top)", paddingLeft: "env(safe-area-inset-left)", paddingRight: "env(safe-area-inset-right)" }}>
-      <PromoBar />
+    <>
+    <header className="orbital-header sticky top-0 z-40 backdrop-blur-md" style={{ background: "rgba(2,0,12,0.7)", borderBottom: "1px solid var(--border-line)", paddingTop: "env(safe-area-inset-top)", paddingLeft: "env(safe-area-inset-left)", paddingRight: "env(safe-area-inset-right)" }}>
+      {pathname !== "/" && <PromoBar />}
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5 sm:gap-6 sm:px-6 sm:py-3">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           <Link to="/" className="flex min-w-0 items-center gap-2 sm:gap-3" aria-label="Astralnaut Studios — Real World Comics">
@@ -85,6 +87,7 @@ export function SiteHeader() {
           })}
         </nav>
         <div className="flex shrink-0 items-center gap-2">
+          <JourneyMenu />
           <LanguageSwitcher />
           <CartDrawer />
           <TierBadge />
@@ -132,12 +135,15 @@ export function SiteHeader() {
         </nav>
       )}
     </header>
+    <SubpageArrival path={pathname} />
+    <div id="page-content" className="page-arrival-anchor"/>
+    </>
   );
 }
 
 export function SiteFooter() {
   return (
-    <footer className="mt-24 border-t border-[var(--border-line)] py-12">
+    <footer className="orbital-footer mt-24 border-t border-[var(--border-line)] py-12">
       <div className="mx-auto grid max-w-7xl gap-8 px-6 md:grid-cols-4">
         <div>
           <div className="text-[10px] font-bold uppercase tracking-[3px]" style={{ color: "var(--gold)" }}>Astralnaut Studios</div>

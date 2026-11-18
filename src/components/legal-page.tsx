@@ -15,7 +15,7 @@ type Props = {
 
 export function LegalPage({ title, eyebrow, effective, updated, version, canonical: _canonical, noindex: _noindex, children }: Props) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="legal-space-shell min-h-screen">
       <a href="#legal-content" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-black focus:px-3 focus:py-2 focus:text-sm focus:text-white">
         Skip to content
       </a>
