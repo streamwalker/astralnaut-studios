@@ -21,14 +21,18 @@ const navigation = [
 ];
 export function JourneyMenu() {
   const [open, setOpen] = useState(false);
+  const trigger = useRef<HTMLButtonElement>(null);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="journey-menu-button" aria-label="Open navigation">
+        <button ref={trigger} className="journey-menu-button" aria-label="Open navigation">
           Menu <span aria-hidden>☰</span>
         </button>
       </DialogTrigger>
-      <DialogContent className="journey-menu" data-lenis-prevent>
+      <DialogContent className="journey-menu" data-lenis-prevent onCloseAutoFocus={(event) => {
+        event.preventDefault();
+        trigger.current?.focus({ preventScroll: true });
+      }}>
         <DialogTitle>Explore Astralnaut</DialogTitle>
         <DialogDescription>Stories from the world before our world began.</DialogDescription>
         <nav aria-label="Explore Astralnaut Studios">

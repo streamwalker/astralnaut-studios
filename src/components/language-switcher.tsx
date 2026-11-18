@@ -1,4 +1,5 @@
 import { Globe } from "lucide-react";
+import { useRef } from "react";
 import { useI18n } from "@/hooks/useI18n";
 import {
   DropdownMenu,
@@ -8,19 +9,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function LanguageSwitcher() {
+  const trigger = useRef<HTMLButtonElement>(null);
   const { lang, setLang, languages } = useI18n();
   const current = languages[lang] ?? languages.en;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
+        ref={trigger}
         className="flex items-center gap-1.5 rounded-md border border-[var(--border-line)] bg-black/30 px-2.5 py-1.5 text-xs font-bold uppercase tracking-[2px] text-[var(--ink2)] hover:text-[var(--neon)]"
         aria-label="Change language"
       >
         <Globe className="h-3.5 w-3.5" />
         <span>{current.code}</span>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="max-h-80 overflow-auto">
+      <DropdownMenuContent align="end" className="max-h-80 overflow-auto" onCloseAutoFocus={(event) => {
+        event.preventDefault();
+        trigger.current?.focus({ preventScroll: true });
+      }}>
         {Object.entries(languages).map(([code, meta]) => (
           <DropdownMenuItem
             key={code}

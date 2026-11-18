@@ -1,5 +1,5 @@
 import { JourneyMenu, SubpageArrival } from "@/components/space-journey/SpaceExperience";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ConfirmButton } from "@/components/admin/confirm-button";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,6 +32,7 @@ export function SiteHeader() {
   const nav_ = useNavigate();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [isCompact, setIsCompact] = useState(false);
+  const accountTrigger = useRef<HTMLButtonElement>(null);
   const showBattlefieldNav = pathname.replace(/\/$/, "") === "/battlefield-atlantis" || pathname.replace(/\/$/, "") === "/kickstarter/battlefield-atlantis";
 
   useEffect(() => {
@@ -116,14 +117,17 @@ export function SiteHeader() {
           {data?.user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button type="button" aria-label={isAdmin ? "Open admin account menu" : "Open account menu"}
+                <button ref={accountTrigger} type="button" aria-label={isAdmin ? "Open admin account menu" : "Open account menu"}
                   className="flex min-h-11 items-center gap-2 rounded-lg border border-[var(--border-line)] px-3 text-sm font-semibold hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-[var(--neon)]">
                   <UserRound className="h-4 w-4" aria-hidden />
                   <span className="hidden xl:inline">{isAdmin ? "Admin" : "Account"}</span>
                   <ChevronDown className="h-3 w-3" aria-hidden />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-60">
+              <DropdownMenuContent align="end" className="w-60" onCloseAutoFocus={(event) => {
+                event.preventDefault();
+                accountTrigger.current?.focus({ preventScroll: true });
+              }}>
                 <DropdownMenuLabel>{isAdmin ? "Admin account" : "Your account"}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild><Link to="/account" data-tour="nav-account" className="min-h-11">Account & subscription</Link></DropdownMenuItem>

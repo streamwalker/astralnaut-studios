@@ -1197,10 +1197,13 @@ html[data-space-page="home"] .pb-safe-nav {
   .orbital-header .orbital-brand { justify-content: center; width: 100%; }
   .orbital-header .orbital-header-actions { width: 100%; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
   .orbital-header .journey-menu-button { margin-right: 0; min-width: 70px; }
-  .orbital-header-actions > button { min-width: 44px; min-height: 44px; }
 }
 
 /* Keep the full wordmark at the top, then free space for the interactive models. */
+.orbital-header-actions > button {
+  min-width: 44px;
+  min-height: 44px;
+}
 .orbital-header > div.orbital-header-row {
   transition: padding-block 220ms ease, gap 220ms ease;
 }
