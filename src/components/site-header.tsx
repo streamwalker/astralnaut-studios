@@ -9,7 +9,7 @@ import { CartDrawer } from "@/components/cart-drawer";
 import { PromoBar } from "@/components/promo-bar";
 import { UserRound, ChevronDown } from "lucide-react";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import astralnautLogo from "@/assets/astralnaut-studios-logo.png";
+import astralnautLogo from "@/assets/astralnaut-studios-logo-v3-transparent.webp";
 import rwcLogo from "@/assets/real-world-comics-logo-transparent.png";
 
 export const BATTLEFIELD_REDDIT_URL = "https://www.reddit.com/r/BattlefieldAtlantis/";
@@ -41,18 +41,17 @@ export function SiteHeader() {
     <>
     <header className="orbital-header sticky top-0 z-40 backdrop-blur-md" style={{ background: "rgba(2,0,12,0.7)", borderBottom: "1px solid var(--border-line)", paddingTop: "env(safe-area-inset-top)", paddingLeft: "env(safe-area-inset-left)", paddingRight: "env(safe-area-inset-right)" }}>
       {pathname !== "/" && <PromoBar />}
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5 sm:gap-6 sm:px-6 sm:py-3">
-        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+      <div className="orbital-header-row mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5 sm:gap-6 sm:px-6 sm:py-3">
+        <div className="orbital-brand flex min-w-0 items-center gap-3 sm:gap-4">
           <Link to="/" className="flex min-w-0 items-center gap-2 sm:gap-3" aria-label="Astralnaut Studios — Real World Comics">
             <img
               src={astralnautLogo}
               alt="Astralnaut Studios"
-              width={160}
-              height={80}
-              className="h-8 w-auto shrink-0 sm:h-10"
+              width={2172}
+              height={724}
+              className="astralnaut-brand-mark shrink-0"
               decoding="async"
               fetchPriority="high"
-              style={{ filter: "drop-shadow(0 0 12px rgba(34,211,255,0.35))" }}
             />
             <span aria-hidden className="hidden h-7 w-px bg-white/15 sm:block" />
             <img
@@ -86,7 +85,7 @@ export function SiteHeader() {
             );
           })}
         </nav>
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="orbital-header-actions flex shrink-0 items-center gap-2">
           <JourneyMenu />
           <LanguageSwitcher />
           <CartDrawer />
