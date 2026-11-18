@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import { chapterIds } from "./chapter-ids";
 
-/** Original canon artwork anchors the photographic look; WebGL adds the moving fleet. */
-const plates = ["orbit", "city", "santee", "orbit", "ryuken"];
+/** Environmental artwork only. Santee and Ryuken are interactive mesh viewers. */
+const plates = ["orbit", "city", "deep-space", "orbit", "deep-space"];
 export function ReferenceBackdrop({ home, path }: { home: boolean; path: string }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -32,6 +32,6 @@ export function ReferenceBackdrop({ home, path }: { home: boolean; path: string 
     return () => { cancelAnimationFrame(frame); window.removeEventListener("scroll", schedule); window.removeEventListener("resize", schedule); };
   }, [home, path]);
   return <div className="reference-backdrop" ref={ref} aria-hidden="true">
-    {plates.map((name, i) => <div key={i} className={`reference-plate reference-${name}`} style={{ backgroundImage: `url(/space-journey/reference-art/${name}.webp)` }} />)}
+    {plates.map((name, i) => <div key={i} className={`reference-plate reference-${name}`} style={name === "deep-space" ? undefined : { backgroundImage: `url(/space-journey/reference-art/${name}.webp)` }} />)}
   </div>;
 }

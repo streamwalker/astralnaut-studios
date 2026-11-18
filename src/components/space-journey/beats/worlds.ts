@@ -27,7 +27,7 @@ export function worlds(scene: T.Scene, low: boolean) {
   const right = new T.Vector3();
   const dorsal = new T.Vector3();
   const basis = new T.Matrix4();
-  const assets = { station: "reference-art", ryuken: "pending" };
+  const assets = { station: "interactive-viewer", ryuken: "pending" };
   root.userData.assets = assets;
 
   // Wrap, rather than changing the exported model's origin, so clone materials stay shared.
