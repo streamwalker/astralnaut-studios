@@ -14,7 +14,7 @@ export function ReferenceBackdrop({ home, path }: { home: boolean; path: string 
       let progress = path.includes("industry") ? 4 : path.includes("astralnaut-studios") ? 1 : 3;
       if (home) {
         const y = scrollY;
-        const positions = chapterIds.map(id => document.getElementById(id)?.offsetTop ?? 0);
+        const positions = chapterIds.map(id => (document.getElementById(id)?.getBoundingClientRect().top ?? -y) + y);
         progress = 0;
         for (let i = 0; i < positions.length - 1; i++) {
           if (y >= positions[i]) progress = i + Math.min(1, (y - positions[i]) / Math.max(1, positions[i + 1] - positions[i]));

@@ -161,11 +161,10 @@ export async function mountSpace(
         if (i)
           gsap.fromTo(
             el,
-            { opacity: 0.15, y: 55, filter: "blur(5px)" },
+            { opacity: 0.7, y: 24 },
             {
               opacity: 1,
               y: 0,
-              filter: "blur(0px)",
               ease: "none",
               scrollTrigger: { trigger: el, start: "top 95%", end: "top 65%", scrub: 0.5 },
             },

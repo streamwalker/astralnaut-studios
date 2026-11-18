@@ -1194,3 +1194,6 @@ html[data-space-page="home"] .pb-safe-nav {
  .reference-santee,.reference-ryuken{background-color:#03060d}
  .reference-santee:after,.reference-ryuken:after{background:linear-gradient(90deg,#03060d 44%,transparent 72%,transparent 92%,#03060d 100%)}
 }
+@media(max-width:900px){
+ .reference-santee,.reference-ryuken{background-size:100% auto;background-color:#03060d;background-position:center 60px}
+}
