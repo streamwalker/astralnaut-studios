@@ -54,7 +54,7 @@ export function SpaceExperience() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const host = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(true);
   const [reduced, setReduced] = useState(false);
   const [paused, setPaused] = useState(false);
   const home = path === "/";
@@ -76,14 +76,19 @@ export function SpaceExperience() {
   useEffect(() => {
     if (operational || ownScene) return;
     const mq = matchMedia("(prefers-reduced-motion: reduce)");
-    const controller = new AbortController();
+    let controller: AbortController | undefined;
     let clean: (() => void) | undefined;
     let timer: ReturnType<typeof setTimeout>;
     let version = 0;
     const start = () => {
       version++;
       const current = version;
+      controller?.abort();
+      controller = new AbortController();
+      const activeController = controller;
+      clearTimeout(timer);
       clean?.();
+      setPaused(false);
       setReduced(mq.matches);
       setReady(mq.matches);
       setProgress(0);
@@ -91,16 +96,18 @@ export function SpaceExperience() {
       timer = setTimeout(() => setReady(true), 12000);
       import("./runtime")
         .then(async ({ mountSpace }) => {
-          if (controller.signal.aborted || current !== version) return;
+          if (activeController.signal.aborted || current !== version) return;
           clean = await mountSpace(
             host.current!,
             home,
-            setProgress,
+            (value) => {
+              if (current === version) setProgress(value);
+            },
             () => {
               clearTimeout(timer);
-              setReady(true);
+              if (current === version) setReady(true);
             },
-            controller.signal,
+            activeController.signal,
             path,
           );
           if (current !== version) clean?.();
@@ -111,7 +118,7 @@ export function SpaceExperience() {
     mq.addEventListener("change", start);
     return () => {
       clearTimeout(timer);
-      controller.abort();
+      controller?.abort();
       clean?.();
       mq.removeEventListener("change", start);
     };

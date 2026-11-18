@@ -555,7 +555,7 @@ html[data-space-page="interior"] #main-content {
   border-bottom: 1px solid #bdd9eb18 !important;
   background: #040913b3 !important;
 }
-.orbital-header > div {
+.orbital-header > div.mx-auto {
   max-width: none;
   padding: 18px 5vw;
 }
@@ -841,7 +841,7 @@ html[data-space-page="interior"] .legal-doc {
   .subpage-arrival {
     min-height: 55svh;
   }
-  .orbital-header > div {
+  .orbital-header > div.mx-auto {
     padding: 13px 5vw;
   }
   .orbital-header .btn-cta {
@@ -992,7 +992,7 @@ html[data-space-page="interior"] .legal-doc {
     height: 90vw;
     right: -30vw;
   }
-  .orbital-header > div {
+  .orbital-header > div.mx-auto {
     padding: 12px 16px;
   }
   .orbital-header .journey-menu-button {
@@ -1115,3 +1115,8 @@ html[data-space-page="interior"] .legal-doc {
   opacity: 1 !important;
   filter: none !important;
 }
+html[data-space-page="home"] nav[aria-label="Primary"]{display:none}
+html[data-space-page="home"] .pb-safe-nav{padding-bottom:0}
+@media(max-width:900px){html[data-space-page="home"] .space-motion{bottom:16px}}
+@media(max-width:600px){html[data-space-page="home"] .scroll-invitation{bottom:35px}}
+.journey-menu[data-state="open"]{background:#07101c!important;color:#ecf4fa}

@@ -44,7 +44,7 @@ export async function nebula(scene: T.Scene, manager: T.LoadingManager, low: boo
     fog.uniforms.time.value = time;
     group.children.forEach((o, i) => {
       (o as T.Mesh<T.BufferGeometry, T.ShaderMaterial>).material.uniforms.time.value = time + i * 3;
-      o.rotation.z += 0.000015 * (i % 2 ? 1 : -1);
+      o.rotation.z = i * 1.7 + time * 0.0009 * (i % 2 ? 1 : -1);
     });
   };
 }

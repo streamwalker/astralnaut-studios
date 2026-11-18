@@ -37,6 +37,7 @@ export async function mountSpace(
     gl.getParameter(gl.MAX_TEXTURE_SIZE) < 8192;
   renderer.setPixelRatio(Math.min(devicePixelRatio, low ? 1.2 : 1.7));
   renderer.setSize(innerWidth, innerHeight);
+  renderer.info.autoReset = false;
   renderer.toneMapping = T.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   host.appendChild(renderer.domElement);
@@ -234,12 +235,15 @@ export async function mountSpace(
     updateNebula(time);
     objects.update(time);
     if (progress > 0.12 || !home) void objects.load();
+    renderer.info.reset();
     if (composer) composer.render();
     else renderer.render(scene, camera);
     if (++count % 20 === 0) {
       host.dataset.progress = progress.toFixed(3);
       host.dataset.drawCalls = String(renderer.info.render.calls);
-      host.dataset.quality = low ? "mobile" : "full";
+      host.dataset.quality = low ? "mobile" : composer ? "full" : "adaptive";
+      host.dataset.pointer = `${pointer.x.toFixed(3)},${pointer.y.toFixed(3)}`;
+      host.dataset.ambientTime = time.toFixed(3);
     }
     if (dt > 0.029 && !low && count > 100) slow++;
     if (slow > 70 && composer) {

@@ -33,3 +33,9 @@ Ambient animation has a pause control. Reduced motion uses the rendered fallback
 Home: full five-stage flight. Studio, three series, pricing, perks, shop, industry, help and training: shared arrival composition and subtle route-aware scroll movement. Legal and policy pages: the shared background and typography with readable document surfaces. Reader, sign-in, checkout, archive and admin: shared navigation and colors, with no decorative WebGL obscuring their existing functionality. The already-published Battlefield Kickstarter cinematic keeps its independent scene.
 
 All original public footer destinations, subscription prices and checkout parameters remain. The original trailer rotator is accessible in “Watch the transmissions.” The first-visit homepage tour is now opt-in via `/?tour=1`; help and training remain in navigation. No checkout, email, admin, or subscriber mutations are needed to inspect the redesign.
+
+## Verification
+
+Run `PLAYWRIGHT_MODULE=/path/to/playwright node scripts/verify-space-journey.cjs [base-url]` with Chrome installed. The script only navigates/reads and exercises local browser state: it does not submit checkout, inquiries, invitations, or project changes. Screenshots and JSON go to `/tmp/astralnaut-space-qa` (override `SPACE_QA_DIR`). Checks cover five camera waypoints, desktop and touch input, cancellation, pause, menu keyboard behavior, live reduced-motion changes, three device widths, missing assets, missing WebGL and disabled JavaScript.
+
+Initial textures plus fallback are approximately 3.8 MB; the four later-loaded GLBs total approximately 0.56 MB. A local Chrome desktop sample returned a 16.7 ms median and 16.7 ms p95 animation interval (roughly 60 fps) in the tested scene. This is a local-machine measurement, not a guarantee for other hardware. Phone tests are emulated; no physical iPhone result is claimed.
