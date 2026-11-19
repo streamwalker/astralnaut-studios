@@ -112,3 +112,7 @@ The release preserves the 32-page Season One opening block and all Season Two an
 Comic payload comics-v14 / GRIDIRON_COMICS_KEY_V14 contains 375 images: 167 Final Cut and 208 Outtakes. Six targeted revisions replace S1E3P6, S1E4P2/P4/P6 and S1E5P1/P2, carrying retirement subtext through acting and eyelines while retaining established visual identities and lettering. The preceding editions remain in Outtakes; all other Final Cut selections are retained. The Story Bible stays library-v7.
 
 The portable offline reader embeds all 375 images and ten screenplay packets, with its opening-five packet advanced to Draft Eight. The hosted comic reader retains its existing image-only feature set. Only 376 encrypted objects and their integrity manifest enter this public repository; source scripts, artwork, prompts and offline HTML remain private. Previous payloads and keys are retained for rollback. Live verification is recorded separately in the private production workspace.
+
+## Season One episodes 6–10 — November 19, 2026
+
+The comics-v15 payload adds three Final Cut pages per episode, bringing Season One to 47 pages and the complete library to 182 Final Cut pages and 208 Outtakes. The portable reader embeds eleven screenplay packets. The private comic reader serves the 390 images and catalog through its existing admin gate. The deployment uses GRIDIRON_COMICS_KEY_V15 and retains previous encrypted payloads for rollback.
