@@ -27,6 +27,7 @@ type Catalog = {
   revision: string;
   counts: { total: number; current: number; earlier: number };
   pages: Page[];
+  screenplays?: { season: number; firstEpisode: number; lastEpisode: number; title: string; filename: string; text: string }[];
 };
 const control =
   "min-h-11 rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-300 disabled:opacity-30";
@@ -148,6 +149,8 @@ function PrivateComicLibrary() {
     [catalog, season, episode, edition],
   );
   const current = visible.find((p) => p.id === selected) || visible[0];
+  const screenplay = current && catalog?.screenplays?.find((s) => s.season === current.season &&
+    current.episode >= s.firstEpisode && current.episode <= s.lastEpisode);
   const index = current ? visible.indexOf(current) : -1;
   useEffect(() => {
     if (!current || !userId) return;
@@ -328,6 +331,14 @@ function PrivateComicLibrary() {
                     Page {current.page} · {current.edition} ·{" "}
                     {current.current ? "Final Cut" : "Outtake"}
                   </p>
+                  {screenplay && (
+                    <details className="mt-3">
+                      <summary className="cursor-pointer text-sm text-amber-300">Read screenplay · {screenplay.title}</summary>
+                      <pre className="my-3 max-h-96 overflow-y-auto whitespace-pre-wrap text-sm leading-relaxed">{screenplay.text}</pre>
+                      <a className="text-sm underline" download={screenplay.filename}
+                        href={`data:text/plain;charset=utf-8,${encodeURIComponent(screenplay.text)}`}>Download Fountain script</a>
+                    </details>
+                  )}
                   {current.note && (
                     <p className="mt-3 border-l-2 border-amber-300 bg-amber-300/10 p-3 text-xs text-amber-100">
                       {current.note}

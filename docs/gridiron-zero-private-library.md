@@ -128,3 +128,7 @@ The Season One continuation through Episode 20 adds 16 pages to Final Cut. The a
 ## Comics v18
 
 Season One Episodes 16–20 use the 19-page Draft Two edition. The 16 Draft One pages appear in Outtakes. The release contains 218 Final Cut pages and 224 Outtakes.
+
+## Comics v19
+
+Season One Episodes 21–25 add 17 Final Cut pages and a screenplay available with the corresponding pages of the signed-in reader. The catalog holds 235 Final Cut pages and 224 Outtakes. The screenplay travels inside the encrypted catalog.
