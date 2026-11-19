@@ -105,3 +105,10 @@ The offline reader embeds all 341 viewing images and ten screenplay downloads. T
 Comic payload comics-v13 / GRIDIRON_COMICS_KEY_V13 contains 369 images: 167 Final Cut and 202 Outtakes. Twenty-eight replacement pages bring the opening five episodes into the current screenplay, with four compatible Episode 2 pages retained. Superseded published pages remain in Outtakes. The Story Bible stays library-v7.
 
 The release preserves the 32-page Season One opening block and all Season Two and Three selections. Source manuscripts, artwork, prompts, review records and portable offline HTML remain private. Only 370 encrypted objects and their integrity manifest enter this repository. Previous versioned payloads and keys remain available for rollback. Publication is verified separately in the private production record.
+
+
+## Season One Draft Eight subtext revision — November 18, 2026
+
+Comic payload comics-v14 / GRIDIRON_COMICS_KEY_V14 contains 375 images: 167 Final Cut and 208 Outtakes. Six targeted revisions replace S1E3P6, S1E4P2/P4/P6 and S1E5P1/P2, carrying retirement subtext through acting and eyelines while retaining established visual identities and lettering. The preceding editions remain in Outtakes; all other Final Cut selections are retained. The Story Bible stays library-v7.
+
+The portable offline reader embeds all 375 images and ten screenplay packets, with its opening-five packet advanced to Draft Eight. The hosted comic reader retains its existing image-only feature set. Only 376 encrypted objects and their integrity manifest enter this public repository; source scripts, artwork, prompts and offline HTML remain private. Previous payloads and keys are retained for rollback. Live verification is recorded separately in the private production workspace.
