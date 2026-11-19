@@ -124,3 +124,7 @@ The comics-v16 release adds seventeen pages. The private library now serves 407 
 ## Comics v17
 
 The Season One continuation through Episode 20 adds 16 pages to Final Cut. The admin release uses the comics-v17 payload and versioned key. Its 423 page images include 215 Final Cut pages and 208 Outtakes.
+
+## Comics v18
+
+Season One Episodes 16–20 use the 19-page Draft Two edition. The 16 Draft One pages appear in Outtakes. The release contains 218 Final Cut pages and 224 Outtakes.
