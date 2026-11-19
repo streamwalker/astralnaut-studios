@@ -116,3 +116,7 @@ The portable offline reader embeds all 375 images and ten screenplay packets, wi
 ## Season One episodes 6–10 — November 19, 2026
 
 The comics-v15 payload adds three Final Cut pages per episode, bringing Season One to 47 pages and the complete library to 182 Final Cut pages and 208 Outtakes. The portable reader embeds eleven screenplay packets. The private comic reader serves the 390 images and catalog through its existing admin gate. The deployment uses GRIDIRON_COMICS_KEY_V15 and retains previous encrypted payloads for rollback.
+
+## Season One episodes 11–15 — November 19, 2026
+
+The comics-v16 release adds seventeen pages. The private library now serves 407 images, including 199 Final Cut pages and 208 Outtakes. The release uses GRIDIRON_COMICS_KEY_V16.
