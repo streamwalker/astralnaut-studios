@@ -120,3 +120,7 @@ The comics-v15 payload adds three Final Cut pages per episode, bringing Season O
 ## Season One episodes 11–15 — November 19, 2026
 
 The comics-v16 release adds seventeen pages. The private library now serves 407 images, including 199 Final Cut pages and 208 Outtakes. The release uses GRIDIRON_COMICS_KEY_V16.
+
+## Comics v17
+
+The Season One continuation through Episode 20 adds 16 pages to Final Cut. The admin release uses the comics-v17 payload and versioned key. Its 423 page images include 215 Final Cut pages and 208 Outtakes.
