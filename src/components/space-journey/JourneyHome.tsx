@@ -10,7 +10,6 @@ import { HomePricingStrip } from "@/components/home/PricingStrip";
 import { HeroRotator } from "@/components/home/HeroRotator";
 import { logoFor } from "@/lib/series-logos";
 import { pageUrl } from "@/lib/storage";
-import { VesselViewer } from "./VesselViewer";
 
 const chapters = [
   ["departure", "Departure"],
@@ -158,7 +157,6 @@ export function JourneyHome() {
           </div>
         </section>
         <section id="slate" data-chapter className="flight-section slate-section">
-          <VesselViewer vessel="santee" />
           <div className="flight-copy">
             <div className="chapter-heading">
               <div>
@@ -252,7 +250,6 @@ export function JourneyHome() {
           </div>
         </section>
         <section id="invitation" data-chapter className="flight-section invitation-section">
-          <VesselViewer vessel="ryuken" />
           <div className="flight-copy">
             <span className="space-eyebrow">04 / You are cleared for arrival</span>
             <h2>
