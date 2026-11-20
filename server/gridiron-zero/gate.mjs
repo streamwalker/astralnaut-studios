@@ -1,6 +1,6 @@
 // Private content is decrypted only after Supabase verifies the session AND admin role.
 export const LIBRARY_ENDPOINT = "/api/admin/gridiron-zero/library";
-export const ENCRYPTED_ASSET = "/assets/gridiron-zero/library-v9.enc";
+export const LIBRARY_PARTS = ["/assets/gridiron-zero/library-v10-part-1.enc", "/assets/gridiron-zero/library-v10-part-2.enc"];
 export const COMICS_ENDPOINT = "/api/admin/gridiron-zero/comics";
 export const COMICS_ASSET_ROOT = "/assets/gridiron-zero/comics-v22";
 const PRIVATE_HEADERS = {
@@ -58,13 +58,27 @@ export async function serveLibrary(request, env, publicConfig, fetcher = fetch) 
   try {
     const denied = await authorizeAdmin(request, env, publicConfig, fetcher);
     if (denied) return denied;
-    return await decryptResponse(
-      request,
-      env,
-      env.GRIDIRON_LIBRARY_KEY_V9,
-      ENCRYPTED_ASSET,
-      "text/html; charset=utf-8",
-    );
+    const loadPart = (path) => decryptResponse(request, env, env.GRIDIRON_LIBRARY_KEY_V10, path, 'text/html; charset=utf-8');
+    const first = await loadPart(LIBRARY_PARTS[0]);
+    if (!first.ok) return first;
+    // Stream in byte order so UTF-8 characters may safely straddle a part boundary.
+    let reader = first.body.getReader();
+    let next = 1;
+    const body = new ReadableStream({
+      async pull(controller) {
+        while (true) {
+          const result = await reader.read();
+          if (!result.done) { controller.enqueue(result.value); return; }
+          reader.releaseLock();
+          if (next === LIBRARY_PARTS.length) { controller.close(); return; }
+          const part = await loadPart(LIBRARY_PARTS[next++]);
+          if (!part.ok) throw new Error('Private library part unavailable');
+          reader = part.body.getReader();
+        }
+      },
+      cancel(reason) { return reader.cancel(reason); },
+    });
+    return new Response(body, { headers: first.headers });
   } catch {
     return errorResponse(503, "Library temporarily unavailable");
   }

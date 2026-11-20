@@ -3,17 +3,21 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { randomBytes, createCipheriv, webcrypto } from 'node:crypto';
 import { gzipSync } from 'node:zlib';
-import { serveLibrary, ENCRYPTED_ASSET, serveComics, COMICS_ENDPOINT, COMICS_ASSET_ROOT } from '../server/gridiron-zero/gate.mjs';
+import { serveLibrary, LIBRARY_PARTS, serveComics, COMICS_ENDPOINT, COMICS_ASSET_ROOT } from '../server/gridiron-zero/gate.mjs';
 if (!globalThis.crypto) globalThis.crypto = webcrypto;
 const config = { url: 'https://identity.example', key: 'public-publishable-key' };
-function fixture({ role = 'admin', expired = false, roleError = false, tamper = false, assetPath = ENCRYPTED_ASSET } = {}) {
+function fixture({ role = 'admin', expired = false, roleError = false, tamper = false, assetPath = LIBRARY_PARTS[0], corruptLast = false } = {}) {
   const key = randomBytes(32), iv = randomBytes(12), text = '<!doctype html><title>Private test document</title>';
   const cipher = createCipheriv('aes-256-gcm', key, iv);
   const payload = Buffer.concat([iv, cipher.update(gzipSync(text)), cipher.final(), cipher.getAuthTag()]);
   if (tamper) payload[payload.length - 1] ^= 1;
   let assetCalls = 0, authCalls = 0;
-  const env = { GRIDIRON_LIBRARY_KEY_V9: key.toString('base64'), GRIDIRON_COMICS_KEY_V22: key.toString('base64'), ASSETS: { fetch: async request => {
-    assetCalls++; assert.equal(new URL(request.url).pathname, assetPath);
+  const env = { GRIDIRON_LIBRARY_KEY_V10: key.toString('base64'), GRIDIRON_COMICS_KEY_V22: key.toString('base64'), ASSETS: { fetch: async request => {
+    assetCalls++;
+    if (new URL(request.url).pathname === LIBRARY_PARTS[1] && assetPath === LIBRARY_PARTS[0]) {
+      return corruptLast ? new Response('missing', {status:404}) : new Response(payload);
+    }
+    assert.equal(new URL(request.url).pathname, assetPath);
     assert.equal(request.headers.get('authorization'), null);
     return new Response(payload);
   } } };
@@ -48,14 +52,19 @@ test('role lookup errors fail closed', async () => {
 });
 test('verified admin receives the exact decrypted content with no-store headers', async () => {
   const f = fixture(); const r = await serveLibrary(f.request, f.env, config, f.fetcher);
-  assert.equal(r.status, 200); assert.equal(await r.text(), f.text);
+  assert.equal(r.status, 200); assert.equal(await r.text(), f.text.repeat(2));
   assert.match(r.headers.get('cache-control'), /no-store/); assert.equal(r.headers.get('vary'), 'Authorization');
   assert.match(r.headers.get('x-robots-tag'), /noindex/);
 });
 test('modified ciphertext and missing key never return plaintext', async () => {
   const f = fixture({ tamper: true }); assert.equal((await serveLibrary(f.request, f.env, config, f.fetcher)).status, 503);
-  delete f.env.GRIDIRON_LIBRARY_KEY_V9;
+  delete f.env.GRIDIRON_LIBRARY_KEY_V10;
   assert.equal((await serveLibrary(f.request, f.env, config, f.fetcher)).status, 503);
+});
+test('a missing later part prevents consumption of a partial Story Bible', async () => {
+  const f = fixture({corruptLast:true});
+  const response = await serveLibrary(f.request, f.env, config, f.fetcher);
+  await assert.rejects(response.text());
 });
 test('unsupported methods are rejected', async () => {
   const f = fixture(); assert.equal((await serveLibrary(new Request(f.request.url, { method: 'POST' }), f.env, config, f.fetcher)).status, 405);
@@ -65,10 +74,12 @@ test('deployment artifact uses the gate and keeps content encrypted', async () =
   const config = JSON.parse(await readFile('.output/server/wrangler.json', 'utf8'));
   assert.equal(config.main, 'gridiron-entry.mjs');
   assert.ok(config.assets.run_worker_first === true || config.assets.run_worker_first.includes('/api/admin/gridiron-zero/*'));
-  const asset = await readFile('.output/public' + ENCRYPTED_ASSET);
-  assert.ok(!asset.includes(Buffer.from('<!DOCTYPE html>')));
-  const source = await readFile('private-content/gridiron-zero/library-v9.enc');
-  assert.deepEqual(asset, source);
+  for (const part of LIBRARY_PARTS) {
+    const asset = await readFile('.output/public' + part);
+    assert.ok(!asset.includes(Buffer.from('<!DOCTYPE html>')));
+    const source = await readFile('private-content/gridiron-zero/' + part.split('/').pop());
+    assert.deepEqual(asset, source);
+  }
 });
 
 for (const suffix of ['', '/0123456789abcdef01']) {

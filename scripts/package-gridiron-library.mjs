@@ -4,14 +4,17 @@ import { loadEnv } from 'vite';
 const configPath = '.output/server/wrangler.json';
 const config = JSON.parse(await readFile(configPath, 'utf8'));
 if (!config.assets?.binding || config.assets.binding !== 'ASSETS') throw new Error('Expected ASSETS binding');
-const source = 'private-content/gridiron-zero/library-v9.enc';
 const manifest = JSON.parse(await readFile('private-content/gridiron-zero/manifest.json', 'utf8'));
 const { createHash } = await import('node:crypto');
-const encrypted = await readFile(source);
-if (createHash('sha256').update(encrypted).digest('hex') !== manifest.encryptedSha256) throw new Error('Encrypted library checksum mismatch');
-if (encrypted.length > 25 * 1024 * 1024) throw new Error('Library exceeds asset size limit');
 await mkdir('.output/public/assets/gridiron-zero', { recursive: true });
-await copyFile(source, '.output/public/assets/gridiron-zero/library-v9.enc');
+if (manifest.version !== 10 || manifest.files.length !== 2) throw new Error('Unexpected private library version');
+for (const [index, part] of manifest.files.entries()) {
+  if (part.name !== `library-v10-part-${index + 1}.enc`) throw new Error('Unexpected library part');
+  const bytes = await readFile('private-content/gridiron-zero/' + part.name);
+  if (createHash('sha256').update(bytes).digest('hex') !== part.sha256 ||
+      bytes.length !== part.bytes || bytes.length > 25 * 1024 * 1024) throw new Error('Invalid library part');
+  await writeFile('.output/public/assets/gridiron-zero/' + part.name, bytes);
+}
 await copyFile('server/gridiron-zero/gate.mjs', '.output/server/gridiron-gate.mjs');
 const buildEnv = loadEnv('production', process.cwd(), 'VITE_');
 const publicConfig = { url: buildEnv.VITE_SUPABASE_URL, key: buildEnv.VITE_SUPABASE_PUBLISHABLE_KEY };
@@ -23,7 +26,7 @@ config.main = 'gridiron-entry.mjs';
 const previous = config.assets.run_worker_first;
 config.assets.run_worker_first = previous === true ? true : [...new Set([...(Array.isArray(previous) ? previous : []), '/api/admin/gridiron-zero/*'])];
 await writeFile(configPath, JSON.stringify(config, null, 2) + '\n');
-console.log(`Packaged encrypted Gridiron Zero library (${encrypted.length} bytes); admin API gate enabled.`);
+console.log(`Packaged encrypted Gridiron Zero library (${manifest.encryptedBytes} bytes); admin API gate enabled.`);
 
 const comicManifest = JSON.parse(await readFile('private-content/gridiron-zero/comics-v22/manifest.json','utf8'));
 await mkdir('.output/public/assets/gridiron-zero/comics-v22',{recursive:true});
