@@ -136,3 +136,7 @@ Season One Episodes 21–25 add 17 Final Cut pages and a screenplay available wi
 ## Comics v20
 
 Season One Episodes 26–30 add sixteen Final Cut pages and their screenplay. The private catalog contains 251 Final Cut pages, 224 Outtakes and both Season One screenplay packets for Episodes 21–30.
+
+## Comics v21
+
+Season One Episodes 31–35 add sixteen Final Cut pages and their screenplay. The private reader contains 267 Final Cut pages, 224 Outtakes and the three Season One screenplay packets covering Episodes 21–35.
