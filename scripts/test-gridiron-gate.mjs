@@ -12,7 +12,7 @@ function fixture({ role = 'admin', expired = false, roleError = false, tamper = 
   const payload = Buffer.concat([iv, cipher.update(gzipSync(text)), cipher.final(), cipher.getAuthTag()]);
   if (tamper) payload[payload.length - 1] ^= 1;
   let assetCalls = 0, authCalls = 0;
-  const env = { GRIDIRON_LIBRARY_KEY_V7: key.toString('base64'), GRIDIRON_COMICS_KEY_V21: key.toString('base64'), ASSETS: { fetch: async request => {
+  const env = { GRIDIRON_LIBRARY_KEY_V9: key.toString('base64'), GRIDIRON_COMICS_KEY_V21: key.toString('base64'), ASSETS: { fetch: async request => {
     assetCalls++; assert.equal(new URL(request.url).pathname, assetPath);
     assert.equal(request.headers.get('authorization'), null);
     return new Response(payload);
@@ -54,7 +54,7 @@ test('verified admin receives the exact decrypted content with no-store headers'
 });
 test('modified ciphertext and missing key never return plaintext', async () => {
   const f = fixture({ tamper: true }); assert.equal((await serveLibrary(f.request, f.env, config, f.fetcher)).status, 503);
-  delete f.env.GRIDIRON_LIBRARY_KEY_V7;
+  delete f.env.GRIDIRON_LIBRARY_KEY_V9;
   assert.equal((await serveLibrary(f.request, f.env, config, f.fetcher)).status, 503);
 });
 test('unsupported methods are rejected', async () => {
@@ -67,7 +67,7 @@ test('deployment artifact uses the gate and keeps content encrypted', async () =
   assert.ok(config.assets.run_worker_first === true || config.assets.run_worker_first.includes('/api/admin/gridiron-zero/*'));
   const asset = await readFile('.output/public' + ENCRYPTED_ASSET);
   assert.ok(!asset.includes(Buffer.from('<!DOCTYPE html>')));
-  const source = await readFile('private-content/gridiron-zero/library-v7.enc');
+  const source = await readFile('private-content/gridiron-zero/library-v9.enc');
   assert.deepEqual(asset, source);
 });
 

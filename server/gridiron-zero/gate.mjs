@@ -1,6 +1,6 @@
 // Private content is decrypted only after Supabase verifies the session AND admin role.
 export const LIBRARY_ENDPOINT = "/api/admin/gridiron-zero/library";
-export const ENCRYPTED_ASSET = "/assets/gridiron-zero/library-v7.enc";
+export const ENCRYPTED_ASSET = "/assets/gridiron-zero/library-v9.enc";
 export const COMICS_ENDPOINT = "/api/admin/gridiron-zero/comics";
 export const COMICS_ASSET_ROOT = "/assets/gridiron-zero/comics-v21";
 const PRIVATE_HEADERS = {
@@ -61,7 +61,7 @@ export async function serveLibrary(request, env, publicConfig, fetcher = fetch) 
     return await decryptResponse(
       request,
       env,
-      env.GRIDIRON_LIBRARY_KEY_V7,
+      env.GRIDIRON_LIBRARY_KEY_V9,
       ENCRYPTED_ASSET,
       "text/html; charset=utf-8",
     );

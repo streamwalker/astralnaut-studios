@@ -140,3 +140,7 @@ Season One Episodes 26–30 add sixteen Final Cut pages and their screenplay. Th
 ## Comics v21
 
 Season One Episodes 31–35 add sixteen Final Cut pages and their screenplay. The private reader contains 267 Final Cut pages, 224 Outtakes and the three Season One screenplay packets covering Episodes 21–35.
+
+## November 19 cast edition
+
+Library v9 contains 122 dossiers, 69 reference sheets, the current continuity digest and the working scripts through Season 1 Episode 35 and Season 3 Episode 40. The gate uses the versioned V9 key.
