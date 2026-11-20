@@ -132,3 +132,7 @@ Season One Episodes 16–20 use the 19-page Draft Two edition. The 16 Draft One 
 ## Comics v19
 
 Season One Episodes 21–25 add 17 Final Cut pages and a screenplay available with the corresponding pages of the signed-in reader. The catalog holds 235 Final Cut pages and 224 Outtakes. The screenplay travels inside the encrypted catalog.
+
+## Comics v20
+
+Season One Episodes 26–30 add sixteen Final Cut pages and their screenplay. The private catalog contains 251 Final Cut pages, 224 Outtakes and both Season One screenplay packets for Episodes 21–30.
