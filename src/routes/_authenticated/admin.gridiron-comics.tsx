@@ -43,6 +43,8 @@ async function authorizedFetch(url: string, signal: AbortSignal) {
   if (!r.ok) throw new Error("load");
   return r;
 }
+const fictionNotice = "Gridiron Zero is a work of fiction. Any resemblance of its fictional characters, in name or likeness, to actual persons, living or deceased, is purely coincidental.";
+
 function PrivateComicLibrary() {
   const [catalog, setCatalog] = useState<Catalog | null>(null),
     [status, setStatus] = useState("loading"),
@@ -185,6 +187,7 @@ function PrivateComicLibrary() {
     window.addEventListener("keydown", fn);
     return () => window.removeEventListener("keydown", fn);
   }, [move]);
+  const scriptText = screenplay && (screenplay.text.includes(fictionNotice) ? screenplay.text : screenplay.text.replace(/\r?\n\r?\n/, "\nFiction notice: " + fictionNotice + "\n\n"));
   if (status === "denied") return <AccessDenied area="The Gridiron Zero comic library" />;
   return (
     <main className="min-h-screen bg-[#0c1015] text-slate-100">
@@ -196,6 +199,7 @@ function PrivateComicLibrary() {
           <h1 className="mt-2 text-3xl font-black italic tracking-tight">
             GRIDIRON <span className="text-amber-300">ZERO</span>
           </h1>
+          <p className="mt-2 max-w-prose text-sm text-slate-300">{fictionNotice}</p>
           <p className="mt-2 text-sm text-slate-400">
             {catalog
               ? `${catalog.counts.current} final-cut pages · ${catalog.counts.earlier} outtakes`
@@ -334,9 +338,9 @@ function PrivateComicLibrary() {
                   {screenplay && (
                     <details className="mt-3">
                       <summary className="cursor-pointer text-sm text-amber-300">Read screenplay · {screenplay.title}</summary>
-                      <pre className="my-3 max-h-96 overflow-y-auto whitespace-pre-wrap text-sm leading-relaxed">{screenplay.text}</pre>
+                      <pre className="my-3 max-h-96 overflow-y-auto whitespace-pre-wrap text-sm leading-relaxed">{scriptText}</pre>
                       <a className="text-sm underline" download={screenplay.filename}
-                        href={`data:text/plain;charset=utf-8,${encodeURIComponent(screenplay.text)}`}>Download Fountain script</a>
+                        href={`data:text/plain;charset=utf-8,${encodeURIComponent(scriptText ?? screenplay.text)}`}>Download Fountain script</a>
                     </details>
                   )}
                   {current.note && (

@@ -7,9 +7,9 @@ if (!config.assets?.binding || config.assets.binding !== 'ASSETS') throw new Err
 const manifest = JSON.parse(await readFile('private-content/gridiron-zero/manifest.json', 'utf8'));
 const { createHash } = await import('node:crypto');
 await mkdir('.output/public/assets/gridiron-zero', { recursive: true });
-if (manifest.version !== 12 || manifest.files.length !== 2) throw new Error('Unexpected private library version');
+if (manifest.version !== 13 || manifest.files.length !== 2) throw new Error('Unexpected private library version');
 for (const [index, part] of manifest.files.entries()) {
-  if (part.name !== `library-v12-part-${index + 1}.enc`) throw new Error('Unexpected library part');
+  if (part.name !== `library-v13-part-${index + 1}.enc`) throw new Error('Unexpected library part');
   const bytes = await readFile('private-content/gridiron-zero/' + part.name);
   if (createHash('sha256').update(bytes).digest('hex') !== part.sha256 ||
       bytes.length !== part.bytes || bytes.length > 25 * 1024 * 1024) throw new Error('Invalid library part');
