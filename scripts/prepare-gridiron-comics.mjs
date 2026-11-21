@@ -6,7 +6,7 @@ import { gzipSync, gunzipSync } from "node:zlib";
 import { spawnSync } from "node:child_process";
 if (!process.argv[2]) throw new Error("Pass the private comic-reader directory");
 const source = resolve(process.argv[2]),
-  binding = "GRIDIRON_COMICS_KEY_V23";
+  binding = "GRIDIRON_COMICS_KEY_V24";
 const secrets = spawnSync(
   "gh",
   ["secret", "list", "--repo", "streamwalker/astralnaut-studios", "--json", "name"],
@@ -27,6 +27,7 @@ const catalog = {
     season: p.season,
     episode: p.episode,
     page: p.page,
+    pageLabel: p.pageLabel,
     title: p.title,
     edition: p.edition,
     current: p.current,
@@ -66,14 +67,14 @@ const result = spawnSync(
   { input: key.toString("base64"), encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] },
 );
 if (result.status !== 0) throw new Error("Secret provisioning failed; payload not written");
-const output = "private-content/gridiron-zero/comics-v23";
+const output = "private-content/gridiron-zero/comics-v24";
 await mkdir(output, { recursive: true });
 for (const e of entries) await writeFile(join(output, e.name), e.bytes);
 await writeFile(
   join(output, "manifest.json"),
   JSON.stringify(
     {
-      version: 23,
+      version: 24,
       keyBinding: binding,
       counts: sourceData.counts,
       files: entries.map(({ name, bytes, sha256 }) => ({ name, bytes: bytes.length, sha256 })),

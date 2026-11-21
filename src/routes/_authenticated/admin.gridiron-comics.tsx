@@ -17,6 +17,7 @@ type Page = {
   season: number;
   episode: number;
   page: number;
+  pageLabel?: string;
   title: string;
   edition: string;
   current: boolean;
@@ -27,7 +28,7 @@ type Catalog = {
   revision: string;
   counts: { total: number; current: number; earlier: number };
   pages: Page[];
-  screenplays?: { season: number; firstEpisode: number; lastEpisode: number; title: string; filename: string; text: string }[];
+  screenplays?: { season: number; firstEpisode: number; lastEpisode: number; pageIds?: string[]; title: string; filename: string; text: string }[];
 };
 const control =
   "min-h-11 rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-300 disabled:opacity-30";
@@ -151,8 +152,9 @@ function PrivateComicLibrary() {
     [catalog, season, episode, edition],
   );
   const current = visible.find((p) => p.id === selected) || visible[0];
-  const screenplay = current && catalog?.screenplays?.find((s) => s.season === current.season &&
-    current.episode >= s.firstEpisode && current.episode <= s.lastEpisode);
+  const screenplay = current && (catalog?.screenplays?.find((s) => s.pageIds?.includes(current.id)) ??
+    catalog?.screenplays?.find((s) => !s.pageIds && s.season === current.season &&
+      current.episode >= s.firstEpisode && current.episode <= s.lastEpisode));
   const index = current ? visible.indexOf(current) : -1;
   useEffect(() => {
     if (!current || !userId) return;
@@ -281,7 +283,7 @@ function PrivateComicLibrary() {
               {visible.map((p) => (
                 <button
                   key={p.id}
-                  aria-label={`Season ${p.season}, episode ${p.episode}, page ${p.page}, ${p.edition}`}
+                  aria-label={`Season ${p.season}, episode ${p.episode}, page ${p.pageLabel ?? p.page}, ${p.edition}`}
                   aria-current={p.id === current?.id ? "page" : undefined}
                   onClick={() => {
                     setSelected(p.id);
@@ -291,7 +293,7 @@ function PrivateComicLibrary() {
                 >
                   <PrivateImage page={p} load={loadImage} thumbnail />
                   <span className="block p-2 text-[10px]">
-                    S{p.season} E{p.episode} · P{p.page}
+                    S{p.season} E{p.episode} · P{p.pageLabel ?? p.page}
                     {p.current ? "" : " · Outtake"}
                   </span>
                 </button>
@@ -332,7 +334,7 @@ function PrivateComicLibrary() {
                   </p>
                   <h2 className="mt-2 text-2xl font-bold">{current.title}</h2>
                   <p className="mt-2 text-xs text-slate-400">
-                    Page {current.page} · {current.edition} ·{" "}
+                    Page {current.pageLabel ?? current.page} · {current.edition} ·{" "}
                     {current.current ? "Final Cut" : "Outtake"}
                   </p>
                   {screenplay && (
@@ -430,7 +432,7 @@ function PrivateImage({
           alt={
             thumbnail
               ? ""
-              : `Season ${page.season}, episode ${page.episode}, page ${page.page}: ${page.title}`
+              : `Season ${page.season}, episode ${page.episode}, page ${page.pageLabel ?? page.page}: ${page.title}`
           }
           onError={() => {
             setError(true);
