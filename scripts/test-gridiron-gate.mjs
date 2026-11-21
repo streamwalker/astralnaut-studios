@@ -12,7 +12,7 @@ function fixture({ role = 'admin', expired = false, roleError = false, tamper = 
   const payload = Buffer.concat([iv, cipher.update(gzipSync(text)), cipher.final(), cipher.getAuthTag()]);
   if (tamper) payload[payload.length - 1] ^= 1;
   let assetCalls = 0, authCalls = 0;
-  const env = { GRIDIRON_LIBRARY_KEY_V10: key.toString('base64'), GRIDIRON_COMICS_KEY_V23: key.toString('base64'), ASSETS: { fetch: async request => {
+  const env = { GRIDIRON_LIBRARY_KEY_V12: key.toString('base64'), GRIDIRON_COMICS_KEY_V23: key.toString('base64'), ASSETS: { fetch: async request => {
     assetCalls++;
     if (new URL(request.url).pathname === LIBRARY_PARTS[1] && assetPath === LIBRARY_PARTS[0]) {
       return corruptLast ? new Response('missing', {status:404}) : new Response(payload);
@@ -58,7 +58,7 @@ test('verified admin receives the exact decrypted content with no-store headers'
 });
 test('modified ciphertext and missing key never return plaintext', async () => {
   const f = fixture({ tamper: true }); assert.equal((await serveLibrary(f.request, f.env, config, f.fetcher)).status, 503);
-  delete f.env.GRIDIRON_LIBRARY_KEY_V10;
+  delete f.env.GRIDIRON_LIBRARY_KEY_V12;
   assert.equal((await serveLibrary(f.request, f.env, config, f.fetcher)).status, 503);
 });
 test('a missing later part prevents consumption of a partial Story Bible', async () => {

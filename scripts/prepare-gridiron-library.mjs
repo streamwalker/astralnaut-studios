@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 if (!process.argv[2]) throw new Error('Pass the approved local library HTML path');
 const existing = spawnSync('gh', ['secret', 'list', '--repo', 'streamwalker/astralnaut-studios', '--json', 'name'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
 if (existing.status !== 0) throw new Error('Could not verify existing deployment secrets');
-if (JSON.parse(existing.stdout).some(secret => secret.name === 'GRIDIRON_LIBRARY_KEY_V10')) throw new Error('Version 10 already exists. Use a new versioned key and payload; never replace the live key.');
+if (JSON.parse(existing.stdout).some(secret => secret.name === 'GRIDIRON_LIBRARY_KEY_V12')) throw new Error('Version 12 already exists. Use a new versioned key and payload; never replace the live key.');
 let html = await readFile(process.argv[2], 'utf8');
 const replacements = [
   ["if(location.hash!==hash)history.pushState(null,'',hash)", "if(window.parent.location.hash!==hash)window.parent.history.pushState(window.parent.history.state,'',hash)"],
@@ -28,7 +28,7 @@ const plain = Buffer.from(html);
 const split = Math.ceil(plain.length / 2);
 const chunks = [plain.subarray(0, split), plain.subarray(split)];
 const files = chunks.map((chunk, i) => {
-  const name = `library-v10-part-${i + 1}.enc`;
+  const name = `library-v12-part-${i + 1}.enc`;
   const iv = randomBytes(12);
   const cipher = createCipheriv('aes-256-gcm', key, iv);
   const bytes = Buffer.concat([iv, cipher.update(gzipSync(chunk)), cipher.final(), cipher.getAuthTag()]);
@@ -39,13 +39,13 @@ const files = chunks.map((chunk, i) => {
   if (!chunk.equals(restored)) throw new Error('Encrypted library round-trip failed');
   return { name, bytes, sha256: createHash('sha256').update(bytes).digest('hex') };
 });
-const result = spawnSync('gh', ['secret', 'set', 'GRIDIRON_LIBRARY_KEY_V10', '--repo', 'streamwalker/astralnaut-studios'], { input: key.toString('base64'), encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] });
+const result = spawnSync('gh', ['secret', 'set', 'GRIDIRON_LIBRARY_KEY_V12', '--repo', 'streamwalker/astralnaut-studios'], { input: key.toString('base64'), encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] });
 if (result.status !== 0) throw new Error('Could not save the private deployment key; no payload written');
 await mkdir('private-content/gridiron-zero', { recursive: true });
 for (const file of files) await writeFile('private-content/gridiron-zero/' + file.name, file.bytes);
 const manifest = {
-  version: 10, edition: new Date().toISOString().slice(0,10), format: 'UTF-8 HTML in ordered, independently AES-256-GCM authenticated gzip parts',
-  keyBinding: 'GRIDIRON_LIBRARY_KEY_V10',
+  version: 12, edition: new Date().toISOString().slice(0,10), format: 'UTF-8 HTML in ordered, independently AES-256-GCM authenticated gzip parts',
+  keyBinding: 'GRIDIRON_LIBRARY_KEY_V12',
   files: files.map(f => ({ name: f.name, sha256: f.sha256, bytes: f.bytes.length })),
   htmlSha256: createHash('sha256').update(plain).digest('hex'),
   sourceSha256: createHash('sha256').update(await readFile(process.argv[2])).digest('hex'),

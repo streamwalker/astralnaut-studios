@@ -1,6 +1,6 @@
 // Private content is decrypted only after Supabase verifies the session AND admin role.
 export const LIBRARY_ENDPOINT = "/api/admin/gridiron-zero/library";
-export const LIBRARY_PARTS = ["/assets/gridiron-zero/library-v10-part-1.enc", "/assets/gridiron-zero/library-v10-part-2.enc"];
+export const LIBRARY_PARTS = ["/assets/gridiron-zero/library-v12-part-1.enc", "/assets/gridiron-zero/library-v12-part-2.enc"];
 export const COMICS_ENDPOINT = "/api/admin/gridiron-zero/comics";
 export const COMICS_ASSET_ROOT = "/assets/gridiron-zero/comics-v23";
 const PRIVATE_HEADERS = {
@@ -58,7 +58,7 @@ export async function serveLibrary(request, env, publicConfig, fetcher = fetch) 
   try {
     const denied = await authorizeAdmin(request, env, publicConfig, fetcher);
     if (denied) return denied;
-    const loadPart = (path) => decryptResponse(request, env, env.GRIDIRON_LIBRARY_KEY_V10, path, 'text/html; charset=utf-8');
+    const loadPart = (path) => decryptResponse(request, env, env.GRIDIRON_LIBRARY_KEY_V12, path, 'text/html; charset=utf-8');
     const first = await loadPart(LIBRARY_PARTS[0]);
     if (!first.ok) return first;
     // Stream in byte order so UTF-8 characters may safely straddle a part boundary.
