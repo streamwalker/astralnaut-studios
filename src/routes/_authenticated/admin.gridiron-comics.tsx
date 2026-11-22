@@ -56,7 +56,8 @@ function PrivateComicLibrary() {
     [episode, setEpisode] = useState("all"),
     [edition, setEdition] = useState("current"),
     [zoom, setZoom] = useState(false);
-  const reader = useRef<HTMLElement>(null);
+  const artwork = useRef<HTMLDivElement>(null);
+  const currentId = useRef<string | undefined>(undefined);
   const cache = useRef(new Map<string, Promise<string>>()),
     controller = useRef(new AbortController());
   useEffect(() => {
@@ -153,6 +154,13 @@ function PrivateComicLibrary() {
     [catalog, season, episode, edition],
   );
   const current = visible.find((p) => p.id === selected) || visible[0];
+  useEffect(() => {
+    if (!current || current.id === currentId.current) return;
+    currentId.current = current.id;
+    if (window.matchMedia("(max-width: 1023px)").matches) {
+      artwork.current?.scrollIntoView({ block: "start", behavior: "instant" });
+    }
+  }, [current]);
   const screenplay = current && (catalog?.screenplays?.find((s) => s.pageIds?.includes(current.id)) ??
     catalog?.screenplays?.find((s) => !s.pageIds && s.season === current.season &&
       current.episode >= s.firstEpisode && current.episode <= s.lastEpisode));
@@ -290,7 +298,7 @@ function PrivateComicLibrary() {
                     setSelected(p.id);
                     setZoom(false);
                     if (window.matchMedia("(max-width: 1023px)").matches) {
-                      reader.current?.scrollIntoView({ block: "start" });
+                      artwork.current?.scrollIntoView({ block: "start" });
                     }
                   }}
                   className={`w-24 shrink-0 overflow-hidden rounded-lg border text-left lg:w-auto ${p.id === current?.id ? "border-amber-300 ring-1 ring-amber-300" : "border-white/20"}`}
@@ -304,7 +312,7 @@ function PrivateComicLibrary() {
               ))}
             </div>
           </aside>
-          <section ref={reader} className="min-w-0 scroll-mt-28">
+          <section className="min-w-0 scroll-mt-28">
             <div className="lg:sticky lg:top-0 z-20 flex flex-wrap items-center gap-2 border-b border-white/10 bg-[#101720]/95 p-3 backdrop-blur">
               <button className={control} disabled={index <= 0} onClick={() => move(-1)}>
                 ← Previous
@@ -355,7 +363,7 @@ function PrivateComicLibrary() {
                     </p>
                   )}
                 </div>
-                <div className="overflow-auto px-2 pb-6 sm:px-5">
+                <div ref={artwork} className="overflow-auto px-2 pb-6 sm:px-5">
                   <div className={zoom ? "w-[1536px]" : "mx-auto max-w-[1024px]"}>
                     <PrivateImage key={current.id} page={current} load={loadImage} fit={!zoom} />
                   </div>
@@ -444,7 +452,7 @@ function PrivateImage({
             setError(true);
             setSrc("");
           }}
-          className={fit ? "block h-auto max-h-[72svh] w-full object-contain" : "block h-auto w-full"}
+          className={fit ? "block h-auto max-lg:max-h-[calc(100svh-180px)] w-full object-contain" : "block h-auto w-full"}
           draggable={false}
         />
       ) : error ? (

@@ -108,6 +108,7 @@ export function TourOverlay() {
       .sort((a, b) => b.pathPrefix.length - a.pathPrefix.length)
       .find((t) => {
         if (t.pathPrefix === "/") return pathname === "/" && new URLSearchParams(window.location.search).has("tour");
+        if (t.pathPrefix === "/admin") return pathname === "/admin" || pathname === "/admin/";
         return pathname.startsWith(t.pathPrefix);
       });
     if (!candidate) {
