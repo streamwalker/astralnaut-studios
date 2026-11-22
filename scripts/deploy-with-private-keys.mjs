@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const secrets = {};
-for (const binding of ["GRIDIRON_LIBRARY_KEY_V13", "GRIDIRON_COMICS_KEY_V28"]) {
+for (const binding of ["GRIDIRON_LIBRARY_KEY_V13", "GRIDIRON_COMICS_KEY_V29"]) {
   const key = process.env[binding];
   if (!key || Buffer.from(key, "base64").length !== 32)
     throw new Error("Required private content key is missing or invalid; deployment stopped");
