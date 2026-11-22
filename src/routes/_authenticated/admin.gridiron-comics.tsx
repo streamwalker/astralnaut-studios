@@ -56,6 +56,7 @@ function PrivateComicLibrary() {
     [episode, setEpisode] = useState("all"),
     [edition, setEdition] = useState("current"),
     [zoom, setZoom] = useState(false);
+  const swipeStart = useRef<{ x: number; y: number } | null>(null);
   const artwork = useRef<HTMLDivElement>(null);
   const cache = useRef(new Map<string, Promise<string>>()),
     controller = useRef(new AbortController());
@@ -359,7 +360,38 @@ function PrivateComicLibrary() {
                     </p>
                   )}
                 </div>
-                <div ref={artwork} className="overflow-auto px-2 pb-6 sm:px-5">
+                <div
+                  ref={artwork}
+                  className="overflow-auto px-2 pb-6 sm:px-5"
+                  style={{ touchAction: zoom ? "auto" : "pan-y pinch-zoom" }}
+                  onTouchStart={(event) => {
+                    const touch = event.touches[0];
+                    swipeStart.current = !zoom && event.touches.length === 1 &&
+                      (window.visualViewport?.scale ?? 1) <= 1
+                      ? { x: touch.clientX, y: touch.clientY }
+                      : null;
+                  }}
+                  onTouchMove={(event) => {
+                    const start = swipeStart.current;
+                    if (!start) return;
+                    const touch = event.touches[0];
+                    const dx = Math.abs(touch.clientX - start.x);
+                    const dy = Math.abs(touch.clientY - start.y);
+                    if (event.touches.length !== 1 || (dy > 16 && dy > dx)) swipeStart.current = null;
+                  }}
+                  onTouchCancel={() => { swipeStart.current = null; }}
+                  onTouchEnd={(event) => {
+                    const start = swipeStart.current;
+                    swipeStart.current = null;
+                    if (!start || event.touches.length || zoom) return;
+                    const touch = event.changedTouches[0];
+                    const dx = touch.clientX - start.x;
+                    const dy = touch.clientY - start.y;
+                    if (Math.abs(dx) >= 48 && Math.abs(dx) > 1.5 * Math.abs(dy)) {
+                      move(dx < 0 ? 1 : -1);
+                    }
+                  }}
+                >
                   <div className={zoom ? "w-[1536px]" : "mx-auto max-w-[1024px]"}>
                     <PrivateImage key={current.id} page={current} load={loadImage} fit={!zoom} onReady={frameArtwork} />
                   </div>
