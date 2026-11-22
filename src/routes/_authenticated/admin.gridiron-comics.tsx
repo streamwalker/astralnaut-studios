@@ -57,7 +57,6 @@ function PrivateComicLibrary() {
     [edition, setEdition] = useState("current"),
     [zoom, setZoom] = useState(false);
   const artwork = useRef<HTMLDivElement>(null);
-  const currentId = useRef<string | undefined>(undefined);
   const cache = useRef(new Map<string, Promise<string>>()),
     controller = useRef(new AbortController());
   useEffect(() => {
@@ -154,13 +153,12 @@ function PrivateComicLibrary() {
     [catalog, season, episode, edition],
   );
   const current = visible.find((p) => p.id === selected) || visible[0];
-  useEffect(() => {
-    if (!current || current.id === currentId.current) return;
-    currentId.current = current.id;
-    if (window.matchMedia("(max-width: 1023px)").matches) {
-      artwork.current?.scrollIntoView({ block: "start", behavior: "instant" });
-    }
-  }, [current]);
+  const frameArtwork = () => {
+    const el = artwork.current;
+    if (!el || !window.matchMedia("(max-width: 1023px)").matches) return;
+    const offset = Math.min(168, window.innerHeight - el.clientHeight);
+    window.scrollTo({ top: window.scrollY + el.getBoundingClientRect().top - Math.max(0, offset), behavior: "instant" });
+  };
   const screenplay = current && (catalog?.screenplays?.find((s) => s.pageIds?.includes(current.id)) ??
     catalog?.screenplays?.find((s) => !s.pageIds && s.season === current.season &&
       current.episode >= s.firstEpisode && current.episode <= s.lastEpisode));
@@ -297,9 +295,7 @@ function PrivateComicLibrary() {
                   onClick={() => {
                     setSelected(p.id);
                     setZoom(false);
-                    if (window.matchMedia("(max-width: 1023px)").matches) {
-                      artwork.current?.scrollIntoView({ block: "start" });
-                    }
+                    if (p.id === current?.id) frameArtwork();
                   }}
                   className={`w-24 shrink-0 overflow-hidden rounded-lg border text-left lg:w-auto ${p.id === current?.id ? "border-amber-300 ring-1 ring-amber-300" : "border-white/20"}`}
                 >
@@ -365,7 +361,7 @@ function PrivateComicLibrary() {
                 </div>
                 <div ref={artwork} className="overflow-auto px-2 pb-6 sm:px-5">
                   <div className={zoom ? "w-[1536px]" : "mx-auto max-w-[1024px]"}>
-                    <PrivateImage key={current.id} page={current} load={loadImage} fit={!zoom} />
+                    <PrivateImage key={current.id} page={current} load={loadImage} fit={!zoom} onReady={frameArtwork} />
                   </div>
                 </div>
                 <div className="order-1 flex justify-center gap-4 pb-8 lg:order-none">
@@ -395,11 +391,13 @@ function PrivateImage({
   load,
   thumbnail = false,
   fit = false,
+  onReady,
 }: {
   page: Page;
   load: (p: Page) => Promise<string>;
   thumbnail?: boolean;
   fit?: boolean;
+  onReady?: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [src, setSrc] = useState(""),
@@ -448,6 +446,7 @@ function PrivateImage({
               ? ""
               : `Season ${page.season}, episode ${page.episode}, page ${page.pageLabel ?? page.page}: ${page.title}`
           }
+          onLoad={onReady}
           onError={() => {
             setError(true);
             setSrc("");
