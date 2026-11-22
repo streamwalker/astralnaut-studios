@@ -234,6 +234,7 @@ export function JourneyHome() {
                 ))}
               </div>
             )}
+            <p><a href="/gridiron/" className="space-text-link">Read Gridiron Zero · Five free episodes <span aria-hidden>↗</span></a></p>
           </div>
         </section>
         <section id="world" data-chapter className="flight-section world-section">
