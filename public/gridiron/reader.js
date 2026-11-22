@@ -24,11 +24,12 @@
  function move(n){if(n<0||n>=pages.length)return;const p=pages[n];location.hash=p.e+'-'+p.p}
  function draw(){const hash=location.hash.slice(1);i=Math.max(0,pages.findIndex(p=>hash===p.e+'-'+p.p));const p=pages[i];
   pic.onload=()=>{visited.add(i);report('sampler-open')};pic.alt=p.title+', episode '+p.e+', page '+p.p+' of '+p.total;pic.src=p.file;get('zoom').href=p.file;
-  get('counter').textContent='Page '+p.p+' of '+p.total;select.value=p.e;get('prev').disabled=!i;nav.hidden=false;get('end').hidden=true;
-  nav.textContent=p.p<p.total?'Next page →':(i===pages.length-1?'Finish sampler':'Read Episode '+(p.e+1)+' →');
+  get('counter').textContent='Page '+p.p+' of '+p.total;select.value=p.e;get('prev').disabled=!i;nav.hidden=i===pages.length-1;get('end').hidden=!nav.hidden;
+  nav.textContent=p.p<p.total?'Next page →':'Read Episode '+(p.e+1)+' →';
   document.title=p.title+' · Page '+p.p+' | Gridiron Zero';window.scrollTo(0,0)}
- function next(){const p=pages[i];if(p.p===p.total && pages.every((q,k)=>q.e!==p.e||visited.has(k)))report('episode-'+p.e+'-complete');
-  if(i<pages.length-1)move(i+1);else{get('end').hidden=false;nav.hidden=true;get('end').scrollIntoView()}}
+ function recordCompletion(){const p=pages[i];if(p.p===p.total && pages.every((q,k)=>q.e!==p.e||visited.has(k)))report('episode-'+p.e+'-complete')}
+ function next(){recordCompletion();if(i<pages.length-1)move(i+1);else get('end').querySelector('.action').focus()}
+ get('end').addEventListener('click',event=>{if(event.target.closest('a'))recordCompletion()});
  select.onchange=()=>move(pages.findIndex(p=>p.e===+select.value));get('prev').onclick=()=>move(i-1);nav.onclick=next;
  document.addEventListener('keydown',e=>{if(e.target.matches('select,button,input')||e.altKey||e.metaKey||e.ctrlKey)return;if(e.key==='ArrowRight')next();if(e.key==='ArrowLeft')move(i-1)});
  window.addEventListener('hashchange',draw);pref();draw()
