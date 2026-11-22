@@ -1,3 +1,4 @@
+import { GridironCallDecoder } from "@/components/GridironCallDecoder";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
@@ -346,6 +347,7 @@ function PrivateComicLibrary() {
                     Page {current.pageLabel ?? current.page} · {current.edition} ·{" "}
                     {current.current ? "Final Cut" : "Outtake"}
                   </p>
+                  {current.season === 1 && current.episode === 1 && <GridironCallDecoder />}
                   {screenplay && (
                     <details className="mt-3">
                       <summary className="cursor-pointer text-sm text-amber-300">Read screenplay · {screenplay.title}</summary>

@@ -1,3 +1,4 @@
+import { GridironCallDecoder } from "@/components/GridironCallDecoder";
 import { useEffect, useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { supabase } from '@/integrations/supabase/client';
@@ -58,6 +59,7 @@ function GridironLibrary() {
         <Link to="/admin/gridiron-comics" className="rounded-md border border-border px-3 py-2 text-sm hover:bg-accent">Comic library →</Link>
         <Link to="/admin" className="rounded-md border border-border px-3 py-2 text-sm hover:bg-accent">← Admin dashboard</Link>
       </header>
+      {status === 'ready' && <div className="shrink-0 px-4"><GridironCallDecoder /></div>}
       {status === 'loading' && <p role="status" className="p-8 text-center text-muted-foreground">Verifying admin access and loading the illustrated Bible…</p>}
       {status === 'error' && <div role="alert" className="p-8 text-center"><p>The library could not be loaded. Your notes have not been changed.</p><button className="mt-4 rounded-md border px-4 py-2" onClick={() => setRetry(n => n + 1)}>Try again</button></div>}
       {status === 'ready' && <iframe title="Gridiron Zero interactive Story Bible" srcDoc={html} className="min-h-0 w-full flex-1 border-0" allow="clipboard-write" />}
