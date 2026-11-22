@@ -56,6 +56,8 @@ function PrivateComicLibrary() {
     [episode, setEpisode] = useState("all"),
     [edition, setEdition] = useState("current"),
     [zoom, setZoom] = useState(false);
+  const artwork = useRef<HTMLDivElement>(null);
+  const currentId = useRef<string | undefined>(undefined);
   const cache = useRef(new Map<string, Promise<string>>()),
     controller = useRef(new AbortController());
   useEffect(() => {
@@ -152,6 +154,13 @@ function PrivateComicLibrary() {
     [catalog, season, episode, edition],
   );
   const current = visible.find((p) => p.id === selected) || visible[0];
+  useEffect(() => {
+    if (!current || current.id === currentId.current) return;
+    currentId.current = current.id;
+    if (window.matchMedia("(max-width: 1023px)").matches) {
+      artwork.current?.scrollIntoView({ block: "start", behavior: "instant" });
+    }
+  }, [current]);
   const screenplay = current && (catalog?.screenplays?.find((s) => s.pageIds?.includes(current.id)) ??
     catalog?.screenplays?.find((s) => !s.pageIds && s.season === current.season &&
       current.episode >= s.firstEpisode && current.episode <= s.lastEpisode));
@@ -231,8 +240,8 @@ function PrivateComicLibrary() {
         </div>
       )}
       {status === "ready" && catalog && (
-        <div className="mx-auto grid max-w-[1800px] lg:grid-cols-[280px_minmax(0,1fr)]">
-          <aside className="border-b border-white/10 p-5 lg:border-r">
+        <div className="mx-auto grid max-w-[1800px] grid-cols-[minmax(0,1fr)] lg:grid-cols-[280px_minmax(0,1fr)]">
+          <aside className="order-2 min-w-0 border-b lg:order-none border-white/10 p-5 lg:border-r">
             <h2 className="text-lg font-semibold">{edition === "current" ? "Final Cut" : "Outtakes"}</h2>
             <p className="mt-2 text-xs text-slate-400">{edition === "current" ? "Latest imagery and lettering, in story order." : "Superseded editions and earlier proofs."}</p>
             <nav className="mt-4 flex gap-2" aria-label="Library sections">
@@ -288,6 +297,9 @@ function PrivateComicLibrary() {
                   onClick={() => {
                     setSelected(p.id);
                     setZoom(false);
+                    if (window.matchMedia("(max-width: 1023px)").matches) {
+                      artwork.current?.scrollIntoView({ block: "start" });
+                    }
                   }}
                   className={`w-24 shrink-0 overflow-hidden rounded-lg border text-left lg:w-auto ${p.id === current?.id ? "border-amber-300 ring-1 ring-amber-300" : "border-white/20"}`}
                 >
@@ -300,8 +312,8 @@ function PrivateComicLibrary() {
               ))}
             </div>
           </aside>
-          <section className="min-w-0">
-            <div className="sticky top-0 z-20 flex flex-wrap items-center gap-2 border-b border-white/10 bg-[#101720]/95 p-3 backdrop-blur">
+          <section className="min-w-0 scroll-mt-28">
+            <div className="lg:sticky lg:top-0 z-20 flex flex-wrap items-center gap-2 border-b border-white/10 bg-[#101720]/95 p-3 backdrop-blur">
               <button className={control} disabled={index <= 0} onClick={() => move(-1)}>
                 ← Previous
               </button>
@@ -327,8 +339,8 @@ function PrivateComicLibrary() {
               </button>
             </div>
             {current ? (
-              <>
-                <div className="p-5">
+              <div className="flex min-w-0 flex-col">
+                <div className="order-2 p-5 lg:order-none">
                   <p className="text-xs uppercase tracking-[.18em] text-amber-300">
                     Season {current.season} / Episode {current.episode}
                   </p>
@@ -351,12 +363,12 @@ function PrivateComicLibrary() {
                     </p>
                   )}
                 </div>
-                <div className="overflow-auto px-2 pb-6 sm:px-5">
+                <div ref={artwork} className="overflow-auto px-2 pb-6 sm:px-5">
                   <div className={zoom ? "w-[1536px]" : "mx-auto max-w-[1024px]"}>
-                    <PrivateImage key={current.id} page={current} load={loadImage} />
+                    <PrivateImage key={current.id} page={current} load={loadImage} fit={!zoom} />
                   </div>
                 </div>
-                <div className="flex justify-center gap-4 pb-8">
+                <div className="order-1 flex justify-center gap-4 pb-8 lg:order-none">
                   <button className={control} disabled={index <= 0} onClick={() => move(-1)}>
                     ← Previous page
                   </button>
@@ -368,7 +380,7 @@ function PrivateComicLibrary() {
                     Next page →
                   </button>
                 </div>
-              </>
+              </div>
             ) : (
               <p className="p-10">No pages in this selection.</p>
             )}
@@ -382,10 +394,12 @@ function PrivateImage({
   page,
   load,
   thumbnail = false,
+  fit = false,
 }: {
   page: Page;
   load: (p: Page) => Promise<string>;
   thumbnail?: boolean;
+  fit?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [src, setSrc] = useState(""),
@@ -438,7 +452,7 @@ function PrivateImage({
             setError(true);
             setSrc("");
           }}
-          className="block h-auto w-full"
+          className={fit ? "block h-auto max-lg:max-h-[calc(100svh-180px)] w-full object-contain" : "block h-auto w-full"}
           draggable={false}
         />
       ) : error ? (
