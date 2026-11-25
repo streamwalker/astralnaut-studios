@@ -1,1 +1,79 @@
-[{"episode": 1, "title": "The Audible", "pages": ["pages/e1-01.webp", "pages/e1-02.webp", "pages/e1-03.webp", "pages/e1-04.webp", "pages/e1-05.webp", "pages/e1-06.webp", "pages/e1-07.webp"]}, {"episode": 2, "title": "The Hit", "pages": ["pages/e2-01.webp", "pages/e2-02.webp", "pages/e2-03.webp", "pages/e2-04.webp", "pages/e2-05.webp", "pages/e2-06.webp", "pages/e2-07.webp", "pages/e2-08.webp"]}, {"episode": 3, "title": "The Verdict", "pages": ["pages/e3-01.webp", "pages/e3-02.webp", "pages/e3-03.webp", "pages/e3-04.webp", "pages/e3-05.webp", "pages/e3-06.webp"]}, {"episode": 4, "title": "The Investor", "pages": ["pages/e4-01.webp", "pages/e4-02.webp", "pages/e4-03.webp", "pages/e4-04.webp", "pages/e4-05.webp", "pages/e4-06.webp", "pages/e4-07.webp"]}, {"episode": 5, "title": "The Old Step", "pages": ["pages/e5-01.webp", "pages/e5-02.webp", "pages/e5-03.webp", "pages/e5-04.webp", "pages/e5-05.webp", "pages/e5-06.webp", "pages/e5-07.webp"]}]
+[
+  {
+    "episode": 1,
+    "title": "The Audible",
+    "pages": [
+      "pages/e1-01.webp?v=86e38b030826",
+      "pages/e1-02.webp?v=00ee7dd1893f",
+      "pages/e1-03.webp?v=6b98439af8dd",
+      "pages/e1-04.webp?v=ce90c959170c",
+      "pages/e1-05.webp?v=613ea5d93d6c",
+      "pages/e1-06.webp?v=7980562812c1",
+      "pages/e1-07.webp?v=ac1c7ace9795",
+      "pages/e1-08.webp?v=19f456f6c284",
+      "pages/e1-09.webp?v=633304c84358",
+      "pages/e1-10.webp?v=766b2fce9812",
+      "pages/e1-11.webp?v=4b24940a2c56",
+      "pages/e1-12.webp?v=4603e957d029",
+      "pages/e1-13.webp?v=291456f41b95"
+    ]
+  },
+  {
+    "episode": 2,
+    "title": "The Hit",
+    "pages": [
+      "pages/e2-01.webp?v=20b0892f69e6",
+      "pages/e2-02.webp?v=16c5f5961d21",
+      "pages/e2-03.webp?v=25a50975008d",
+      "pages/e2-04.webp?v=afa8c47aa8da",
+      "pages/e2-05.webp?v=20c4147ec6f9",
+      "pages/e2-06.webp?v=dccf9d0a8498",
+      "pages/e2-07.webp?v=be724f37e54c",
+      "pages/e2-08.webp?v=10f704f1cca9",
+      "pages/e2-09.webp?v=09158b0516e2",
+      "pages/e2-10.webp?v=36fdec9d4558",
+      "pages/e2-11.webp?v=b0c2a438a88d",
+      "pages/e2-12.webp?v=2fdbced22108",
+      "pages/e2-13.webp?v=66236eda2f01",
+      "pages/e2-14.webp?v=dc4a7f6af19a"
+    ]
+  },
+  {
+    "episode": 3,
+    "title": "The Verdict",
+    "pages": [
+      "pages/e3-01.webp?v=af08361a1828",
+      "pages/e3-02.webp?v=7744a833666e",
+      "pages/e3-03.webp?v=12c55a893569",
+      "pages/e3-04.webp?v=b38a274f5ba9",
+      "pages/e3-05.webp?v=f7e2180a13ff",
+      "pages/e3-06.webp?v=14da367ac754"
+    ]
+  },
+  {
+    "episode": 4,
+    "title": "The Investor",
+    "pages": [
+      "pages/e4-01.webp?v=b9ae089b2ee7",
+      "pages/e4-02.webp?v=93f77f27f68d",
+      "pages/e4-03.webp?v=4c6e8decb5dd",
+      "pages/e4-04.webp?v=d2d347bbacfc",
+      "pages/e4-05.webp?v=a0038429ed93",
+      "pages/e4-06.webp?v=dabae676a928",
+      "pages/e4-07.webp?v=af03c8f28008"
+    ]
+  },
+  {
+    "episode": 5,
+    "title": "The Old Step",
+    "pages": [
+      "pages/e5-01.webp?v=fcfcb1895d89",
+      "pages/e5-02.webp?v=f4ce3feb5e64",
+      "pages/e5-03.webp?v=038b17c70d79",
+      "pages/e5-04.webp?v=cf18725bcacb",
+      "pages/e5-05.webp?v=c44aa4a69609",
+      "pages/e5-06.webp?v=b68ac5f4d03c",
+      "pages/e5-07.webp?v=c06f07a3dd77"
+    ]
+  }
+]
